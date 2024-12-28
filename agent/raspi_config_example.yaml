@@ -1,0 +1,14 @@
+# raspi_config_example.yaml
+# Example config file for your Raspberry Pi environment.
+
+facility_id: "example_facility"
+branch_name: "example_branch"
+github_repo: "git@github.com:YourOrg/my-raspi-agent-repo.git"
+
+idigbio_api_key: "YOUR_IDIGBIO_API_KEY"
+morphosource_api_key: "YOUR_MORPHOSOURCE_API_KEY"
+
+metadata_input_dir: "/home/pi/xray_data"
+metadata_output_file: "/home/pi/xray_data/metadata_parsed.yaml"
+
+notes: "Copy this file to 'raspi_config.yaml' and adjust as needed."
