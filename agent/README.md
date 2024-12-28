@@ -1,22 +1,102 @@
-# Raspi Device Automated Install/Config for Script/Agent functions
+```plaintext
+agent/
+├── README.md
+├── install.sh
+├── requirements.txt
+├── scripts/
+│   ├── __init__.py
+│   ├── metadata_parser.py
+│   ├── fetch_github_metadata.py
+│   ├── search_and_integrate.py
+│   ├── metadata_parser.service
+│   ├── fetch_github_metadata.service
+│   ├── search_and_integrate.service
+└── raspi_config_example.yaml
+```
 
-This repository contains scripts and configuration files for the Raspberry Pi 
-that automatically collects X-ray metadata and integrates it with GitHub 
-(and potentially iDigBio/MorphoSource).
+# Agent
+
+This repository contains scripts, service files, and configuration  
+for a Raspberry Pi that automatically collects and processes X-ray metadata,  
+then integrates it with GitHub (and possibly iDigBio/MorphoSource).
+
+---
 
 ## Setup Instructions
 
-1. **Clone this repo** onto your Raspberry Pi:
+1. **Clone this repo**:
    ```bash
    git clone https://github.com/YourOrg/my-raspi-agent-repo.git
    cd my-raspi-agent-repo
    ```
-2. **Run the install script** to set up the dependencies
+
+2. **Run the install script**:
    ```bash
+   chmod +x install.sh
    ./install.sh
    ```
-3. **Edit the config file** to match your facility details:
-   ```bash
-    cp raspi_config_example.yaml raspi_config.yaml
-    nano raspi_config.yaml
-   ```
+
+3. **Configure the Pi**:
+   - Make a copy of `raspi_config_example.yaml` to `raspi_config.yaml`.
+   - Edit it to match your facility info, GitHub repo, etc.
+
+4. **Install systemd services (optional)**:
+   - Copy the `.service` files from `scripts/` into `/etc/systemd/system`.
+   - Enable and start them as needed:
+     ```bash
+     sudo systemctl enable metadata_parser.service
+     sudo systemctl start metadata_parser.service
+     # ...
+     ```
+
+---
+
+## Scripts Overview
+
+- **metadata_parser.py**: Processes local X-ray data into structured metadata.  
+- **fetch_github_metadata.py**: Pulls updates/config from GitHub.  
+- **search_and_integrate.py**: Searches external APIs (iDigBio, MorphoSource) and integrates new data.  
+
+---
+
+## Service Files
+
+- **metadata_parser.service**  
+- **fetch_github_metadata.service**  
+- **search_and_integrate.service**
+
+These allow you to run the scripts automatically in the background.  
+Adjust them as needed for your environment.
+
+---
+
+### `install.sh`
+
+```bash
+#!/usr/bin/env bash
+#
+# install.sh
+#
+# Installs necessary system packages and Python libraries on the Raspberry Pi.
+# Usage: chmod +x install.sh && ./install.sh
+#
+
+set -e
+
+echo "Updating system packages..."
+sudo apt-get update -y
+sudo apt-get upgrade -y
+
+echo "Installing Python3 and pip..."
+sudo apt-get install -y python3 python3-pip
+
+echo "Installing any additional dependencies if needed..."
+# e.g., git, yq, etc.
+# sudo apt-get install -y git jq
+
+echo "Installing Python libraries from requirements.txt..."
+pip3 install --upgrade pip
+pip3 install -r requirements.txt
+
+echo "Installation complete!"
+```
