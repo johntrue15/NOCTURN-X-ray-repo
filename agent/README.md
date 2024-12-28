@@ -1,4 +1,4 @@
-# My Raspi Agent Repo
+# Raspi Device Automated Install/Config for Script/Agent functions
 
 This repository contains scripts and configuration files for the Raspberry Pi 
 that automatically collects X-ray metadata and integrates it with GitHub 
