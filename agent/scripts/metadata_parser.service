@@ -1,0 +1,13 @@
+[Unit]
+Description=Metadata Parser Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+ExecStart=/usr/bin/python3 /home/pi/my-raspi-agent-repo/scripts/metadata_parser.py /home/pi/xray_data
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
