@@ -1,0 +1,83 @@
+name: API Agent Workflow
+
+on:
+  # Run workflow when new commits are pushed to main, or adjust branches as needed
+  push:
+    branches:
+      - main
+  # Also run workflow on a schedule (e.g., daily at 2 AM)
+  schedule:
+    - cron: '0 2 * * *'
+
+jobs:
+  fetch-and-integrate:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Check out the repo so we can access files/scripts
+      - name: Check out repo
+        uses: actions/checkout@v3
+        with:
+          ref: main
+
+      # 2. Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # 3. Install Python dependencies
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install requests pyyaml openai
+
+      # 4. (Optional) Configure environment variables from GitHub Secrets
+      #    Add your own secrets in the "Settings > Secrets and variables > Actions" of your repo
+      - name: Set environment variables
+        run: echo "Environment variables set."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IDIGBIO_API_KEY: ${{ secrets.IDIGBIO_API_KEY }}
+          MORPHOSOURCE_API_KEY: ${{ secrets.MORPHOSOURCE_API_KEY }}
+          # For AI-based fuzzy matching, e.g. OpenAI
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      # 5. Fetch new metadata from the GitHub repo
+      #    (In some setups, you might just parse local files that were already checked out above,
+      #     or use the GitHub API to list newly added files in certain branches/folders.)
+      - name: Fetch GitHub metadata
+        run: |
+          python agent/fetch_github_metadata.py \
+            --repo "your-org/your-repo" \
+            --token "${{ secrets.GITHUB_TOKEN }}" \
+            --output "metadata_cache/"
+
+      # 6. Perform search & integrate logic
+      #    This script should:
+      #     - Parse the fetched metadata
+      #     - Search iDigBio & MorphoSource
+      #     - Decide if new record or existing
+      #     - Create/update accordingly
+      - name: Search and Integrate
+        run: |
+          python agent/search_and_integrate.py \
+            --metadata_dir "metadata_cache/" \
+            --idigbio_key "${{ secrets.IDIGBIO_API_KEY }}" \
+            --morphosource_key "${{ secrets.MORPHOSOURCE_API_KEY }}" \
+            --openai_key "${{ secrets.OPENAI_API_KEY }}"
+
+      # 7. (Optional) Push updates back to GitHub or create a Pull Request
+      #    For instance, if your script modifies docs or logs, you could commit them here.
+      - name: Commit & Push Changes
+        if: ${{ always() }}
+        run: |
+          git config user.name "GitHub Action"
+          git config user.email "actions@github.com"
+          # Example: if your integration script updated some local docs or logs:
+          git add docs/ logs/
+          # Only commit if there are changes
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "Automated update from integration service"
+            git push origin main
+          else
+            echo "No changes to commit."
