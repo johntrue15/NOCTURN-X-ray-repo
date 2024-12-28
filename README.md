@@ -106,7 +106,7 @@ This section describes how to install and configure **NOCTURN Metadata Parser** 
    ```
 
 
-4. Save the file as a `.txt` into the shared folder o nthe CT Workstation.
+4. Save the file as a `.txt` into the shared folder on the CT Workstation.
 
 ---
 
