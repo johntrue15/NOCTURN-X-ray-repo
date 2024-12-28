@@ -1,0 +1,13 @@
+[Unit]
+Description=Search and Integrate Service (iDigBio/MorphoSource)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=pi
+ExecStart=/usr/bin/python3 /home/pi/my-raspi-agent-repo/scripts/search_and_integrate.py --metadata_dir "/home/pi/metadata_cache"
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
