@@ -4,47 +4,43 @@ import requests
 from bs4 import BeautifulSoup
 
 # Constants
-SEARCH_URL = "https://www.morphosource.org/catalog/media?locale=en&q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc"
+SEARCH_URL = (
+    "https://www.morphosource.org/catalog/media?locale=en"
+    "&q=X-Ray+Computed+Tomography&search_field=all_fields"
+    "&sort=system_create_dtsi+desc"
+)
 LAST_COUNT_FILE = "last_count.txt"
 
 def get_current_record_count():
     """
     Scrape MorphoSource to find how many "X-ray Computed Tomography" records exist.
+    Looks for the <meta name="totalResults" content="..."> tag in the page.
     """
     response = requests.get(SEARCH_URL)
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, "html.parser")
 
-    # This is just an example. Adjust to match the actual structure of the site:
-    # Often sites show something like: "1 - 25 of 999 results" or "999 results found".
-    # You need to inspect the actual HTML to locate the correct tag or text. 
-    results_info = soup.find("span", class_="search-pagination__count")  # Hypothetical
-    if not results_info:
-        # If we cannot find the results count element, handle gracefully:
-        raise ValueError("Could not find the results count element on the page.")
+    # The <meta name="totalResults" content="104233"> gives us the total count
+    results_meta = soup.find("meta", {"name": "totalResults"})
+    if not results_meta or not results_meta.get("content"):
+        raise ValueError("Could not find the 'totalResults' meta tag on the page.")
 
-    # This might be text like: "1 - 25 of 101 results"
-    # You need to parse it or extract the last numeric piece.
-    text = results_info.get_text(strip=True)
-    # Let's assume the text ends with something like " of 101 results"
-    # Very naive approach: split by space and take the second to last entry:
-    parts = text.split()
-    total_count_str = parts[-2]  # e.g. "101"
-    total_count = int(total_count_str)
+    total_count = int(results_meta["content"])
     return total_count
 
 def load_last_count():
     """
     Load the previously recorded number of records from file.
+    Returns 0 if file doesn't exist or contains invalid data.
     """
     if not os.path.exists(LAST_COUNT_FILE):
         return 0
-    with open(LAST_COUNT_FILE, "r") as f:
-        try:
+    try:
+        with open(LAST_COUNT_FILE, "r") as f:
             return int(f.read().strip())
-        except ValueError:
-            return 0
+    except ValueError:
+        return 0
 
 def save_last_count(count):
     """
@@ -55,12 +51,12 @@ def save_last_count(count):
 
 def parse_new_records():
     """
-    Optionally parse new records from the page to get details. For demonstration,
-    let's just return some placeholder text. In a real scenario, you'd parse each
-    record's metadata, e.g. title, ID, link, etc.
+    Optionally parse new records from the page to get details.
+    For demonstration, just return a placeholder string.
+    In a real scenario, you'd parse actual new entries.
     """
-    # Example: Just returning a placeholder. 
-    # You would adapt BeautifulSoup code to gather each new record’s data.
+    # Placeholder. You could fetch the page again and gather detailed info
+    # for each newly added record, then build a string or JSON summary.
     return "List of new record details here (adapt as needed)."
 
 def main():
@@ -76,12 +72,12 @@ def main():
         save_last_count(current_count)
 
         # Print GitHub Actions outputs
-        print(f"::set-output name=new_data::true")
-        print(f"::set-output name=details::We found {new_records_count} new records.\n{details}")
+        print("::set-output name=new_data::true")
+        print(f"::set-output name=details::Found {new_records_count} new records.\n{details}")
     else:
         # No new data
-        print(f"::set-output name=new_data::false")
-        print(f"::set-output name=details::No new records found.")
+        print("::set-output name=new_data::false")
+        print("::set-output name=details::No new records found.")
 
 if __name__ == "__main__":
     main()
