@@ -1,0 +1,46 @@
+name: Parse MorphoSource Data
+
+on:
+  schedule:
+    # Run every 12 hours.  Cron format: m h dom mon dow
+    - cron: "0 */12 * * *"
+  workflow_dispatch:
+    # Allows manual triggering from the "Actions" tab, if desired
+    inputs:
+      run_reason:
+        description: "Reason to run the job manually"
+        required: false
+
+jobs:
+  scrape_and_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run Scraper
+        id: scraper
+        run: python scripts/scrape_morphosource.py
+
+      # This step only runs if the previous 'scraper' step outputs "new_data" = "true"
+      - name: Create or Update Release
+        if: steps.scraper.outputs.new_data == 'true'
+        uses: actions/create-release@v1
+        with:
+          tag_name: 'morphosource-updates'
+          release_name: 'MorphoSource Updates'
+          body: |
+            A new increase in X-ray Computed Tomography records was found on MorphoSource.
+            See details below:
+
+            ${{ steps.scraper.outputs.details }}
+          draft: false
+          prerelease: false
