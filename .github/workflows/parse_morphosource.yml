@@ -28,7 +28,7 @@ jobs:
 
       - name: Run Scraper
         id: scraper
-        run: python scripts/scrape_morphosource.py
+        run: python .github/workflows/scrape_morphosource.py
 
       # This step only runs if the previous 'scraper' step outputs "new_data" = "true"
       - name: Create or Update Release
