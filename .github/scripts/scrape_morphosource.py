@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 
 # Constants
-SEARCH_URL = "https://www.morphosource.org/concern/media?utf8=%E2%9C%93&q=X-ray+Computed+Tomography&search_field=all_fields"
+SEARCH_URL = "https://www.morphosource.org/catalog/media?locale=en&q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc"
 LAST_COUNT_FILE = "last_count.txt"
 
 def get_current_record_count():
