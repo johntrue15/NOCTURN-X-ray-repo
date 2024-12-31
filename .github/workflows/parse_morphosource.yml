@@ -35,10 +35,14 @@ jobs:
       - name: Create or Update Release
         if: steps.scraper.outputs.new_data == 'true'
         uses: actions/create-release@v1
-        # Provide a token so the action can create or update the release.
-        # You can use the built-in GITHUB_TOKEN or a custom MY_GITHUB_TOKEN secret.
+        env:
+          # Provide your token here as an environment variable.
+          # Use either the built-in GITHUB_TOKEN or a custom PAT secret (e.g. MY_GITHUB_TOKEN).
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          # or, if you have a custom secret named MY_GITHUB_TOKEN:
+          # GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
         with:
-          token: ${{ secrets.MY_GITHUB_TOKEN }}
           tag_name: 'morphosource-updates'
           release_name: 'MorphoSource Updates'
           body: |
