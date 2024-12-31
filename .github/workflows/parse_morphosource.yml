@@ -35,7 +35,7 @@ jobs:
       - name: Create or Update Release
         if: steps.scraper.outputs.new_data == 'true'
         uses: actions/create-release@v1
-        # Pass our MY_GITHUB_TOKEN secret as GITHUB_TOKEN in the environment
+        # Use a token to authenticate and create the release
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
