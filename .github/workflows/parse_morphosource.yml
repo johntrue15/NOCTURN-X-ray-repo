@@ -33,12 +33,12 @@ jobs:
         run: python .github/scripts/scrape_morphosource.py
 
       - name: Create or Update Release
-        # Only create/update the release if new records were found
         if: steps.scraper.outputs.new_data == 'true'
         uses: actions/create-release@v1
+        # Pass our MY_GITHUB_TOKEN secret as GITHUB_TOKEN in the environment
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          # Provide the GitHub token so the release can be created
-          token: ${{ secrets.MY_GITHUB_TOKEN }}
           tag_name: 'morphosource-updates'
           release_name: 'MorphoSource Updates'
           body: |
