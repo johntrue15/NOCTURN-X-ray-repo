@@ -2,10 +2,14 @@ name: Parse MorphoSource Data
 
 on:
   schedule:
-    # Run every 12 hours (UTC time by default).
+    # Run every 12 hours (0th minute, every 12 hours)
     - cron: "0 */12 * * *"
-  # Allows manual runs from the GitHub Actions tab if desired
   workflow_dispatch:
+    # Allows you to manually trigger from the Actions tab if you wish
+    inputs:
+      reason:
+        description: "Reason to run the job manually"
+        required: false
 
 jobs:
   scrape_and_release:
@@ -18,6 +22,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
+          # Adjust Python version as you prefer
           python-version: '3.9'
 
       - name: Install dependencies
@@ -28,14 +33,17 @@ jobs:
         run: python .github/scripts/scrape_morphosource.py
 
       - name: Create or Update Release
+        # Only create/update the release if new records were found
         if: steps.scraper.outputs.new_data == 'true'
         uses: actions/create-release@v1
         with:
+          # Provide the GitHub token so the release can be created
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: 'morphosource-updates'
           release_name: 'MorphoSource Updates'
           body: |
             A new increase in **X-ray Computed Tomography** records was found on MorphoSource.
-            
+
             ${{ steps.scraper.outputs.details }}
           draft: false
           prerelease: false
