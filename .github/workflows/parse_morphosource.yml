@@ -5,7 +5,7 @@ on:
     # Run every 12 hours (0th minute, every 12 hours)
     - cron: "0 */12 * * *"
   workflow_dispatch:
-    # Allows you to manually trigger from the Actions tab if you wish
+    # Allows you to manually trigger from the Actions tab, if desired
     inputs:
       reason:
         description: "Reason to run the job manually"
@@ -22,8 +22,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          # Adjust Python version as you prefer
-          python-version: '3.9'
+          # Adjust Python version as needed
+          python-version: "3.9"
 
       - name: Install dependencies
         run: pip install requests beautifulsoup4
@@ -35,12 +35,12 @@ jobs:
       - name: Create or Update Release
         if: steps.scraper.outputs.new_data == 'true'
         uses: actions/create-release@v1
-        # Use a token to authenticate and create the release
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        # Provide a token so the action can create or update the release.
+        # You can use the built-in GITHUB_TOKEN or a custom MY_GITHUB_TOKEN secret.
         with:
-          tag_name: morphosource-updates-${{ github.run_number }}
-          release_name: "MorphoSource Updates #${{ github.run_number }}"
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
+          tag_name: 'morphosource-updates'
+          release_name: 'MorphoSource Updates'
           body: |
             A new increase in **X-ray Computed Tomography** records was found on MorphoSource.
 
