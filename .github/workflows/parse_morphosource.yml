@@ -39,8 +39,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          tag_name: 'morphosource-updates'
-          release_name: 'MorphoSource Updates'
+          tag_name: morphosource-updates-${{ github.run_number }}
+          release_name: "MorphoSource Updates #${{ github.run_number }}"
           body: |
             A new increase in **X-ray Computed Tomography** records was found on MorphoSource.
 
