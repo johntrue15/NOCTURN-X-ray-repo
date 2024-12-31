@@ -10,7 +10,7 @@ SEARCH_URL = (
     "&sort=system_create_dtsi+desc"
 )
 BASE_URL = "https://www.morphosource.org"
-LAST_COUNT_FILE = "last_count.txt"
+LAST_COUNT_FILE = ".github/last_count.txt"
 
 def get_current_record_count():
     """
