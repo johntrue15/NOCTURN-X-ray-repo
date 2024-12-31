@@ -68,3 +68,54 @@ This repository contains a GitHub Actions workflow (`parse_morphosource.yml`) an
 │     └─ scrape_morphosource.py  # The Python scraper script
 ├─ last_count.txt                # Stores the last known total count of records
 └─ README.md                     # This README
+```
+
+**parse_morphosource.yml**  
+Defines when and how the workflow runs.
+
+**scrape_morphosource.py**  
+The script that scrapes MorphoSource and outputs data.
+
+**last_count.txt**  
+Gets created or updated automatically—tracks how many records we last saw.
+
+---
+
+## Setup
+
+1. **Clone/Download** this repository to your local machine or fork it on GitHub.  
+2. **Install Python 3** (if you’re running locally).  
+3. **Install Dependencies**: The script needs `requests` and `beautifulsoup4`. You can install these via:
+   ```bash
+   pip install requests beautifulsoup4
+
+### Configure a Token (Optional)
+By default, the workflow uses the built-in `GITHUB_TOKEN` (provided by GitHub Actions).  
+If you want to use a custom token (e.g., `MY_GITHUB_TOKEN`), set it as a repository secret and update the workflow accordingly.
+
+---
+
+## Usage
+
+### Automatic (Scheduled)
+By default, the workflow is scheduled (`cron: "0 */12 * * *"`) to run every 12 hours.  
+This means you don’t have to do anything—GitHub Actions will run the checks automatically and update the release when new records are found.
+
+### Manual (On Demand)
+You can manually run the workflow from GitHub’s Actions tab:
+
+1. Go to **Actions** in your repository.  
+2. Select the “Parse MorphoSource Data” workflow.  
+3. Click **“Run workflow.”**
+
+The script will run, check for new records, and update (or create) the release if there’s an increase.
+
+---
+
+## Customization
+
+1. **Change the Cron**: Modify `cron: "0 */12 * * *"` in `.github/workflows/parse_morphosource.yml` to suit your schedule.  
+2. **Scrape More Details**: In `scrape_morphosource.py`, you can expand `parse_new_records()` to gather more fields (e.g., Date Uploaded, Object, Taxonomy). Incorporate them into the final output string.  
+3. **Different Release Behavior**:
+   - If you’d prefer a new release each time, change the `tag_name` or release naming logic (e.g., append timestamps).  
+   - If you’d rather store data in a JSON file, see [`actions/upload-artifact`](https://github.com/actions/upload-artifact).
