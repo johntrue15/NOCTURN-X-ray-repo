@@ -38,7 +38,7 @@ jobs:
         uses: actions/create-release@v1
         with:
           # Provide the GitHub token so the release can be created
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
           tag_name: 'morphosource-updates'
           release_name: 'MorphoSource Updates'
           body: |
