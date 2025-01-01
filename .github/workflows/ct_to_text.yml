@@ -69,7 +69,7 @@ jobs:
           # In this example, we just do "date" again. If you want EXACT offset (10 seconds),
           # you'd do e.g. "date --date='10 seconds' +'%m.%d.%Y-%H:%M:%S'"
           # But for demonstration, let's do:
-          TS=$(date +'%m.%d.%Y-%H:%M:%S')
+          TS=$(date +'%Y-%m-%d_%H-%M-%S')
           echo "::set-output name=analysis_ts::$TS"
 
       - name: Create or Update Release with AI Summary
