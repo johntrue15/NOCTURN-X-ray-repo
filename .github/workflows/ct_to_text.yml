@@ -1,0 +1,42 @@
+name: CT to Text Generation
+
+on:
+  schedule:
+    - cron: "0 3 * * *"  # e.g., run daily at 3 AM (UTC)
+  workflow_dispatch:
+    # Allows manual runs from the Actions tab
+
+jobs:
+  ct_text_job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install Dependencies
+        run: pip install requests beautifulsoup4 openai
+
+      - name: Run CT to Text
+        id: ct2text
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python .github/scripts/ct_to_text.py
+
+      # Optional: create a release with the generated text
+      - name: Create or Update Release
+        if: always()  # or some condition if you only want a release on success
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "ct-to-text-updates-${{ github.run_number }}"
+          release_name: "CT to Text Summaries #${{ github.run_number }}"
+          body: ${{ steps.ct2text.outputs.description }}
+          draft: false
+          prerelease: false
