@@ -1,14 +1,14 @@
-name: CT to Text (on new Morphosource Release)
+name: CT to Text
 
 on:
-  release:
-    types: [published]
+  workflow_run:
+    workflows: ["Parse MorphoSource Data"]  # must match the 'name:' field of Workflow 1
+    types: [completed]                # or [success] if you only want it on success
 
 jobs:
   ct_text_job:
-    # Only run if the newly published release’s tag_name starts with "morphosource-updates-"
-    if: startsWith(github.event.release.tag_name, 'morphosource-updates-3')
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Check out repo
@@ -19,40 +19,51 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: pip install requests beautifulsoup4 openai
 
-      - name: Capture the release body
-        id: capture_body
+      - name: Fetch Latest Release
+        id: fetch_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
+          echo "Fetching the latest morphosource-updates- release..."
+          # We'll just do a quick API call to retrieve the latest release that starts with 'morphosource-updates-'
+          # You can adapt to find the newest tag or just do 'releases/latest' if your only release is these updates.
+
+          # Example: let's do 'releases/latest' for simplicity:
+          response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+            https://api.github.com/repos/${{ github.repository }}/releases/latest)
+
+          echo "$response" > latest_release.json
+          # For debugging
+          echo "Response: $response"
+
+          # Extract the 'body' from JSON
+          body=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['body'])")
           echo "release_body<<EOF" >> $GITHUB_OUTPUT
-          echo "${{ github.event.release.body }}" >> $GITHUB_OUTPUT
+          echo "$body" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Run CT to Text
         id: ct2text
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
-          # Save the release body to a local file
-          echo "${{ steps.capture_body.outputs.release_body }}" > release_body.txt
-          
-          # Run the Python script with that file, capturing stdout to ct_output.txt
+          echo "${{ steps.fetch_release.outputs.release_body }}" > release_body.txt
           python .github/scripts/ct_to_text.py release_body.txt > ct_output.txt
-          
-          # Convert ct_output.txt into a GitHub Actions output named 'description'
+
           echo "description<<EOF" >> $GITHUB_OUTPUT
           cat ct_output.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Create or Update Release
+      - name: Create or Update Release with AI Summary
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          tag_name: "ct-to-text-${{ github.run_number }}"
-          release_name: "CT to Text #${{ github.run_number }}"
+          tag_name: "ct-to-text-analysis-${{ github.run_number }}"
+          release_name: "CT to Text Analysis #${{ github.run_number }}"
           body: ${{ steps.ct2text.outputs.description }}
           draft: false
           prerelease: false
