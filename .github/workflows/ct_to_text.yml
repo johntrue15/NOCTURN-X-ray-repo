@@ -9,7 +9,6 @@ on:
 jobs:
   ct_text_job:
     runs-on: ubuntu-latest
-    # Only run if Workflow #1 ended successfully
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
@@ -27,23 +26,19 @@ jobs:
       - name: Fetch Latest Release
         id: fetch_release
         env:
-          # Provide a GitHub token with read access to releases
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
           echo "Fetching the latest release from this repo..."
           response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
             https://api.github.com/repos/${{ github.repository }}/releases/latest)
 
-          # Save JSON for debugging if needed
           echo "$response" > latest_release.json
 
-          # Extract fields via Python
           body=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['body'])")
           tag_name=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['tag_name'])")
 
           echo "Found release tag_name=$tag_name"
 
-          # Output them for subsequent steps
           {
             echo "release_body<<EOF"
             echo "$body"
@@ -74,7 +69,17 @@ jobs:
               echo "false"
               echo "EOF"
             } >> "$GITHUB_OUTPUT"
-          fi
+
+      # ---------------------------------------------------------------
+      # 1) Generate Timestamp (same logic you used in .morphosourceyml)
+      # ---------------------------------------------------------------
+      - name: Generate Timestamp
+        id: gen_ts
+        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        run: |
+          # Example format: YYYY-MM-DD_HH-MM-SS
+          TS=$(date +'%Y-%m-%d_%H-%M-%S')
+          echo "::set-output name=timestamp::$TS"
 
       - name: Run CT to Text
         id: ct2text
@@ -82,27 +87,26 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          # Save release_body to a file
           echo "${{ steps.fetch_release.outputs.release_body }}" > release_body.txt
-
-          # Pass it to the script
           python .github/scripts/ct_to_text.py release_body.txt > ct_output.txt
 
-          # Export the script output as 'description'
           {
             echo "description<<EOF"
             cat ct_output.txt
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
+      # ----------------------------------------------------------------------
+      # 2) Update the release creation to use your timestamp-based format
+      # ----------------------------------------------------------------------
       - name: Create or Update Release with AI Summary
         if: steps.check_morpho.outputs.is_morphosource == 'true'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          tag_name: "ct_to_text_analysis-${{ github.run_number }}"
-          release_name: "CT to Text Analysis #${{ github.run_number }}"
+          tag_name: "ct_to_text_analysis-${{ steps.gen_ts.outputs.timestamp }}"
+          release_name: "CT to Text Analysis #${{ steps.gen_ts.outputs.timestamp }}"
           body: ${{ steps.ct2text.outputs.description }}
           draft: false
           prerelease: false
