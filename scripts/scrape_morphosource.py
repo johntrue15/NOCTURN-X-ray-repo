@@ -9,7 +9,7 @@ SEARCH_URL = (
     "&sort=system_create_dtsi+desc"
 )
 BASE_URL = "https://www.morphosource.org"
-LAST_COUNT_FILE = ".github/last_count.txt"
+LAST_COUNT_FILE = ".github/last_count.txt"  # We'll commit this file back to the repo
 
 def get_current_record_count():
     """
@@ -26,6 +26,10 @@ def get_current_record_count():
     return int(meta_tag["content"])
 
 def load_last_count():
+    """
+    Reads the last known record count from LAST_COUNT_FILE.
+    Returns 0 if file doesn't exist or is invalid.
+    """
     if not os.path.exists(LAST_COUNT_FILE):
         return 0
     try:
@@ -35,28 +39,29 @@ def load_last_count():
         return 0
 
 def save_last_count(count):
+    """
+    Writes the updated count to LAST_COUNT_FILE.
+    """
     with open(LAST_COUNT_FILE, "w") as f:
         f.write(str(count))
 
 def parse_top_records(n=3):
     """
-    Parse the first n records from the search results page.
-    Returns a list of dicts, each containing relevant metadata.
+    Grabs the first n <li class="document blacklight-media"> from the search results.
+    Returns a list of dicts, each containing relevant metadata (title, object, etc.).
     """
     session = requests.Session()
     resp = session.get(SEARCH_URL)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 
-    # Grab the first n LI elements with class="document blacklight-media"
-    all_li = soup.select("div#search-results li.document.blacklight-media")
-    top_li = all_li[:n]
-
-    results = []
-    for li in top_li:
+    # Select the first n LI elements
+    li_list = soup.select("div#search-results li.document.blacklight-media")[:n]
+    records = []
+    for li in li_list:
         record = {}
 
-        # 1) Record Title and Detail Page URL
+        # 1) Title & detail link
         title_el = li.select_one("h3.search-result-title a")
         if title_el:
             record["title"] = title_el.get_text(strip=True)
@@ -65,30 +70,27 @@ def parse_top_records(n=3):
             record["title"] = "No Title"
             record["detail_url"] = None
 
-        # 2) Now parse the metadata fields inside <dl class="dl-horizontal">
+        # 2) Additional metadata from dt/dd pairs
         metadata_dl = li.select_one("div.metadata dl.dl-horizontal")
         if metadata_dl:
             items = metadata_dl.select("div.index-field-item")
             for item in items:
                 dt = item.select_one("dt")
                 dd = item.select_one("dd")
-                if not dt or not dd:
-                    continue
-                field_name = dt.get_text(strip=True).rstrip(":")
-                field_value = dd.get_text(strip=True)
-                record[field_name] = field_value
-        else:
-            pass
+                if dt and dd:
+                    field_name = dt.get_text(strip=True).rstrip(":")
+                    field_value = dd.get_text(strip=True)
+                    record[field_name] = field_value
 
-        results.append(record)
+        records.append(record)
 
-    return results
+    return records
 
 def format_release_message(new_records, old_count, records):
     """
-    Build the multiline release body with:
-    - A header about how many new records (plus old count).
-    - A block for each record in reverse order.
+    Creates a multiline string for the Release body:
+      - How many new records, old record value
+      - Then each record in descending order
     """
     lines = []
     lines.append("A new increase in X-ray Computed Tomography records was found on MorphoSource.")
@@ -96,14 +98,11 @@ def format_release_message(new_records, old_count, records):
     lines.append(f"We found {new_records} new records (old record value: {old_count}).")
     lines.append("")
 
-    # If old_count = 13323 and new_records = 3,
-    # we want the first record to be #13326, then #13325, then #13324
-    # i.e. old_count + new_records - (i-1)
-    # We'll parse records in normal order but label them in descending order.
+    # Example: if old_count=104233, new_records=3
+    # Then the new record numbers are 104234, 104235, 104236
+    # We want them in descending order: 104236, 104235, 104234
     for i, r in enumerate(records, start=1):
         record_number = old_count + new_records - (i - 1)
-        # The highest number for the first record in the list
-        # (since i = 1 for the "first" parsed record).
         lines.append(f"New Record #{record_number} Title: {r.get('title', 'N/A')}")
         lines.append(f"Detail Page URL: {r.get('detail_url', 'N/A')}")
 
@@ -119,32 +118,36 @@ def format_release_message(new_records, old_count, records):
         ]:
             if key in r:
                 lines.append(f"{key}: {r[key]}")
-        lines.append("")  # blank line after each record
 
+        lines.append("")  # Blank line after each record
     return "\n".join(lines)
 
 def main():
     current_count = get_current_record_count()
     old_count = load_last_count()
-    new_records = current_count - old_count
 
+    new_records = current_count - old_count
     github_output = os.environ.get("GITHUB_OUTPUT", "")
 
     if new_records > 0:
+        # Parse the top 3 new records
         top_records = parse_top_records(n=3)
+
+        # Save the updated count so we don't trigger next time for these same new records
         save_last_count(current_count)
 
+        # Build the final message
         message = format_release_message(new_records, old_count, top_records)
 
+        # Write outputs for the next step in the workflow
         if github_output:
             with open(github_output, "a") as fh:
                 fh.write("new_data=true\n")
                 fh.write("details<<EOF\n")
                 fh.write(message + "\n")
                 fh.write("EOF\n")
-        else:
-            print("Warning: GITHUB_OUTPUT not found.")
     else:
+        # No new data
         if github_output:
             with open(github_output, "a") as fh:
                 fh.write("new_data=false\n")
