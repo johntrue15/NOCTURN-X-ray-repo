@@ -1,22 +1,16 @@
-name: Parse MorphoSource Data
+name: CT to Text Generation
 
 on:
-  schedule:
-    - cron: "0 */12 * * *"
   workflow_dispatch:
-
-permissions:
-  contents: write  # so we can commit last_count.txt back to the repo
+  schedule:
+    - cron: "0 3 * * *"
 
 jobs:
-  scrape_and_release:
+  ct_text_job:
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-        with:
-          persist-credentials: true  # so we can push the updated file
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -24,29 +18,22 @@ jobs:
           python-version: "3.9"
 
       - name: Install Dependencies
-        run: pip install requests beautifulsoup4
+        run: pip install requests beautifulsoup4 openai
 
-      - name: Run Scraper
-        id: scraper
-        run: python .github/scripts/scrape_morphosource.py
-
-      - name: Commit updated last_count.txt
-        if: steps.scraper.outputs.new_data == 'true'
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add .github/last_count.txt
-          git commit -m "Update last_count.txt for new records"
-          git push
+      - name: Run CT to Text
+        id: ct2text
+        env:
+          # Pass the GitHub secret as OPENAI_API_KEY
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python .github/scripts/ct_to_text.py
 
       - name: Create or Update Release
-        if: steps.scraper.outputs.new_data == 'true'
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          tag_name: "morphosource-updates-${{ github.run_number }}"
-          release_name: "MorphoSource Updates #${{ github.run_number }}"
-          body: ${{ steps.scraper.outputs.details }}
+          tag_name: "ct-to-text-updates-${{ github.run_number }}"
+          release_name: "CT to Text Summaries #${{ github.run_number }}"
+          body: ${{ steps.ct2text.outputs.description }}
           draft: false
           prerelease: false
