@@ -2,8 +2,8 @@ name: CT to Text
 
 on:
   workflow_run:
-    workflows: ["Parse MorphoSource Data"]  # must match the 'name:' field of Workflow 1
-    types: [completed]                # or [success] if you only want it on success
+    workflows: ["Parse MorphoSource Data"]  # must match the name: field in parse_morphosource_data.yml
+    types: [completed]
 
 jobs:
   ct_text_job:
@@ -25,22 +25,21 @@ jobs:
       - name: Fetch Latest Release
         id: fetch_release
         env:
+          # Use your GITHUB_TOKEN or a custom token with repo/read permissions
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
           echo "Fetching the latest morphosource-updates- release..."
-          # We'll just do a quick API call to retrieve the latest release that starts with 'morphosource-updates-'
-          # You can adapt to find the newest tag or just do 'releases/latest' if your only release is these updates.
-
-          # Example: let's do 'releases/latest' for simplicity:
+          # We'll call /releases/latest for simplicity, assuming your "latest" is always morphosource-updates-*
           response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
             https://api.github.com/repos/${{ github.repository }}/releases/latest)
 
           echo "$response" > latest_release.json
-          # For debugging
           echo "Response: $response"
 
           # Extract the 'body' from JSON
           body=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['body'])")
+
+          # Make 'release_body' an output for the next step
           echo "release_body<<EOF" >> $GITHUB_OUTPUT
           echo "$body" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
@@ -50,9 +49,13 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
+          # Save the release body to a file
           echo "${{ steps.fetch_release.outputs.release_body }}" > release_body.txt
+
+          # Run your script, capture output
           python .github/scripts/ct_to_text.py release_body.txt > ct_output.txt
 
+          # Expose it as an Actions output 'description'
           echo "description<<EOF" >> $GITHUB_OUTPUT
           cat ct_output.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
