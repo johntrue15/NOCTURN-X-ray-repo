@@ -8,6 +8,7 @@ on:
 jobs:
   ct_text_job:
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -23,14 +24,13 @@ jobs:
       - name: Run CT to Text
         id: ct2text
         env:
-          # Pass the GitHub secret as OPENAI_API_KEY
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: python .github/scripts/ct_to_text.py
 
       - name: Create or Update Release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: "ct-to-text-updates-${{ github.run_number }}"
           release_name: "CT to Text Summaries #${{ github.run_number }}"
