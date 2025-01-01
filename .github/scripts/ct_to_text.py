@@ -64,7 +64,7 @@ def parse_records_from_body(body: str):
             val = parts[1].strip()
             kl = key.lower()
 
-            # We can store known fields in a canonical key
+            # We can store known fields in canonical keys
             if kl.startswith("detail page url"):
                 current_record["detail_url"] = val
             elif kl == "object":
@@ -83,7 +83,8 @@ def parse_records_from_body(body: str):
                 current_record["Rights Statement"] = val
             elif kl == "cc license":
                 current_record["CC License"] = val
-            # Also store the raw key: val in case we need it
+
+            # Also store the raw key-value in case we need it
             current_record[key] = val
 
     # After the loop, if there's a record in progress, append it
@@ -109,9 +110,9 @@ def generate_text_for_records(records):
 
     # Build a user prompt that includes each record's metadata
     user_content = ["Below are new CT records from a MorphoSource release:\n"]
-    for i, rec in enumerate(records, start=1):
-        user_content.append(f"Record {i}:")
-        user_content.append(f" - Record Number: {rec.get('record_number','N/A')}")
+    for rec in records:
+        record_num = rec.get("record_number", "N/A")
+        user_content.append(f"Record #{record_num}:")
         user_content.append(f" - Title: {rec.get('title','N/A')}")
         user_content.append(f" - URL: {rec.get('detail_url','N/A')}")
 
@@ -127,18 +128,18 @@ def generate_text_for_records(records):
         ]:
             if field in rec:
                 user_content.append(f" - {field}: {rec[field]}")
-        user_content.append("")
+        user_content.append("")  # Blank line separator
 
     # Add instructions for a ~200-word multi-paragraph summary
     user_content.append(
         "You are a scientific writer with expertise in analyzing morphological data. "
         "You have received metadata from X-ray computed tomography scans of various biological specimens. "
-        "Please compose a multi paragraph, one for each record/species, 200-word plain-English description that "
+        "Please compose a multi-paragraph, one for each record/species, ~200-word plain-English description that "
         "emphasizes each specimen’s species (taxonomy) and object details. Focus on identifying notable anatomical "
         "or morphological features that may be revealed by the CT scanning process. Avoid discussions of copyright "
         "or publication status. Make the final description readable for a broad audience, yet scientifically informed. "
-        "Write with clarity and accuracy, highlighting the significance of the scans for understanding the organism’s "
-        "structure and potential insights into its biology or evolution."
+        "Highlight the significance of the scans for understanding the organism’s structure and potential insights "
+        "into its biology or evolution."
     )
 
     try:
@@ -179,7 +180,9 @@ def main():
     with open(release_body_file, "r", encoding="utf-8") as f:
         body = f.read()
 
+    # Parse records
     records = parse_records_from_body(body)
+    # Generate final text using the o1-mini model
     description = generate_text_for_records(records)
     print(description)
 
