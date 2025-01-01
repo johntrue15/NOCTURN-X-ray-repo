@@ -2,14 +2,12 @@ name: Parse MorphoSource Data
 
 on:
   schedule:
-    # Run every 12 hours (0th minute, every 12 hours)
     - cron: "0 */12 * * *"
   workflow_dispatch:
-    # Allows you to manually trigger from the Actions tab, if desired
-    inputs:
-      reason:
-        description: "Reason to run the job manually"
-        required: false
+
+permissions:
+  # Allow this workflow to push commits back to the repo.
+  contents: write
 
 jobs:
   scrape_and_release:
@@ -18,11 +16,12 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
+        with:
+          persist-credentials: true  # Required so we can push
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          # Adjust Python version as needed
           python-version: "3.9"
 
       - name: Install dependencies
@@ -32,16 +31,21 @@ jobs:
         id: scraper
         run: python .github/scripts/scrape_morphosource.py
 
+      # Commit the updated last_count.txt if new data was found
+      - name: Commit updated last_count.txt
+        if: steps.scraper.outputs.new_data == 'true'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .github/last_count.txt
+          git commit -m "Update last_count.txt for new records"
+          git push origin HEAD:${{ github.ref_name }}
+
       - name: Create or Update Release
         if: steps.scraper.outputs.new_data == 'true'
         uses: actions/create-release@v1
         env:
-          # Provide your token here as an environment variable.
-          # Use either the built-in GITHUB_TOKEN or a custom PAT secret (e.g. MY_GITHUB_TOKEN).
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-          # or, if you have a custom secret named MY_GITHUB_TOKEN:
-          # GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}  # or use secrets.GITHUB_TOKEN
         with:
           tag_name: morphosource-updates-${{ github.run_number }}
           release_name: "MorphoSource Updates #${{ github.run_number }}"
