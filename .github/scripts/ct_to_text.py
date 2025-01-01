@@ -20,8 +20,8 @@ if not OPENAI_API_KEY:
     print("Warning: OPENAI_API_KEY not set. You may need to set it manually.")
 
 # Replace these with your actual GitHub repo owner and repo name
-GITHUB_OWNER = "OWNER"
-GITHUB_REPO = "REPO"
+GITHUB_OWNER = "johntrue15"
+GITHUB_REPO = "NOCTURN-X-ray-repo"
 
 # Example: "https://api.github.com/repos/OWNER/REPO/releases/latest"
 LATEST_RELEASE_URL = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/releases/latest"
