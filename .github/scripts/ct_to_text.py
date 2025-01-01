@@ -198,7 +198,7 @@ def main():
 
     # 3. Generate text
     description = generate_text_for_records(records)
-    print("\n--- Generated Description ---\n")
+    print("\n--- A.I. Generated Description ---\n")
     print(description)
 
 
