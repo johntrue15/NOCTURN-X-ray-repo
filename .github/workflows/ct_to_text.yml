@@ -33,7 +33,7 @@ jobs:
         run: pip install requests beautifulsoup4 openai
 
       # -------------------------------------------------------
-      # 4. Fetch Latest Release
+      # 4. Fetch Latest Release (multi-line safe)
       # -------------------------------------------------------
       - name: Fetch Latest Release
         id: fetch_release
@@ -54,7 +54,12 @@ jobs:
           echo "Found release tag_name=$tag_name"
 
           # Store them as outputs for subsequent steps
-          echo "release_body=$body" >> "$GITHUB_OUTPUT"
+          # Use multi-line safe approach for release_body
+          echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$body" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+          # tag_name should be a single line
           echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
@@ -98,7 +103,7 @@ jobs:
           # Run your custom Python script
           python .github/scripts/ct_to_text.py release_body.txt > ct_output.txt
 
-          # Export the script output as "description"
+          # Export the script output (multi-line safe)
           echo "description<<EOF" >> "$GITHUB_OUTPUT"
           cat ct_output.txt >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
