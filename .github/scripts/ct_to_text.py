@@ -155,7 +155,7 @@ def generate_text_for_records(records):
         user_content.append("")  # blank line
 
     user_content.append(
-        "Write a concise description focusing on species/taxonomy and object details. "
+        "You are a scientific writer with expertise in analyzing morphological data. You have received metadata from X-ray computed tomography scans of various biological specimens. Please compose a concise, 50-word plain-English description that emphasizes each specimen’s species (taxonomy) and object details. Focus on identifying notable anatomical or morphological features that may be revealed by the CT scanning process. Avoid discussions of copyright or publication status. Make the final description readable for a broad audience, yet scientifically informed. Write with clarity and accuracy, highlighting the significance of the scans for understanding the organism’s structure and potential insights into its biology or evolution. "
         "Ignore copyright or publication status."
     )
 
