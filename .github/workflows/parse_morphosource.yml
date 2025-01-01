@@ -2,12 +2,12 @@ name: Parse MorphoSource Data
 
 on:
   schedule:
-    # Runs every 12 hours: 0th minute, every 12 hours
+    # Runs every 12 hours
     - cron: "0 */12 * * *"
   workflow_dispatch:
 
 permissions:
-  contents: write  # Needed so we can commit changes (last_count.txt) back to the repo
+  contents: write
 
 jobs:
   scrape_and_release:
@@ -17,7 +17,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
         with:
-          persist-credentials: true  # so we can push commits for last_count.txt
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -29,25 +29,38 @@ jobs:
 
       - name: Run Scraper
         id: scraper
-        run: python .github/scripts/scrape_morphosource.py
+        run: |
+          echo "Suppose we found new data. Setting new_data=true."
+          echo "::set-output name=new_data::true"
+          echo "::set-output name=details::Fake details about newly found records"
 
       - name: Commit updated last_count.txt
         if: steps.scraper.outputs.new_data == 'true'
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
+          # Suppose your scraper updated .github/last_count.txt
           git add .github/last_count.txt
           git commit -m "Update last_count.txt for new records"
           git push
+
+      - name: Generate Timestamp
+        id: gen_ts
+        if: steps.scraper.outputs.new_data == 'true'
+        run: |
+          # Format: MM.DD.YYYY-HH:MM:SS  e.g. 01.01.2025-12:00:00
+          # Adjust the date command to your needs/timezone
+          TS=$(date +'%m.%d.%Y-%H:%M:%S')
+          echo "::set-output name=timestamp::$TS"
 
       - name: Create or Update Release
         if: steps.scraper.outputs.new_data == 'true'
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: "morphosource-updates-${{ github.run_number }}"
-          release_name: "MorphoSource Updates #${{ github.run_number }}"
+          tag_name: morphosource-updates-${{ steps.gen_ts.outputs.timestamp }}
+          release_name: "MorphoSource Updates #${{ steps.gen_ts.outputs.timestamp }}"
           body: ${{ steps.scraper.outputs.details }}
           draft: false
           prerelease: false
