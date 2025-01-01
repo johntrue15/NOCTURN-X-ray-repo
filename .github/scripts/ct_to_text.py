@@ -1,116 +1,56 @@
 #!/usr/bin/env python3
-"""
-ct_to_text.py
-
-Reads a file containing the release body, parses lines like:
-  New Record #XXXX Title: ...
-Then calls a model to generate a textual summary focusing on taxonomy.
-Prints the summary to stdout for your workflow to capture.
-"""
-
-import os
-import re
-import sys
+import sys, os, re
 
 try:
-    from openai import OpenAI
+    import openai
 except ImportError:
-    print("Error: `openai` library or your custom O1 model is missing.")
+    print("Please install openai or your custom O1-mini model library.")
     sys.exit(1)
 
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
-if not OPENAI_API_KEY:
-    print("Warning: OPENAI_API_KEY is not set in environment.")
-
-RE_RECORD_HEADER = re.compile(r'^New Record #(\d+)\s+Title:\s*(.*)$', re.IGNORECASE)
-
-def parse_records_from_body(body: str):
+def parse_records_from_body(body):
+    # Example: look for lines "New Record #XXXX Title: something"
+    # We'll do a simple parse. Adjust to your needs.
+    record_pattern = re.compile(r'^New Record #(\d+)\s+Title:\s*(.*)$', re.IGNORECASE)
     lines = body.splitlines()
     records = []
     current_record = {}
 
     for line in lines:
-        line = line.strip()
+        line=line.strip()
         if not line:
             continue
-
-        match = RE_RECORD_HEADER.match(line)
+        match = record_pattern.match(line)
         if match:
-            # finalize previous if any
+            # If we had a record in progress, add it
             if current_record:
                 records.append(current_record)
             current_record = {}
             current_record["record_number"] = match.group(1)
             current_record["title"] = match.group(2)
-            continue
-
-        if ":" in line:
+        elif ":" in line:
             parts = line.split(":", 1)
             key = parts[0].strip()
             val = parts[1].strip()
-
-            kl = key.lower()
-            if kl.startswith("detail page url"):
-                current_record["detail_url"] = val
-            elif kl == "object":
-                current_record["Object"] = val
-            elif kl == "taxonomy":
-                current_record["Taxonomy"] = val
-            elif kl == "element or part":
-                current_record["Element or Part"] = val
-            elif kl == "data manager":
-                current_record["Data Manager"] = val
-            elif kl == "date uploaded":
-                current_record["Date Uploaded"] = val
-            elif kl == "publication status":
-                current_record["Publication Status"] = val
-            elif kl == "rights statement":
-                current_record["Rights Statement"] = val
-            elif kl == "cc license":
-                current_record["CC License"] = val
-
+            current_record[key] = val
     if current_record:
         records.append(current_record)
-
     return records
 
 def generate_text_for_records(records):
-    if not OPENAI_API_KEY:
-        return "Error: OPENAI_API_KEY is missing."
+    """
+    Here you'd call openai API or your custom logic to generate a summary.
+    For demo, we'll just build a short string.
+    """
+    if not records:
+        return "No new records to summarize."
 
-    client = OpenAI(api_key=OPENAI_API_KEY)
+    summary_lines = []
+    summary_lines.append("**CT to Text Analysis**\n")
 
-    user_content = ["Below are new CT records from a Morphosource release:\n"]
     for i, rec in enumerate(records, start=1):
-        user_content.append(f"Record {i}:")
-        user_content.append(f" - Record Number: {rec.get('record_number','N/A')}")
-        user_content.append(f" - Title: {rec.get('title','N/A')}")
-        user_content.append(f" - URL: {rec.get('detail_url','N/A')}")
-        for field in ["Object","Taxonomy","Element or Part","Data Manager","Date Uploaded",
-                      "Publication Status","Rights Statement","CC License"]:
-            if field in rec:
-                user_content.append(f" - {field}: {rec[field]}")
-        user_content.append("")
-
-    user_content.append("You are a scientific writer with expertise in analyzing morphological data. You have received metadata from X-ray computed tomography scans of various biological specimens. Please compose a multi paragraph, one for each record/species, 200-word plain-English description that emphasizes each specimen’s species (taxonomy) and object details. Focus on identifying notable anatomical or morphological features that may be revealed by the CT scanning process. Avoid discussions of copyright or publication status. Make the final description readable for a broad audience, yet scientifically informed. Write with clarity and accuracy, highlighting the significance of the scans for understanding the organism’s structure and potential insights into its biology or evolution.")
-    try:
-        resp = client.chat.completions.create(
-            model="o1-mini",
-            messages=[
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": "\n".join(user_content)
-                        }
-                    ]
-                }
-            ]
-        )
-        return resp.choices[0].message.content.strip()
-    except Exception as e:
-        return f"Error calling o1-mini model: {e}"
+        summary_lines.append(f"Record {i}: #{rec.get('record_number','???')} - {rec.get('title','N/A')}")
+        # Possibly incorporate data like 'Object', 'Taxonomy', etc. from rec
+    return "\n".join(summary_lines)
 
 def main():
     if len(sys.argv) < 2:
@@ -119,23 +59,17 @@ def main():
 
     release_body_file = sys.argv[1]
     if not os.path.isfile(release_body_file):
-        print(f"File '{release_body_file}' not found.")
+        print(f"Release body file '{release_body_file}' not found.")
         sys.exit(1)
 
-    with open(release_body_file, 'r', encoding='utf-8') as f:
+    with open(release_body_file, "r", encoding="utf-8") as f:
         body = f.read()
 
-    if not body.strip():
-        print("No release body found or file is empty.")
-        sys.exit(0)
-
+    # Parse the "New Record" lines
     records = parse_records_from_body(body)
-    if not records:
-        print("No records found in the release body.")
-        sys.exit(0)
-
-    description = generate_text_for_records(records)
-    print(description)
+    # Summarize
+    summary = generate_text_for_records(records)
+    print(summary)
 
 if __name__ == "__main__":
     main()
