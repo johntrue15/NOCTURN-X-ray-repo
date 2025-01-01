@@ -2,11 +2,11 @@ name: Parse MorphoSource Data
 
 on:
   schedule:
-    - cron: "0 */12 * * *"
+    - cron: "0 */12 * * *"  # every 12 hours
   workflow_dispatch:
 
 permissions:
-  contents: write  # If you want to commit last_count.txt back to the repo
+  contents: write  # only needed if you're committing last_count.txt back to the repo
 
 jobs:
   scrape_and_release:
@@ -32,11 +32,10 @@ jobs:
         if: steps.scraper.outputs.new_data == 'true'
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: "morphosource-updates-${{ github.run_number }}"
+          tag_name: morphosource-updates-${{ github.run_number }}
           release_name: "MorphoSource Updates #${{ github.run_number }}"
-          body: |
-            ${{ steps.scraper.outputs.details }}
+          body: ${{ steps.scraper.outputs.details }}
           draft: false
           prerelease: false
