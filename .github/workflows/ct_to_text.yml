@@ -34,7 +34,7 @@ jobs:
         env:
           # For your script if it needs to fetch the latest release (already have it though),
           # or for authentication if your repo is private
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           # Option A) Pass the release body into your Python script as a file or env var
