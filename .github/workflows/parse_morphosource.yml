@@ -2,12 +2,11 @@ name: Parse MorphoSource Data
 
 on:
   schedule:
-    # Runs every 12 hours: 0th minute, every 12 hours
     - cron: "0 */12 * * *"
   workflow_dispatch:
 
 permissions:
-  contents: write  # Needed to commit changes (last_count.txt) back to the repo
+  contents: write  # so we can commit last_count.txt back to the repo
 
 jobs:
   scrape_and_release:
@@ -17,14 +16,14 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
         with:
-          persist-credentials: true  # Needed so we can push commits
+          persist-credentials: true  # so we can push the updated file
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: pip install requests beautifulsoup4
 
       - name: Run Scraper
@@ -32,7 +31,6 @@ jobs:
         run: python .github/scripts/scrape_morphosource.py
 
       - name: Commit updated last_count.txt
-        # Only commit if new_data == 'true'
         if: steps.scraper.outputs.new_data == 'true'
         run: |
           git config user.name "github-actions"
@@ -45,10 +43,9 @@ jobs:
         if: steps.scraper.outputs.new_data == 'true'
         uses: actions/create-release@v1
         env:
-          # You can use secrets.GITHUB_TOKEN or a custom personal access token
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: morphosource-updates-${{ github.run_number }}
+          tag_name: "morphosource-updates-${{ github.run_number }}"
           release_name: "MorphoSource Updates #${{ github.run_number }}"
           body: ${{ steps.scraper.outputs.details }}
           draft: false
