@@ -7,7 +7,7 @@ on:
 jobs:
   ct_text_job:
     # Only run if the newly published release’s tag_name starts with "morphosource-updates-"
-    if: startsWith(github.event.release.tag_name, 'morphosource-updates')
+    if: startsWith(github.event.release.tag_name, 'morphosource-updates-3')
     runs-on: ubuntu-latest
 
     steps:
