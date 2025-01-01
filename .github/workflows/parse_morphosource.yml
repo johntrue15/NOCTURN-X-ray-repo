@@ -45,7 +45,7 @@ jobs:
         if: steps.scraper.outputs.new_data == 'true'
         run: |
           # Format: MM.DD.YYYY-HH:MM:SS (e.g. 01.01.2025-12:00:00)
-          TS=$(date +'%m.%d.%Y-%H:%M:%S')
+          TS=$(date +'%Y-%m-%d_%H-%M-%S')
           echo "::set-output name=timestamp::$TS"
 
       - name: Create or Update Release
