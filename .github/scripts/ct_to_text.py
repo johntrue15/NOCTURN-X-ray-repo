@@ -2,144 +2,122 @@
 """
 ct_to_text.py
 
-1. Fetches the latest release from GitHub.
-2. Parses the release body to find record metadata (matching your known format).
-3. Calls the O1-mini model to generate a textual description focusing on taxonomy/object.
+1. Reads a file containing the release body (e.g., 'release_body.txt'), which has lines like:
+   New Record #104236 Title: Endocast [Mesh] [CT]
+   Detail Page URL: ...
+   Object: ...
+   Taxonomy: ...
+2. Parses these lines into a list of "record" dicts.
+3. Calls the "o1-mini" model (via openai) to summarize them, focusing on species/taxonomy.
+4. Prints the summary to stdout.
 """
 
 import os
 import re
-import requests
+import sys
 
-# If you have the new "OpenAI" package for the o1-mini model:
-from openai import OpenAI
+# Import your special "OpenAI" with the "o1-mini" model support
+try:
+    from openai import OpenAI
+except ImportError:
+    print("Error: `openai` library or your custom O1 model is not installed. Please install.")
+    sys.exit(1)
 
-# In many repos, you'd NOT hardcode your key. We'll illustrate environment variable usage:
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
-if not OPENAI_API_KEY:
-    print("Warning: OPENAI_API_KEY not set. You may need to set it manually.")
 
-# Replace these with your actual GitHub repo owner and repo name
-GITHUB_OWNER = "johntrue15"
-GITHUB_REPO = "NOCTURN-X-ray-repo"
-
-# Example: "https://api.github.com/repos/OWNER/REPO/releases/latest"
-LATEST_RELEASE_URL = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/releases/latest"
-
-
-def fetch_latest_release_body(github_token: str = "") -> str:
-    """
-    Fetch the latest release from GitHub using the GitHub API.
-    Returns the release body text.
-    If `github_token` is provided, it will be used to authenticate.
-    """
-    headers = {}
-    if github_token:
-        headers["Authorization"] = f"Bearer {github_token}"
-
-    resp = requests.get(LATEST_RELEASE_URL, headers=headers)
-    resp.raise_for_status()
-
-    data = resp.json()
-    body = data.get("body", "")
-    return body
-
+# Regex to detect lines like "New Record #104236 Title: ..."
+RE_RECORD_HEADER = re.compile(r'^New Record #(\d+)\s+Title:\s*(.*)$', re.IGNORECASE)
 
 def parse_records_from_body(body: str):
     """
-    Given the release body with lines like:
-
-      A new increase ...
-      We found 3 new records (old record value: 104233).
-
-      New Record #104236 Title: Endocast [Mesh] [CT]
-      Detail Page URL: https://...
-      Object: UMMZ:mammals:172254
-      Taxonomy: Hesperoptenus tickelli
+    Looks for lines like:
+      New Record #XXXX Title: something
+      Detail Page URL: ...
+      Object: ...
+      Taxonomy: ...
       ...
-
-    This function parses out each "New Record #..." block and returns
-    a list of dicts with fields: title, detail_url, object, taxonomy, etc.
+    Returns a list of dicts with keys:
+      {
+        "record_number": ...,
+        "title": ...,
+        "detail_url": ...,
+        "Object": ...,
+        "Taxonomy": ...,
+        ...
+      }
     """
-
-    # We'll split by blank lines or detect "New Record #"
     lines = body.splitlines()
-
     records = []
     current_record = {}
-    record_number_pattern = re.compile(r"^New Record #(\d+)\s+Title:\s*(.*)$", re.IGNORECASE)
 
     for line in lines:
         line = line.strip()
+        if not line:
+            continue  # skip blank lines
 
-        # Detect a new record line:
-        match = record_number_pattern.match(line)
+        match = RE_RECORD_HEADER.match(line)
         if match:
-            # If we have an existing record in progress, append it
+            # If we already have a record in progress, finalize it
             if current_record:
                 records.append(current_record)
             current_record = {}
-            record_num = match.group(1)
-            record_title = match.group(2)
-            current_record["record_number"] = record_num
-            current_record["title"] = record_title
+            current_record["record_number"] = match.group(1)
+            current_record["title"] = match.group(2)
             continue
 
-        # Check for key-value lines (e.g. "Detail Page URL: https://...")
+        # If line has "Key: Value"
         if ":" in line:
             parts = line.split(":", 1)
             key = parts[0].strip()
             val = parts[1].strip()
-            # We'll store them in a way that matches your previous code:
-            if key.lower().startswith("detail page url"):
-                current_record["detail_url"] = val
-            elif key.lower() == "object":
-                current_record["Object"] = val
-            elif key.lower() == "taxonomy":
-                current_record["Taxonomy"] = val
-            elif key.lower() == "element or part":
-                current_record["Element or Part"] = val
-            elif key.lower() == "data manager":
-                current_record["Data Manager"] = val
-            elif key.lower() == "date uploaded":
-                current_record["Date Uploaded"] = val
-            elif key.lower() == "publication status":
-                current_record["Publication Status"] = val
-            elif key.lower() == "rights statement":
-                current_record["Rights Statement"] = val
-            elif key.lower() == "cc license":
-                current_record["CC License"] = val
-            # else: ignore lines we don't care about, or store them as needed
 
-    # Append the last record if present
+            klower = key.lower()
+            if klower.startswith("detail page url"):
+                current_record["detail_url"] = val
+            elif klower == "object":
+                current_record["Object"] = val
+            elif klower == "taxonomy":
+                current_record["Taxonomy"] = val
+            elif klower == "element or part":
+                current_record["Element or Part"] = val
+            elif klower == "data manager":
+                current_record["Data Manager"] = val
+            elif klower == "date uploaded":
+                current_record["Date Uploaded"] = val
+            elif klower == "publication status":
+                current_record["Publication Status"] = val
+            elif klower == "rights statement":
+                current_record["Rights Statement"] = val
+            elif klower == "cc license":
+                current_record["CC License"] = val
+            # else ignore or store if you want
+
+    # Add last record if present
     if current_record:
         records.append(current_record)
 
     return records
 
-
 def generate_text_for_records(records):
     """
-    Uses the O1-mini model to generate a summary of the provided X-ray CT metadata.
-    Based on the snippet you provided.
+    Calls the 'o1-mini' model to generate a summary focusing on
+    species/taxonomy and ignoring irrelevant fields.
     """
     if not OPENAI_API_KEY:
-        return "Error: No OPENAI_API_KEY set."
+        return "Error: OPENAI_API_KEY is not set."
 
-    # Initialize the client
     client = OpenAI(api_key=OPENAI_API_KEY)
 
-    # Prepare user content
-    user_content = ["Below are CT scan records from a recent GitHub Release:\n"]
+    user_content = ["Below are new X-ray CT records from a Morphosource release:\n"]
     for i, rec in enumerate(records, start=1):
-        user_content.append(f"Record {i}:")
-        record_num = rec.get("record_number", "???")
+        record_num = rec.get("record_number", "N/A")
         title = rec.get("title", "N/A")
         detail_url = rec.get("detail_url", "N/A")
+        
+        user_content.append(f"Record {i}:")
         user_content.append(f" - Record Number: {record_num}")
         user_content.append(f" - Title: {title}")
         user_content.append(f" - URL: {detail_url}")
-
         for key in [
             "Object",
             "Taxonomy",
@@ -155,11 +133,10 @@ def generate_text_for_records(records):
         user_content.append("")  # blank line
 
     user_content.append(
-        "You are a scientific writer with expertise in analyzing morphological data. You have received metadata from X-ray computed tomography scans of various biological specimens. Please compose a three paragraph 250-word plain-English description that emphasizes each specimen’s species (taxonomy) and object details. Focus on identifying notable anatomical or morphological features that may be revealed by the CT scanning process. Avoid discussions of copyright or publication status. Make the final description readable for a broad audience, yet scientifically informed. Write with clarity and accuracy, highlighting the significance of the scans for understanding the organism’s structure and potential insights into its biology or evolution. Add useful information about the species and its typical size, weight, conservation status, etc."
-        "Ignore copyright or publication status."
+        "You are a scientific writer with expertise in analyzing morphological data. You have received metadata from X-ray computed tomography scans of various biological specimens. Please compose a three paragraph 250-word plain-English description that emphasizes each specimen’s species (taxonomy) and object details. Focus on identifying notable anatomical or morphological features that may be revealed by the CT scanning process. Avoid discussions of copyright or publication status. Make the final description readable for a broad audience, yet scientifically informed. Write with clarity and accuracy, highlighting the significance of the scans for understanding the organism’s structure and potential insights into its biology or evolution. Add useful information about the species and its typical size, weight, conservation status, etc. "
+        "ignoring any copyright statuses."
     )
 
-    # Call the model
     try:
         response = client.chat.completions.create(
             model="o1-mini",
@@ -177,30 +154,37 @@ def generate_text_for_records(records):
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
-        return f"Error generating text: {e}"
-
+        return f"Error calling o1-mini model: {e}"
 
 def main():
-    # We can read a GITHUB_TOKEN from environment if needed for private repos
-    github_token = os.environ.get("GITHUB_TOKEN", "")
+    if len(sys.argv) < 2:
+        print("Usage: ct_to_text.py <release_body_file>")
+        sys.exit(1)
 
-    # 1. Fetch latest release body
-    release_body = fetch_latest_release_body(github_token=github_token)
-    if not release_body:
-        print("No release body found. Exiting.")
-        return
+    release_body_file = sys.argv[1]
+    if not os.path.isfile(release_body_file):
+        print(f"File '{release_body_file}' does not exist.")
+        sys.exit(1)
 
-    # 2. Parse the records from the release body
+    with open(release_body_file, "r", encoding="utf-8") as f:
+        release_body = f.read()
+
+    if not release_body.strip():
+        print("No release body found or file is empty.")
+        sys.exit(0)
+
+    # 1. Parse records from the release body
     records = parse_records_from_body(release_body)
     if not records:
-        print("No records found in the release body. Exiting.")
-        return
+        print("No records found in release body.")
+        sys.exit(0)
 
-    # 3. Generate text
+    # 2. Generate text from the O1-mini model
     description = generate_text_for_records(records)
-    print("\n--- A.I. Generated Description ---\n")
+
+    # 3. Print to stdout so the workflow can capture it
     print(description)
 
-
 if __name__ == "__main__":
+    import os
     main()
