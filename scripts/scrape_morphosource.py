@@ -9,13 +9,9 @@ SEARCH_URL = (
     "&sort=system_create_dtsi+desc"
 )
 BASE_URL = "https://www.morphosource.org"
-LAST_COUNT_FILE = ".github/last_count.txt"  # We'll commit this file back to the repo
+LAST_COUNT_FILE = ".github/last_count.txt"
 
 def get_current_record_count():
-    """
-    Scrape MorphoSource to find how many X-ray CT records exist,
-    by looking at <meta name='totalResults' content='...'>.
-    """
     response = requests.get(SEARCH_URL)
     response.raise_for_status()
     soup = BeautifulSoup(response.text, "html.parser")
@@ -26,10 +22,6 @@ def get_current_record_count():
     return int(meta_tag["content"])
 
 def load_last_count():
-    """
-    Reads the last known record count from LAST_COUNT_FILE.
-    Returns 0 if file doesn't exist or is invalid.
-    """
     if not os.path.exists(LAST_COUNT_FILE):
         return 0
     try:
@@ -39,9 +31,6 @@ def load_last_count():
         return 0
 
 def save_last_count(count):
-    """
-    Writes the updated count to LAST_COUNT_FILE.
-    """
     with open(LAST_COUNT_FILE, "w") as f:
         f.write(str(count))
 
@@ -55,7 +44,6 @@ def parse_top_records(n=3):
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 
-    # Select the first n LI elements
     li_list = soup.select("div#search-results li.document.blacklight-media")[:n]
     records = []
     for li in li_list:
@@ -89,8 +77,8 @@ def parse_top_records(n=3):
 def format_release_message(new_records, old_count, records):
     """
     Creates a multiline string for the Release body:
-      - How many new records, old record value
-      - Then each record in descending order
+      - How many new records (plus old record value)
+      - Then each record in descending order, labeled as "New Record #... Title: ..."
     """
     lines = []
     lines.append("A new increase in X-ray Computed Tomography records was found on MorphoSource.")
@@ -98,13 +86,13 @@ def format_release_message(new_records, old_count, records):
     lines.append(f"We found {new_records} new records (old record value: {old_count}).")
     lines.append("")
 
-    # Example: if old_count=104233, new_records=3
-    # Then the new record numbers are 104234, 104235, 104236
-    # We want them in descending order: 104236, 104235, 104234
-    for i, r in enumerate(records, start=1):
+    # If old_count=104233 and new_records=3,
+    # the new record numbers are 104234, 104235, 104236
+    # but we want them in descending order: 104236, 104235, 104234
+    for i, rec in enumerate(records, start=1):
         record_number = old_count + new_records - (i - 1)
-        lines.append(f"New Record #{record_number} Title: {r.get('title', 'N/A')}")
-        lines.append(f"Detail Page URL: {r.get('detail_url', 'N/A')}")
+        lines.append(f"New Record #{record_number} Title: {rec.get('title', 'N/A')}")
+        lines.append(f"Detail Page URL: {rec.get('detail_url', 'N/A')}")
 
         for key in [
             "Object",
@@ -116,30 +104,25 @@ def format_release_message(new_records, old_count, records):
             "Rights Statement",
             "CC License",
         ]:
-            if key in r:
-                lines.append(f"{key}: {r[key]}")
-
+            if key in rec:
+                lines.append(f"{key}: {rec[key]}")
         lines.append("")  # Blank line after each record
+
     return "\n".join(lines)
 
 def main():
     current_count = get_current_record_count()
     old_count = load_last_count()
-
     new_records = current_count - old_count
+
     github_output = os.environ.get("GITHUB_OUTPUT", "")
 
     if new_records > 0:
-        # Parse the top 3 new records
         top_records = parse_top_records(n=3)
-
-        # Save the updated count so we don't trigger next time for these same new records
         save_last_count(current_count)
 
-        # Build the final message
         message = format_release_message(new_records, old_count, top_records)
 
-        # Write outputs for the next step in the workflow
         if github_output:
             with open(github_output, "a") as fh:
                 fh.write("new_data=true\n")
@@ -147,7 +130,6 @@ def main():
                 fh.write(message + "\n")
                 fh.write("EOF\n")
     else:
-        # No new data
         if github_output:
             with open(github_output, "a") as fh:
                 fh.write("new_data=false\n")
