@@ -27,7 +27,7 @@ jobs:
       - name: Run CT to Text
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: python .github/scripts/ct_to_text.py
 
       # Optional: Create a release with the generated text if you want
