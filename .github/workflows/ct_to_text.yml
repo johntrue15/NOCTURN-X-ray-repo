@@ -2,7 +2,7 @@ name: CT to Text
 
 on:
   workflow_run:
-    workflows: ["Parse MorphoSource Data"]  # must match the name: field in parse_morphosource_data.yml
+    workflows: ["Parse MorphoSource Data"]  # Must match the name from parse_morphosource_data.yml
     types: [completed]
 
 jobs:
@@ -25,23 +25,29 @@ jobs:
       - name: Fetch Latest Release
         id: fetch_release
         env:
-          # Use your GITHUB_TOKEN or a custom token with repo/read permissions
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
-          echo "Fetching the latest morphosource-updates- release..."
-          # We'll call /releases/latest for simplicity, assuming your "latest" is always morphosource-updates-*
+          # We'll call 'releases/latest' to retrieve the newly published morphosource-updates-XX release
           response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
             https://api.github.com/repos/${{ github.repository }}/releases/latest)
 
           echo "$response" > latest_release.json
           echo "Response: $response"
 
-          # Extract the 'body' from JSON
+          # Extract the body
           body=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['body'])")
+          # Extract the tag_name (e.g. 'morphosource-updates-01.01.2025-12:00:00')
+          tag=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['tag_name'])")
 
-          # Make 'release_body' an output for the next step
+          # Get the timestamp from the tag: everything after 'morphosource-updates-'
+          raw_ts="${tag#morphosource-updates-}"
+
           echo "release_body<<EOF" >> $GITHUB_OUTPUT
           echo "$body" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          echo "release_ts<<EOF" >> $GITHUB_OUTPUT
+          echo "$raw_ts" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Run CT to Text
@@ -49,24 +55,30 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          # Save the release body to a file
           echo "${{ steps.fetch_release.outputs.release_body }}" > release_body.txt
-
-          # Run your script, capture output
           python .github/scripts/ct_to_text.py release_body.txt > ct_output.txt
 
-          # Expose it as an Actions output 'description'
           echo "description<<EOF" >> $GITHUB_OUTPUT
           cat ct_output.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Generate Timestamp for CT-to-Text Analysis
+        id: gen_analysis_ts
+        run: |
+          # We'll make a slightly offset time
+          # In this example, we just do "date" again. If you want EXACT offset (10 seconds),
+          # you'd do e.g. "date --date='10 seconds' +'%m.%d.%Y-%H:%M:%S'"
+          # But for demonstration, let's do:
+          TS=$(date +'%m.%d.%Y-%H:%M:%S')
+          echo "::set-output name=analysis_ts::$TS"
 
       - name: Create or Update Release with AI Summary
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          tag_name: "ct-to-text-analysis-${{ github.run_number }}"
-          release_name: "CT to Text Analysis #${{ github.run_number }}"
+          tag_name: "ct_to_text_analysis-${{ steps.gen_analysis_ts.outputs.analysis_ts }}"
+          release_name: "CT to Text Analysis #${{ steps.gen_analysis_ts.outputs.analysis_ts }}"
           body: ${{ steps.ct2text.outputs.description }}
           draft: false
           prerelease: false
