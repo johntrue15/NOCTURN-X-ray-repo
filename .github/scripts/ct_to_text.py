@@ -2,93 +2,144 @@
 """
 ct_to_text.py
 
-Scrapes the top N X-ray Computed Tomography records from MorphoSource,
-then calls the OpenAI ChatCompletion API to generate a short textual
-description based on the metadata. Outputs the result to GITHUB_OUTPUT
-so that subsequent workflow steps can access it as 'steps.[id].outputs.description'.
+1. Fetches the latest release from GitHub.
+2. Parses the release body to find record metadata (matching your known format).
+3. Calls the O1-mini model to generate a textual description focusing on taxonomy/object.
 """
 
 import os
+import re
 import requests
-import openai
-from bs4 import BeautifulSoup
 
-# Constants
-SEARCH_URL = (
-    "https://www.morphosource.org/catalog/media?locale=en"
-    "&q=X-Ray+Computed+Tomography&search_field=all_fields"
-    "&sort=system_create_dtsi+desc"
-)
-BASE_URL = "https://www.morphosource.org"
+# If you have the new "OpenAI" package for the o1-mini model:
+from openai import OpenAI
 
-def parse_top_records(n=3):
+# In many repos, you'd NOT hardcode your key. We'll illustrate environment variable usage:
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
+if not OPENAI_API_KEY:
+    print("Warning: OPENAI_API_KEY not set. You may need to set it manually.")
+
+# Replace these with your actual GitHub repo owner and repo name
+GITHUB_OWNER = "OWNER"
+GITHUB_REPO = "REPO"
+
+# Example: "https://api.github.com/repos/OWNER/REPO/releases/latest"
+LATEST_RELEASE_URL = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/releases/latest"
+
+
+def fetch_latest_release_body(github_token: str = "") -> str:
     """
-    Scrapes the first n <li> elements from MorphoSource's search results for "X-Ray Computed Tomography".
-    Returns a list of dicts, each containing relevant metadata like title, detail URL, object, taxonomy, etc.
+    Fetch the latest release from GitHub using the GitHub API.
+    Returns the release body text.
+    If `github_token` is provided, it will be used to authenticate.
     """
-    resp = requests.get(SEARCH_URL)
+    headers = {}
+    if github_token:
+        headers["Authorization"] = f"Bearer {github_token}"
+
+    resp = requests.get(LATEST_RELEASE_URL, headers=headers)
     resp.raise_for_status()
 
-    soup = BeautifulSoup(resp.text, "html.parser")
+    data = resp.json()
+    body = data.get("body", "")
+    return body
 
-    # Grab up to n results from the search page
-    li_list = soup.select("div#search-results li.document.blacklight-media")[:n]
+
+def parse_records_from_body(body: str):
+    """
+    Given the release body with lines like:
+
+      A new increase ...
+      We found 3 new records (old record value: 104233).
+
+      New Record #104236 Title: Endocast [Mesh] [CT]
+      Detail Page URL: https://...
+      Object: UMMZ:mammals:172254
+      Taxonomy: Hesperoptenus tickelli
+      ...
+
+    This function parses out each "New Record #..." block and returns
+    a list of dicts with fields: title, detail_url, object, taxonomy, etc.
+    """
+
+    # We'll split by blank lines or detect "New Record #"
+    lines = body.splitlines()
+
     records = []
+    current_record = {}
+    record_number_pattern = re.compile(r"^New Record #(\d+)\s+Title:\s*(.*)$", re.IGNORECASE)
 
-    for li in li_list:
-        record = {}
+    for line in lines:
+        line = line.strip()
 
-        # Title and detail URL
-        title_el = li.select_one("h3.search-result-title a")
-        if title_el:
-            record["title"] = title_el.get_text(strip=True)
-            record["detail_url"] = BASE_URL + title_el.get("href", "")
-        else:
-            record["title"] = "N/A"
-            record["detail_url"] = None
+        # Detect a new record line:
+        match = record_number_pattern.match(line)
+        if match:
+            # If we have an existing record in progress, append it
+            if current_record:
+                records.append(current_record)
+            current_record = {}
+            record_num = match.group(1)
+            record_title = match.group(2)
+            current_record["record_number"] = record_num
+            current_record["title"] = record_title
+            continue
 
-        # Additional metadata from <dl class="dl-horizontal">
-        metadata_dl = li.select_one("div.metadata dl.dl-horizontal")
-        if metadata_dl:
-            items = metadata_dl.select("div.index-field-item")
-            for item in items:
-                dt = item.select_one("dt")
-                dd = item.select_one("dd")
-                if dt and dd:
-                    field_name = dt.get_text(strip=True).rstrip(":")
-                    field_value = dd.get_text(strip=True)
-                    record[field_name] = field_value
+        # Check for key-value lines (e.g. "Detail Page URL: https://...")
+        if ":" in line:
+            parts = line.split(":", 1)
+            key = parts[0].strip()
+            val = parts[1].strip()
+            # We'll store them in a way that matches your previous code:
+            if key.lower().startswith("detail page url"):
+                current_record["detail_url"] = val
+            elif key.lower() == "object":
+                current_record["Object"] = val
+            elif key.lower() == "taxonomy":
+                current_record["Taxonomy"] = val
+            elif key.lower() == "element or part":
+                current_record["Element or Part"] = val
+            elif key.lower() == "data manager":
+                current_record["Data Manager"] = val
+            elif key.lower() == "date uploaded":
+                current_record["Date Uploaded"] = val
+            elif key.lower() == "publication status":
+                current_record["Publication Status"] = val
+            elif key.lower() == "rights statement":
+                current_record["Rights Statement"] = val
+            elif key.lower() == "cc license":
+                current_record["CC License"] = val
+            # else: ignore lines we don't care about, or store them as needed
 
-        records.append(record)
+    # Append the last record if present
+    if current_record:
+        records.append(current_record)
 
     return records
 
+
 def generate_text_for_records(records):
     """
-    Uses OpenAI's ChatCompletion API to generate a concise textual description
-    for the given list of record metadata.
+    Uses the O1-mini model to generate a summary of the provided X-ray CT metadata.
+    Based on the snippet you provided.
     """
-    # Ensure we have the API key
-    openai.api_key = os.environ.get("OPENAI_API_KEY")
-    if not openai.api_key:
-        raise ValueError("OPENAI_API_KEY not set in environment.")
+    if not OPENAI_API_KEY:
+        return "Error: No OPENAI_API_KEY set."
 
-    # Build a 'system' message to instruct the assistant
-    system_message = {
-        "role": "system",
-        "content": (
-            "You are a scientific assistant with knowledge of biology and zoology. "
-            "Provide a concise description for these X-ray Computed Tomography records."
-        ),
-    }
+    # Initialize the client
+    client = OpenAI(api_key=OPENAI_API_KEY)
 
-    # Build a 'user' message that contains the record metadata
-    user_content_lines = []
-    user_content_lines.append("Below are several CT scan records from MorphoSource.\n")
+    # Prepare user content
+    user_content = ["Below are CT scan records from a recent GitHub Release:\n"]
     for i, rec in enumerate(records, start=1):
-        user_content_lines.append(f"Record {i}:")
-        user_content_lines.append(f" Title: {rec.get('title', 'N/A')}")
-        user_content_lines.append(f" URL: {rec.get('detail_url', 'N/A')}")
+        user_content.append(f"Record {i}:")
+        record_num = rec.get("record_number", "???")
+        title = rec.get("title", "N/A")
+        detail_url = rec.get("detail_url", "N/A")
+        user_content.append(f" - Record Number: {record_num}")
+        user_content.append(f" - Title: {title}")
+        user_content.append(f" - URL: {detail_url}")
+
         for key in [
             "Object",
             "Taxonomy",
@@ -100,42 +151,56 @@ def generate_text_for_records(records):
             "CC License",
         ]:
             if key in rec:
-                user_content_lines.append(f" {key}: {rec[key]}")
-        user_content_lines.append("")  # Blank line separating each record
-    user_content_lines.append(
-        "Please summarize these scans, focusing on the species or taxonomy and any notable details."
-    )
-    user_message = {"role": "user", "content": "\n".join(user_content_lines)}
+                user_content.append(f" - {key}: {rec[key]}")
+        user_content.append("")  # blank line
 
-    # Create the ChatCompletion request
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[system_message, user_message],
-        max_tokens=600,
-        temperature=0.7,
+    user_content.append(
+        "Write a concise description focusing on species/taxonomy and object details. "
+        "Ignore copyright or publication status."
     )
 
-    # Extract the assistant's response
-    return response.choices[0].message["content"].strip()
+    # Call the model
+    try:
+        response = client.chat.completions.create(
+            model="o1-mini",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "\n".join(user_content)
+                        }
+                    ]
+                }
+            ]
+        )
+        return response.choices[0].message.content.strip()
+    except Exception as e:
+        return f"Error generating text: {e}"
+
 
 def main():
-    # Scrape top 3 records
-    records = parse_top_records(n=3)
-    if not records:
-        description = "No CT records found on MorphoSource."
-    else:
-        description = generate_text_for_records(records)
+    # We can read a GITHUB_TOKEN from environment if needed for private repos
+    github_token = os.environ.get("GITHUB_TOKEN", "")
 
-    # Write final text to GITHUB_OUTPUT so the workflow can reference 'steps.[id].outputs.description'
-    github_output = os.environ.get("GITHUB_OUTPUT")
-    if github_output:
-        with open(github_output, "a") as fh:
-            fh.write("description<<EOF\n")
-            fh.write(description + "\n")
-            fh.write("EOF\n")
-    else:
-        # Fallback: just print it
-        print(description)
+    # 1. Fetch latest release body
+    release_body = fetch_latest_release_body(github_token=github_token)
+    if not release_body:
+        print("No release body found. Exiting.")
+        return
+
+    # 2. Parse the records from the release body
+    records = parse_records_from_body(release_body)
+    if not records:
+        print("No records found in the release body. Exiting.")
+        return
+
+    # 3. Generate text
+    description = generate_text_for_records(records)
+    print("\n--- Generated Description ---\n")
+    print(description)
+
 
 if __name__ == "__main__":
     main()
