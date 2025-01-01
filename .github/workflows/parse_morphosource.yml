@@ -1,39 +1,55 @@
-name: CT to Text Generation
+name: Parse MorphoSource Data
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: "0 3 * * *"
+    # Runs every 12 hours: 0th minute, every 12 hours
+    - cron: "0 */12 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write  # Needed to commit changes (last_count.txt) back to the repo
 
 jobs:
-  ct_text_job:
+  scrape_and_release:
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
+        with:
+          persist-credentials: true  # Needed so we can push commits
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
 
-      - name: Install Dependencies
-        run: pip install requests beautifulsoup4 openai
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
 
-      - name: Run CT to Text
-        id: ct2text
-        env:
-          # Pass the GitHub secret as OPENAI_API_KEY
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: python .github/scripts/ct_to_text.py
+      - name: Run Scraper
+        id: scraper
+        run: python .github/scripts/scrape_morphosource.py
+
+      - name: Commit updated last_count.txt
+        # Only commit if new_data == 'true'
+        if: steps.scraper.outputs.new_data == 'true'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .github/last_count.txt
+          git commit -m "Update last_count.txt for new records"
+          git push
 
       - name: Create or Update Release
+        if: steps.scraper.outputs.new_data == 'true'
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          # You can use secrets.GITHUB_TOKEN or a custom personal access token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: "ct-to-text-updates-${{ github.run_number }}"
-          release_name: "CT to Text Summaries #${{ github.run_number }}"
-          body: ${{ steps.ct2text.outputs.description }}
+          tag_name: morphosource-updates-${{ github.run_number }}
+          release_name: "MorphoSource Updates #${{ github.run_number }}"
+          body: ${{ steps.scraper.outputs.details }}
           draft: false
           prerelease: false
