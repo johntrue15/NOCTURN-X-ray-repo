@@ -2,7 +2,7 @@ name: CT to Text
 
 on:
   workflow_run:
-    workflows: ["Parse MorphoSource Data"]  # Must match the name from parse_morphosource_data.yml
+    workflows: ["Parse MorphoSource Data"]  # match the name in parse_morphosource_data.yml
     types: [completed]
 
 jobs:
@@ -27,58 +27,77 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
-          # We'll call 'releases/latest' to retrieve the newly published morphosource-updates-XX release
-          response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+          echo "Fetching the latest release from this repo..."
+          response=$(curl -sSL \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
             https://api.github.com/repos/${{ github.repository }}/releases/latest)
 
+          # Save full JSON for debugging
           echo "$response" > latest_release.json
-          echo "Response: $response"
 
-          # Extract the body
+          # Extract fields
           body=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['body'])")
-          # Extract the tag_name (e.g. 'morphosource-updates-01.01.2025-12:00:00')
-          tag=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['tag_name'])")
+          tag_name=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['tag_name'])")
 
-          # Get the timestamp from the tag: everything after 'morphosource-updates-'
-          raw_ts="${tag#morphosource-updates-}"
+          echo "Release tag_name: $tag_name"
+          echo "Release body: $body"
 
+          # Output them for next steps
           echo "release_body<<EOF" >> $GITHUB_OUTPUT
           echo "$body" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-          echo "release_ts<<EOF" >> $GITHUB_OUTPUT
-          echo "$raw_ts" >> $GITHUB_OUTPUT
+          echo "release_tag<<EOF" >> $GITHUB_OUTPUT
+          echo "$tag_name" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Check if morphosource-updates
+        id: check_morpho
+        run: |
+          # We'll read the tag name from the previous step's output
+          TAG_NAME="${{ steps.fetch_release.outputs.release_tag }}"
+          echo "Found TAG_NAME=$TAG_NAME"
+
+          # We'll set an output 'is_morphosource' = true or false
+          if [[ "$TAG_NAME" == morphosource-updates-* ]]; then
+            echo "is_morphosource<<EOF" >> $GITHUB_OUTPUT
+            echo "true" >> $GITHUB_OUTPUT
+            echo "EOF"
+          else
+            echo "is_morphosource<<EOF" >> $GITHUB_OUTPUT
+            echo "false" >> $GITHUB_OUTPUT
+            echo "EOF"
+          fi
 
       - name: Run CT to Text
         id: ct2text
+        if: steps.check_morpho.outputs.is_morphosource == 'true'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           echo "${{ steps.fetch_release.outputs.release_body }}" > release_body.txt
+
+          # Run your parser / AI script:
           python .github/scripts/ct_to_text.py release_body.txt > ct_output.txt
 
+          # Expose the AI summary as an output
           echo "description<<EOF" >> $GITHUB_OUTPUT
           cat ct_output.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Generate Timestamp for CT-to-Text Analysis
-        id: gen_analysis_ts
-        run: |
-          # We'll make a slightly offset time
-          # In this example, we just do "date" again. If you want EXACT offset (10 seconds),
-          # you'd do e.g. "date --date='10 seconds' +'%m.%d.%Y-%H:%M:%S'"
-          # But for demonstration, let's do:
-          TS=$(date +'%Y-%m-%d_%H-%M-%S')
-          echo "::set-output name=analysis_ts::$TS"
-
       - name: Create or Update Release with AI Summary
+        if: steps.check_morpho.outputs.is_morphosource == 'true'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          tag_name: "ct_to_text_analysis-${{ steps.gen_analysis_ts.outputs.analysis_ts }}"
-          release_name: "CT to Text Analysis #${{ steps.gen_analysis_ts.outputs.analysis_ts }}"
+          # We use an underscore-based timestamp or run_number; up to you
+          tag_name: "ct_to_text_analysis-${{ github.run_number }}"
+          release_name: "CT to Text Analysis #${{ github.run_number }}"
           body: ${{ steps.ct2text.outputs.description }}
           draft: false
           prerelease: false
+
+      - name: No new morphosource release
+        if: steps.check_morpho.outputs.is_morphosource == 'false'
+        run: echo "No 'morphosource-updates-*' release found. Skipping CT-to-text analysis."
