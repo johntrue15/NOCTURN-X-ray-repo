@@ -3,7 +3,7 @@ name: Parse MorphoSource Data
 on:
   schedule:
     # Runs every 12 hours
-    - cron: "0 */12 * * *"
+    - cron: "*/15 * * * *"
   workflow_dispatch:
 
 permissions:
