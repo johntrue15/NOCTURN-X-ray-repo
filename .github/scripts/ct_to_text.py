@@ -5,21 +5,30 @@ import os
 import re
 
 try:
-    import openai  # or from openai import OpenAI if you have a custom "o1-mini"
+    import openai
 except ImportError:
-    print("Please install the openai library (or your custom model library).")
-    sys.exit(1)
+    # If you're not using the openai library, you can comment this out or replace with your own custom library.
+    print("Note: `openai` library not found. If you plan to call GPT APIs, install it via pip.")
+    # We won't exit(1) here in case you're using local summarization logic.
 
-def parse_records_from_body(body):
+def parse_records_from_body(body: str):
     """
-    Looks for lines like:
+    Parse lines like:
       New Record #104236 Title: Endocast [Mesh] [CT]
-    Then collects additional fields from the subsequent lines with 'Key: Value' format.
-    Returns a list of dicts, each representing a new record.
+    And gather subsequent lines such as:
+      Object: ...
+      Taxonomy: ...
+      Element or Part: ...
+      etc.
+    
+    Returns a list of dicts, each representing one "New Record".
     """
-    record_pattern = re.compile(r'^New Record #(\d+)\s+Title:\s*(.*)$', re.IGNORECASE)
-    lines = body.splitlines()
     records = []
+    
+    # Regex to detect "New Record #XXXX Title: Something"
+    new_record_pattern = re.compile(r'^New Record #(\d+)\s+Title:\s*(.*)$', re.IGNORECASE)
+
+    lines = body.splitlines()
     current_record = {}
 
     for line in lines:
@@ -27,9 +36,10 @@ def parse_records_from_body(body):
         if not line:
             continue
 
-        match = record_pattern.match(line)
+        # Check if line indicates a new record
+        match = new_record_pattern.match(line)
         if match:
-            # If we already have a record in progress, store it
+            # If there's an unfinished record, store it
             if current_record:
                 records.append(current_record)
             current_record = {}
@@ -37,14 +47,14 @@ def parse_records_from_body(body):
             current_record["title"] = match.group(2)
             continue
 
-        # If we see something like 'Object: USNM:HERP:...'
+        # Otherwise, if the line looks like "Key: Value"
         if ":" in line:
             parts = line.split(":", 1)
             key = parts[0].strip()
             val = parts[1].strip()
             current_record[key] = val
 
-    # Add the last record if in progress
+    # If there's a last record still in progress
     if current_record:
         records.append(current_record)
 
@@ -52,20 +62,35 @@ def parse_records_from_body(body):
 
 def generate_summary(records):
     """
-    Stub that simply lists each record found. In real usage, you might call openai API here.
+    Generates a simple textual summary of the records found.
+    If you want to integrate an OpenAI API call, do it here.
     """
     if not records:
         return "No new records found in this release."
 
-    lines = []
-    lines.append("CT to Text Analysis:\n")
+    summary_lines = []
+    summary_lines.append("CT to Text Analysis:\n")
     for i, rec in enumerate(records, start=1):
-        lines.append(f"Record {i}: # {rec.get('record_number')} - {rec.get('title','N/A')}")
-        # Optional: include more data like 'Object', 'Taxonomy', etc.
+        record_number = rec.get("record_number", "???")
+        title = rec.get("title", "N/A")
 
-    return "\n".join(lines)
+        summary_lines.append(f"Record {i} - #{record_number}: {title}")
+        # Optionally, include more fields like 'Object', 'Taxonomy', etc.:
+        # object_val = rec.get("Object")
+        # if object_val:
+        #     summary_lines.append(f"  Object: {object_val}")
+        # ...and so on.
+
+    return "\n".join(summary_lines)
 
 def main():
+    """
+    Main entry point:
+      1) Reads a file name from sys.argv[1] (the 'release_body.txt').
+      2) Parses it for new morphosource records.
+      3) Generates a text summary.
+      4) Prints it to stdout.
+    """
     if len(sys.argv) < 2:
         print("Usage: ct_to_text.py <release_body_file>")
         sys.exit(1)
@@ -75,16 +100,17 @@ def main():
         print(f"Error: file '{release_body_file}' not found.")
         sys.exit(1)
 
+    # Read the entire release body
     with open(release_body_file, "r", encoding="utf-8") as f:
-        body = f.read()
+        body_text = f.read()
 
-    # Parse records from the release body
-    records = parse_records_from_body(body)
+    # 1) Parse the release body
+    records = parse_records_from_body(body_text)
 
-    # Generate a textual summary
+    # 2) Generate a summary (stub or real AI logic)
     summary = generate_summary(records)
 
-    # Print to stdout so the workflow can capture it
+    # 3) Print the result to stdout so the GitHub Actions workflow can capture it
     print(summary)
 
 if __name__ == "__main__":
