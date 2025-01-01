@@ -12,10 +12,6 @@ BASE_URL = "https://www.morphosource.org"
 LAST_COUNT_FILE = ".github/last_count.txt"
 
 def get_current_record_count():
-    """
-    Scrape MorphoSource to find how many X-ray CT records exist,
-    by looking at <meta name='totalResults' content='...'>
-    """
     response = requests.get(SEARCH_URL)
     response.raise_for_status()
     soup = BeautifulSoup(response.text, "html.parser")
@@ -40,23 +36,20 @@ def save_last_count(count):
 
 def parse_top_records(n=3):
     """
-    Parse the first n records from the search results page.
-    Returns a list of dicts, each containing relevant metadata.
+    Grabs the first n <li class="document blacklight-media"> from the search results.
+    Returns a list of dicts, each containing relevant metadata (title, object, etc.).
     """
     session = requests.Session()
     resp = session.get(SEARCH_URL)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 
-    # Grab the first n LI elements with class="document blacklight-media"
-    all_li = soup.select("div#search-results li.document.blacklight-media")
-    top_li = all_li[:n]
-
-    results = []
-    for li in top_li:
+    li_list = soup.select("div#search-results li.document.blacklight-media")[:n]
+    records = []
+    for li in li_list:
         record = {}
 
-        # 1) Record Title and Detail Page URL
+        # 1) Title & detail link
         title_el = li.select_one("h3.search-result-title a")
         if title_el:
             record["title"] = title_el.get_text(strip=True)
@@ -65,60 +58,42 @@ def parse_top_records(n=3):
             record["title"] = "No Title"
             record["detail_url"] = None
 
-        # 2) Now parse the metadata fields inside <dl class="dl-horizontal">
-        #    We'll look for dt -> dd pairs like:
-        #    <dt>Object:</dt><dd>...</dd>
-        #    <dt>Taxonomy:</dt><dd>...</dd>
-        #    etc.
+        # 2) Additional metadata from dt/dd pairs
         metadata_dl = li.select_one("div.metadata dl.dl-horizontal")
         if metadata_dl:
-            # Each "index-field-item" has a <dt> and <dd> for each field
             items = metadata_dl.select("div.index-field-item")
             for item in items:
                 dt = item.select_one("dt")
                 dd = item.select_one("dd")
-                if not dt or not dd:
-                    continue
-                field_name = dt.get_text(strip=True).rstrip(":")
-                field_value = dd.get_text(strip=True)
-                record[field_name] = field_value
-        else:
-            # If the structure changes, you might need to adapt
-            pass
+                if dt and dd:
+                    field_name = dt.get_text(strip=True).rstrip(":")
+                    field_value = dd.get_text(strip=True)
+                    record[field_name] = field_value
 
-        # Optionally load the detail page to gather more info (like <title>),
-        # but from your screenshot, it seems you want info from the search listing itself.
-        # If you do want the detail page <title>, you can do that:
-        if record["detail_url"]:
-            detail_resp = session.get(record["detail_url"])
-            detail_resp.raise_for_status()
-            detail_soup = BeautifulSoup(detail_resp.text, "html.parser")
-            detail_title = detail_soup.title.string if detail_soup.title else "No detail page title"
-            record["detail_page_title"] = detail_title
-        else:
-            record["detail_page_title"] = "No detail page title"
+        records.append(record)
 
-        results.append(record)
-
-    return results
+    return records
 
 def format_release_message(new_records, old_count, records):
     """
-    Build the multiline release body with:
-    - A header about how many new records (plus old count).
-    - A block for each record (title, detail URL, etc.).
+    Creates a multiline string for the Release body:
+      - How many new records (plus old record value)
+      - Then each record in descending order, labeled as "New Record #... Title: ..."
     """
     lines = []
     lines.append("A new increase in X-ray Computed Tomography records was found on MorphoSource.")
-    lines.append("")  # blank line
+    lines.append("")
     lines.append(f"We found {new_records} new records (old record value: {old_count}).")
     lines.append("")
 
-    for r in records:
-        lines.append(f"First Record Title: {r.get('title', 'N/A')}")
-        lines.append(f"Detail Page URL: {r.get('detail_url', 'N/A')}")
+    # If old_count=104233 and new_records=3,
+    # the new record numbers are 104234, 104235, 104236
+    # but we want them in descending order: 104236, 104235, 104234
+    for i, rec in enumerate(records, start=1):
+        record_number = old_count + new_records - (i - 1)
+        lines.append(f"New Record #{record_number} Title: {rec.get('title', 'N/A')}")
+        lines.append(f"Detail Page URL: {rec.get('detail_url', 'N/A')}")
 
-        # List out the fields we want in a specific order:
         for key in [
             "Object",
             "Taxonomy",
@@ -129,13 +104,10 @@ def format_release_message(new_records, old_count, records):
             "Rights Statement",
             "CC License",
         ]:
-            if key in r:
-                lines.append(f"{key}: {r[key]}")
+            if key in rec:
+                lines.append(f"{key}: {rec[key]}")
+        lines.append("")  # Blank line after each record
 
-        # If you want the detail page <title> from inside the record, you can do:
-        # lines.append(f"Detail Page <title>: {r.get('detail_page_title', 'N/A')}")
-
-        lines.append("")  # blank line after each record
     return "\n".join(lines)
 
 def main():
@@ -146,26 +118,18 @@ def main():
     github_output = os.environ.get("GITHUB_OUTPUT", "")
 
     if new_records > 0:
-        # Parse the top 3 records from the page
         top_records = parse_top_records(n=3)
-
-        # Save new count
         save_last_count(current_count)
 
-        # Build a nice multiline message
         message = format_release_message(new_records, old_count, top_records)
 
-        # If we have GITHUB_OUTPUT, pass the data to subsequent step
         if github_output:
             with open(github_output, "a") as fh:
                 fh.write("new_data=true\n")
                 fh.write("details<<EOF\n")
                 fh.write(message + "\n")
                 fh.write("EOF\n")
-        else:
-            print("Warning: GITHUB_OUTPUT not found.")
     else:
-        # No new data
         if github_output:
             with open(github_output, "a") as fh:
                 fh.write("new_data=false\n")
