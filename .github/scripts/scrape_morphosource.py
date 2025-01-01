@@ -3,7 +3,6 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
-# Constants
 SEARCH_URL = (
     "https://www.morphosource.org/catalog/media?locale=en"
     "&q=X-Ray+Computed+Tomography&search_field=all_fields"
@@ -15,7 +14,7 @@ LAST_COUNT_FILE = ".github/last_count.txt"
 def get_current_record_count():
     """
     Scrape MorphoSource to find how many X-ray CT records exist,
-    by looking at <meta name="totalResults" content="...">
+    by looking at <meta name='totalResults' content='...'>
     """
     response = requests.get(SEARCH_URL)
     response.raise_for_status()
@@ -26,53 +25,7 @@ def get_current_record_count():
         raise ValueError("Could not find the 'totalResults' meta tag on the page.")
     return int(meta_tag["content"])
 
-def parse_new_records():
-    """
-    Example logic:
-      1) Load the same search page
-      2) Find the first record block
-      3) Extract the link, then request that detail page
-      4) Return a summary of the data
-    """
-    session = requests.Session()
-    resp = session.get(SEARCH_URL)
-    resp.raise_for_status()
-    soup = BeautifulSoup(resp.text, "html.parser")
-
-    # Find first <li> with class="document blacklight-media"
-    first_li = soup.select_one("div#search-results li.document.blacklight-media")
-    if not first_li:
-        return "No first record found."
-
-    # Extract the link from the <h3> tag
-    title_el = first_li.select_one("h3.search-result-title a")
-    if not title_el:
-        return "No title link for first record."
-
-    first_title = title_el.get_text(strip=True)
-    detail_url = BASE_URL + title_el.get("href", "")
-
-    # Load the detail page
-    detail_resp = session.get(detail_url)
-    detail_resp.raise_for_status()
-    detail_soup = BeautifulSoup(detail_resp.text, "html.parser")
-
-    # Example: grab <title> from detail page
-    detail_page_title = detail_soup.title.string if detail_soup.title else "No detail page title"
-
-    # Build a multi-line summary
-    summary = (
-        f"**First Record Title (from search results):** {first_title}\n"
-        f"**Detail Page URL:** {detail_url}\n"
-        f"**Detail Page <title>:** {detail_page_title}\n"
-    )
-    return summary
-
 def load_last_count():
-    """
-    Load the previously recorded count from file.
-    Returns 0 if file doesn't exist or contains invalid data.
-    """
     if not os.path.exists(LAST_COUNT_FILE):
         return 0
     try:
@@ -82,44 +35,141 @@ def load_last_count():
         return 0
 
 def save_last_count(count):
-    """
-    Save the current record count to file.
-    """
     with open(LAST_COUNT_FILE, "w") as f:
         f.write(str(count))
 
+def parse_top_records(n=3):
+    """
+    Parse the first n records from the search results page.
+    Returns a list of dicts, each containing relevant metadata.
+    """
+    session = requests.Session()
+    resp = session.get(SEARCH_URL)
+    resp.raise_for_status()
+    soup = BeautifulSoup(resp.text, "html.parser")
+
+    # Grab the first n LI elements with class="document blacklight-media"
+    all_li = soup.select("div#search-results li.document.blacklight-media")
+    top_li = all_li[:n]
+
+    results = []
+    for li in top_li:
+        record = {}
+
+        # 1) Record Title and Detail Page URL
+        title_el = li.select_one("h3.search-result-title a")
+        if title_el:
+            record["title"] = title_el.get_text(strip=True)
+            record["detail_url"] = BASE_URL + title_el.get("href", "")
+        else:
+            record["title"] = "No Title"
+            record["detail_url"] = None
+
+        # 2) Now parse the metadata fields inside <dl class="dl-horizontal">
+        #    We'll look for dt -> dd pairs like:
+        #    <dt>Object:</dt><dd>...</dd>
+        #    <dt>Taxonomy:</dt><dd>...</dd>
+        #    etc.
+        metadata_dl = li.select_one("div.metadata dl.dl-horizontal")
+        if metadata_dl:
+            # Each "index-field-item" has a <dt> and <dd> for each field
+            items = metadata_dl.select("div.index-field-item")
+            for item in items:
+                dt = item.select_one("dt")
+                dd = item.select_one("dd")
+                if not dt or not dd:
+                    continue
+                field_name = dt.get_text(strip=True).rstrip(":")
+                field_value = dd.get_text(strip=True)
+                record[field_name] = field_value
+        else:
+            # If the structure changes, you might need to adapt
+            pass
+
+        # Optionally load the detail page to gather more info (like <title>),
+        # but from your screenshot, it seems you want info from the search listing itself.
+        # If you do want the detail page <title>, you can do that:
+        if record["detail_url"]:
+            detail_resp = session.get(record["detail_url"])
+            detail_resp.raise_for_status()
+            detail_soup = BeautifulSoup(detail_resp.text, "html.parser")
+            detail_title = detail_soup.title.string if detail_soup.title else "No detail page title"
+            record["detail_page_title"] = detail_title
+        else:
+            record["detail_page_title"] = "No detail page title"
+
+        results.append(record)
+
+    return results
+
+def format_release_message(new_records, old_count, records):
+    """
+    Build the multiline release body with:
+    - A header about how many new records (plus old count).
+    - A block for each record (title, detail URL, etc.).
+    """
+    lines = []
+    lines.append("A new increase in X-ray Computed Tomography records was found on MorphoSource.")
+    lines.append("")  # blank line
+    lines.append(f"We found {new_records} new records (old record value: {old_count}).")
+    lines.append("")
+
+    for r in records:
+        lines.append(f"First Record Title: {r.get('title', 'N/A')}")
+        lines.append(f"Detail Page URL: {r.get('detail_url', 'N/A')}")
+
+        # List out the fields we want in a specific order:
+        for key in [
+            "Object",
+            "Taxonomy",
+            "Element or Part",
+            "Data Manager",
+            "Date Uploaded",
+            "Publication Status",
+            "Rights Statement",
+            "CC License",
+        ]:
+            if key in r:
+                lines.append(f"{key}: {r[key]}")
+
+        # If you want the detail page <title> from inside the record, you can do:
+        # lines.append(f"Detail Page <title>: {r.get('detail_page_title', 'N/A')}")
+
+        lines.append("")  # blank line after each record
+    return "\n".join(lines)
+
 def main():
     current_count = get_current_record_count()
-    last_count = load_last_count()
+    old_count = load_last_count()
+    new_records = current_count - old_count
 
-    new_records = current_count - last_count
-    github_output = os.environ.get("GITHUB_OUTPUT")  # GitHub sets this env var
+    github_output = os.environ.get("GITHUB_OUTPUT", "")
 
     if new_records > 0:
-        # Parse more info about the new records (if desired)
-        details = parse_new_records()
+        # Parse the top 3 records from the page
+        top_records = parse_top_records(n=3)
 
-        # Save the new count
+        # Save new count
         save_last_count(current_count)
 
-        # If we have the GitHub output file, write keys to it
+        # Build a nice multiline message
+        message = format_release_message(new_records, old_count, top_records)
+
+        # If we have GITHUB_OUTPUT, pass the data to subsequent step
         if github_output:
             with open(github_output, "a") as fh:
                 fh.write("new_data=true\n")
-                # For multi-line content, use '<<EOF' syntax
                 fh.write("details<<EOF\n")
-                fh.write(f"We found {new_records} new records.\n\n{details}\n")
+                fh.write(message + "\n")
                 fh.write("EOF\n")
         else:
-            print("Warning: GITHUB_OUTPUT not found; cannot set step outputs.")
+            print("Warning: GITHUB_OUTPUT not found.")
     else:
         # No new data
         if github_output:
             with open(github_output, "a") as fh:
                 fh.write("new_data=false\n")
                 fh.write("details<<EOF\nNo new records found.\nEOF\n")
-        else:
-            print("Warning: GITHUB_OUTPUT not found; cannot set step outputs.")
 
 if __name__ == "__main__":
     main()
