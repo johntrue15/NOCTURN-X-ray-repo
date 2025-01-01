@@ -45,7 +45,7 @@ jobs:
         if: steps.scraper.outputs.new_data == 'true'
         uses: actions/create-release@v1
         env:
-          # You can use secrets.GITHUB_TOKEN or a custom personal access token
+          # You can use secrets.MY_GITHUB_TOKEN or a custom personal access token
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: morphosource-updates-${{ github.run_number }}
