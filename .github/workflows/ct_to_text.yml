@@ -2,12 +2,14 @@ name: CT to Text
 
 on:
   workflow_run:
-    workflows: ["Parse MorphoSource Data"]  # match the name in parse_morphosource_data.yml
+    # Must match the 'name:' from your parse_morphosource_data.yml
+    workflows: ["Parse MorphoSource Data"]
     types: [completed]
 
 jobs:
   ct_text_job:
     runs-on: ubuntu-latest
+    # Only run if Workflow #1 ended successfully
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
@@ -25,48 +27,53 @@ jobs:
       - name: Fetch Latest Release
         id: fetch_release
         env:
+          # Provide a GitHub token with read access to releases
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
           echo "Fetching the latest release from this repo..."
-          response=$(curl -sSL \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
+          response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
             https://api.github.com/repos/${{ github.repository }}/releases/latest)
 
-          # Save full JSON for debugging
+          # Save JSON for debugging if needed
           echo "$response" > latest_release.json
 
-          # Extract fields
+          # Extract fields via Python
           body=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['body'])")
           tag_name=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['tag_name'])")
 
-          echo "Release tag_name: $tag_name"
-          echo "Release body: $body"
+          echo "Found release tag_name=$tag_name"
 
-          # Output them for next steps
-          echo "release_body<<EOF" >> $GITHUB_OUTPUT
-          echo "$body" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          # Output them for subsequent steps
+          {
+            echo "release_body<<EOF"
+            echo "$body"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
-          echo "release_tag<<EOF" >> $GITHUB_OUTPUT
-          echo "$tag_name" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          {
+            echo "release_tag<<EOF"
+            echo "$tag_name"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Check if morphosource-updates
         id: check_morpho
         run: |
-          # We'll read the tag name from the previous step's output
           TAG_NAME="${{ steps.fetch_release.outputs.release_tag }}"
           echo "Found TAG_NAME=$TAG_NAME"
 
-          # We'll set an output 'is_morphosource' = true or false
           if [[ "$TAG_NAME" == morphosource-updates-* ]]; then
-            echo "is_morphosource<<EOF" >> $GITHUB_OUTPUT
-            echo "true" >> $GITHUB_OUTPUT
-            echo "EOF"
+            {
+              echo "is_morphosource<<EOF"
+              echo "true"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
           else
-            echo "is_morphosource<<EOF" >> $GITHUB_OUTPUT
-            echo "false" >> $GITHUB_OUTPUT
-            echo "EOF"
+            {
+              echo "is_morphosource<<EOF"
+              echo "false"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
           fi
 
       - name: Run CT to Text
@@ -75,15 +82,18 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
+          # Save release_body to a file
           echo "${{ steps.fetch_release.outputs.release_body }}" > release_body.txt
 
-          # Run your parser / AI script:
+          # Pass it to the script
           python .github/scripts/ct_to_text.py release_body.txt > ct_output.txt
 
-          # Expose the AI summary as an output
-          echo "description<<EOF" >> $GITHUB_OUTPUT
-          cat ct_output.txt >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          # Export the script output as 'description'
+          {
+            echo "description<<EOF"
+            cat ct_output.txt
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Create or Update Release with AI Summary
         if: steps.check_morpho.outputs.is_morphosource == 'true'
@@ -91,7 +101,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          # We use an underscore-based timestamp or run_number; up to you
           tag_name: "ct_to_text_analysis-${{ github.run_number }}"
           release_name: "CT to Text Analysis #${{ github.run_number }}"
           body: ${{ steps.ct2text.outputs.description }}
