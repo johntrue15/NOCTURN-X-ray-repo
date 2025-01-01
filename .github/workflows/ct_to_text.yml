@@ -12,17 +12,29 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
+      # -------------------------------------------------------
+      # 1. Check out your repository
+      # -------------------------------------------------------
       - name: Check out repo
         uses: actions/checkout@v3
 
+      # -------------------------------------------------------
+      # 2. Set up Python
+      # -------------------------------------------------------
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
 
+      # -------------------------------------------------------
+      # 3. Install Dependencies
+      # -------------------------------------------------------
       - name: Install Dependencies
         run: pip install requests beautifulsoup4 openai
 
+      # -------------------------------------------------------
+      # 4. Fetch Latest Release
+      # -------------------------------------------------------
       - name: Fetch Latest Release
         id: fetch_release
         env:
@@ -32,25 +44,22 @@ jobs:
           response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
             https://api.github.com/repos/${{ github.repository }}/releases/latest)
 
+          # (Optional) Save JSON for debugging
           echo "$response" > latest_release.json
 
+          # Extract fields
           body=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['body'])")
           tag_name=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['tag_name'])")
 
           echo "Found release tag_name=$tag_name"
 
-          {
-            echo "release_body<<EOF"
-            echo "$body"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+          # Store them as outputs for subsequent steps
+          echo "release_body=$body" >> "$GITHUB_OUTPUT"
+          echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
 
-          {
-            echo "release_tag<<EOF"
-            echo "$tag_name"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
-
+      # -------------------------------------------------------
+      # 5. Check if morphosource-updates
+      # -------------------------------------------------------
       - name: Check if morphosource-updates
         id: check_morpho
         run: |
@@ -58,47 +67,45 @@ jobs:
           echo "Found TAG_NAME=$TAG_NAME"
 
           if [[ "$TAG_NAME" == morphosource-updates-* ]]; then
-            {
-              echo "is_morphosource<<EOF"
-              echo "true"
-              echo "EOF"
-            } >> "$GITHUB_OUTPUT"
+            echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
           else
-            {
-              echo "is_morphosource<<EOF"
-              echo "false"
-              echo "EOF"
-            } >> "$GITHUB_OUTPUT"
+            echo "is_morphosource=false" >> "$GITHUB_OUTPUT"
+          fi
 
-      # ---------------------------------------------------------------
-      # 1) Generate Timestamp (same logic you used in .morphosourceyml)
-      # ---------------------------------------------------------------
+      # -------------------------------------------------------
+      # 6. Generate Timestamp (Only if it's morphosource-updates)
+      # -------------------------------------------------------
       - name: Generate Timestamp
         id: gen_ts
         if: steps.check_morpho.outputs.is_morphosource == 'true'
         run: |
           # Example format: YYYY-MM-DD_HH-MM-SS
           TS=$(date +'%Y-%m-%d_%H-%M-%S')
-          echo "::set-output name=timestamp::$TS"
+          echo "timestamp=$TS" >> "$GITHUB_OUTPUT"
 
+      # -------------------------------------------------------
+      # 7. Run CT to Text (Only if it's morphosource-updates)
+      # -------------------------------------------------------
       - name: Run CT to Text
         id: ct2text
         if: steps.check_morpho.outputs.is_morphosource == 'true'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
+          # Write the release body to a file
           echo "${{ steps.fetch_release.outputs.release_body }}" > release_body.txt
+
+          # Run your custom Python script
           python .github/scripts/ct_to_text.py release_body.txt > ct_output.txt
 
-          {
-            echo "description<<EOF"
-            cat ct_output.txt
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+          # Export the script output as "description"
+          echo "description<<EOF" >> "$GITHUB_OUTPUT"
+          cat ct_output.txt >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
-      # ----------------------------------------------------------------------
-      # 2) Update the release creation to use your timestamp-based format
-      # ----------------------------------------------------------------------
+      # -------------------------------------------------------
+      # 8. Create or Update Release with AI Summary
+      # -------------------------------------------------------
       - name: Create or Update Release with AI Summary
         if: steps.check_morpho.outputs.is_morphosource == 'true'
         uses: actions/create-release@v1
@@ -111,6 +118,9 @@ jobs:
           draft: false
           prerelease: false
 
+      # -------------------------------------------------------
+      # 9. Fallback step if not morphosource-updates
+      # -------------------------------------------------------
       - name: No new morphosource release
         if: steps.check_morpho.outputs.is_morphosource == 'false'
         run: echo "No 'morphosource-updates-*' release found. Skipping CT-to-text analysis."
