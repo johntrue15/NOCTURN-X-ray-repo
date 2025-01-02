@@ -1,38 +1,28 @@
 name: Automated Screenshot Workflow
-
 on:
-  workflow_dispatch:
-  #workflow_run:
-    #workflows: ["CT to Text"]
-    #types: [completed]
-
+  workflow_run:
+    workflows: ["CT to Text"]
+    types: [completed]
 jobs:
   screenshot_job:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.x"
-
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install selenium webdriver-manager requests beautifulsoup4
-
+          pip install selenium webdriver-manager
       - name: Install and setup Chrome
         run: |
           sudo apt-get update
           sudo apt-get install -y wget gnupg2 unzip
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
-
-      # Fetch MorphoSource release
       - name: Fetch MorphoSource release
         id: fetch_morpho
         env:
@@ -44,10 +34,15 @@ jobs:
           
           python <<EOF > morpho_out.json
           import json
+          import re
+          
+          def extract_url_from_body(body):
+              pattern = r'https://www\.morphosource\.org/concern/media/\d+'
+              urls = re.findall(pattern, body)
+              return urls[0] if urls else None
           
           with open("all_releases.json", "r", encoding="utf-8") as f:
               data = json.load(f)
-
           best_release = None
           for release in data:
               tag = release.get("tag_name", "")
@@ -57,27 +52,26 @@ jobs:
                   else:
                       if release.get("created_at", "") > best_release.get("created_at", ""):
                           best_release = release
-
           if best_release:
-              print(json.dumps({
-                  "found": True,
-                  "tag_name": best_release["tag_name"],
-                  "body": best_release["body"]
-              }, indent=2))
+              url = extract_url_from_body(best_release["body"])
+              if url:
+                  print(json.dumps({
+                      "found": True,
+                      "tag_name": best_release["tag_name"],
+                      "url": url
+                  }, indent=2))
+              else:
+                  print(json.dumps({"found": False}))
           else:
               print(json.dumps({"found": False}))
           EOF
-
           found=$(cat morpho_out.json | python -c "import sys, json; j=json.load(sys.stdin); print(j.get('found', False))")
           if [ "$found" = "True" ]; then
             tag_name=$(cat morpho_out.json | python -c "import sys, json; j=json.load(sys.stdin); print(j['tag_name'])")
-            body=$(cat morpho_out.json | python -c "import sys, json; j=json.load(sys.stdin); print(j['body'])")
+            url=$(cat morpho_out.json | python -c "import sys, json; j=json.load(sys.stdin); print(j['url'])")
             echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
-            echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
-            echo "$body" >> "$GITHUB_OUTPUT"
-            echo "EOF" >> "$GITHUB_OUTPUT"
+            echo "morpho_url=$url" >> "$GITHUB_OUTPUT"
           fi
-
       - name: Check if morphosource-updates found
         id: check_morpho
         run: |
@@ -87,18 +81,14 @@ jobs:
           else
             echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
           fi
-
       - name: Process URLs and take screenshots
         if: steps.check_morpho.outputs.is_morphosource == 'true'
         run: |
-          echo "${{ steps.fetch_morpho.outputs.release_body }}" > release_body.txt
-          python .github/scripts/selenium_screenshot.py release_body.txt
-
-      - name: Upload screenshots
+          echo "${{ steps.fetch_morpho.outputs.morpho_url }}" > release_body.txt
+          python .github/scripts/selenium_screenshot_new.py release_body.txt
+      - name: Upload screenshot
         if: steps.check_morpho.outputs.is_morphosource == 'true'
         uses: actions/upload-artifact@v3
         with:
           name: morphosource_screenshots
-          path: |
-            *.png
-            screenshot_log.txt
+          path: fullscreen_screenshot.png
