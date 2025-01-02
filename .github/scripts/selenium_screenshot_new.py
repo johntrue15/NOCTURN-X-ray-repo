@@ -40,6 +40,7 @@ def take_screenshot(url, output_file="fullscreen_screenshot.png"):
         
         # Wait for specific elements to be present (adjust selectors as needed)
         wait = WebDriverWait(driver, 60)  # 60 second timeout
+        wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
         
         # Wait for and switch to UV iframe
         uv_iframe = wait.until(
