@@ -40,7 +40,8 @@ def take_screenshot(url, output_file="fullscreen_screenshot.png"):
         print("Looking for fullscreen button...")
         full_screen_btn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen")))
         full_screen_btn.click()
-        
+
+        time.sleep(30) #need to make longer to accomodate load, eventually dynamic (PULL REQUEST)
         print("Taking screenshot...")
         driver.save_screenshot(output_file)
         print(f"Screenshot saved to {output_file}")
