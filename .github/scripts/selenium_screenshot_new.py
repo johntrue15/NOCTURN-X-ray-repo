@@ -69,7 +69,7 @@ def take_screenshot(url, output_file="fullscreen_screenshot.png"):
         # Additional wait after resizing
         time.sleep(5)
         
-        print(f"Taking screenshot (dimensions: {total_width}x{total_height})")
+        #print(f"Taking screenshot (dimensions: {total_width}x{total_height})")
         driver.save_screenshot(output_file)
         print(f"Screenshot saved to {output_file}")
         
