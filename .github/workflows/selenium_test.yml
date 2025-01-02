@@ -34,7 +34,7 @@ jobs:
 
       - name: Run Selenium test
         run: |
-          python selenium_fullscreen_test.py
+          python .github/scripts/selenium_fullscreen_test.py
 
       - name: Upload screenshot artifact
         if: always()
