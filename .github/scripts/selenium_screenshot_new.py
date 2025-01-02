@@ -6,12 +6,8 @@ import time
 import sys
 
 def test_fullscreen_screenshot(url):
-    print(f"Debug - Received URL: {url}")  # Debug print
-    
-    # Validate URL format
-    if not url.startswith("https://www.morphosource.org/concern/media/"):
-        print(f"Error: Invalid URL format: {url}")
-        sys.exit(1)
+    print(f"Debug - Received URL type: {type(url)}")
+    print(f"Debug - URL content: |{url}|")
 
     # 1. Launch the browser
     options = webdriver.ChromeOptions()
@@ -21,7 +17,7 @@ def test_fullscreen_screenshot(url):
     driver = webdriver.Chrome(options=options)
     
     try:
-        print(f"Debug - Attempting to load URL: {url}")  # Debug print
+        print(f"Debug - Attempting to load URL: |{url}|")
         driver.get(url)
         driver.maximize_window()
         
@@ -38,8 +34,10 @@ def test_fullscreen_screenshot(url):
         )
         full_screen_btn.click()
         
+        # 5. Wait for fullscreen
         time.sleep(12)
         
+        # 6. Take screenshot
         screenshot_name = "fullscreen_screenshot.png"
         driver.save_screenshot(screenshot_name)
         print(f"Screenshot saved as {screenshot_name}")
@@ -58,18 +56,17 @@ if __name__ == "__main__":
             print("Usage: python selenium_screenshot_new.py <url_file>")
             sys.exit(1)
         
-        url_file = sys.argv[1]
-        print(f"Debug - Reading URL from file: {url_file}")  # Debug print
-        
-        # Read and clean the URL
-        with open(url_file, 'r') as file:
+        # Read and debug URL from file
+        with open(sys.argv[1], 'r') as file:
             url = file.read().strip()
+        
+        print(f"Debug - URL from file type: {type(url)}")
+        print(f"Debug - URL from file content: |{url}|")
             
         if not url:
             print("Error: URL file is empty")
             sys.exit(1)
             
-        print(f"Debug - URL from file: {url}")  # Debug print
         test_fullscreen_screenshot(url)
         
     except Exception as e:
