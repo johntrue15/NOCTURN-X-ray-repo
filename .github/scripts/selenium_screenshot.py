@@ -11,20 +11,16 @@ from selenium.webdriver.support import expected_conditions as EC
 def parse_morphosource_urls(file_path):
     """
     Reads the release body from file_path and extracts MorphoSource record IDs and URLs.
-    
-    Example lines:
-        Record #34986: https://www.morphosource.org/concern/media/000034986?locale=en
-        
-    Adjust the regex/logic to your actual release body format.
-    Returns list of (record_id, url).
     """
     print(f"[parse_morphosource_urls] Reading file: {file_path}")
-    pattern = r'Record\s*#(\d+).*?(https:\/\/www\.morphosource\.org\/concern\/media\/\d+\?locale=en)'
+    # Updated pattern to match the new format
+    pattern = r'New Record #(\d+).*?Detail Page URL: (https:\/\/www\.morphosource\.org\/concern\/media\/\d+\?locale=en)'
     results = []
     with open(file_path, 'r', encoding='utf-8') as f:
         content = f.read()
         print("[parse_morphosource_urls] File content loaded. Searching for matches...")
-        matches = re.findall(pattern, content)
+        # Make the search multiline and dotall to match across line breaks
+        matches = re.findall(pattern, content, re.DOTALL | re.MULTILINE)
         for record_id, url in matches:
             results.append((record_id.strip(), url.strip()))
 
@@ -94,6 +90,7 @@ def main():
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--window-size=1920,1080')  # Added for consistent resolution
     
     driver = webdriver.Chrome(options=options)
     print("WebDriver initialization complete.")
