@@ -85,7 +85,7 @@ jobs:
         if: steps.check_morpho.outputs.is_morphosource == 'true'
         run: |
           echo "${{ steps.fetch_morpho.outputs.morpho_url }}" > release_body.txt
-          python .github/scripts/selenium_screenshot_new.py release_body.txt
+          python .github/scripts/selenium_screenshot.py release_body.txt
       - name: Upload screenshot
         if: steps.check_morpho.outputs.is_morphosource == 'true'
         uses: actions/upload-artifact@v3
