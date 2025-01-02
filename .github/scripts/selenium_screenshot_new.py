@@ -23,7 +23,7 @@ def test_fullscreen_screenshot(url):
         driver = webdriver.Chrome(options=options)
         try:
             print(f"Debug - Loading URL (stripped): |{formatted_url.strip('"')}|")
-            driver.get(formatted_url.strip('"'))
+            driver.get("https://www.morphosource.org/concern/media/000034986")
             driver.maximize_window()
             
             # 3. Wait until the uv-iframe is available
