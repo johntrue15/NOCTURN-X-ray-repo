@@ -42,7 +42,7 @@ def take_screenshot(url, output_file="fullscreen_screenshot.png"):
         full_screen_btn.click()
         
         print("Taking screenshot...")
-        driver.save_screenshot("fullscreen_screenshot.png")
+        driver.save_screenshot(output_file)
         print(f"Screenshot saved to {output_file}")
         
     except Exception as e:
