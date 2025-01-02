@@ -37,10 +37,11 @@ def take_screenshot(url, output_file="fullscreen_screenshot.png"):
         
         print("Attempting to load URL...")
         driver.get(url)
+        driver.maximize_window()
         
         # Wait for specific elements to be present (adjust selectors as needed)
         wait = WebDriverWait(driver, 60)  # 60 second timeout
-        wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+        #wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
         
         # Wait for and switch to UV iframe
         uv_iframe = wait.until(
@@ -59,11 +60,11 @@ def take_screenshot(url, output_file="fullscreen_screenshot.png"):
         time.sleep(10)  # Add an extra delay
         
         # Get page dimensions
-        total_height = driver.execute_script("return document.documentElement.scrollHeight")
-        total_width = driver.execute_script("return document.documentElement.scrollWidth")
+        #total_height = driver.execute_script("return document.documentElement.scrollHeight")
+        #total_width = driver.execute_script("return document.documentElement.scrollWidth")
         
         # Set viewport size
-        driver.set_window_size(total_width, total_height)
+        #driver.set_window_size(total_width, total_height)
         
         # Additional wait after resizing
         time.sleep(5)
