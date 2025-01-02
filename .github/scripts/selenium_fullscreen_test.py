@@ -16,7 +16,7 @@ def test_fullscreen_screenshot():
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--disable-gpu')
     # Set an explicit window size to ensure the screenshot works in headless mode
-    options.add_argument('--window-size=1920,1080')
+    #options.add_argument('--window-size=1920,1080')
 
     driver = webdriver.Chrome(options=options)
 
@@ -43,7 +43,7 @@ def test_fullscreen_screenshot():
         full_screen_btn.click()
 
         # 5. Wait a bit longer for the fullscreen animation
-        time.sleep(30)
+        time.sleep(45)
 
         # 6. Attempt to take a screenshot and save it
         screenshot_name = "fullscreen_screenshot.png"
