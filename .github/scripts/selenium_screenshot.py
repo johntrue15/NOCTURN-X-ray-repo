@@ -22,37 +22,56 @@ def parse_morphosource_urls(file_path):
     print(f"Found {len(results)} record(s).")
     return results
 
-def take_fullscreen_screenshot(driver, url, output_path):
+def take_morphosource_screenshot(url, record_id):
     """Takes a fullscreen screenshot of a MorphoSource page."""
-    print(f"Taking screenshot of {url}")
-    
-    # 1. Navigate and maximize
-    driver.get(url)
-    driver.maximize_window()
-    
-    # 2. Wait for and switch to iframe
-    wait = WebDriverWait(driver, 5)
-    uv_iframe = wait.until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
-    )
-    driver.switch_to.frame(uv_iframe)
-    
-    # 3. Click fullscreen button
-    full_screen_btn = wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
-    )
-    full_screen_btn.click()
-    
-    # 4. Wait for fullscreen animation (using the same wait time that worked)
-    print(f"Waiting 112 seconds for fullscreen animation...")
-    time.sleep(12)
-    
-    # 5. Take the screenshot
-    driver.save_screenshot(output_path)
-    print(f"Screenshot saved to {output_path}")
-    
-    # 6. Brief pause after screenshot
-    time.sleep(3)
+    # 1. Launch the browser with the same working options
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    if os.path.exists('/usr/bin/chromium-browser'):
+        options.binary_location = '/usr/bin/chromium-browser'
+
+    driver = webdriver.Chrome(options=options)
+
+    try:
+        # 2. Go to the MorphoSource page
+        driver.get(url)
+        driver.maximize_window()
+
+        # 3. Wait until the uv-iframe is available, then switch into it
+        wait = WebDriverWait(driver, 5)
+        uv_iframe = wait.until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
+        )
+        driver.switch_to.frame(uv_iframe)
+
+        # 4. Click the Full Screen button
+        full_screen_btn = wait.until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
+        )
+        full_screen_btn.click()
+
+        # 5. Wait a moment to let the fullscreen animation take effect
+        time.sleep(112)
+
+        # 6. Take screenshots with both naming patterns
+        # Original working filename
+        screenshot_name = "fullscreen_screenshot.png"
+        driver.save_screenshot(screenshot_name)
+        print(f"Screenshot saved as {screenshot_name}")
+
+        # Record-specific filename in screenshots directory
+        record_screenshot = f"screenshots/{record_id}.png"
+        driver.save_screenshot(record_screenshot)
+        print(f"Screenshot also saved as {record_screenshot}")
+
+        # 7. Pause briefly
+        time.sleep(3)
+
+    finally:
+        # 8. Quit the browser
+        driver.quit()
 
 def main():
     if len(sys.argv) < 2:
@@ -65,34 +84,16 @@ def main():
         print("No MorphoSource URLs found. Exiting.")
         sys.exit(0)
 
-    # Ensure screenshots directory exists
+    # Create screenshots directory
     os.makedirs("screenshots", exist_ok=True)
 
-    # Configure Chrome with the same working options
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    if os.path.exists('/usr/bin/chromium-browser'):
-        options.binary_location = '/usr/bin/chromium-browser'
-
-    driver = webdriver.Chrome(options=options)
-
-    try:
-        # Process each record
-        for record_id, url in records:
-            print(f"\nProcessing Record #{record_id}")
-            screenshot_name = f"screenshots/{record_id}.png"
-            try:
-                take_fullscreen_screenshot(driver, url, screenshot_name)
-                print(f"Successfully processed Record #{record_id}")
-            except Exception as e:
-                print(f"Error processing record {record_id}: {e}")
-
-    finally:
-        print("Closing WebDriver...")
-        driver.quit()
-        print("Browser closed")
+    # Process each record
+    for record_id, url in records:
+        print(f"\nProcessing Record #{record_id}")
+        try:
+            take_morphosource_screenshot(url, record_id)
+        except Exception as e:
+            print(f"Error processing record {record_id}: {e}")
 
 if __name__ == "__main__":
     main()
