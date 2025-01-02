@@ -35,7 +35,7 @@ def test_fullscreen_screenshot():
         full_screen_btn.click()
 
         # 5. Wait a moment to let the fullscreen animation take effect
-        time.sleep(112)
+        time.sleep(12)
 
         # 6. Take a screenshot and save it
         screenshot_name = "fullscreen_screenshot.png"
