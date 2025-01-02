@@ -51,8 +51,9 @@ jobs:
       - name: Create or Update Release
         if: steps.scraper.outputs.new_data == 'true'
         uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          token: ${{ secrets.MY_GITHUB_TOKEN }}
           tag_name: morphosource-updates-${{ steps.gen_ts.outputs.timestamp }}
           release_name: "MorphoSource Updates #${{ steps.gen_ts.outputs.timestamp }}"
           body: ${{ steps.scraper.outputs.details }}
