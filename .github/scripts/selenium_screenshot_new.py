@@ -43,7 +43,8 @@ def take_screenshot(url):
        print(f"Loading URL: {url}")
        driver.get(url)
        
-       wait = WebDriverWait(driver, 5)
+       # Wait for initial iframe with increased timeout
+       wait = WebDriverWait(driver, 10)
        print("Looking for iframe...")
        uv_iframe = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe")))
        
@@ -52,24 +53,15 @@ def take_screenshot(url):
        
        print("Looking for fullscreen button...")
        full_screen_btn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen")))
+       
+       # Take pre-fullscreen screenshot to keep renderer active
+       driver.save_screenshot(f"pre_{output_file}")
+       
+       print("Clicking fullscreen button...")
        full_screen_btn.click()
-
-       # Split 8 second sleep into smaller chunks with actions in between
-       print("First wait period...")
-       time.sleep(2)
        
-       # Try to keep renderer active
-       driver.switch_to.default_content()
-       time.sleep(2)
-       
-       print("Second wait period...")
-       driver.switch_to.frame(uv_iframe)
-       time.sleep(2)
-       
-       print("Final wait period...")
-       driver.switch_to.default_content()
-       driver.switch_to.frame(uv_iframe)
-       time.sleep(2)
+       # Look for fullscreen state change
+       wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.image.fullscreen")))
        
        print("Taking screenshot...")
        driver.save_screenshot(output_file)
