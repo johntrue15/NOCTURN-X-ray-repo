@@ -40,7 +40,18 @@ def take_screenshot(url, output_file="fullscreen_screenshot.png"):
         
         # Wait for specific elements to be present (adjust selectors as needed)
         wait = WebDriverWait(driver, 60)  # 60 second timeout
-        wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
+        
+        # Wait for and switch to UV iframe
+        uv_iframe = wait.until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
+        )
+        driver.switch_to.frame(uv_iframe)
+        
+        # Wait for and click the fullscreen button
+        full_screen_btn = wait.until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
+        )
+        full_screen_btn.click()
         
         # Additional wait to ensure page is fully loaded
         print("Waiting for page to stabilize...")
