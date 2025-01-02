@@ -94,13 +94,12 @@ jobs:
             echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Modify and run screenshot script
+      - name: Process URLs and take screenshots
         if: steps.check_morpho.outputs.is_morphosource == 'true'
         run: |
-          MORPHO_URL="${{ steps.fetch_morpho.outputs.morpho_url }}"
-          sed "s|https://www\.morphosource\.org/concern/media/000034986|$MORPHO_URL|" \
-            .github/scripts/selenium_fullscreen_test.py > .github/scripts/temp_screenshot.py
-          python .github/scripts/temp_screenshot.py
+          echo "Found URL: ${{ steps.fetch_morpho.outputs.morpho_url }}"
+          echo "${{ steps.fetch_morpho.outputs.morpho_url }}" > release_body.txt
+          python .github/scripts/selenium_screenshot_new.py release_body.txt
 
       - name: Upload screenshot
         if: steps.check_morpho.outputs.is_morphosource == 'true'
