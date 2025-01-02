@@ -50,24 +50,10 @@ def take_screenshot(url):
         print("Switching to iframe...")
         driver.switch_to.frame(uv_iframe)
         
-        print("Starting fullscreen click loop...")
-        start_time = time.time()
+        print("Looking for fullscreen button...")
+        full_screen_btn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen")))
+        full_screen_btn.click()
         
-        while time.time() - start_time < 20:  # Run for 20 seconds
-            try:
-                full_screen_btn = driver.find_element(By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen")
-                full_screen_btn.click()
-                print("Clicked fullscreen button")
-            except:
-                print("Button click attempt")
-                
-            try:
-                # Check if fullscreen exists
-                driver.find_element(By.CSS_SELECTOR, "div.image.fullscreen")
-                print("Fullscreen detected")
-            except:
-                pass
-                
         print("Taking screenshot...")
         driver.save_screenshot(output_file)
         print(f"Screenshot saved to {output_file}")
