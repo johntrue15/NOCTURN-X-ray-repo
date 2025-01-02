@@ -13,13 +13,11 @@ def parse_morphosource_urls(file_path):
     Reads the release body from file_path and extracts MorphoSource record IDs and URLs.
     """
     print(f"[parse_morphosource_urls] Reading file: {file_path}")
-    # Updated pattern to match the new format
     pattern = r'New Record #(\d+).*?Detail Page URL: (https:\/\/www\.morphosource\.org\/concern\/media\/\d+\?locale=en)'
     results = []
     with open(file_path, 'r', encoding='utf-8') as f:
         content = f.read()
         print("[parse_morphosource_urls] File content loaded. Searching for matches...")
-        # Make the search multiline and dotall to match across line breaks
         matches = re.findall(pattern, content, re.DOTALL | re.MULTILINE)
         for record_id, url in matches:
             results.append((record_id.strip(), url.strip()))
@@ -38,7 +36,6 @@ def take_fullscreen_screenshot(driver, url, output_path):
 
     wait = WebDriverWait(driver, 20)
     
-    # Switch to iframe (if present)
     print("[take_fullscreen_screenshot] Waiting for uv-iframe to appear...")
     uv_iframe = wait.until(
         EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
@@ -46,7 +43,6 @@ def take_fullscreen_screenshot(driver, url, output_path):
     driver.switch_to.frame(uv_iframe)
     print("[take_fullscreen_screenshot] Switched to uv-iframe.")
 
-    # Click Full Screen
     print("[take_fullscreen_screenshot] Looking for Full Screen button...")
     full_screen_btn = wait.until(
         EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
@@ -54,9 +50,8 @@ def take_fullscreen_screenshot(driver, url, output_path):
     print("[take_fullscreen_screenshot] Full Screen button is clickable. Clicking now...")
     full_screen_btn.click()
 
-    # Let the fullscreen load. 15s is just an example; adjust as needed.
-    print("[take_fullscreen_screenshot] Waiting 15 seconds in fullscreen mode...")
-    time.sleep(15)
+    print("[take_fullscreen_screenshot] Waiting 30 seconds in fullscreen mode...")
+    time.sleep(30)
 
     print(f"[take_fullscreen_screenshot] Saving screenshot to {output_path}")
     driver.save_screenshot(output_path)
@@ -72,7 +67,6 @@ def main():
     release_body_file = sys.argv[1]
     print(f"Release body file provided: {release_body_file}")
 
-    # 1. Parse the release body for (record_id, url) pairs
     records = parse_morphosource_urls(release_body_file)
     if not records:
         print("No MorphoSource URLs found in the release body. Exiting.")
@@ -80,17 +74,17 @@ def main():
 
     print(f"Preparing to capture screenshots for {len(records)} record(s)...")
 
-    # 2. Make sure screenshots folder exists
     os.makedirs("screenshots", exist_ok=True)
     print("Created/ensured 'screenshots' folder exists.")
 
-    # 3. Configure Selenium WebDriver (headless Chrome)
     print("Configuring Selenium WebDriver for headless Chrome...")
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    options.add_argument('--window-size=1920,1080')  # Added for consistent resolution
+    options.add_argument('--window-size=1920,1080')
+    # Specify the binary location for chromium-browser
+    options.binary_location = '/usr/bin/chromium-browser'
     
     driver = webdriver.Chrome(options=options)
     print("WebDriver initialization complete.")
@@ -101,7 +95,6 @@ def main():
             screenshot_name = f"screenshots/{record_id}.png"
             take_fullscreen_screenshot(driver, url, screenshot_name)
             
-            # Switch back out of iframe for the next iteration
             print("[main] Switching back to default content...")
             driver.switch_to.default_content()
             print(f"[main] Done with Record #{record_id}")
