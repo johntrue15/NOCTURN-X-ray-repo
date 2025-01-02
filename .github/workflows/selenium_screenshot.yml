@@ -17,7 +17,6 @@ jobs:
       # -------------------------------------------------------
       - name: Check out repo
         uses: actions/checkout@v3
-      
       - name: Log - Checked out repository
         run: echo "Repository has been checked out."
 
@@ -28,7 +27,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
-      
       - name: Log - Python setup complete
         run: echo "Python 3.9 is now set up."
 
@@ -60,32 +58,27 @@ jobs:
           response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/releases?per_page=10")
 
-          # We'll parse them in Python to find the newest morphosource-updates-* tag.
           echo "$response" > all_releases.json
+          echo "Saved all_releases.json. Parsing to find the latest 'morphosource-updates-' release..."
 
-          echo "Parsing to find the latest 'morphosource-updates-' release..."
-          python <<EOF > morpho_out.json
+          # Carefully place Python code in a multiline heredoc
+          python << 'EOF' > morpho_out.json
 import json
 
 with open("all_releases.json", "r", encoding="utf-8") as f:
     data = json.load(f)
 
-# We'll store the best match (most recently created) that starts with 'morphosource-updates-'.
 best_release = None
 for release in data:
     tag = release.get("tag_name", "")
     if tag.startswith("morphosource-updates-"):
-        # If we haven't chosen one yet, or this release is newer by created_at
+        # If no best_release yet, or this one is newer by created_at
         if best_release is None:
             best_release = release
         else:
-            # Compare created_at times
-            current_created = release.get("created_at", "")
-            best_created = best_release.get("created_at", "")
-            if current_created > best_created:
+            if release.get("created_at", "") > best_release.get("created_at", ""):
                 best_release = release
 
-# We'll output a JSON with { "found": true/false, "tag_name": ..., "body": ... }
 if best_release:
     print(json.dumps({
         "found": True,
@@ -96,12 +89,10 @@ else:
     print(json.dumps({"found": False}))
 EOF
 
-          # Now read morpho_out.json to see if found = true
+          # Now read morpho_out.json to see if found == true
           found=$(cat morpho_out.json | python -c "import sys, json; j=json.load(sys.stdin); print(j.get('found', False))")
           if [ "$found" = "True" ]; then
             echo "Found a morphosource-updates release."
-
-            # Extract the tag_name and body
             tag_name=$(cat morpho_out.json | python -c "import sys, json; j=json.load(sys.stdin); print(j['tag_name'])")
             body=$(cat morpho_out.json | python -c "import sys, json; j=json.load(sys.stdin); print(j['body'])")
 
@@ -114,8 +105,6 @@ EOF
             echo "No morphosource-updates-* release found in the last 10 releases."
             echo "release_tag=" >> "$GITHUB_OUTPUT"
             echo "release_body=" >> "$GITHUB_OUTPUT"
-            # optional: exit 0 or set a flag
-          fi
 
       # -------------------------------------------------------
       # 5. Check if we found a morphosource-updates release
@@ -131,7 +120,7 @@ EOF
             echo "No morphosource-updates-* release found. Skipping."
           else
             echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
-          fi
+            echo "We have a valid morphosource-updates release to work with."
 
       # -------------------------------------------------------
       # 6. Take Screenshots (Only if we found morphosource-updates)
