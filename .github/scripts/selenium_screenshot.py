@@ -7,7 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.chrome.service import Service
 
 def parse_morphosource_urls(file_path):
     """
@@ -139,11 +139,11 @@ def main():
     options.add_argument('--v=1')
     options.binary_location = '/usr/bin/chromium-browser'
 
-    # Create capabilities with longer timeouts
-    caps = DesiredCapabilities.CHROME.copy()
-    caps['pageLoadStrategy'] = 'normal'
+    # Set page load strategy
+    options.set_capability('pageLoadStrategy', 'normal')
     
-    driver = webdriver.Chrome(options=options, desired_capabilities=caps)
+    service = Service()
+    driver = webdriver.Chrome(service=service, options=options)
     print("WebDriver initialization complete.")
 
     try:
