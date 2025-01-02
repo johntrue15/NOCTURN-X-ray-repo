@@ -22,7 +22,7 @@ def test_fullscreen_screenshot():
         driver.maximize_window()
 
         # 3. Wait until the uv-iframe is available, then switch into it
-        wait = WebDriverWait(driver, 30)
+        wait = WebDriverWait(driver, 5)
         uv_iframe = wait.until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
         )
@@ -35,7 +35,7 @@ def test_fullscreen_screenshot():
         full_screen_btn.click()
 
         # 5. Wait a moment to let the fullscreen animation take effect
-        time.sleep(25)
+        time.sleep(45)
 
         # 6. Take a screenshot and save it
         screenshot_name = "fullscreen_screenshot.png"
@@ -43,7 +43,7 @@ def test_fullscreen_screenshot():
         print(f"Screenshot saved as {screenshot_name}")
 
         # 7. Pause briefly so you can observe the page (optional)
-        time.sleep(1)
+        time.sleep(3)
 
     finally:
         # 8. Quit the browser
