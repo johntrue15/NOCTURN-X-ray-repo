@@ -40,7 +40,7 @@ def test_fullscreen_screenshot(url):
             )
             full_screen_btn.click()
             
-            time.sleep(112)
+            time.sleep(12)
             
             screenshot_name = "fullscreen_screenshot.png"
             driver.save_screenshot(screenshot_name)
