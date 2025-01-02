@@ -130,6 +130,9 @@ jobs:
         run: |
           echo "Storing release body to 'release_body.txt'..."
           echo "${{ steps.fetch_morpho.outputs.release_body }}" > release_body.txt
+          echo "DEBUG: Content of release_body.txt:"
+          cat release_body.txt
+          echo "DEBUG: End of release_body.txt"
           echo "Running selenium_screenshot.py to capture screenshots..."
           python .github/scripts/selenium_screenshot.py release_body.txt 2>&1 | tee screenshot_log.txt
 
@@ -150,4 +153,4 @@ jobs:
       # -------------------------------------------------------
       - name: No new morphosource release
         if: steps.check_morpho.outputs.is_morphosource == 'false'
-        run: echo "No 'morphosource-updates-*' release found. Skipping screenshot steps."
+        run: echo "No 'morphosource-updates-* release found. Skipping screenshot steps."
