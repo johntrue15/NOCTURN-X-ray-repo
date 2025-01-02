@@ -21,6 +21,7 @@ def test_fullscreen_screenshot(url):
         # First attempt with stripped quotes
         print("\nTrying with stripped quotes...")
         driver = webdriver.Chrome(options=options)
+        driver.set_page_load_timeout(45)
         try:
             print(f"Debug - Loading URL (stripped): |{formatted_url.strip('"')}|")
             driver.get(formatted_url.strip('"'))
