@@ -3,6 +3,9 @@ name: Run Selenium Fullscreen Test
 on:
   push:
     branches: [ "main" ]
+    paths:
+     - "src/**"
+     - "tests/**"
   pull_request:
     branches: [ "main" ]
 
