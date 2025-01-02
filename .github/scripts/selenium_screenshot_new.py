@@ -17,7 +17,7 @@ def test_fullscreen_screenshot(url):
     
     try:
         # 2. Go to the MorphoSource page using the provided URL
-        driver.get(url)
+        driver.get("https://www.morphosource.org/concern/media/000034986?locale=en")
         driver.maximize_window()
         
         # 3. Wait until the uv-iframe is available, then switch into it
