@@ -97,7 +97,7 @@ jobs:
       - name: Process URLs and take screenshots
         if: steps.check_morpho.outputs.is_morphosource == 'true'
         run: |
-          echo "Found URL: ${{ steps.fetch_morpho.outputs.morpho_url }}"
+          # Save URL to file and run script
           echo "${{ steps.fetch_morpho.outputs.morpho_url }}" > release_body.txt
           python .github/scripts/selenium_screenshot_new.py release_body.txt
 
