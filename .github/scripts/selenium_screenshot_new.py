@@ -18,6 +18,7 @@ def setup_driver():
     # Increase various timeout settings
     chrome_options.add_argument('--browser-timeout=60000')
     chrome_options.add_argument('--page-load-timeout=60000')
+    chrome_options.add_argument('--timeout=60000')
     
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
@@ -40,7 +41,7 @@ def take_screenshot(url, output_file="fullscreen_screenshot.png"):
         driver.maximize_window()
         
         # Wait for specific elements to be present (adjust selectors as needed)
-        wait = WebDriverWait(driver, 60)  # 60 second timeout
+        wait = WebDriverWait(driver, 30)  # 60 second timeout
         #wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
         
         # Wait for and switch to UV iframe
