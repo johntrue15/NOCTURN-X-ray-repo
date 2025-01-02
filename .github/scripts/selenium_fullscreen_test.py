@@ -35,7 +35,7 @@ def test_fullscreen_screenshot():
         full_screen_btn.click()
 
         # 5. Wait a moment to let the fullscreen animation take effect
-        time.sleep(10)
+        time.sleep(25)
 
         # 6. Take a screenshot and save it
         screenshot_name = "fullscreen_screenshot.png"
@@ -43,7 +43,7 @@ def test_fullscreen_screenshot():
         print(f"Screenshot saved as {screenshot_name}")
 
         # 7. Pause briefly so you can observe the page (optional)
-        time.sleep(3)
+        time.sleep(1)
 
     finally:
         # 8. Quit the browser
