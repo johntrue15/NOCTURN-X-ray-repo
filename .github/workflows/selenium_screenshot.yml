@@ -1,4 +1,4 @@
-name: Selenium Screenshot
+name: Automated Screenshot Workflow
 
 on:
   workflow_run:
