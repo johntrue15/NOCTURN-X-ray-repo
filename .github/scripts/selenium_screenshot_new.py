@@ -1,3 +1,4 @@
+#https://claude.ai/chat/7e5795ce-34c7-4311-b301-22950dc5435c
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
