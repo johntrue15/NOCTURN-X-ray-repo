@@ -1,5 +1,6 @@
 name: Selenium Screenshot New Workflow
 on:
+  workflow_dispatch:
   workflow_run:
     workflows: ["CT to Text"]
     types: [completed]
