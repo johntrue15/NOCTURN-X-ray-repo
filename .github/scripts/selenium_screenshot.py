@@ -25,13 +25,20 @@ def extract_urls_from_release(release_file):
 
 def take_screenshot(url, index):
     """Take a screenshot of a specific MorphoSource page."""
-    # Set up Chrome options using the working configuration
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-
+    # Add these options to help with timeout issues
+    options.add_argument('--disable-gpu')
+    options.add_argument('--window-size=1920,1080')
+    options.page_load_strategy = 'eager'
+    
     driver = webdriver.Chrome(options=options)
+    # Set page load timeout to 30 seconds
+    driver.set_page_load_timeout(30)
+    # Set script timeout to 30 seconds
+    driver.set_script_timeout(30)
     
     try:
         print(f"\nProcessing URL {index + 1}: {url}")
@@ -39,36 +46,60 @@ def take_screenshot(url, index):
         # Navigate to the page
         driver.get(url)
         driver.maximize_window()
-
-        # Wait for and switch to the UV iframe
-        wait = WebDriverWait(driver, 5)
-        uv_iframe = wait.until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
+        
+        # Increased wait time to 20 seconds
+        wait = WebDriverWait(driver, 20)
+        
+        # Wait for page to be fully loaded
+        wait.until(
+            lambda driver: driver.execute_script('return document.readyState') == 'complete'
         )
-        driver.switch_to.frame(uv_iframe)
-
-        # Click the Full Screen button
-        full_screen_btn = wait.until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
-        )
-        full_screen_btn.click()
-
-        # Wait for fullscreen animation
-        time.sleep(3)
-
-        # Take the screenshot
-        screenshot_name = f"morphosource_{index + 1}.png"
-        driver.save_screenshot(screenshot_name)
-        print(f"Screenshot saved as {screenshot_name}")
-
-        return True
-
+        
+        # Wait for and switch to the UV iframe with explicit wait
+        try:
+            print("Waiting for UV iframe...")
+            uv_iframe = wait.until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
+            )
+            print("UV iframe found, switching...")
+            driver.switch_to.frame(uv_iframe)
+            
+            # Add a small delay after switching frames
+            time.sleep(2)
+            
+            print("Waiting for full screen button...")
+            full_screen_btn = wait.until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
+            )
+            print("Clicking full screen button...")
+            full_screen_btn.click()
+            
+            # Increased wait time for fullscreen animation
+            time.sleep(5)
+            
+            # Take the screenshot
+            screenshot_name = f"morphosource_{index + 1}.png"
+            driver.save_screenshot(screenshot_name)
+            print(f"Screenshot saved as {screenshot_name}")
+            return True
+            
+        except Exception as iframe_error:
+            print(f"Error with iframe interaction: {str(iframe_error)}")
+            # Try to take a screenshot anyway
+            screenshot_name = f"morphosource_{index + 1}_partial.png"
+            driver.save_screenshot(screenshot_name)
+            print(f"Partial screenshot saved as {screenshot_name}")
+            return False
+            
     except Exception as e:
         print(f"Error processing {url}: {str(e)}")
         return False
         
     finally:
-        driver.quit()
+        try:
+            driver.quit()
+        except Exception as quit_error:
+            print(f"Error while closing driver: {str(quit_error)}")
 
 def main():
     if len(sys.argv) != 2:
