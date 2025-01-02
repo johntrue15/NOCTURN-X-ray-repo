@@ -36,8 +36,8 @@ def save_last_count(count):
 
 def parse_top_records(n=3):
     """
-    Grabs the first n <li class="document blacklight-media"> from the search results.
-    Returns a list of dicts, each containing relevant metadata (title, object, etc.).
+    Grabs the first n <li class="document blacklight-media"> from the search results
+    (descending by creation date). Returns a list of dicts containing relevant metadata.
     """
     session = requests.Session()
     resp = session.get(SEARCH_URL)
@@ -78,17 +78,17 @@ def format_release_message(new_records, old_count, records):
     """
     Creates a multiline string for the Release body:
       - How many new records (plus old record value)
-      - Then each record in descending order, labeled as "New Record #... Title: ..."
+      - Then each record in descending order, labeled as "New Record #..."
     """
     lines = []
     lines.append("A new increase in X-ray Computed Tomography records was found on MorphoSource.")
     lines.append("")
-    lines.append(f"We found {new_records} new records (old record value: {old_count}).")
+    lines.append(f"We found {new_records} new record(s) (old record value: {old_count}).")
     lines.append("")
 
-    # If old_count=104233 and new_records=3,
-    # the new record numbers are 104234, 104235, 104236
-    # but we want them in descending order: 104236, 104235, 104234
+    # Example: if old_count=104235 and new_records=1,
+    # the new record number is 104236
+    # if new_records=3, they are 104236, 104235, 104234 (descending).
     for i, rec in enumerate(records, start=1):
         record_number = old_count + new_records - (i - 1)
         lines.append(f"New Record #{record_number} Title: {rec.get('title', 'N/A')}")
@@ -118,7 +118,11 @@ def main():
     github_output = os.environ.get("GITHUB_OUTPUT", "")
 
     if new_records > 0:
-        top_records = parse_top_records(n=3)
+        # Only fetch as many records as are new, up to a maximum of 3
+        records_to_fetch = min(new_records, 3)
+        top_records = parse_top_records(n=records_to_fetch)
+
+        # Update the stored count
         save_last_count(current_count)
 
         message = format_release_message(new_records, old_count, top_records)
