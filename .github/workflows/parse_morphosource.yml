@@ -2,7 +2,7 @@ name: Parse MorphoSource Data
 
 on:
   schedule:
-    # Runs every 5 minutes
+    # Runs every 5 minutes (adjust as needed)
     - cron: "*/5 * * * *"
   workflow_dispatch:
 
@@ -44,17 +44,15 @@ jobs:
         id: gen_ts
         if: steps.scraper.outputs.new_data == 'true'
         run: |
-          # Format: MM.DD.YYYY-HH:MM:SS (e.g. 01.01.2025-12:00:00)
+          # Format: YYYY-MM-DD_HH-MM-SS
           TS=$(date +'%Y-%m-%d_%H-%M-%S')
-          echo "::set-output name=timestamp::$TS"
+          echo "timestamp=$TS" >> $GITHUB_OUTPUT
 
       - name: Create or Update Release
         if: steps.scraper.outputs.new_data == 'true'
         uses: actions/create-release@v1
-        env:
-          # If you store a custom token in MY_GITHUB_TOKEN, replace below:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
           tag_name: morphosource-updates-${{ steps.gen_ts.outputs.timestamp }}
           release_name: "MorphoSource Updates #${{ steps.gen_ts.outputs.timestamp }}"
           body: ${{ steps.scraper.outputs.details }}
