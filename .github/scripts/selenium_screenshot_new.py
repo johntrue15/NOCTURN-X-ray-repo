@@ -30,7 +30,7 @@ def take_screenshot(url, output_file="fullscreen_screenshot.png"):
         print(f"Loading URL: {url}")
         driver.get(url)
         
-        wait = WebDriverWait(driver, 20)
+        wait = WebDriverWait(driver, 5)
         print("Looking for iframe...")
         uv_iframe = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe")))
         
@@ -42,7 +42,7 @@ def take_screenshot(url, output_file="fullscreen_screenshot.png"):
         full_screen_btn.click()
         
         print("Taking screenshot...")
-        driver.save_screenshot(output_file)
+        driver.save_screenshot("fullscreen_screenshot.png")
         print(f"Screenshot saved to {output_file}")
         
     except Exception as e:
