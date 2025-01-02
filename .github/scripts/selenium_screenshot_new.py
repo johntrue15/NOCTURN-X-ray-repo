@@ -54,8 +54,8 @@ def take_screenshot(url):
        full_screen_btn.click()
        
        # Added 8 second wait for fullscreen image to load
-       print("Waiting for fullscreen image to load...")
-       time.sleep(8)
+       #print("Waiting for fullscreen image to load...")
+       #time.sleep(8)
        
        print("Taking screenshot...")
        driver.save_screenshot(output_file)
