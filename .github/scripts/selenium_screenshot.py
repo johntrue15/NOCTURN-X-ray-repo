@@ -2,11 +2,12 @@ import sys
 import re
 import os
 import time
-
+import logging
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 def parse_morphosource_urls(file_path):
     """
@@ -30,32 +31,79 @@ def take_fullscreen_screenshot(driver, url, output_path):
     Navigates to the given MorphoSource URL, switches to the uv-iframe,
     clicks fullscreen, waits, then saves a screenshot to output_path.
     """
-    print(f"[take_fullscreen_screenshot] Navigating to {url}")
-    driver.get(url)
-    driver.maximize_window()
-
-    wait = WebDriverWait(driver, 20)
-    
-    print("[take_fullscreen_screenshot] Waiting for uv-iframe to appear...")
-    uv_iframe = wait.until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
-    )
-    driver.switch_to.frame(uv_iframe)
-    print("[take_fullscreen_screenshot] Switched to uv-iframe.")
-
-    print("[take_fullscreen_screenshot] Looking for Full Screen button...")
-    full_screen_btn = wait.until(
-        EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
-    )
-    print("[take_fullscreen_screenshot] Full Screen button is clickable. Clicking now...")
-    full_screen_btn.click()
-
-    print("[take_fullscreen_screenshot] Waiting 30 seconds in fullscreen mode...")
-    time.sleep(30)
-
-    print(f"[take_fullscreen_screenshot] Saving screenshot to {output_path}")
-    driver.save_screenshot(output_path)
-    print("[take_fullscreen_screenshot] Screenshot saved.")
+    try:
+        print(f"[take_fullscreen_screenshot] Navigating to {url}")
+        driver.get(url)
+        time.sleep(5)  # Wait for initial page load
+        
+        driver.maximize_window()
+        print("[take_fullscreen_screenshot] Window maximized")
+        
+        # Set longer timeout for iframe
+        wait = WebDriverWait(driver, 40)  # Increased timeout
+        print("[take_fullscreen_screenshot] Waiting for uv-iframe to appear...")
+        
+        # Try multiple times to find the iframe
+        max_attempts = 3
+        for attempt in range(max_attempts):
+            try:
+                uv_iframe = wait.until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
+                )
+                print(f"[take_fullscreen_screenshot] Found iframe on attempt {attempt + 1}")
+                break
+            except Exception as e:
+                if attempt == max_attempts - 1:
+                    raise
+                print(f"Attempt {attempt + 1} failed, retrying...")
+                time.sleep(5)
+        
+        driver.switch_to.frame(uv_iframe)
+        print("[take_fullscreen_screenshot] Switched to uv-iframe")
+        
+        # Wait for the page to stabilize
+        time.sleep(10)
+        
+        print("[take_fullscreen_screenshot] Looking for Full Screen button...")
+        full_screen_btn = wait.until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
+        )
+        
+        # Multiple attempts for clicking fullscreen
+        for attempt in range(max_attempts):
+            try:
+                print(f"[take_fullscreen_screenshot] Attempting to click fullscreen (attempt {attempt + 1})")
+                full_screen_btn.click()
+                break
+            except Exception as e:
+                if attempt == max_attempts - 1:
+                    raise
+                time.sleep(5)
+        
+        print("[take_fullscreen_screenshot] Waiting in fullscreen mode...")
+        time.sleep(20)  # Reduced wait time but added stability checks
+        
+        # Take multiple screenshots to ensure quality
+        for i in range(3):
+            screenshot_path = f"{output_path}_attempt_{i+1}.png"
+            print(f"[take_fullscreen_screenshot] Saving screenshot attempt {i+1} to {screenshot_path}")
+            driver.save_screenshot(screenshot_path)
+            time.sleep(5)
+        
+        # Use the last screenshot as the final one
+        if os.path.exists(f"{output_path}_attempt_3.png"):
+            os.rename(f"{output_path}_attempt_3.png", output_path)
+            print(f"[take_fullscreen_screenshot] Final screenshot saved as {output_path}")
+            
+        # Clean up temporary screenshots
+        for i in range(2):
+            temp_path = f"{output_path}_attempt_{i+1}.png"
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+                
+    except Exception as e:
+        print(f"[take_fullscreen_screenshot] Error during screenshot: {str(e)}")
+        raise
 
 def main():
     print("=== Starting selenium_screenshot.py ===")
@@ -79,31 +127,40 @@ def main():
 
     print("Configuring Selenium WebDriver for headless Chrome...")
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
+    options.add_argument('--headless=new')  # Using new headless mode
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--window-size=1920,1080')
-    # Specify the binary location for chromium-browser
+    options.add_argument('--disable-gpu')
+    options.add_argument('--ignore-certificate-errors')
+    options.add_argument('--disable-extensions')
+    options.add_argument('--disable-web-security')
+    options.add_argument('--enable-logging')
+    options.add_argument('--v=1')
     options.binary_location = '/usr/bin/chromium-browser'
+
+    # Create capabilities with longer timeouts
+    caps = DesiredCapabilities.CHROME.copy()
+    caps['pageLoadStrategy'] = 'normal'
     
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(options=options, desired_capabilities=caps)
     print("WebDriver initialization complete.")
 
     try:
         for idx, (record_id, url) in enumerate(records, start=1):
             print(f"\n[{idx}/{len(records)}] Capturing screenshot for Record #{record_id} -> {url}")
             screenshot_name = f"screenshots/{record_id}.png"
-            take_fullscreen_screenshot(driver, url, screenshot_name)
-            
-            print("[main] Switching back to default content...")
-            driver.switch_to.default_content()
-            print(f"[main] Done with Record #{record_id}")
+            try:
+                take_fullscreen_screenshot(driver, url, screenshot_name)
+                print("[main] Switching back to default content...")
+                driver.switch_to.default_content()
+                print(f"[main] Done with Record #{record_id}")
+            except Exception as e:
+                print(f"Error processing record {record_id}: {str(e)}")
+                continue  # Continue with next record even if one fails
 
     except Exception as e:
         print(f"ERROR occurred while capturing screenshots: {e}")
-        driver.quit()
-        sys.exit(1)
-
     finally:
         print("Closing WebDriver...")
         driver.quit()
