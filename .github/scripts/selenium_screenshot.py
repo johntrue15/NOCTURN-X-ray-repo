@@ -1,129 +1,74 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
+from webdriver_manager.chrome import ChromeDriverManager
 import time
-import os
 import sys
-import re
 
-def extract_urls_from_release(release_file):
-    """Extract MorphoSource URLs from the release body text file."""
-    try:
-        with open(release_file, 'r', encoding='utf-8') as f:
-            content = f.read()
-        
-        # Find all MorphoSource URLs
-        pattern = r'https://www\.morphosource\.org/concern/media/\d+'
-        urls = re.findall(pattern, content)
-        
-        print(f"Found {len(urls)} MorphoSource URLs in release body")
-        return urls
-    except Exception as e:
-        print(f"Error reading release file: {e}")
-        return []
+def setup_driver():
+    chrome_options = Options()
+    chrome_options.add_argument('--headless=new')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument('--window-size=1920,1080')
+    
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+    
+    return driver
 
-def take_screenshot(url, index):
-    """Take a screenshot of a specific MorphoSource page."""
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    # Add these options to help with timeout issues
-    options.add_argument('--disable-gpu')
-    options.add_argument('--window-size=1920,1080')
-    options.page_load_strategy = 'eager'
-    
-    driver = webdriver.Chrome(options=options)
-    # Set page load timeout to 30 seconds
-    driver.set_page_load_timeout(30)
-    # Set script timeout to 30 seconds
-    driver.set_script_timeout(30)
-    
+def take_screenshot(url, output_file="fullscreen_screenshot.png"):
+    driver = None
     try:
-        print(f"\nProcessing URL {index + 1}: {url}")
-        
-        # Navigate to the page
-        driver.get(url)
+        driver = setup_driver()
         driver.maximize_window()
         
-        # Increased wait time to 20 seconds
-        wait = WebDriverWait(driver, 20)
+        print(f"Loading URL: {url}")
+        driver.get(url)
         
-        # Wait for page to be fully loaded
-        wait.until(
-            lambda driver: driver.execute_script('return document.readyState') == 'complete'
-        )
+        wait = WebDriverWait(driver, 5)
+        print("Looking for iframe...")
+        uv_iframe = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe")))
         
-        # Wait for and switch to the UV iframe with explicit wait
-        try:
-            print("Waiting for UV iframe...")
-            uv_iframe = wait.until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
-            )
-            print("UV iframe found, switching...")
-            driver.switch_to.frame(uv_iframe)
-            
-            # Add a small delay after switching frames
-            time.sleep(2)
-            
-            print("Waiting for full screen button...")
-            full_screen_btn = wait.until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
-            )
-            print("Clicking full screen button...")
-            full_screen_btn.click()
-            
-            # Increased wait time for fullscreen animation
-            time.sleep(5)
-            
-            # Take the screenshot
-            screenshot_name = f"morphosource_{index + 1}.png"
-            driver.save_screenshot(screenshot_name)
-            print(f"Screenshot saved as {screenshot_name}")
-            return True
-            
-        except Exception as iframe_error:
-            print(f"Error with iframe interaction: {str(iframe_error)}")
-            # Try to take a screenshot anyway
-            screenshot_name = f"morphosource_{index + 1}_partial.png"
-            driver.save_screenshot(screenshot_name)
-            print(f"Partial screenshot saved as {screenshot_name}")
-            return False
-            
+        print("Switching to iframe...")
+        driver.switch_to.frame(uv_iframe)
+        
+        print("Looking for fullscreen button...")
+        full_screen_btn = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen")))
+        full_screen_btn.click()
+
+        time.sleep(30) #need to make longer to accomodate load, eventually dynamic (PULL REQUEST)
+        print("Taking screenshot...")
+        driver.save_screenshot(output_file)
+        print(f"Screenshot saved to {output_file}")
+        
     except Exception as e:
-        print(f"Error processing {url}: {str(e)}")
-        return False
-        
+        print(f"Error: {str(e)}")
+        if driver:
+            driver.save_screenshot("error_screenshot.png")
+            print("Error screenshot saved")
+        raise
     finally:
-        try:
+        if driver:
             driver.quit()
-        except Exception as quit_error:
-            print(f"Error while closing driver: {str(quit_error)}")
 
 def main():
     if len(sys.argv) != 2:
-        print("Usage: python selenium_screenshot.py <release_body_file>")
+        print("Usage: python script.py <input_file>")
         sys.exit(1)
     
-    release_file = sys.argv[1]
-    urls = extract_urls_from_release(release_file)
-    
-    if not urls:
-        print("No MorphoSource URLs found in release body")
-        sys.exit(1)
-    
-    # Process each URL
-    successful_screenshots = 0
-    for index, url in enumerate(urls):
-        if take_screenshot(url, index):
-            successful_screenshots += 1
-    
-    print(f"\nScreenshot process complete")
-    print(f"Successfully captured {successful_screenshots} out of {len(urls)} screenshots")
-    
-    # Exit with error if we didn't get all screenshots
-    if successful_screenshots != len(urls):
+    input_file = sys.argv[1]
+    try:
+        with open(input_file, 'r') as f:
+            url = f.read().strip()
+            print(f"URL from file: {url}")
+            take_screenshot(url)
+    except Exception as e:
+        print(f"Error: {str(e)}")
         sys.exit(1)
 
 if __name__ == "__main__":
