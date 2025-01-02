@@ -1,81 +1,96 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 import sys
 
-def test_fullscreen_screenshot(url):
-    print(f"Loading URL: {url}")
+def setup_driver():
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument('--window-size=1920,1080')
+    # Increase various timeout settings
+    chrome_options.add_argument('--browser-timeout=60000')
+    chrome_options.add_argument('--page-load-timeout=60000')
     
-    # 1. Launch the browser with modified options
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless=new')  # Use new headless mode
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    options.add_argument('--remote-debugging-port=9222')  # Enable debugging
-    options.add_argument('--disable-gpu')  # Disable GPU usage
-    options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=chrome_options)
     
+    # Set page load timeout to 60 seconds
+    driver.set_page_load_timeout(60)
+    # Set script timeout to 60 seconds
+    driver.set_script_timeout(60)
+    
+    return driver
+
+def take_screenshot(url, output_file="fullscreen_screenshot.png"):
+    driver = None
     try:
-        # Setup service with increased startup timeout
-        service = Service(ChromeDriverManager().install())
-        service.start()  # Start service explicitly
+        print(f"Loading URL: {url}")
+        driver = setup_driver()
         
-        # Create driver with the running service
-        driver = webdriver.Chrome(service=service, options=options)
-        driver.set_page_load_timeout(30)
-        
-        print(f"Attempting to load URL...")
+        print("Attempting to load URL...")
         driver.get(url)
-        driver.maximize_window()
         
-        wait = WebDriverWait(driver, 5)
-        uv_iframe = wait.until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
-        )
-        driver.switch_to.frame(uv_iframe)
+        # Wait for specific elements to be present (adjust selectors as needed)
+        wait = WebDriverWait(driver, 60)  # 60 second timeout
+        wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
         
-        full_screen_btn = wait.until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
-        )
-        full_screen_btn.click()
+        # Additional wait to ensure page is fully loaded
+        print("Waiting for page to stabilize...")
+        time.sleep(10)  # Add an extra delay
         
-        time.sleep(12)
+        # Get page dimensions
+        total_height = driver.execute_script("return document.documentElement.scrollHeight")
+        total_width = driver.execute_script("return document.documentElement.scrollWidth")
         
-        screenshot_name = "fullscreen_screenshot.png"
-        driver.save_screenshot(screenshot_name)
-        print(f"Screenshot saved as {screenshot_name}")
+        # Set viewport size
+        driver.set_window_size(total_width, total_height)
         
-        time.sleep(3)
+        # Additional wait after resizing
+        time.sleep(5)
         
+        print(f"Taking screenshot (dimensions: {total_width}x{total_height})")
+        driver.save_screenshot(output_file)
+        print(f"Screenshot saved to {output_file}")
+        
+    except TimeoutException as e:
+        print(f"Timeout while loading page: {str(e)}")
+        if driver:
+            print("Attempting to save partial screenshot...")
+            try:
+                driver.save_screenshot("timeout_partial_screenshot.png")
+                print("Partial screenshot saved")
+            except Exception as se:
+                print(f"Could not save partial screenshot: {str(se)}")
+        raise
     except Exception as e:
         print(f"Error during screenshot process: {str(e)}")
         raise
     finally:
-        if 'driver' in locals():
+        if driver:
             driver.quit()
-        if 'service' in locals():
-            service.stop()  # Explicitly stop the service
 
-if __name__ == "__main__":
+def main():
     if len(sys.argv) != 2:
-        print("Usage: python selenium_screenshot_new.py <url_file>")
+        print("Usage: python script.py <input_file>")
         sys.exit(1)
     
+    input_file = sys.argv[1]
     try:
-        with open(sys.argv[1], 'r') as file:
-            url = file.read().strip()
-            
-        if not url:
-            print("Error: URL file is empty")
-            sys.exit(1)
-            
-        print(f"URL from file: {url}")
-        test_fullscreen_screenshot(url)
-        
+        with open(input_file, 'r') as f:
+            url = f.read().strip()
+            print(f"URL from file: {url}")
+            take_screenshot(url)
     except Exception as e:
         print(f"Error reading file: {str(e)}")
         sys.exit(1)
+
+if __name__ == "__main__":
+    main()
