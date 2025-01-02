@@ -1,7 +1,7 @@
 name: Automated Screenshot Workflow
 
 on:
-  workflow-dispatch:
+  workflow_dispatch:
   #workflow_run:
     #workflows: ["CT to Text"]
     #types: [completed]
