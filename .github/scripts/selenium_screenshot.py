@@ -7,88 +7,72 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.service import Service
 
 def log_time(message):
     """Helper function to print timestamped messages"""
     timestamp = datetime.now().strftime('%H:%M:%S.%f')[:-3]
     print(f"[{timestamp}] {message}")
 
+def parse_morphosource_urls(file_path):
+    """
+    Reads the release body from file_path and extracts MorphoSource record IDs and URLs.
+    """
+    log_time(f"Reading file: {file_path}")
+    pattern = r'New Record #(\d+).*?Detail Page URL: (https:\/\/www\.morphosource\.org\/concern\/media\/\d+\?locale=en)'
+    results = []
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+        log_time("File content loaded. Searching for matches...")
+        matches = re.findall(pattern, content, re.DOTALL | re.MULTILINE)
+        for record_id, url in matches:
+            results.append((record_id.strip(), url.strip()))
+
+    log_time(f"Found {len(results)} record(s).")
+    return results
+
 def take_fullscreen_screenshot(driver, url, output_path):
-    start_time = time.time()
-    log_time(f"Starting screenshot process for {url}")
-    
+    """
+    Takes a fullscreen screenshot of a MorphoSource page.
+    """
     try:
-        log_time("Navigating to URL")
+        log_time(f"Navigating to {url}")
         driver.get(url)
-        log_time(f"Navigation complete. Took {time.time() - start_time:.2f} seconds")
-        
-        nav_time = time.time()
         driver.maximize_window()
         log_time("Window maximized")
-        
-        wait = WebDriverWait(driver, 40)
-        log_time("Looking for iframe...")
-        
-        iframe_start = time.time()
-        max_attempts = 3
-        for attempt in range(max_attempts):
-            try:
-                uv_iframe = wait.until(
-                    EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
-                )
-                log_time(f"Found iframe on attempt {attempt + 1}. Took {time.time() - iframe_start:.2f} seconds")
-                break
-            except Exception as e:
-                log_time(f"Attempt {attempt + 1} failed to find iframe")
-                if attempt == max_attempts - 1:
-                    raise
-                time.sleep(5)
-        
-        switch_time = time.time()
+
+        # Wait for and switch to iframe
+        log_time("Waiting for iframe...")
+        wait = WebDriverWait(driver, 5)
+        uv_iframe = wait.until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
+        )
         driver.switch_to.frame(uv_iframe)
-        log_time(f"Switched to iframe. Took {time.time() - switch_time:.2f} seconds")
-        
-        log_time("Waiting 5 seconds for page stabilization")
-        time.sleep(5)
-        
-        button_start = time.time()
+        log_time("Switched to iframe")
+
+        # Click fullscreen button
         log_time("Looking for Full Screen button")
         full_screen_btn = wait.until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
         )
-        log_time(f"Found Full Screen button. Took {time.time() - button_start:.2f} seconds")
+        full_screen_btn.click()
+        log_time("Clicked Full Screen button")
+
+        # Wait for fullscreen and take screenshot
+        log_time("Waiting for fullscreen animation...")
+        time.sleep(112)  # Using the working timeout value
         
-        click_start = time.time()
-        for attempt in range(max_attempts):
-            try:
-                log_time(f"Attempting to click fullscreen (attempt {attempt + 1})")
-                full_screen_btn.click()
-                log_time("Successfully clicked fullscreen")
-                break
-            except Exception as e:
-                log_time(f"Click attempt {attempt + 1} failed")
-                if attempt == max_attempts - 1:
-                    raise
-                time.sleep(5)
-        
-        log_time("Waiting 10 seconds in fullscreen mode")
-        time.sleep(10)
-        
-        screenshot_start = time.time()
-        log_time("Taking screenshot")
+        log_time(f"Taking screenshot: {output_path}")
         driver.save_screenshot(output_path)
-        log_time(f"Screenshot saved to {output_path}. Took {time.time() - screenshot_start:.2f} seconds")
-        
-        total_time = time.time() - start_time
-        log_time(f"Total screenshot process took {total_time:.2f} seconds")
-                
+        log_time("Screenshot saved")
+
+        # Brief pause after screenshot
+        time.sleep(3)
+
     except Exception as e:
         log_time(f"Error during screenshot: {str(e)}")
         raise
 
 def main():
-    start_time = time.time()
     log_time("=== Starting selenium_screenshot.py ===")
 
     if len(sys.argv) < 2:
@@ -98,57 +82,46 @@ def main():
     release_body_file = sys.argv[1]
     log_time(f"Release body file provided: {release_body_file}")
 
-    # Parse URLs
-    parse_start = time.time()
-    pattern = r'New Record #(\d+).*?Detail Page URL: (https:\/\/www\.morphosource\.org\/concern\/media\/\d+\?locale=en)'
-    with open(release_body_file, 'r', encoding='utf-8') as f:
-        content = f.read()
-    matches = re.findall(pattern, content, re.DOTALL | re.MULTILINE)
-    records = [(record_id.strip(), url.strip()) for record_id, url in matches]
-    log_time(f"Found {len(records)} URLs. Parsing took {time.time() - parse_start:.2f} seconds")
-
+    records = parse_morphosource_urls(release_body_file)
     if not records:
-        log_time("No MorphoSource URLs found. Exiting.")
+        log_time("No MorphoSource URLs found in the release body. Exiting.")
         sys.exit(0)
 
-    os.makedirs("screenshots", exist_ok=True)
-    log_time("Created screenshots directory")
+    log_time(f"Preparing to capture screenshots for {len(records)} record(s)...")
 
-    # Set up WebDriver
-    driver_start = time.time()
-    log_time("Configuring Chrome...")
+    os.makedirs("screenshots", exist_ok=True)
+    log_time("Created/ensured 'screenshots' folder exists.")
+
+    log_time("Configuring Selenium WebDriver...")
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless=new')
+    options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    options.add_argument('--window-size=1920,1080')
-    options.binary_location = '/usr/bin/chromium-browser'
-    options.set_capability('pageLoadStrategy', 'normal')
-    
-    service = Service()
-    driver = webdriver.Chrome(service=service, options=options)
-    log_time(f"Chrome setup complete. Took {time.time() - driver_start:.2f} seconds")
+    if os.path.exists('/usr/bin/chromium-browser'):
+        options.binary_location = '/usr/bin/chromium-browser'
+
+    driver = webdriver.Chrome(options=options)
+    log_time("WebDriver initialization complete.")
 
     try:
         for idx, (record_id, url) in enumerate(records, start=1):
-            log_time(f"\nProcessing record {idx}/{len(records)}: #{record_id}")
+            log_time(f"\n[{idx}/{len(records)}] Processing Record #{record_id}")
             screenshot_name = f"screenshots/{record_id}.png"
             try:
                 take_fullscreen_screenshot(driver, url, screenshot_name)
-                log_time(f"Successfully processed record #{record_id}")
+                log_time(f"Successfully captured screenshot for Record #{record_id}")
             except Exception as e:
-                log_time(f"Failed to process record #{record_id}: {str(e)}")
-                continue
+                log_time(f"Error processing record {record_id}: {str(e)}")
+                continue  # Continue with next record even if one fails
 
     except Exception as e:
-        log_time(f"Fatal error: {e}")
+        log_time(f"ERROR occurred while capturing screenshots: {e}")
     finally:
-        log_time("Closing Chrome...")
+        log_time("Closing WebDriver...")
         driver.quit()
-        log_time("Chrome closed")
+        log_time("WebDriver closed successfully.")
 
-    total_time = time.time() - start_time
-    log_time(f"=== Script completed in {total_time:.2f} seconds ===")
+    log_time("=== Finished selenium_screenshot.py ===")
 
 if __name__ == "__main__":
     main()
