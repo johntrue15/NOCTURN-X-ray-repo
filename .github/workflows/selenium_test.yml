@@ -31,9 +31,14 @@ jobs:
           # Install Chrome
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
-          # Automatically configure chromedriver
-          # (webdriver-manager can help you manage the ChromeDriver version)
 
       - name: Run Selenium test
         run: |
-          python .github/scripts/selenium_fullscreen_test.py
+          python selenium_fullscreen_test.py
+
+      - name: Upload screenshot artifact
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: fullscreen_screenshot
+          path: fullscreen_screenshot.png
