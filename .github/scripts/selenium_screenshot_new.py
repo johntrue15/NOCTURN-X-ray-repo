@@ -55,9 +55,9 @@ def take_screenshot(url):
 
         # Split 8 second sleep into two 4-second intervals
         print("Initial wait after fullscreen click...")
-        time.sleep(4)
+        time.sleep(2)
         print("Continuing wait...")
-        time.sleep(4)
+        time.sleep(2)
         
         print("Taking screenshot...")
         driver.save_screenshot(output_file)
