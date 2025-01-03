@@ -1,8 +1,9 @@
 name: Automated Screenshot Workflow
 on:
-  workflow_run:
-    workflows: ["CT to Text"]
-    types: [completed]
+  workflow_dispatch:
+  #workflow_run:
+   # workflows: ["CT to Text"]
+    #types: [completed]
 jobs:
   screenshot_job:
     runs-on: ubuntu-latest
