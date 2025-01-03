@@ -46,7 +46,7 @@ def test_fullscreen_screenshot():
         time.sleep(660)
 
         # 6. Attempt to take a screenshot and save it
-        screenshot_name = "fullscreen_screenshot.png"
+        screenshot_name = "fullscreen_screenshot_3D.png"
         try:
             driver.save_screenshot(screenshot_name)
         except TimeoutException:
