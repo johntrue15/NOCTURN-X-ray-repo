@@ -6,7 +6,16 @@ from selenium.common.exceptions import TimeoutException, WebDriverException
 import time
 import os
 import sys
+import argparse
 from datetime import datetime
+
+# Default URL for 3D test
+DEFAULT_URL = "https://www.morphosource.org/concern/media/000699150"
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Run Selenium fullscreen test')
+    parser.add_argument('--url', type=str, help='URL to test (optional)', default=DEFAULT_URL)
+    return parser.parse_args()
 
 def take_screenshot_with_retry(driver, screenshot_name, max_retries=3, wait_between_retries=10):
     """Attempt to take a screenshot with multiple retries"""
@@ -31,11 +40,13 @@ def take_screenshot_with_retry(driver, screenshot_name, max_retries=3, wait_betw
             else:
                 raise
 
-def test_fullscreen_screenshot():
+def test_fullscreen_screenshot(url):
     driver = None
     start_time = datetime.now()
     
     try:
+        print(f"Testing URL: {url}")
+        
         # 1. Configure ChromeOptions with enhanced settings
         options = webdriver.ChromeOptions()
         options.add_argument('--headless')
@@ -44,14 +55,13 @@ def test_fullscreen_screenshot():
         options.add_argument('--disable-gpu')
         options.add_argument('--start-maximized')
         options.add_argument('--window-size=1920,1080')
-        # Add additional Chrome flags to help with stability
         options.add_argument('--disable-web-security')
         options.add_argument('--disable-features=IsolateOrigins,site-per-process')
         
         # Initialize webdriver with extended timeouts
         driver = webdriver.Chrome(options=options)
-        driver.set_page_load_timeout(60)  # Extended timeout
-        driver.set_script_timeout(60)     # Extended script timeout
+        driver.set_page_load_timeout(60)
+        driver.set_script_timeout(60)
         
         print("Starting test execution...")
         
@@ -59,7 +69,7 @@ def test_fullscreen_screenshot():
         max_navigation_retries = 3
         for attempt in range(max_navigation_retries):
             try:
-                driver.get("https://www.morphosource.org/concern/media/000699150")
+                driver.get(url)
                 break
             except TimeoutException as e:
                 if attempt < max_navigation_retries - 1:
@@ -87,8 +97,8 @@ def test_fullscreen_screenshot():
         full_screen_btn.click()
         
         # 6. Wait for content to load with progress monitoring
-        total_wait = 10  # Total wait time in seconds
-        interval = 30     # Progress update interval
+        total_wait = 10
+        interval = 2
         print(f"Waiting {total_wait} seconds for content to load...")
         for i in range(0, total_wait, interval):
             time.sleep(interval)
@@ -123,7 +133,8 @@ def test_fullscreen_screenshot():
 
 if __name__ == "__main__":
     try:
-        test_fullscreen_screenshot()
+        args = parse_arguments()
+        test_fullscreen_screenshot(args.url)
     except Exception as e:
         print(f"Test failed with error: {str(e)}")
-        sys.exit(1)  # Ensure non-zero exit code on failure
+        sys.exit(1)
