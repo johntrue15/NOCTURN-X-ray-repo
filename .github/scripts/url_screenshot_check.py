@@ -38,6 +38,10 @@ def setup_driver():
         chrome_options.add_argument('--disable-software-rasterizer')
         chrome_options.add_argument('--window-size=1920,1080')
         chrome_options.add_argument('--start-maximized')
+        chrome_options.add_argument('--disable-extensions')
+        chrome_options.add_argument('--ignore-certificate-errors')
+        chrome_options.add_argument('--disable-web-security')
+        chrome_options.add_argument('--allow-running-insecure-content')
         
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=chrome_options)
@@ -79,12 +83,29 @@ def wait_for_element(driver, by, selector, timeout=10, condition="presence"):
         logging.error(f"Error waiting for element {selector}: {str(e)}")
         raise
 
+def verify_page_loaded(driver, timeout=30):
+    """Verify that the page has loaded properly"""
+    try:
+        # Wait for the page to be in ready state
+        WebDriverWait(driver, timeout).until(
+            lambda d: d.execute_script('return document.readyState') == 'complete'
+        )
+        
+        # Additional check for specific elements that should be present
+        WebDriverWait(driver, 5).until(
+            lambda d: len(d.find_elements(By.TAG_NAME, "body")) > 0
+        )
+        return True
+    except Exception as e:
+        logging.error(f"Page load verification failed: {str(e)}")
+        return False
+
 def take_screenshot(url):
     file_id = extract_id_from_url(url)
     output_file = f"{file_id}.png"
     error_file = f"error_{file_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
     max_retries = 3
-    retry_delay = 5  # seconds between retries
+    retry_delay = 10  # increased retry delay
 
     for attempt in range(max_retries):
         driver = None
@@ -98,19 +119,56 @@ def take_screenshot(url):
             # Load the page with retry mechanism
             try:
                 driver.get(url)
+                if not verify_page_loaded(driver):
+                    raise TimeoutException("Page did not load completely")
             except TimeoutException:
-                logging.warning("Page load timeout, refreshing...")
+                logging.warning("Page load timeout, trying again with refresh...")
                 driver.refresh()
+                time.sleep(5)  # Wait after refresh
+                if not verify_page_loaded(driver):
+                    raise TimeoutException("Page did not load after refresh")
+                
+            # Additional wait for dynamic content
+            time.sleep(5)  # Wait for dynamic content to load
             
-            # Wait for and switch to iframe
+            # Check if we're on the right page
+            try:
+                if "morphosource" not in driver.current_url.lower():
+                    raise WebDriverException("Not on MorphoSource page")
+            except Exception as e:
+                logging.error(f"URL verification failed: {str(e)}")
+                raise
+            
+            # Wait for and switch to iframe with multiple selectors
             logging.info("Waiting for iframe...")
-            uv_iframe = wait_for_element(
-                driver,
-                By.CSS_SELECTOR,
+            iframe_found = False
+            iframe_selectors = [
                 "iframe#uv-iframe",
-                timeout=15,
-                condition="presence"
-            )
+                "iframe[id*='uv-']",  # Partial ID match
+                "iframe[src*='uv']",   # Partial src match
+                "iframe"               # Any iframe as fallback
+            ]
+            
+            for selector in iframe_selectors:
+                try:
+                    logging.info(f"Trying iframe selector: {selector}")
+                    uv_iframe = wait_for_element(
+                        driver,
+                        By.CSS_SELECTOR,
+                        selector,
+                        timeout=10,
+                        condition="presence"
+                    )
+                    iframe_found = True
+                    logging.info(f"Found iframe with selector: {selector}")
+                    break
+                except Exception as e:
+                    logging.warning(f"Selector {selector} failed: {str(e)}")
+                    continue
+            
+            if not iframe_found:
+                logging.error("No iframe found with any selector")
+                raise NoSuchElementException("Could not find iframe with any selector")
             
             # Add a small delay before switching
             time.sleep(2)
