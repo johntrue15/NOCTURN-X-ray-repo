@@ -69,6 +69,9 @@ def take_screenshot(url):
                 if "Media preview currently unavailable" in not_ready.text:
                     logging.info("morphosource media error")
                     print("morphosource media error")
+                    # Save screenshot of the error state
+                    driver.save_screenshot(output_file)
+                    logging.info(f"Error state screenshot saved to {output_file}")
                     return True
             except NoSuchElementException:
                 pass
