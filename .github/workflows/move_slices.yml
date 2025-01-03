@@ -37,4 +37,4 @@ jobs:
       - name: Run Selenium script
         run: |
           # If you are using headless, ensure you uncomment `options.add_argument("--headless")` in .py
-          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python move_slices_and_screenshots.py
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python .github/scripts/move_slices_and_screenshots.py
