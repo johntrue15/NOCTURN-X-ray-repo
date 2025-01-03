@@ -1,4 +1,12 @@
-Convert Your Repo into a Template
+# Welcome to Your Facility’s Repository
+
+Now that you’ve created your new repo from the template, here’s what to do next:
+
+1. **Create a branch** named `facility-MyFacilityName`.  
+   ```bash
+   git checkout -b facility-MyFacilityName
+   git push -u origin facility-MyFacilityName
+   ```
 
 ## How to start a new facility branch
 
