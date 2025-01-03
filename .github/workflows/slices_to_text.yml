@@ -3,10 +3,10 @@ name: Slices to Text
 # This workflow starts only when your "Move Slices with Selenium" workflow finishes successfully.
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Move Slices with Selenium"]  # must match your first workflow's 'name' exactly
-    types:
-      - completed
+  #workflow_run:
+  #  workflows: ["Move Slices with Selenium"]  # must match your first workflow's 'name' exactly
+  #  types:
+  #    - completed
 
 jobs:
   slices_to_text_job:
@@ -39,4 +39,4 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          python slices_to_text.py screenshots
+          python .github/scripts/slices_to_text.py screenshots.zip
