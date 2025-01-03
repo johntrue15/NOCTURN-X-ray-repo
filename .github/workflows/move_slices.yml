@@ -1,40 +1,38 @@
 name: Move Slices with Selenium
 
-# Run this workflow on push to main or pull requests (modify as needed).
 on:
   workflow_dispatch:
-  #push:
-  #  branches: [ "main" ]
-  #pull_request:
+
 
 jobs:
   move_slices_job:
     runs-on: ubuntu-latest
     steps:
-      # 1. Check out your repository code
       - name: Check out repository
         uses: actions/checkout@v3
 
-      # 2. Set up Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
 
-      # 3. Install Chrome and dependencies
       - name: Install Chrome
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser
 
-      # 4. Install Python dependencies
       - name: Install dependencies
         run: |
           pip install --upgrade pip
           pip install selenium webdriver-manager
 
-      # 5. Run your Python script in a virtual (headless) display
       - name: Run Selenium script
         run: |
-          # If you are using headless, ensure you uncomment `options.add_argument("--headless")` in .py
+          # Ensure you've uncommented the headless option in the .py file if needed.
           xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python .github/scripts/move_slices_and_screenshots.py
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v3
+        with:
+          name: screenshots
+          path: screenshots/
