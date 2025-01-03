@@ -1,0 +1,162 @@
+name: MorphoSource URL and Screenshot Check
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["CT to Text"]
+    types: [completed]
+
+jobs:
+  url_check:
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' || 
+      github.event_name == 'release' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    outputs:
+      is_morphosource: ${{ steps.check_morpho.outputs.is_morphosource }}
+      has_media_error: ${{ steps.url_check.outputs.has_media_error }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+          
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install selenium webdriver-manager
+          
+      - name: Install and setup Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget gnupg2 unzip
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+          
+      - name: Extract release URL
+        id: release_info
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "${{ github.event_name }}" = "workflow_run" ]; then
+            response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+              "https://api.github.com/repos/${{ github.repository }}/releases?per_page=10")
+            echo "$response" > all_releases.json
+          else
+            echo '${{ toJSON(github.event.release) }}' > release.json
+            response="[$(cat release.json)]"
+            echo "$response" > all_releases.json
+          fi
+          
+          python <<EOF > release_out.json
+          import json
+          import re
+          import sys
+          
+          def extract_url_from_body(body):
+              pattern = r'https://www\.morphosource\.org/concern/media/\d+'
+              urls = re.findall(pattern, body)
+              return urls if urls else None
+          
+          with open("all_releases.json", "r", encoding="utf-8") as f:
+              data = json.load(f)
+              
+          for release in data:
+              tag = release.get("tag_name", "")
+              if tag.startswith("morphosource-updates-"):
+                  urls = extract_url_from_body(release["body"])
+                  if urls:
+                      print(json.dumps({
+                          "found": True,
+                          "tag_name": tag,
+                          "urls": urls
+                      }, indent=2))
+                      sys.exit(0)
+          
+          print(json.dumps({"found": False}))
+          EOF
+          
+          found=$(cat release_out.json | python -c "import sys, json; j=json.load(sys.stdin); print(j.get('found', False))")
+          if [ "$found" = "True" ]; then
+            tag_name=$(cat release_out.json | python -c "import sys, json; j=json.load(sys.stdin); print(j['tag_name'])")
+            urls=$(cat release_out.json | python -c "import sys, json; j=json.load(sys.stdin); print('\n'.join(j['urls']))")
+            echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
+            echo "$urls" > release_body.txt
+          fi
+          
+      - name: Check if morphosource-updates found
+        id: check_morpho
+        run: |
+          TAG_NAME="${{ steps.release_info.outputs.release_tag }}"
+          if [[ -z "$TAG_NAME" ]]; then
+            echo "is_morphosource=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
+          fi
+          
+      - name: Run URL check
+        id: url_check
+        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        run: |
+          python .github/scripts/url_screenshot_check.py release_body.txt
+          if [ -f "url_check_status.json" ]; then
+            echo "has_media_error=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_media_error=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  take_screenshots:
+    needs: url_check
+    if: |
+      needs.url_check.outputs.is_morphosource == 'true' && 
+      needs.url_check.outputs.has_media_error != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+          
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install selenium webdriver-manager
+          
+      - name: Install and setup Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget gnupg2 unzip
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+
+      # Copy release_body.txt from previous job
+      - name: Copy release body from previous job
+        run: |
+          echo "${{ needs.url_check.outputs.release_body }}" > release_body.txt
+          
+      - name: Process URLs and take screenshots
+        run: |
+          python .github/scripts/selenium_screenshot_new.py release_body.txt
+          
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v3
+        with:
+          name: morphosource_screenshots
+          path: |
+            *.png
+            !error_*.png
+            
+      - name: Upload error screenshots
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: error_screenshots
+          path: error_*.png
