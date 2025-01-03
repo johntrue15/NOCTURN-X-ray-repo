@@ -1,70 +1,129 @@
-# selenium_fullscreen_test3D.py
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, WebDriverException
 import time
 import os
+import sys
+from datetime import datetime
+
+def take_screenshot_with_retry(driver, screenshot_name, max_retries=3, wait_between_retries=10):
+    """Attempt to take a screenshot with multiple retries"""
+    for attempt in range(max_retries):
+        try:
+            driver.save_screenshot(screenshot_name)
+            print(f"Screenshot successfully saved as {screenshot_name} on attempt {attempt + 1}")
+            return True
+        except TimeoutException as e:
+            print(f"Screenshot attempt {attempt + 1} failed with timeout: {str(e)}")
+            if attempt < max_retries - 1:
+                print(f"Waiting {wait_between_retries} seconds before retry...")
+                time.sleep(wait_between_retries)
+            else:
+                print("Max retries reached for screenshot")
+                raise
+        except Exception as e:
+            print(f"Unexpected error during screenshot: {str(e)}")
+            if attempt < max_retries - 1:
+                print(f"Waiting {wait_between_retries} seconds before retry...")
+                time.sleep(wait_between_retries)
+            else:
+                raise
 
 def test_fullscreen_screenshot():
-    # 1. Configure ChromeOptions
-    options = webdriver.ChromeOptions()
-    # Comment out headless if you want to see the browser UI
-    options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
-    options.add_argument('--disable-gpu')
-    # Set an explicit window size to ensure the screenshot works in headless mode
-    #options.add_argument('--window-size=1920,1080')
-
-    driver = webdriver.Chrome(options=options)
-
-    # Increase page load and script timeouts to avoid renderer timeout
-    driver.set_page_load_timeout(30)     # extends the time to load a page
-    driver.set_script_timeout(30)        # extends the time for scripts to finish
-
+    driver = None
+    start_time = datetime.now()
+    
     try:
-        # 2. Go to the MorphoSource page
-        driver.get("https://www.morphosource.org/concern/media/000699150")
-        driver.maximize_window()
+        # 1. Configure ChromeOptions with enhanced settings
+        options = webdriver.ChromeOptions()
+        options.add_argument('--headless')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+        options.add_argument('--disable-gpu')
+        options.add_argument('--start-maximized')
+        options.add_argument('--window-size=1920,1080')
+        # Add additional Chrome flags to help with stability
+        options.add_argument('--disable-web-security')
+        options.add_argument('--disable-features=IsolateOrigins,site-per-process')
+        
+        # Initialize webdriver with extended timeouts
+        driver = webdriver.Chrome(options=options)
+        driver.set_page_load_timeout(60)  # Extended timeout
+        driver.set_script_timeout(60)     # Extended script timeout
+        
+        print("Starting test execution...")
+        
+        # 2. Navigate to the page with retry logic
+        max_navigation_retries = 3
+        for attempt in range(max_navigation_retries):
+            try:
+                driver.get("https://www.morphosource.org/concern/media/000699150")
+                break
+            except TimeoutException as e:
+                if attempt < max_navigation_retries - 1:
+                    print(f"Navigation timeout, attempt {attempt + 1} of {max_navigation_retries}")
+                    driver.refresh()
+                    time.sleep(5)
+                else:
+                    raise Exception("Failed to load page after multiple attempts") from e
 
-        # 3. Wait until the uv-iframe is available, then switch into it
-        wait = WebDriverWait(driver, 20)  # extend the wait to 20s
+        # 3. Set up WebDriverWait with longer timeout
+        wait = WebDriverWait(driver, 30)
+        
+        # 4. Wait for and switch to iframe
+        print("Waiting for iframe...")
         uv_iframe = wait.until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
         )
         driver.switch_to.frame(uv_iframe)
-
-        # 4. Click the Full Screen button
+        
+        # 5. Wait for and click fullscreen button
+        print("Waiting for fullscreen button...")
         full_screen_btn = wait.until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
         )
         full_screen_btn.click()
-
-        # 5. Wait a bit longer for the fullscreen animation
-        time.sleep(660)
-
-        # 6. Attempt to take a screenshot and save it
+        
+        # 6. Wait for content to load with progress monitoring
+        total_wait = 10  # Total wait time in seconds
+        interval = 30     # Progress update interval
+        print(f"Waiting {total_wait} seconds for content to load...")
+        for i in range(0, total_wait, interval):
+            time.sleep(interval)
+            elapsed = i + interval
+            print(f"Still waiting... {elapsed}/{total_wait} seconds elapsed")
+        
+        # 7. Take screenshot with retry mechanism
         screenshot_name = "fullscreen_screenshot_3D.png"
-        try:
-            driver.save_screenshot(screenshot_name)
-        except TimeoutException:
-            # If screenshot fails initially, wait and retry
-            print("Initial screenshot timed out, retrying after short wait...")
-            time.sleep(5)
-            driver.save_screenshot(screenshot_name)
-
-        print(f"Screenshot saved as {screenshot_name}")
-
-        # 7. Pause briefly (optional observation)
-        time.sleep(3)
-
+        take_screenshot_with_retry(driver, screenshot_name)
+        
+    except TimeoutException as e:
+        print(f"Operation timed out: {str(e)}")
+        raise
+    except WebDriverException as e:
+        print(f"WebDriver error: {str(e)}")
+        raise
+    except Exception as e:
+        print(f"Unexpected error: {str(e)}")
+        raise
     finally:
-        # 8. Quit the browser
-        driver.quit()
+        # 8. Cleanup
+        if driver:
+            try:
+                driver.quit()
+            except Exception as e:
+                print(f"Error during driver cleanup: {str(e)}")
+        
+        # Print execution time
+        end_time = datetime.now()
+        duration = end_time - start_time
+        print(f"Total execution time: {duration}")
 
-# If you want to run this script directly (e.g., `python selenium_fullscreen_test3D.py`),
-# include this:
 if __name__ == "__main__":
-    test_fullscreen_screenshot()
+    try:
+        test_fullscreen_screenshot()
+    except Exception as e:
+        print(f"Test failed with error: {str(e)}")
+        sys.exit(1)  # Ensure non-zero exit code on failure
