@@ -1,0 +1,67 @@
+name: 2D or 3D Selenium Fullscreen Test
+on:
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Select test type to run'
+        required: true
+        type: choice
+        options:
+          - '2D'
+          - '3D'
+        default: '2D'
+  push:
+    branches: [ "main" ]
+    paths:
+     - "src/**"
+     - "tests/**"
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  run-selenium-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install selenium webdriver-manager
+      
+      - name: Install and setup Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget gnupg2 unzip
+          # Install Chrome
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+      
+      - name: Run Selenium test
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            if [[ "${{ github.event.inputs.test_type }}" == "3D" ]]; then
+              python .github/scripts/selenium_fullscreen_test3D.py
+            else
+              python .github/scripts/selenium_fullscreen_test2D.py
+            fi
+          else
+            # For push/pull_request events, run both tests
+            python .github/scripts/selenium_fullscreen_test2D.py
+            python .github/scripts/selenium_fullscreen_test3D.py
+          fi
+      
+      - name: Upload screenshot artifact
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: fullscreen_screenshot
+          path: |
+            fullscreen_screenshot_2D.png
+            fullscreen_screenshot_3D.png
