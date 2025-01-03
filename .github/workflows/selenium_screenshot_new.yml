@@ -1,9 +1,9 @@
 name: Selenium Screenshot New Workflow
 on:
   workflow_dispatch:  # Added workflow_dispatch trigger
-  #workflow_run:
-  #  workflows: ["CT to Text"]
-  #  types: [completed]
+  workflow_run:
+    workflows: ["URL Screenshot Check for 2D/3D"]
+    types: [completed]
 
 jobs:
   screenshot_job:
