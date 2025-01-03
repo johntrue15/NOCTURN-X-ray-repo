@@ -4,12 +4,15 @@ import os
 import sys
 
 try:
-    from openai import OpenAI  # or from o1_mini import OpenAI if using your custom package
+    # If you have a custom library named "o1-mini", you might do: 
+    # from o1_mini import OpenAI 
+    # Otherwise, if using standard openai:
+    from openai import OpenAI
 except ImportError:
-    print("Error: The 'openai' library (or your custom O1-mini package) is missing.")
+    print("Error: The 'openai' (or your custom O1-mini) library is missing.")
     sys.exit(1)
 
-# We assume you set OPENAI_API_KEY in your GitHub Actions environment
+# We assume OPENAI_API_KEY is set in the GitHub Actions environment
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
 def gather_screenshot_files(folder_path):
@@ -26,42 +29,39 @@ def gather_screenshot_files(folder_path):
 
 def generate_text_for_screenshots(screenshot_files):
     """
-    Calls the 'o1-mini' (or similarly named) model via an OpenAI-like usage
-    to generate text descriptions for the screenshot files.
+    Calls an OpenAI-like model to generate text based on the screenshot file names.
     """
     if not OPENAI_API_KEY:
-        return "Error: OPENAI_API_KEY is missing."
+        return "Error: OPENAI_API_KEY is missing. Please set it in your environment."
 
-    # Initialize the client
+    # Initialize the client (replace with your custom class if needed)
     client = OpenAI(api_key=OPENAI_API_KEY)
 
     # If no screenshots found, bail out
     if not screenshot_files:
         return "No screenshot files found."
 
-    # Build a user prompt that references each screenshot filename
+    # Build a user prompt referencing the screenshot filenames
     user_content = [
-        "Below are the filenames of several CT slice screenshots:\n"
+        "Here are the filenames of several CT slice screenshots:\n"
     ]
     for f in screenshot_files:
         user_content.append(f"- {f}")
 
-    # Add instructions for summarizing these slice images
     user_content.append(
-        "\nYou are a scientific writer with expertise in imaging and morphological data. "
-        "Please compose a multi-paragraph, plain-English description of what these incremental CT slice images might "
-        "reveal about the specimen’s anatomy or structure. Focus on identifying notable morphological features and "
-        "the significance of viewing slices at different depths. Avoid code or technical implementation details; "
-        "keep the discussion to scientific interpretation and possible insights."
+        "\nYou are a scientific writer specializing in CT imaging and morphological data. "
+        "Please compose a multi-paragraph, plain-English description of what these incremental CT slice images "
+        "could reveal about the specimen’s anatomy or structure. Emphasize any notable morphological features and "
+        "the potential insights gained from viewing different slices in sequence. Avoid code or technical details; "
+        "focus on a scientifically informed, approachable explanation."
     )
 
-    # Convert user_content list into the format your model expects
     prompt_text = "\n".join(user_content)
 
     try:
-        # Using the same chat.completions.create call style
+        # Example using a chat completion style call
         resp = client.chat.completions.create(
-            model="o1-mini",  # or whichever model you're using
+            model="o1-mini",  # or "gpt-3.5-turbo" or whichever model you prefer
             messages=[
                 {
                     "role": "user",
@@ -75,18 +75,19 @@ def generate_text_for_screenshots(screenshot_files):
             ]
         )
         return resp.choices[0].message.content.strip()
+
     except Exception as e:
-        return f"Error calling o1-mini model: {e}"
+        return f"Error calling the model: {e}"
 
 def main():
     """
     1. Reads one argument: <screenshots_folder>
-    2. Gathers all .png files in that folder
-    3. Calls generate_text_for_screenshots() to produce descriptive text
+    2. Gathers the .png files
+    3. Calls generate_text_for_screenshots() to get the summary text
     4. Prints the final text to stdout
     """
     if len(sys.argv) < 2:
-        print("Usage: slices_to_text.py <screenshots_folder>")
+        print("Usage: automated_slices_to_text.py <screenshots_folder>")
         sys.exit(1)
 
     screenshots_folder = sys.argv[1]
