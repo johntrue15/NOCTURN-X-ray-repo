@@ -10,6 +10,10 @@ on:
           - '2D'
           - '3D'
         default: '2D'
+      custom_url:
+        description: 'Custom MorphoSource URL (optional)'
+        required: false
+        type: string
   push:
     branches: [ "main" ]
     paths:
@@ -47,12 +51,20 @@ jobs:
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             if [[ "${{ github.event.inputs.test_type }}" == "3D" ]]; then
-              python .github/scripts/selenium_fullscreen_test3D.py
+              if [[ -n "${{ github.event.inputs.custom_url }}" ]]; then
+                python .github/scripts/selenium_fullscreen_test3D.py --url "${{ github.event.inputs.custom_url }}"
+              else
+                python .github/scripts/selenium_fullscreen_test3D.py
+              fi
             else
-              python .github/scripts/selenium_fullscreen_test2D.py
+              if [[ -n "${{ github.event.inputs.custom_url }}" ]]; then
+                python .github/scripts/selenium_fullscreen_test2D.py --url "${{ github.event.inputs.custom_url }}"
+              else
+                python .github/scripts/selenium_fullscreen_test2D.py
+              fi
             fi
           else
-            # For push/pull_request events, run both tests
+            # For push/pull_request events, run both tests with default URLs
             python .github/scripts/selenium_fullscreen_test2D.py
             python .github/scripts/selenium_fullscreen_test3D.py
           fi
