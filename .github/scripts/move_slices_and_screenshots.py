@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
+import os
 
 def move_slices_and_screenshots():
     """
@@ -19,7 +20,7 @@ def move_slices_and_screenshots():
     # Chrome setup
     options = webdriver.ChromeOptions()
 
-    # >>> Uncomment this for GitHub Actions (headless) <<<
+    # >>> IMPORTANT for GitHub Actions (headless) <<<
     options.add_argument("--headless")
 
     options.add_argument("--no-sandbox")
@@ -29,6 +30,11 @@ def move_slices_and_screenshots():
     driver = webdriver.Chrome(options=options)
     driver.set_page_load_timeout(30)
     driver.set_script_timeout(30)
+
+    # Create a "screenshots" directory if it doesn't exist
+    screenshots_dir = "screenshots"
+    if not os.path.exists(screenshots_dir):
+        os.makedirs(screenshots_dir)
 
     try:
         # 1. Navigate
@@ -78,15 +84,15 @@ def move_slices_and_screenshots():
             )
             print(f"Set slices-index to {val}")
 
-            # Take a screenshot after setting each slice
-            screenshot_name = f"slice_{val}.png"
+            # Take a screenshot
+            screenshot_name = os.path.join(screenshots_dir, f"slice_{val}.png")
             driver.save_screenshot(screenshot_name)
             print(f"Screenshot saved as {screenshot_name}")
 
             time.sleep(2)  # short pause to observe changes
 
         # 4. Optional final screenshot after entire loop
-        final_screenshot = "move_slices.png"
+        final_screenshot = os.path.join(screenshots_dir, "move_slices.png")
         driver.save_screenshot(final_screenshot)
         print(f"Final screenshot saved as {final_screenshot}")
 
