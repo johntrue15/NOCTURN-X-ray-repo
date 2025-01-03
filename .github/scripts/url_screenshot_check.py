@@ -61,9 +61,16 @@ def take_screenshot(url):
                 not_ready = driver.find_element(By.CSS_SELECTOR, 'div.not-ready')
                 if "Media preview currently unavailable" in not_ready.text:
                     logging.info("morphosource media error")
+                    print("morphosource media error")
                     # Save status to file
-                    with open('media_status.json', 'w') as f:
-                        json.dump({'status': 'media_error', 'url': url}, f)
+                    status_data = {
+                        'status': 'media_error',
+                        'url': url,
+                        'timestamp': datetime.now().isoformat()
+                    }
+                    with open('url_check_status.json', 'w') as f:
+                        json.dump(status_data, f, indent=2)
+                    logging.info("Status file saved")
                     return True
             except NoSuchElementException:
                 pass
