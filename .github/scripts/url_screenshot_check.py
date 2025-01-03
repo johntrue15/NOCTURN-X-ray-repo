@@ -4,13 +4,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import (
-    TimeoutException,
-    NoSuchElementException,
-    ElementNotInteractableException,
-    WebDriverException,
-    StaleElementReferenceException
-)
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, ElementNotInteractableException
 from webdriver_manager.chrome import ChromeDriverManager
 import re
 import sys
@@ -38,18 +32,12 @@ def setup_driver():
         chrome_options.add_argument('--disable-software-rasterizer')
         chrome_options.add_argument('--window-size=1920,1080')
         chrome_options.add_argument('--start-maximized')
-        chrome_options.add_argument('--disable-extensions')
-        chrome_options.add_argument('--ignore-certificate-errors')
-        chrome_options.add_argument('--disable-web-security')
-        chrome_options.add_argument('--allow-running-insecure-content')
         
         service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service, options=chrome_options)
         
-        # Increase timeouts
-        driver.set_page_load_timeout(45)
-        driver.set_script_timeout(30)
-        driver.implicitly_wait(15)
+        driver.set_page_load_timeout(30)
+        driver.implicitly_wait(10)
         
         return driver
     except Exception as e:
@@ -57,55 +45,14 @@ def setup_driver():
         raise
 
 def extract_id_from_url(url):
-    try:
-        match = re.search(r'(\d+)$', url)
-        return match.group(1) if match else 'unknown'
-    except Exception as e:
-        logging.error(f"Error extracting ID from URL: {str(e)}")
-        return 'unknown'
-
-def wait_for_element(driver, by, selector, timeout=10, condition="presence"):
-    """
-    Wait for an element with customizable conditions
-    """
-    try:
-        wait = WebDriverWait(driver, timeout)
-        if condition == "presence":
-            return wait.until(EC.presence_of_element_located((by, selector)))
-        elif condition == "clickable":
-            return wait.until(EC.element_to_be_clickable((by, selector)))
-        elif condition == "visible":
-            return wait.until(EC.visibility_of_element_located((by, selector)))
-    except TimeoutException:
-        logging.error(f"Timeout waiting for element: {selector}")
-        raise
-    except Exception as e:
-        logging.error(f"Error waiting for element {selector}: {str(e)}")
-        raise
-
-def verify_page_loaded(driver, timeout=30):
-    """Verify that the page has loaded properly"""
-    try:
-        # Wait for the page to be in ready state
-        WebDriverWait(driver, timeout).until(
-            lambda d: d.execute_script('return document.readyState') == 'complete'
-        )
-        
-        # Additional check for specific elements that should be present
-        WebDriverWait(driver, 5).until(
-            lambda d: len(d.find_elements(By.TAG_NAME, "body")) > 0
-        )
-        return True
-    except Exception as e:
-        logging.error(f"Page load verification failed: {str(e)}")
-        return False
+    match = re.search(r'(\d+)$', url)
+    return match.group(1) if match else 'unknown'
 
 def take_screenshot(url):
     file_id = extract_id_from_url(url)
     output_file = f"{file_id}.png"
     error_file = f"error_{file_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
     max_retries = 3
-    retry_delay = 10  # increased retry delay
 
     for attempt in range(max_retries):
         driver = None
@@ -114,119 +61,52 @@ def take_screenshot(url):
             logging.info(f"Loading URL: {url}")
             
             driver = setup_driver()
-            driver.maximize_window()
+            driver.get(url)
             
-            # Load the page with retry mechanism
+            # First check for the not-ready message
             try:
-                driver.get(url)
-                if not verify_page_loaded(driver):
-                    raise TimeoutException("Page did not load completely")
-            except TimeoutException:
-                logging.warning("Page load timeout, trying again with refresh...")
-                driver.refresh()
-                time.sleep(5)  # Wait after refresh
-                if not verify_page_loaded(driver):
-                    raise TimeoutException("Page did not load after refresh")
-                
-            # Additional wait for dynamic content
-            time.sleep(5)  # Wait for dynamic content to load
+                not_ready = driver.find_element(By.CSS_SELECTOR, 'div.not-ready')
+                if "Media preview currently unavailable" in not_ready.text:
+                    logging.info("morphosource media error")
+                    print("morphosource media error")
+                    return True
+            except NoSuchElementException:
+                pass
             
-            # Check if we're on the right page
-            try:
-                if "morphosource" not in driver.current_url.lower():
-                    raise WebDriverException("Not on MorphoSource page")
-            except Exception as e:
-                logging.error(f"URL verification failed: {str(e)}")
-                raise
-            
-            # Wait for and switch to iframe with multiple selectors
+            # If no not-ready message, look for iframe
             logging.info("Waiting for iframe...")
-            iframe_found = False
-            iframe_selectors = [
-                "iframe#uv-iframe",
-                "iframe[id*='uv-']",  # Partial ID match
-                "iframe[src*='uv']",   # Partial src match
-                "iframe"               # Any iframe as fallback
-            ]
+            wait = WebDriverWait(driver, 15)
+            uv_iframe = wait.until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
+            )
             
-            for selector in iframe_selectors:
-                try:
-                    logging.info(f"Trying iframe selector: {selector}")
-                    uv_iframe = wait_for_element(
-                        driver,
-                        By.CSS_SELECTOR,
-                        selector,
-                        timeout=10,
-                        condition="presence"
-                    )
-                    iframe_found = True
-                    logging.info(f"Found iframe with selector: {selector}")
-                    break
-                except Exception as e:
-                    logging.warning(f"Selector {selector} failed: {str(e)}")
-                    continue
-            
-            if not iframe_found:
-                logging.error("No iframe found with any selector")
-                raise NoSuchElementException("Could not find iframe with any selector")
-            
-            # Add a small delay before switching
-            time.sleep(2)
             driver.switch_to.frame(uv_iframe)
             
-            # Wait for fullscreen button with retry
-            logging.info("Waiting for fullscreen button...")
-            for _ in range(3):
-                try:
-                    full_screen_btn = wait_for_element(
-                        driver,
-                        By.CSS_SELECTOR,
-                        "button.btn.imageBtn.fullScreen",
-                        timeout=10,
-                        condition="clickable"
-                    )
-                    break
-                except (TimeoutException, StaleElementReferenceException):
-                    logging.warning("Retrying to find fullscreen button...")
-                    driver.switch_to.default_content()
-                    time.sleep(1)
-                    driver.switch_to.frame(uv_iframe)
-            
-            # Click fullscreen with retry
-            try:
-                full_screen_btn.click()
-            except ElementNotInteractableException:
-                logging.warning("Direct click failed, trying JavaScript click...")
-                driver.execute_script("arguments[0].click();", full_screen_btn)
-            
-            # Add delay before screenshot
-            time.sleep(3)
+            logging.info("Looking for fullscreen button...")
+            full_screen_btn = wait.until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
+            )
+            full_screen_btn.click()
             
             logging.info("Taking screenshot...")
             driver.save_screenshot(output_file)
             logging.info(f"Screenshot saved to {output_file}")
             return True
 
-        except TimeoutException as e:
-            logging.error(f"Timeout on attempt {attempt + 1}: {str(e)}")
-        except WebDriverException as e:
-            logging.error(f"WebDriver error on attempt {attempt + 1}: {str(e)}")
         except Exception as e:
-            logging.error(f"Unexpected error on attempt {attempt + 1}: {str(e)}")
-        finally:
+            logging.error(f"Error on attempt {attempt + 1}: {str(e)}")
             if driver:
                 try:
-                    if attempt < max_retries - 1:  # Save error screenshot only on non-final attempts
-                        driver.save_screenshot(error_file)
-                        logging.info(f"Error screenshot saved as {error_file}")
-                except Exception as e:
-                    logging.error(f"Failed to save error screenshot: {str(e)}")
-                finally:
-                    driver.quit()
-        
+                    driver.save_screenshot(error_file)
+                    logging.info(f"Error screenshot saved as {error_file}")
+                except:
+                    logging.error("Could not save error screenshot")
+        finally:
+            if driver:
+                driver.quit()
+
         if attempt < max_retries - 1:
-            logging.info(f"Waiting {retry_delay} seconds before retry...")
-            time.sleep(retry_delay)
+            time.sleep(5)
 
     return False
 
