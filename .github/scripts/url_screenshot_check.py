@@ -10,6 +10,7 @@ import re
 import sys
 import json
 import logging
+from datetime import datetime
 
 # Set up logging
 logging.basicConfig(
@@ -41,6 +42,31 @@ def extract_id_from_url(url):
     match = re.search(r'(\d+)$', url)
     return match.group(1) if match else 'unknown'
 
+def handle_media_error(url, driver):
+    """Handle media error case and create status file"""
+    file_id = extract_id_from_url(url)
+    status_data = {
+        'status': 'media_error',
+        'url': url,
+        'file_id': file_id,
+        'timestamp': datetime.now().isoformat()
+    }
+    
+    # Save the error state screenshot
+    error_file = f"{file_id}.png"
+    try:
+        driver.save_screenshot(error_file)
+        logging.info(f"Error state screenshot saved to {error_file}")
+    except Exception as e:
+        logging.error(f"Failed to save error screenshot: {str(e)}")
+    
+    # Save status file
+    with open('url_check_status.json', 'w') as f:
+        json.dump(status_data, f, indent=2)
+    logging.info("Status file saved")
+    
+    return True
+
 def take_screenshot(url):
     file_id = extract_id_from_url(url)
     output_file = f"{file_id}.png"
@@ -62,16 +88,7 @@ def take_screenshot(url):
                 if "Media preview currently unavailable" in not_ready.text:
                     logging.info("morphosource media error")
                     print("morphosource media error")
-                    # Save status to file
-                    status_data = {
-                        'status': 'media_error',
-                        'url': url,
-                        'timestamp': datetime.now().isoformat()
-                    }
-                    with open('url_check_status.json', 'w') as f:
-                        json.dump(status_data, f, indent=2)
-                    logging.info("Status file saved")
-                    return True
+                    return handle_media_error(url, driver)
             except NoSuchElementException:
                 pass
             
@@ -96,8 +113,11 @@ def take_screenshot(url):
         except Exception as e:
             logging.error(f"Error on attempt {attempt + 1}: {str(e)}")
             if driver:
-                driver.save_screenshot(error_file)
-                logging.info(f"Error screenshot saved as {error_file}")
+                try:
+                    driver.save_screenshot(error_file)
+                    logging.info(f"Error screenshot saved as {error_file}")
+                except Exception as se:
+                    logging.error(f"Failed to save error screenshot: {str(se)}")
         finally:
             if driver:
                 driver.quit()
