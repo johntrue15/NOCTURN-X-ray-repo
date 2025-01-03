@@ -1,0 +1,40 @@
+name: Run Selenium Fullscreen Test
+on:
+  workflow_dispatch:  # Added workflow_dispatch trigger
+  push:
+    branches: [ "main" ]
+    paths:
+     - "src/**"
+     - "tests/**"
+  pull_request:
+    branches: [ "main" ]
+jobs:
+  run-selenium-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install selenium webdriver-manager
+      - name: Install and setup Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget gnupg2 unzip
+          # Install Chrome
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+      - name: Run Selenium test
+        run: |
+          python .github/scripts/selenium_fullscreen_test.py
+      - name: Upload screenshot artifact
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: fullscreen_screenshot
+          path: fullscreen_screenshot.png

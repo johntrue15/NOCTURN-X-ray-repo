@@ -1,0 +1,21 @@
+# Facility Configuration for Nocturn Xray
+
+# GitHub Repository (for logging, updates, etc.)
+GITHUB_REPO_URL=https://github.com/johntrue15/NOCTURN-X-ray-repo/tree/American-Museum-of-Natural-History
+
+# Facility Name
+FACILITY_NAME=American-Museum-of-Natural-History
+
+# X-ray User ORCID
+XRAY_USER_ORCID=0000-0001-2345-6789
+
+# iDigBio / Morphosource Mapping Fields
+IDIGBIO_COLLECTION_CODE=XYZ
+MORPHOSOURCE_PROJECT=MyMorphoProject
+
+# Windows Shared Folder Path (UNC)
+SHARED_FOLDER_PATH=//WINDOWS-MACHINE/MySharedFolder
+
+# Additional notes:
+# This folder should contain the metadata files that the Pi will read.
+# The Pi will only need "read" permissions.

@@ -1,0 +1,61 @@
+name: Parse MorphoSource Data
+
+on:
+  schedule:
+    # Runs every 5 minutes (adjust as needed)
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scrape_and_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run Scraper
+        id: scraper
+        run: python .github/scripts/scrape_morphosource.py
+
+      - name: Commit updated last_count.txt
+        if: steps.scraper.outputs.new_data == 'true'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .github/last_count.txt
+          git commit -m "Update last_count.txt for new records"
+          git push
+
+      - name: Generate Timestamp
+        id: gen_ts
+        if: steps.scraper.outputs.new_data == 'true'
+        run: |
+          # Format: YYYY-MM-DD_HH-MM-SS
+          TS=$(date +'%Y-%m-%d_%H-%M-%S')
+          echo "timestamp=$TS" >> $GITHUB_OUTPUT
+
+      - name: Create or Update Release
+        if: steps.scraper.outputs.new_data == 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          tag_name: morphosource-updates-${{ steps.gen_ts.outputs.timestamp }}
+          release_name: "MorphoSource Updates #${{ steps.gen_ts.outputs.timestamp }}"
+          body: ${{ steps.scraper.outputs.details }}
+          draft: false
+          prerelease: false

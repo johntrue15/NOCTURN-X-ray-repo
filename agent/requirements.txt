@@ -1,0 +1,8 @@
+# requirements.txt
+# Python dependencies for your Raspi agent scripts
+
+requests
+pyyaml
+# Add any other packages you need, for example:
+# openai
+# fuzzywuzzy

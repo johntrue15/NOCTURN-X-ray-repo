@@ -1,0 +1,13 @@
+[Unit]
+Description=Fetch GitHub Metadata Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=pi
+ExecStart=/usr/bin/python3 /home/pi/my-raspi-agent-repo/scripts/fetch_github_metadata.py --repo "YourOrg/my-raspi-agent-repo"
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target

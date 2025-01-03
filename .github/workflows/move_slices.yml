@@ -1,0 +1,38 @@
+name: Move Slices with Selenium
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  move_slices_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install selenium webdriver-manager
+
+      - name: Run Selenium script
+        run: |
+          # Ensure you've uncommented the headless option in the .py file if needed.
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python .github/scripts/move_slices_and_screenshots.py
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v3
+        with:
+          name: screenshots
+          path: screenshots/
