@@ -92,24 +92,35 @@ jobs:
             echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
           fi
           
-      # Download artifacts from the previous workflow
-      - name: Download previous workflow artifacts
+      # First workflow: Save status if this is the URL check workflow
+      - name: Upload URL check status
+        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: url_check_status
+          path: url_check_status.json
+          retention-days: 1
+
+      # Second workflow: Download and check status from previous workflow
+      - name: Download URL check status
         if: steps.check_morpho.outputs.is_morphosource == 'true'
         uses: actions/download-artifact@v3
         continue-on-error: true
         with:
-          name: url_check_artifacts
+          name: url_check_status
           path: previous_workflow
           
       - name: Check for media error
         if: steps.check_morpho.outputs.is_morphosource == 'true'
         id: check_media_error
         run: |
-          if [ -f "previous_workflow/media_status.json" ]; then
-            media_error=$(cat previous_workflow/media_status.json | jq -r '.status')
+          if [ -f "previous_workflow/url_check_status.json" ]; then
+            media_error=$(jq -r '.status' previous_workflow/url_check_status.json)
             if [ "$media_error" = "media_error" ]; then
-              echo "Found media error in previous workflow, skipping screenshot process"
+              url=$(jq -r '.url' previous_workflow/url_check_status.json)
+              echo "Found media error for URL: $url"
               echo "has_media_error=true" >> "$GITHUB_OUTPUT"
+              echo "media_error_url=$url" >> "$GITHUB_OUTPUT"
               exit 0
             fi
           fi
