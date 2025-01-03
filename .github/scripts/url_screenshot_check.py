@@ -4,45 +4,38 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException, NoSuchElementException, ElementNotInteractableException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from webdriver_manager.chrome import ChromeDriverManager
 import re
 import sys
+import json
 import logging
-import time
-from datetime import datetime
 
 # Set up logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('screenshot_script.log'),
         logging.StreamHandler(sys.stdout)
     ]
 )
 
 def setup_driver():
-    try:
-        chrome_options = Options()
-        chrome_options.add_argument('--headless=new')
-        chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--disable-dev-shm-usage')
-        chrome_options.add_argument('--disable-gpu')
-        chrome_options.add_argument('--disable-software-rasterizer')
-        chrome_options.add_argument('--window-size=1920,1080')
-        chrome_options.add_argument('--start-maximized')
-        
-        service = Service(ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=service, options=chrome_options)
-        
-        driver.set_page_load_timeout(30)
-        driver.implicitly_wait(10)
-        
-        return driver
-    except Exception as e:
-        logging.error(f"Failed to setup driver: {str(e)}")
-        raise
+    chrome_options = Options()
+    chrome_options.add_argument('--headless=new')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--disable-software-rasterizer')
+    chrome_options.add_argument('--window-size=1920,1080')
+    
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=chrome_options)
+    
+    driver.set_page_load_timeout(30)
+    driver.implicitly_wait(10)
+    
+    return driver
 
 def extract_id_from_url(url):
     match = re.search(r'(\d+)$', url)
@@ -51,7 +44,7 @@ def extract_id_from_url(url):
 def take_screenshot(url):
     file_id = extract_id_from_url(url)
     output_file = f"{file_id}.png"
-    error_file = f"error_{file_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+    error_file = f"error_{file_id}.png"
     max_retries = 3
 
     for attempt in range(max_retries):
@@ -63,34 +56,31 @@ def take_screenshot(url):
             driver = setup_driver()
             driver.get(url)
             
-            # First check for the not-ready message
+            # Check for the not-ready message first
             try:
                 not_ready = driver.find_element(By.CSS_SELECTOR, 'div.not-ready')
                 if "Media preview currently unavailable" in not_ready.text:
                     logging.info("morphosource media error")
-                    print("morphosource media error")
-                    # Save screenshot of the error state
-                    driver.save_screenshot(output_file)
-                    logging.info(f"Error state screenshot saved to {output_file}")
+                    # Save status to file
+                    with open('media_status.json', 'w') as f:
+                        json.dump({'status': 'media_error', 'url': url}, f)
                     return True
             except NoSuchElementException:
                 pass
             
-            # If no not-ready message, look for iframe
-            logging.info("Waiting for iframe...")
-            wait = WebDriverWait(driver, 15)
+            # If no not-ready message, proceed with screenshot
+            wait = WebDriverWait(driver, 10)
             uv_iframe = wait.until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
             )
-            
+
             driver.switch_to.frame(uv_iframe)
             
-            logging.info("Looking for fullscreen button...")
             full_screen_btn = wait.until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
             )
             full_screen_btn.click()
-            
+
             logging.info("Taking screenshot...")
             driver.save_screenshot(output_file)
             logging.info(f"Screenshot saved to {output_file}")
@@ -99,17 +89,11 @@ def take_screenshot(url):
         except Exception as e:
             logging.error(f"Error on attempt {attempt + 1}: {str(e)}")
             if driver:
-                try:
-                    driver.save_screenshot(error_file)
-                    logging.info(f"Error screenshot saved as {error_file}")
-                except:
-                    logging.error("Could not save error screenshot")
+                driver.save_screenshot(error_file)
+                logging.info(f"Error screenshot saved as {error_file}")
         finally:
             if driver:
                 driver.quit()
-
-        if attempt < max_retries - 1:
-            time.sleep(5)
 
     return False
 
