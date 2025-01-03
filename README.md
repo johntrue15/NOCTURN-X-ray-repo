@@ -31,13 +31,19 @@
 - **IF**  
   This code works, we push it to `selenium_screenshot_new.yml`.
 - **TODO**
-  create selenium_2D_test.yml`          (slice pages)
-  create selenium_3D_test.yml`          (volume pages)
-  create selenium_test_slices.yml`       (control slice button)
-  create selenium_test_origin.yml`       (press origin button)
-  create selenium_test_zoom.yml`         (control zoom button)
-  create selenium_test_view_mode.yml`   (control slice/mesh view)
-  create selenium_test_move_mesh.yml`   (move mesh view)
+  >create selenium_2D_test.yml`          (slice pages)
+  >
+  >create selenium_3D_test.yml`          (volume pages)
+  >
+  >create selenium_test_slices.yml`       (control slice button)
+  >
+  >create selenium_test_origin.yml`       (press origin button)
+  >
+  >create selenium_test_zoom.yml`         (control zoom button)
+  >
+  >create selenium_test_view_mode.yml`   (control slice/mesh view)
+  >
+  >create selenium_test_move_mesh.yml`   (move mesh view)
 
 ---
 
