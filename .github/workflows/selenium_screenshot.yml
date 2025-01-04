@@ -1,4 +1,4 @@
-name: Automated Screenshot Workflow
+name: Test New Morphosource Release URL Screenshot
 on:
   workflow_dispatch:
   #workflow_run:
