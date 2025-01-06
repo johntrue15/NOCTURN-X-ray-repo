@@ -34,7 +34,7 @@ def extract_id_from_url(url):
 def take_screenshot(url):
     file_id = extract_id_from_url(url)
     max_retries = 3
-    num_screenshots = 100  # Number of screenshots to take
+    num_screenshots = 20  # Number of screenshots to take
     screenshot_delay = 0.5  # Delay between screenshots in seconds
 
     for attempt in range(max_retries):
