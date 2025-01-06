@@ -18,6 +18,7 @@ jobs:
       is_morphosource: ${{ steps.check_morpho.outputs.is_morphosource }}
       has_media_error: ${{ steps.url_check.outputs.has_media_error }}
       has_server_error: ${{ steps.url_check.outputs.has_server_error }}
+      release_body: ${{ steps.read_release_body.outputs.content }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -121,6 +122,15 @@ jobs:
             echo "has_media_error=false" >> "$GITHUB_OUTPUT"
             echo "has_server_error=false" >> "$GITHUB_OUTPUT"
           fi
+          
+      - name: Read release body
+        id: read_release_body
+        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        run: |
+          CONTENT=$(cat release_body.txt)
+          echo "content<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$CONTENT" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Upload error screenshots
         if: always()
@@ -159,10 +169,11 @@ jobs:
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
 
-      # Copy release_body.txt from previous job
       - name: Copy release body from previous job
         run: |
-          echo "${{ needs.url_check.outputs.release_body }}" > release_body.txt
+          cat << 'EOF' > release_body.txt
+          ${{ needs.url_check.outputs.release_body }}
+          EOF
           
       - name: Process URLs and take screenshots
         run: |
