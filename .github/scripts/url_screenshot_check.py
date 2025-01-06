@@ -21,6 +21,10 @@ logging.basicConfig(
     ]
 )
 
+class MorphoSourceTemporarilyUnavailable(Exception):
+    """Custom exception for when MorphoSource is temporarily unavailable"""
+    pass
+
 def setup_driver():
     chrome_options = Options()
     chrome_options.add_argument('--headless=new')
@@ -41,6 +45,16 @@ def setup_driver():
 def extract_id_from_url(url):
     match = re.search(r'(\d+)$', url)
     return match.group(1) if match else 'unknown'
+
+def check_for_server_error(driver):
+    """Check if the page shows the 500 error message"""
+    try:
+        title = driver.title
+        if "MorphoSource temporarily unavailable (500)" in title:
+            raise MorphoSourceTemporarilyUnavailable("MorphoSource is temporarily unavailable (500 error)")
+    except Exception as e:
+        if "MorphoSource temporarily unavailable (500)" in str(e):
+            raise MorphoSourceTemporarilyUnavailable("MorphoSource is temporarily unavailable (500 error)")
 
 def handle_media_error(url, driver):
     """Handle media error case and create status file"""
@@ -67,6 +81,24 @@ def handle_media_error(url, driver):
     
     return True
 
+def handle_server_error(url):
+    """Handle server error case and create status file"""
+    file_id = extract_id_from_url(url)
+    status_data = {
+        'status': 'server_error',
+        'url': url,
+        'file_id': file_id,
+        'timestamp': datetime.now().isoformat(),
+        'error': 'MorphoSource temporarily unavailable (500)'
+    }
+    
+    # Save status file
+    with open('url_check_status.json', 'w') as f:
+        json.dump(status_data, f, indent=2)
+    logging.info("Server error status file saved")
+    
+    return False
+
 def take_screenshot(url):
     file_id = extract_id_from_url(url)
     output_file = f"{file_id}.png"
@@ -82,7 +114,17 @@ def take_screenshot(url):
             driver = setup_driver()
             driver.get(url)
             
-            # Check for the not-ready message first
+            # Check for 500 error first
+            try:
+                check_for_server_error(driver)
+            except MorphoSourceTemporarilyUnavailable as e:
+                logging.warning(f"Server Error: {str(e)}")
+                if attempt == max_retries - 1:  # If this is the last attempt
+                    return handle_server_error(url)
+                time.sleep(5)  # Wait before retry
+                continue
+            
+            # Check for the not-ready message
             try:
                 not_ready = driver.find_element(By.CSS_SELECTOR, 'div.not-ready')
                 if "Media preview currently unavailable" in not_ready.text:
@@ -92,7 +134,7 @@ def take_screenshot(url):
             except NoSuchElementException:
                 pass
             
-            # If no not-ready message, proceed with screenshot
+            # If no errors, proceed with screenshot
             wait = WebDriverWait(driver, 10)
             uv_iframe = wait.until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
@@ -145,6 +187,15 @@ def process_urls_from_file(input_file):
 
         logging.info(f"\nScreenshot process complete")
         logging.info(f"Successfully captured {successful_screenshots} out of {len(urls)} screenshots")
+
+        # Modified exit condition: Don't exit with error if all failures were due to server error
+        status_file = 'url_check_status.json'
+        if os.path.exists(status_file):
+            with open(status_file, 'r') as f:
+                status = json.load(f)
+                if status.get('status') == 'server_error':
+                    logging.warning("Process completed with server error")
+                    sys.exit(0)  # Exit gracefully for server errors
 
         if successful_screenshots != len(urls):
             sys.exit(1)
