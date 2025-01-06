@@ -2,6 +2,7 @@
 import os
 import requests
 from bs4 import BeautifulSoup
+import time
 
 SEARCH_URL = (
     "https://www.morphosource.org/catalog/media?locale=en"
@@ -11,15 +12,55 @@ SEARCH_URL = (
 BASE_URL = "https://www.morphosource.org"
 LAST_COUNT_FILE = ".github/last_count.txt"
 
-def get_current_record_count():
-    response = requests.get(SEARCH_URL)
-    response.raise_for_status()
-    soup = BeautifulSoup(response.text, "html.parser")
+def get_current_record_count(max_retries=3):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    }
+    
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(SEARCH_URL, headers=headers, timeout=30)
+            response.raise_for_status()
+            
+            # Debug output
+            print(f"Response status code: {response.status_code}")
+            print("First 500 characters of response:", response.text[:500])
+            
+            soup = BeautifulSoup(response.text, "html.parser")
+            
+            # Try multiple methods to find the count
+            # Method 1: Meta tag
+            meta_tag = soup.find("meta", {"name": "totalResults"})
+            if meta_tag and meta_tag.get("content"):
+                return int(meta_tag["content"])
+                
+            # Method 2: Search results count text
+            results_text = soup.select_one("div.page-links")
+            if results_text:
+                text = results_text.get_text()
+                import re
+                if match := re.search(r'(\d+)\s+results?', text):
+                    return int(match.group(1))
+            
+            # Method 3: Count actual results
+            results = soup.select("div#search-results li.document.blacklight-media")
+            if results:
+                return len(results)
+                
+            if attempt < max_retries - 1:
+                time.sleep(5)  # Wait before retry
+                continue
+                
+            raise ValueError("Could not find result count using any method")
+            
+        except requests.RequestException as e:
+            print(f"Request failed (attempt {attempt + 1}/{max_retries}): {e}")
+            if attempt < max_retries - 1:
+                time.sleep(5)
+                continue
+            raise
 
-    meta_tag = soup.find("meta", {"name": "totalResults"})
-    if not meta_tag or not meta_tag.get("content"):
-        raise ValueError("Could not find the 'totalResults' meta tag on the page.")
-    return int(meta_tag["content"])
+    raise ValueError("Failed to get record count after all retries")
 
 def load_last_count():
     if not os.path.exists(LAST_COUNT_FILE):
@@ -40,7 +81,10 @@ def parse_top_records(n=3):
     (descending by creation date). Returns a list of dicts containing relevant metadata.
     """
     session = requests.Session()
-    resp = session.get(SEARCH_URL)
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    }
+    resp = session.get(SEARCH_URL, headers=headers, timeout=30)
     resp.raise_for_status()
     soup = BeautifulSoup(resp.text, "html.parser")
 
@@ -111,33 +155,43 @@ def format_release_message(new_records, old_count, records):
     return "\n".join(lines)
 
 def main():
-    current_count = get_current_record_count()
-    old_count = load_last_count()
-    new_records = current_count - old_count
+    try:
+        current_count = get_current_record_count()
+        print(f"Current count: {current_count}")  # Debug output
+        
+        old_count = load_last_count()
+        print(f"Old count: {old_count}")  # Debug output
+        
+        new_records = current_count - old_count
+        print(f"New records: {new_records}")  # Debug output
 
-    github_output = os.environ.get("GITHUB_OUTPUT", "")
+        github_output = os.environ.get("GITHUB_OUTPUT", "")
 
-    if new_records > 0:
-        # Only fetch as many records as are new, up to a maximum of 3
-        records_to_fetch = min(new_records, 3)
-        top_records = parse_top_records(n=records_to_fetch)
+        if new_records > 0:
+            # Only fetch as many records as are new, up to a maximum of 3
+            records_to_fetch = min(new_records, 3)
+            top_records = parse_top_records(n=records_to_fetch)
 
-        # Update the stored count
-        save_last_count(current_count)
+            # Update the stored count
+            save_last_count(current_count)
 
-        message = format_release_message(new_records, old_count, top_records)
+            message = format_release_message(new_records, old_count, top_records)
 
-        if github_output:
-            with open(github_output, "a") as fh:
-                fh.write("new_data=true\n")
-                fh.write("details<<EOF\n")
-                fh.write(message + "\n")
-                fh.write("EOF\n")
-    else:
-        if github_output:
-            with open(github_output, "a") as fh:
-                fh.write("new_data=false\n")
-                fh.write("details<<EOF\nNo new records found.\nEOF\n")
+            if github_output:
+                with open(github_output, "a") as fh:
+                    fh.write("new_data=true\n")
+                    fh.write("details<<EOF\n")
+                    fh.write(message + "\n")
+                    fh.write("EOF\n")
+        else:
+            if github_output:
+                with open(github_output, "a") as fh:
+                    fh.write("new_data=false\n")
+                    fh.write("details<<EOF\nNo new records found.\nEOF\n")
+                    
+    except Exception as e:
+        print(f"Error in main: {str(e)}")
+        raise
 
 if __name__ == "__main__":
     main()
