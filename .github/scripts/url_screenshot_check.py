@@ -8,7 +8,9 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from webdriver_manager.chrome import ChromeDriverManager
 import re
 import sys
+import os
 import json
+import time
 import logging
 from datetime import datetime
 
@@ -51,10 +53,20 @@ def check_for_server_error(driver):
     try:
         title = driver.title
         if "MorphoSource temporarily unavailable (500)" in title:
-            raise MorphoSourceTemporarilyUnavailable("MorphoSource is temporarily unavailable (500 error)")
+            logging.warning("Detected MorphoSource 500 error page")
+            return True
+        
+        # Also check the page source for the error message
+        if "MorphoSource temporarily unavailable (500)" in driver.page_source:
+            logging.warning("Detected MorphoSource 500 error in page source")
+            return True
+            
+        return False
     except Exception as e:
         if "MorphoSource temporarily unavailable (500)" in str(e):
-            raise MorphoSourceTemporarilyUnavailable("MorphoSource is temporarily unavailable (500 error)")
+            logging.warning("Detected MorphoSource 500 error in exception")
+            return True
+        return False
 
 def handle_media_error(url, driver):
     """Handle media error case and create status file"""
@@ -81,7 +93,7 @@ def handle_media_error(url, driver):
     
     return True
 
-def handle_server_error(url):
+def handle_server_error(url, driver=None):
     """Handle server error case and create status file"""
     file_id = extract_id_from_url(url)
     status_data = {
@@ -91,6 +103,15 @@ def handle_server_error(url):
         'timestamp': datetime.now().isoformat(),
         'error': 'MorphoSource temporarily unavailable (500)'
     }
+    
+    # Try to save error screenshot if driver is available
+    if driver:
+        error_file = f"error_{file_id}_500.png"
+        try:
+            driver.save_screenshot(error_file)
+            logging.info(f"500 error screenshot saved as {error_file}")
+        except Exception as e:
+            logging.error(f"Failed to save 500 error screenshot: {str(e)}")
     
     # Save status file
     with open('url_check_status.json', 'w') as f:
@@ -104,6 +125,7 @@ def take_screenshot(url):
     output_file = f"{file_id}.png"
     error_file = f"error_{file_id}.png"
     max_retries = 3
+    server_error_count = 0
 
     for attempt in range(max_retries):
         driver = None
@@ -115,13 +137,12 @@ def take_screenshot(url):
             driver.get(url)
             
             # Check for 500 error first
-            try:
-                check_for_server_error(driver)
-            except MorphoSourceTemporarilyUnavailable as e:
-                logging.warning(f"Server Error: {str(e)}")
+            if check_for_server_error(driver):
+                server_error_count += 1
                 if attempt == max_retries - 1:  # If this is the last attempt
-                    return handle_server_error(url)
-                time.sleep(5)  # Wait before retry
+                    return handle_server_error(url, driver)
+                logging.warning(f"Server error detected (attempt {attempt + 1}), waiting 5 seconds before retry...")
+                time.sleep(5)
                 continue
             
             # Check for the not-ready message
@@ -162,8 +183,15 @@ def take_screenshot(url):
                     logging.error(f"Failed to save error screenshot: {str(se)}")
         finally:
             if driver:
-                driver.quit()
+                try:
+                    driver.quit()
+                except Exception:
+                    pass
 
+    # If we got here and all attempts were server errors, handle it
+    if server_error_count == max_retries:
+        return handle_server_error(url)
+    
     return False
 
 def process_urls_from_file(input_file):
@@ -179,29 +207,40 @@ def process_urls_from_file(input_file):
 
         logging.info(f"Found {len(urls)} MorphoSource URLs in file")
         successful_screenshots = 0
+        server_errors = 0
 
         for i, url in enumerate(urls, 1):
             logging.info(f"\nProcessing URL {i}/{len(urls)}: {url}")
-            if take_screenshot(url):
+            result = take_screenshot(url)
+            
+            # Check if it was a server error
+            if os.path.exists('url_check_status.json'):
+                with open('url_check_status.json', 'r') as f:
+                    status = json.load(f)
+                    if status.get('status') == 'server_error':
+                        server_errors += 1
+                        continue
+            
+            if result:
                 successful_screenshots += 1
 
         logging.info(f"\nScreenshot process complete")
         logging.info(f"Successfully captured {successful_screenshots} out of {len(urls)} screenshots")
+        if server_errors > 0:
+            logging.warning(f"Encountered {server_errors} server errors")
 
-        # Modified exit condition: Don't exit with error if all failures were due to server error
-        status_file = 'url_check_status.json'
-        if os.path.exists(status_file):
-            with open(status_file, 'r') as f:
-                status = json.load(f)
-                if status.get('status') == 'server_error':
-                    logging.warning("Process completed with server error")
-                    sys.exit(0)  # Exit gracefully for server errors
-
+        # Exit with success if all failures were server errors
+        failed_count = len(urls) - successful_screenshots
+        if failed_count > 0 and failed_count == server_errors:
+            logging.warning("All failures were due to server errors")
+            sys.exit(0)
+            
+        # Otherwise exit with error if any screenshots failed
         if successful_screenshots != len(urls):
             sys.exit(1)
 
     except Exception as e:
-        logging.error(f"Error reading file: {str(e)}")
+        logging.error(f"Error processing file: {str(e)}")
         sys.exit(1)
 
 if __name__ == "__main__":
