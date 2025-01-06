@@ -8,20 +8,20 @@ from selenium.common.exceptions import TimeoutException
 from webdriver_manager.chrome import ChromeDriverManager
 import re
 import sys
+import time
 
 def setup_driver():
     chrome_options = Options()
     chrome_options.add_argument('--headless=new')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
-    chrome_options.add_argument('--disable-gpu')  # Helpful in headless
+    chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument('--disable-software-rasterizer')
     chrome_options.add_argument('--window-size=1920,1080')
     
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
-    # Increase page load timeout and set implicit wait
     driver.set_page_load_timeout(30)
     driver.implicitly_wait(10)
 
@@ -33,9 +33,9 @@ def extract_id_from_url(url):
 
 def take_screenshot(url):
     file_id = extract_id_from_url(url)
-    output_file = f"{file_id}.png"
-    error_file = f"error_{file_id}.png"
     max_retries = 3
+    num_screenshots = 100  # Number of screenshots to take
+    screenshot_delay = 0.5  # Delay between screenshots in seconds
 
     for attempt in range(max_retries):
         driver = None
@@ -60,9 +60,19 @@ def take_screenshot(url):
             )
             full_screen_btn.click()
 
-            print("Taking screenshot...")
-            driver.save_screenshot(output_file)
-            print(f"Screenshot saved to {output_file}")
+            print(f"\nTaking {num_screenshots} screenshots with {screenshot_delay}s delay between each...")
+            
+            # Take multiple screenshots
+            for i in range(num_screenshots):
+                screenshot_file = f"{file_id}_frame_{i+1:03d}.png"
+                try:
+                    print(f"Taking screenshot {i+1}/{num_screenshots}...")
+                    driver.save_screenshot(screenshot_file)
+                    print(f"Saved {screenshot_file}")
+                    time.sleep(screenshot_delay)
+                except Exception as e:
+                    print(f"Error saving screenshot {i+1}: {str(e)}")
+
             return True
 
         except Exception as e:
@@ -78,6 +88,7 @@ def take_screenshot(url):
                     driver.quit()
                 continue
             else:
+                error_file = f"error_{file_id}.png"
                 if driver:
                     try:
                         driver.save_screenshot(error_file)
@@ -97,14 +108,12 @@ def process_urls_from_file(input_file):
         with open(input_file, 'r') as f:
             content = f.read().strip()
         
-        # Add debug logging for file contents
         print(f"\nFile contents:")
         print("-------------------")
         print(content)
         print("-------------------")
         print(f"File length: {len(content)} characters")
 
-        # Extract MorphoSource URLs
         urls = re.findall(r'https://www\.morphosource\.org/concern/media/\d+', content)
 
         if not urls:
