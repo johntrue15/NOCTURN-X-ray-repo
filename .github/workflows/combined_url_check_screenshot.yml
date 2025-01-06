@@ -17,6 +17,7 @@ jobs:
     outputs:
       is_morphosource: ${{ steps.check_morpho.outputs.is_morphosource }}
       has_media_error: ${{ steps.url_check.outputs.has_media_error }}
+      has_server_error: ${{ steps.url_check.outputs.has_server_error }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -103,18 +104,39 @@ jobs:
         id: url_check
         if: steps.check_morpho.outputs.is_morphosource == 'true'
         run: |
-          python .github/scripts/url_screenshot_check.py release_body.txt
+          python .github/scripts/url_screenshot_check.py release_body.txt || true
           if [ -f "url_check_status.json" ]; then
-            echo "has_media_error=true" >> "$GITHUB_OUTPUT"
+            status=$(cat url_check_status.json | jq -r .status)
+            if [ "$status" = "media_error" ]; then
+              echo "has_media_error=true" >> "$GITHUB_OUTPUT"
+              echo "has_server_error=false" >> "$GITHUB_OUTPUT"
+            elif [ "$status" = "server_error" ]; then
+              echo "has_media_error=false" >> "$GITHUB_OUTPUT"
+              echo "has_server_error=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "has_media_error=false" >> "$GITHUB_OUTPUT"
+              echo "has_server_error=false" >> "$GITHUB_OUTPUT"
+            fi
           else
             echo "has_media_error=false" >> "$GITHUB_OUTPUT"
+            echo "has_server_error=false" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Upload error screenshots
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: error_screenshots
+          path: |
+            error_*.png
+            *_500.png
 
   take_screenshots:
     needs: url_check
     if: |
       needs.url_check.outputs.is_morphosource == 'true' && 
-      needs.url_check.outputs.has_media_error != 'true'
+      needs.url_check.outputs.has_media_error != 'true' &&
+      needs.url_check.outputs.has_server_error != 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
