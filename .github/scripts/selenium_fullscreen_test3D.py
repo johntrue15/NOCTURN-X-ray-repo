@@ -97,13 +97,13 @@ def test_fullscreen_screenshot(url):
         full_screen_btn.click()
         
         # 6. Wait for content to load with progress monitoring
-        total_wait = 10
-        interval = 2
-        print(f"Waiting {total_wait} seconds for content to load...")
-        for i in range(0, total_wait, interval):
-            time.sleep(interval)
-            elapsed = i + interval
-            print(f"Still waiting... {elapsed}/{total_wait} seconds elapsed")
+        #total_wait = 2
+        #interval = 1
+        #print(f"Waiting {total_wait} seconds for content to load...")
+        #for i in range(0, total_wait, interval):
+        #    time.sleep(interval)
+        #    elapsed = i + interval
+        #    print(f"Still waiting... {elapsed}/{total_wait} seconds elapsed")
         
         # 7. Take screenshot with retry mechanism
         screenshot_name = "fullscreen_screenshot_3D.png"
