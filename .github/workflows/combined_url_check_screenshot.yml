@@ -129,7 +129,7 @@ jobs:
           name: error_screenshots
           path: |
             error_*.png
-            *_500.png
+            *.png
 
   take_screenshots:
     needs: url_check
