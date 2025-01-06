@@ -3,6 +3,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 import time
+import sys
 
 SEARCH_URL = (
     "https://www.morphosource.org/catalog/media?locale=en"
@@ -11,6 +12,15 @@ SEARCH_URL = (
 )
 BASE_URL = "https://www.morphosource.org"
 LAST_COUNT_FILE = ".github/last_count.txt"
+
+class MorphoSourceTemporarilyUnavailable(Exception):
+    """Custom exception for when MorphoSource is temporarily unavailable"""
+    pass
+
+def check_for_server_error(response_text):
+    """Check if the response indicates a server error"""
+    if "MorphoSource temporarily unavailable (500)" in response_text:
+        raise MorphoSourceTemporarilyUnavailable("MorphoSource is temporarily unavailable (500 error)")
 
 def get_current_record_count(max_retries=3):
     headers = {
@@ -23,8 +33,11 @@ def get_current_record_count(max_retries=3):
             response.raise_for_status()
             
             # Debug output
-            print(f"Response status code: {response.status_code}")
-            print("First 500 characters of response:", response.text[:500])
+            print(f"Response status code: {response.status_code}", file=sys.stderr)
+            print("First 500 characters of response:", response.text[:500], file=sys.stderr)
+            
+            # Check for server error before proceeding
+            check_for_server_error(response.text)
             
             soup = BeautifulSoup(response.text, "html.parser")
             
@@ -50,11 +63,19 @@ def get_current_record_count(max_retries=3):
             if attempt < max_retries - 1:
                 time.sleep(5)  # Wait before retry
                 continue
-                
+            
             raise ValueError("Could not find result count using any method")
             
+        except MorphoSourceTemporarilyUnavailable as e:
+            print(f"Server Error: {str(e)}", file=sys.stderr)
+            if attempt < max_retries - 1:
+                print(f"Retrying in 5 seconds (attempt {attempt + 1}/{max_retries})", file=sys.stderr)
+                time.sleep(5)
+                continue
+            raise
+            
         except requests.RequestException as e:
-            print(f"Request failed (attempt {attempt + 1}/{max_retries}): {e}")
+            print(f"Request failed (attempt {attempt + 1}/{max_retries}): {e}", file=sys.stderr)
             if attempt < max_retries - 1:
                 time.sleep(5)
                 continue
@@ -72,6 +93,7 @@ def load_last_count():
         return 0
 
 def save_last_count(count):
+    os.makedirs(os.path.dirname(LAST_COUNT_FILE), exist_ok=True)
     with open(LAST_COUNT_FILE, "w") as f:
         f.write(str(count))
 
@@ -84,8 +106,13 @@ def parse_top_records(n=3):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
     }
+    
     resp = session.get(SEARCH_URL, headers=headers, timeout=30)
     resp.raise_for_status()
+    
+    # Check for server error
+    check_for_server_error(resp.text)
+    
     soup = BeautifulSoup(resp.text, "html.parser")
 
     li_list = soup.select("div#search-results li.document.blacklight-media")[:n]
@@ -130,9 +157,6 @@ def format_release_message(new_records, old_count, records):
     lines.append(f"We found {new_records} new record(s) (old record value: {old_count}).")
     lines.append("")
 
-    # Example: if old_count=104235 and new_records=1,
-    # the new record number is 104236
-    # if new_records=3, they are 104236, 104235, 104234 (descending).
     for i, rec in enumerate(records, start=1):
         record_number = old_count + new_records - (i - 1)
         lines.append(f"New Record #{record_number} Title: {rec.get('title', 'N/A')}")
@@ -154,43 +178,44 @@ def format_release_message(new_records, old_count, records):
 
     return "\n".join(lines)
 
+def write_github_output(is_new_data, message):
+    """Helper function to write GitHub output"""
+    github_output = os.environ.get("GITHUB_OUTPUT")
+    if github_output:
+        with open(github_output, "a") as fh:
+            fh.write(f"new_data={str(is_new_data).lower()}\n")
+            fh.write("details<<EOF\n")
+            fh.write(message + "\n")
+            fh.write("EOF\n")
+
 def main():
     try:
         current_count = get_current_record_count()
-        print(f"Current count: {current_count}")  # Debug output
+        print(f"Current count: {current_count}", file=sys.stderr)
         
         old_count = load_last_count()
-        print(f"Old count: {old_count}")  # Debug output
+        print(f"Old count: {old_count}", file=sys.stderr)
         
         new_records = current_count - old_count
-        print(f"New records: {new_records}")  # Debug output
-
-        github_output = os.environ.get("GITHUB_OUTPUT", "")
+        print(f"New records: {new_records}", file=sys.stderr)
 
         if new_records > 0:
-            # Only fetch as many records as are new, up to a maximum of 3
             records_to_fetch = min(new_records, 3)
             top_records = parse_top_records(n=records_to_fetch)
-
-            # Update the stored count
             save_last_count(current_count)
-
             message = format_release_message(new_records, old_count, top_records)
-
-            if github_output:
-                with open(github_output, "a") as fh:
-                    fh.write("new_data=true\n")
-                    fh.write("details<<EOF\n")
-                    fh.write(message + "\n")
-                    fh.write("EOF\n")
+            write_github_output(True, message)
         else:
-            if github_output:
-                with open(github_output, "a") as fh:
-                    fh.write("new_data=false\n")
-                    fh.write("details<<EOF\nNo new records found.\nEOF\n")
-                    
+            write_github_output(False, "No new records found.")
+            
+    except MorphoSourceTemporarilyUnavailable as e:
+        print(f"Server Error: {str(e)}", file=sys.stderr)
+        write_github_output(False, f"Error: MorphoSource is temporarily unavailable. Please try again later.")
+        sys.exit(0)  # Exit gracefully
+        
     except Exception as e:
-        print(f"Error in main: {str(e)}")
+        print(f"Error in main: {str(e)}", file=sys.stderr)
+        write_github_output(False, f"Error: {str(e)}")
         raise
 
 if __name__ == "__main__":
