@@ -1,5 +1,3 @@
-#https://claude.ai/chat/7e5795ce-34c7-4311-b301-22950dc5435c
-
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -81,8 +79,11 @@ def take_screenshot(url):
                 continue
             else:
                 if driver:
-                    driver.save_screenshot(error_file)
-                    print(f"Error screenshot saved as {error_file}")
+                    try:
+                        driver.save_screenshot(error_file)
+                        print(f"Error screenshot saved as {error_file}")
+                    except:
+                        print("Could not save error screenshot")
                 break
         finally:
             if driver:
@@ -92,17 +93,30 @@ def take_screenshot(url):
 
 def process_urls_from_file(input_file):
     try:
+        print(f"\nReading file: {input_file}")
         with open(input_file, 'r') as f:
             content = f.read().strip()
+        
+        # Add debug logging for file contents
+        print(f"\nFile contents:")
+        print("-------------------")
+        print(content)
+        print("-------------------")
+        print(f"File length: {len(content)} characters")
 
         # Extract MorphoSource URLs
         urls = re.findall(r'https://www\.morphosource\.org/concern/media/\d+', content)
 
         if not urls:
-            print("No valid MorphoSource URLs found in file")
+            print("\nURL matching results:")
+            print("- No valid MorphoSource URLs found in file")
+            print("- Pattern searching for: https://www.morphosource.org/concern/media/\\d+")
             return
 
-        print(f"Found {len(urls)} MorphoSource URLs in file")
+        print(f"\nFound {len(urls)} MorphoSource URLs in file:")
+        for i, url in enumerate(urls, 1):
+            print(f"{i}. {url}")
+
         successful_screenshots = 0
 
         for i, url in enumerate(urls, 1):
@@ -118,6 +132,8 @@ def process_urls_from_file(input_file):
 
     except Exception as e:
         print(f"Error reading file: {str(e)}")
+        print(f"Error type: {type(e).__name__}")
+        print(f"Error details: {str(e)}")
         sys.exit(1)
 
 if __name__ == "__main__":
