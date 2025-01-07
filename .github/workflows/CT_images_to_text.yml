@@ -22,7 +22,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-browser libnss3 libgbm1 libasound2
+          sudo apt-get install -y chromium-browser libnss3 libgbm1 libasound2t64 xvfb
           pip install --upgrade pip
           pip install openai selenium pillow webdriver-manager urllib3
 
@@ -82,6 +82,11 @@ jobs:
           fi
           
           mkdir -p screenshots
+          
+          # Start Xvfb
+          Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+          export DISPLAY=:99
+          
           python3 .github/scripts/ct_image_to_text.py "$MORPHOSOURCE_URL" screenshots 2>&1 | tee process.log
           
           if [ ! -f "screenshots/*.png" ]; then
