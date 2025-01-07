@@ -408,7 +408,7 @@ jobs:
             !error_*.png
             !screenshots/error_*.png
 
-  handle_errors:
+  handle_errors2:
     needs: [url_check, process_3d, process_2d]
     if: |
       always() && (
