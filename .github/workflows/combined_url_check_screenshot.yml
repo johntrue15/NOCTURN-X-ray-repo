@@ -149,13 +149,15 @@ jobs:
           echo "$CONTENT" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
-      - name: Upload error screenshots
+      - name: Upload initial screenshots
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: error_screenshots
+          name: initial_screenshots
           path: |
+            *.png
             screenshots/error_*.png
+            error_*.png
 
   take_screenshots:
     needs: url_check
@@ -186,6 +188,9 @@ jobs:
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
 
+      - name: Create screenshots directory
+        run: mkdir -p screenshots
+
       - name: Copy release body from previous job
         run: |
           cat << 'EOF' > release_body.txt
@@ -208,7 +213,9 @@ jobs:
         with:
           name: morphosource_3d_screenshots
           path: |
+            *.png
             screenshots/*.png
+            !error_*.png
             !screenshots/error_*.png
             
       - name: Upload volumetric screenshots
@@ -217,7 +224,9 @@ jobs:
         with:
           name: morphosource_2d_screenshots
           path: |
+            *.png
             screenshots/*.png
+            !error_*.png
             !screenshots/error_*.png
             
       - name: Upload error screenshots
@@ -226,4 +235,5 @@ jobs:
         with:
           name: error_screenshots
           path: |
+            error_*.png
             screenshots/error_*.png
