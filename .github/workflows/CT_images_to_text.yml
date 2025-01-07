@@ -1,4 +1,4 @@
-name: CT Image to Text
+name: CT Images to Text
 
 on:
   workflow_run:
