@@ -59,12 +59,12 @@ jobs:
 
   url_check:
     needs: check_parse_status
-    if: needs.check_parse_status.outputs.should_continue == 'true'
     runs-on: ubuntu-latest
     if: |
-      github.event_name == 'workflow_dispatch' || 
-      github.event_name == 'release' ||
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+      needs.check_parse_status.outputs.should_continue == 'true' &&
+      (github.event_name == 'workflow_dispatch' || 
+       github.event_name == 'release' ||
+       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
     outputs:
       is_morphosource: ${{ steps.check_morpho.outputs.is_morphosource }}
       has_analysis: ${{ steps.check_existing.outputs.has_analysis }}
