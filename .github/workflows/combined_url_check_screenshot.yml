@@ -155,8 +155,7 @@ jobs:
         with:
           name: error_screenshots
           path: |
-            error_*.png
-            *.png
+            screenshots/error_*.png
 
   take_screenshots:
     needs: url_check
@@ -209,8 +208,8 @@ jobs:
         with:
           name: morphosource_3d_screenshots
           path: |
-            *.png
-            !error_*.png
+            screenshots/*.png
+            !screenshots/error_*.png
             
       - name: Upload volumetric screenshots
         if: needs.url_check.outputs.has_volumetric_images == 'true'
@@ -218,8 +217,8 @@ jobs:
         with:
           name: morphosource_2d_screenshots
           path: |
-            *.png
-            !error_*.png
+            screenshots/*.png
+            !screenshots/error_*.png
             
       - name: Upload error screenshots
         if: failure()
@@ -227,4 +226,4 @@ jobs:
         with:
           name: error_screenshots
           path: |
-            error_*.png
+            screenshots/error_*.png
