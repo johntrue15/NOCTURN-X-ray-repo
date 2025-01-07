@@ -38,7 +38,7 @@ def move_slices_and_screenshots():
 
     try:
         # 1. Navigate
-        driver.get("https://www.morphosource.org/concern/media/000695203")
+        driver.get("https://www.morphosource.org/concern/media/000699452")
         driver.maximize_window()
 
         # 2. Switch into the uv-iframe
