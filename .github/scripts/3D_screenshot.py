@@ -118,7 +118,7 @@ def take_screenshot(url):
         print(f"\nProcessing ID {file_id}")
         print(f"Loading URL: {url}")
         driver.get(url)
-        time.sleep(480)
+        time.sleep(48)
 
         # Wait for iframe and switch
         wait = WebDriverWait(driver, 10)
