@@ -17,6 +17,7 @@ jobs:
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     outputs:
       is_morphosource: ${{ steps.check_morpho.outputs.is_morphosource }}
+      has_analysis: ${{ steps.check_existing.outputs.has_analysis }}
       has_media_error: ${{ steps.url_check.outputs.has_media_error }}
       has_server_error: ${{ steps.url_check.outputs.has_server_error }}
       has_mesh: ${{ steps.type_check.outputs.has_mesh }}
@@ -104,10 +105,34 @@ jobs:
           else
             echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Check for existing analysis
+        id: check_existing
+        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          releases=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
+          
+          release_tag="${{ steps.release_info.outputs.release_tag }}"
+          
+          # Check for any ct analysis releases for this morphosource tag
+          existing_analysis=$(echo "$releases" | jq -r ".[] | select(.tag_name | startswith(\"ct_image_analysis-\") or .tag_name | startswith(\"ct_slice_analysis-\")) | select(.body | contains(\"$release_tag\")) | .tag_name")
+          
+          if [ ! -z "$existing_analysis" ]; then
+            echo "Found existing analysis: $existing_analysis"
+            echo "has_analysis=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No existing analysis found"
+            echo "has_analysis=false" >> "$GITHUB_OUTPUT"
+          fi
           
       - name: Run URL check
         id: url_check
-        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        if: |
+          steps.check_morpho.outputs.is_morphosource == 'true' && 
+          steps.check_existing.outputs.has_analysis != 'true'
         run: |
           python .github/scripts/url_screenshot_check.py release_body.txt || true
           if [ -f "url_check_status.json" ]; then
@@ -129,7 +154,9 @@ jobs:
 
       - name: Run 2D/3D Type Check
         id: type_check
-        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        if: |
+          steps.check_morpho.outputs.is_morphosource == 'true' && 
+          steps.check_existing.outputs.has_analysis != 'true'
         run: |
           python .github/scripts/2D3D_check.py release_body.txt || true
           if [ -f "url_check_status.json" ]; then
@@ -144,7 +171,9 @@ jobs:
           
       - name: Read release body
         id: read_release_body
-        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        if: |
+          steps.check_morpho.outputs.is_morphosource == 'true' && 
+          steps.check_existing.outputs.has_analysis != 'true'
         run: |
           CONTENT=$(cat release_body.txt)
           echo "content<<EOF" >> "$GITHUB_OUTPUT"
@@ -165,6 +194,7 @@ jobs:
     needs: url_check
     if: |
       needs.url_check.outputs.is_morphosource == 'true' && 
+      needs.url_check.outputs.has_analysis != 'true' &&
       needs.url_check.outputs.has_media_error != 'true' &&
       needs.url_check.outputs.has_server_error != 'true' &&
       needs.url_check.outputs.has_mesh == 'true'
@@ -190,37 +220,14 @@ jobs:
           Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
           echo "DISPLAY=:99" >> $GITHUB_ENV
 
-      - name: Check for existing analysis
-        id: check_existing
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        run: |
-          releases=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
-          
-          release_tag="${{ needs.url_check.outputs.release_tag }}"
-          
-          # Check for any ct_image_analysis releases for this morphosource tag
-          existing_analysis=$(echo "$releases" | jq -r ".[] | select(.tag_name | startswith(\"ct_image_analysis-\")) | select(.body | contains(\"$release_tag\")) | .tag_name")
-          
-          if [ ! -z "$existing_analysis" ]; then
-            echo "Found existing analysis: $existing_analysis"
-            echo "has_analysis=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "No existing analysis found"
-            echo "has_analysis=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Generate Timestamp
         id: gen_ts
-        if: steps.check_existing.outputs.has_analysis != 'true'
         run: |
           TS=$(date +'%Y-%m-%d_%H-%M-%S')
           echo "timestamp=$TS" >> "$GITHUB_OUTPUT"
 
       - name: Process CT Images
         id: process_images
-        if: steps.check_existing.outputs.has_analysis != 'true'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           PYTHONUNBUFFERED: 1
@@ -245,7 +252,7 @@ jobs:
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Create Image Analysis Release
-        if: steps.check_existing.outputs.has_analysis != 'true' && success()
+        if: success()
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
@@ -260,7 +267,7 @@ jobs:
           prerelease: false
 
       - name: Upload 3D Screenshots
-        if: steps.check_existing.outputs.has_analysis != 'true' && success()
+        if: success()
         uses: actions/upload-artifact@v3
         with:
           name: ct-scan-screenshots
@@ -271,6 +278,7 @@ jobs:
     needs: url_check
     if: |
       needs.url_check.outputs.is_morphosource == 'true' && 
+      needs.url_check.outputs.has_analysis != 'true' &&
       needs.url_check.outputs.has_media_error != 'true' &&
       needs.url_check.outputs.has_server_error != 'true' &&
       needs.url_check.outputs.has_volumetric_images == 'true'
@@ -299,13 +307,40 @@ jobs:
       - name: Create screenshots directory
         run: mkdir -p screenshots
 
+      - name: Generate Timestamp
+        id: gen_ts
+        run: |
+          TS=$(date +'%Y-%m-%d_%H-%M-%S')
+          echo "timestamp=$TS" >> "$GITHUB_OUTPUT"
+
       - name: Process 2D Screenshots
+        id: process_slices
         run: |
           # Create release body file from previous job
           echo "${{ needs.url_check.outputs.release_body }}" > release_body.txt
-          python .github/scripts/2D_screenshot.py release_body.txt
+          python .github/scripts/2D_screenshot.py release_body.txt 2>&1 | tee process.log
+          
+          echo "description<<EOF" >> "$GITHUB_OUTPUT"
+          cat process.log >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Create Slice Analysis Release
+        if: success()
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          tag_name: "ct_slice_analysis-${{ steps.gen_ts.outputs.timestamp }}"
+          release_name: "CT Slice Analysis #${{ steps.gen_ts.outputs.timestamp }}"
+          body: |
+            Analysis for MorphoSource release: ${{ needs.url_check.outputs.release_tag }}
+            
+            ${{ steps.process_slices.outputs.description }}
+          draft: false
+          prerelease: false
 
       - name: Upload 2D Screenshots
+        if: success()
         uses: actions/upload-artifact@v3
         with:
           name: morphosource_2d_screenshots
@@ -317,10 +352,22 @@ jobs:
 
   handle_errors:
     needs: [url_check, process_3d, process_2d]
-    if: always() && (failure() || needs.url_check.outputs.has_media_error == 'true' || needs.url_check.outputs.has_server_error == 'true')
+    if: |
+      always() && (
+        failure() || 
+        needs.url_check.outputs.has_media_error == 'true' || 
+        needs.url_check.outputs.has_server_error == 'true'
+      )
     runs-on: ubuntu-latest
     steps:
+      - name: Handle Analysis Skip
+        if: needs.url_check.outputs.has_analysis == 'true'
+        run: |
+          echo "Skipping CT analysis as it has already been performed for this MorphoSource release."
+          exit 0
+
       - name: Upload Error Screenshots
+        if: needs.url_check.outputs.has_analysis != 'true'
         uses: actions/upload-artifact@v3
         with:
           name: error_screenshots
