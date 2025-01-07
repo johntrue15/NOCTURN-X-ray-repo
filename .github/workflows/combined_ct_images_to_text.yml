@@ -117,8 +117,27 @@ jobs:
           
           release_tag="${{ steps.release_info.outputs.release_tag }}"
           
+          # Add parse check and convert to JSON array if needed
+          if ! echo "$releases" | jq empty; then
+            echo "Error: Invalid JSON response"
+            echo "has_analysis=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          
           # Check for any ct analysis releases for this morphosource tag
-          existing_analysis=$(echo "$releases" | jq -r ".[] | select(.tag_name | startswith(\"ct_image_analysis-\") or .tag_name | startswith(\"ct_slice_analysis-\")) | select(.body | contains(\"$release_tag\")) | .tag_name")
+          existing_analysis=$(echo "$releases" | jq -r --arg tag "$release_tag" '
+            if type == "array" then
+              .[] | 
+              select(.tag_name != null) |
+              select(
+                (.tag_name | startswith("ct_image_analysis-") or startswith("ct_slice_analysis-")) and
+                (.body | contains($tag))
+              ) |
+              .tag_name
+            else
+              empty
+            end
+          ')
           
           if [ ! -z "$existing_analysis" ]; then
             echo "Found existing analysis: $existing_analysis"
@@ -375,3 +394,33 @@ jobs:
             error_*.png
             screenshots/error_*.png
             process.log
+
+  notify_completion:
+    needs: [url_check, process_3d, process_2d]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Overall Status
+        run: |
+          if [ "${{ needs.url_check.outputs.has_analysis }}" == "true" ]; then
+            echo "Analysis already exists for this MorphoSource release"
+            exit 0
+          fi
+          
+          if [ "${{ needs.url_check.outputs.has_media_error }}" == "true" ]; then
+            echo "Media error occurred during processing"
+            exit 1
+          fi
+          
+          if [ "${{ needs.url_check.outputs.has_server_error }}" == "true" ]; then
+            echo "Server error occurred during processing"
+            exit 1
+          fi
+          
+          if [ "${{ needs.process_3d.result }}" == "success" ] || [ "${{ needs.process_2d.result }}" == "success" ]; then
+            echo "Analysis completed successfully"
+            exit 0
+          else
+            echo "Analysis failed"
+            exit 1
+          fi
