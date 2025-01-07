@@ -27,6 +27,7 @@ def setup_driver():
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
     chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--disable-software-rasterizer')
     chrome_options.add_argument('--window-size=1920,1080')
     
     service = Service(ChromeDriverManager().install())
@@ -56,9 +57,12 @@ def check_for_server_error(driver):
         return False
 
 def create_status_file(status_data):
-    with open('url_check_status.json', 'w') as f:
-        json.dump(status_data, f, indent=2)
-    logging.info("Status file saved")
+    try:
+        with open('url_check_status.json', 'w') as f:
+            json.dump(status_data, f, indent=2)
+        logging.info("Status file saved")
+    except Exception as e:
+        logging.error(f"Failed to save status file: {str(e)}")
 
 def check_media_types(url):
     driver = None
@@ -103,6 +107,7 @@ def check_media_types(url):
             type_elements = driver.find_elements(By.CLASS_NAME, 'text-muted-value')
             for element in type_elements:
                 text = element.text.lower()
+                logging.info(f"Found media type: {text}")
                 if 'mesh' in text:
                     has_mesh = True
                 if 'volumetric image series' in text.lower():
@@ -121,12 +126,14 @@ def check_media_types(url):
         }
         create_status_file(status_data)
         
-        # Output for GitHub Actions
-        with open(os.getenv('GITHUB_OUTPUT', 'github_output.txt'), 'a') as f:
-            f.write(f"has_mesh={str(has_mesh).lower()}\n")
-            f.write(f"has_volumetric_images={str(has_volumetric).lower()}\n")
-            f.write("has_media_error=false\n")
-            f.write("has_server_error=false\n")
+        # Create GitHub Actions output file if environment variable is set
+        github_output = os.getenv('GITHUB_OUTPUT')
+        if github_output:
+            with open(github_output, 'a') as f:
+                f.write(f"has_mesh={str(has_mesh).lower()}\n")
+                f.write(f"has_volumetric_images={str(has_volumetric).lower()}\n")
+                f.write("has_media_error=false\n")
+                f.write("has_server_error=false\n")
         
         return True
 
