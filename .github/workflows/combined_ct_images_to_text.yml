@@ -1,8 +1,8 @@
 name: MorphoSource Analysis Workflow
 
 on:
-  release:
-    types: [published]
+  #release:
+  #  types: [published]
   workflow_dispatch:
   workflow_run:
     workflows: ["Parse MorphoSource Data"]
