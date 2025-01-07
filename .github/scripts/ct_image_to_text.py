@@ -98,7 +98,7 @@ def take_screenshots(url, output_folder):
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
         )
         full_screen_btn.click()
-        time.sleep(10)
+        time.sleep(2)
         
         try:
             expand_button = driver.find_element(By.CSS_SELECTOR, '.expandButton[title="Expand Contents"]')
