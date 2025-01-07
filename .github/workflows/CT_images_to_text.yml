@@ -34,10 +34,27 @@ jobs:
           response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
             https://api.github.com/repos/${{ github.repository }}/releases/latest)
           
+          # Save JSON for debugging
           echo "$response" > latest_release.json
           
-          body=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['body'])")
-          tag_name=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['tag_name'])")
+          # Extract fields with error checking
+          body=$(echo "$response" | python -c '
+import sys, json
+try:
+    data = json.load(sys.stdin)
+    print(data.get("body", ""))
+except Exception as e:
+    print("")
+')
+          
+          tag_name=$(echo "$response" | python -c '
+import sys, json
+try:
+    data = json.load(sys.stdin)
+    print(data.get("tag_name", ""))
+except Exception as e:
+    print("")
+')
           
           # Extract URL from release body using Python with error handling
           url=$(echo "$body" | python -c '
@@ -53,26 +70,37 @@ except Exception as e:
     print("NO_URL_FOUND")
 ')
           
-          echo "Found release tag_name=$tag_name"
-          if [ "$url" != "NO_URL_FOUND" ]; then
-              echo "Found URL=$url"
-              echo "morphosource_url=$url" >> "$GITHUB_OUTPUT"
-          else
-              echo "No valid URL found in release body"
-              echo "morphosource_url=" >> "$GITHUB_OUTPUT"
+          # Check if we got valid data
+          if [ -z "$tag_name" ]; then
+            echo "Error: Could not extract tag_name from release"
+            exit 1
           fi
           
+          echo "Found release tag_name=$tag_name"
+          if [ "$url" != "NO_URL_FOUND" ]; then
+            echo "Found URL=$url"
+            echo "morphosource_url=$url" >> "$GITHUB_OUTPUT"
+          else
+            echo "No valid URL found in release body"
+            echo "morphosource_url=" >> "$GITHUB_OUTPUT"
+          fi
+          
+          # Store outputs for subsequent steps
           echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
           echo "$body" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
           
           echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
-          echo "morphosource_url=$url" >> "$GITHUB_OUTPUT"
 
       - name: Check if morphosource-updates
         id: check_morpho
         run: |
           TAG_NAME="${{ steps.fetch_release.outputs.release_tag }}"
+          if [ -z "$TAG_NAME" ]; then
+            echo "Error: Empty tag name"
+            exit 1
+          fi
+          
           echo "Found TAG_NAME=$TAG_NAME"
           
           if [[ "$TAG_NAME" == morphosource-updates-* ]]; then
@@ -100,15 +128,28 @@ except Exception as e:
             exit 1
           fi
           
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "Error: OPENAI_API_KEY is not set"
+            exit 1
+          fi
+          
           mkdir -p screenshots
           python .github/scripts/ct_image_to_text.py "$MORPHOSOURCE_URL" screenshots > ct_image_output.txt
+          
+          if [ ! -s ct_image_output.txt ]; then
+            echo "Error: No output generated from image analysis"
+            exit 1
+          fi
           
           echo "description<<EOF" >> "$GITHUB_OUTPUT"
           cat ct_image_output.txt >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Create Image Analysis Release
-        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        if: |
+          steps.check_morpho.outputs.is_morphosource == 'true' && 
+          steps.process_images.outputs.description != '' &&
+          success()
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
@@ -118,6 +159,20 @@ except Exception as e:
           body: ${{ steps.process_images.outputs.description }}
           draft: false
           prerelease: false
+
+      - name: Handle Errors
+        if: |
+          failure() || 
+          (steps.check_morpho.outputs.is_morphosource == 'true' && 
+           steps.fetch_release.outputs.morphosource_url == '')
+        run: |
+          echo "Workflow failed or no valid URL found in morphosource release."
+          echo "Please check the following:"
+          echo "1. Release tag format"
+          echo "2. Valid MorphoSource URL in release body"
+          echo "3. OpenAI API key configuration"
+          echo "4. Python dependencies installation"
+          exit 1
 
       - name: No new morphosource release
         if: steps.check_morpho.outputs.is_morphosource == 'false'
