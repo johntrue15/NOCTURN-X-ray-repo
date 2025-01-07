@@ -327,20 +327,20 @@ jobs:
           cat process.log >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
-      - name: Create Slice Analysis Release
-        if: success()
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        with:
-          tag_name: "ct_slice_analysis-${{ steps.gen_ts.outputs.timestamp }}"
-          release_name: "CT Slice Analysis #${{ steps.gen_ts.outputs.timestamp }}"
-          body: |
-            Analysis for MorphoSource release: ${{ needs.url_check.outputs.release_tag }}
-            
-            ${{ steps.process_slices.outputs.description }}
-          draft: false
-          prerelease: false
+     # - name: Create Slice Analysis Release
+     #   if: success()
+     #   uses: actions/create-release@v1
+     #   env:
+     #     GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+     #   with:
+     #     tag_name: "ct_slice_analysis-${{ steps.gen_ts.outputs.timestamp }}"
+     #     release_name: "CT Slice Analysis #${{ steps.gen_ts.outputs.timestamp }}"
+     #     body: |
+     #       Analysis for MorphoSource release: ${{ needs.url_check.outputs.release_tag }}
+     #       
+     #       ${{ steps.process_slices.outputs.description }}
+     #     draft: false
+     #     prerelease: false
 
       - name: Upload 2D Screenshots
         if: success()
