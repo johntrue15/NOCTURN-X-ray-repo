@@ -46,6 +46,7 @@ jobs:
           # Extract data
           body=$(echo "$morphosource_release" | jq -r '.body // empty')
           tag_name=$(echo "$morphosource_release" | jq -r '.tag_name // empty')
+          created_at=$(echo "$morphosource_release" | jq -r '.created_at // empty')
           
           # Extract URL from body
           url=$(echo "$body" | python3 .github/scripts/extract_url.py)
@@ -58,6 +59,7 @@ jobs:
           
           echo "Found morphosource release: $tag_name"
           echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
+          echo "morphosource_created_at=$created_at" >> "$GITHUB_OUTPUT"
           
           if [ "$url" != "NO_URL_FOUND" ]; then
             echo "morphosource_url=$url" >> "$GITHUB_OUTPUT"
@@ -67,16 +69,38 @@ jobs:
           
           echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
 
+      - name: Check for existing analysis
+        id: check_existing
+        if: steps.fetch_release.outputs.is_morphosource == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          releases=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
+          
+          morphosource_date="${{ steps.fetch_release.outputs.morphosource_created_at }}"
+          
+          # Check for any ct_image_analysis releases created after this morphosource release
+          existing_analysis=$(echo "$releases" | jq -r ".[] | select(.tag_name | startswith(\"ct_image_analysis-\")) | select(.created_at > \"$morphosource_date\") | .tag_name")
+          
+          if [ ! -z "$existing_analysis" ]; then
+            echo "Found existing analysis: $existing_analysis"
+            echo "has_analysis=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No existing analysis found"
+            echo "has_analysis=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Generate Timestamp
         id: gen_ts
-        if: steps.fetch_release.outputs.is_morphosource == 'true'
+        if: steps.fetch_release.outputs.is_morphosource == 'true' && steps.check_existing.outputs.has_analysis != 'true'
         run: |
           TS=$(date +'%Y-%m-%d_%H-%M-%S')
           echo "timestamp=$TS" >> "$GITHUB_OUTPUT"
 
       - name: Process CT Images
         id: process_images
-        if: steps.fetch_release.outputs.is_morphosource == 'true' && steps.fetch_release.outputs.morphosource_url != ''
+        if: steps.fetch_release.outputs.is_morphosource == 'true' && steps.fetch_release.outputs.morphosource_url != '' && steps.check_existing.outputs.has_analysis != 'true'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           MORPHOSOURCE_URL: ${{ steps.fetch_release.outputs.morphosource_url }}
@@ -104,7 +128,7 @@ jobs:
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Create Image Analysis Release
-        if: steps.fetch_release.outputs.is_morphosource == 'true' && success()
+        if: steps.fetch_release.outputs.is_morphosource == 'true' && steps.check_existing.outputs.has_analysis != 'true' && success()
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
@@ -116,7 +140,7 @@ jobs:
           prerelease: false
 
       - name: Upload Screenshots
-        if: steps.fetch_release.outputs.is_morphosource == 'true' && success()
+        if: steps.fetch_release.outputs.is_morphosource == 'true' && steps.check_existing.outputs.has_analysis != 'true' && success()
         uses: actions/upload-artifact@v3
         with:
           name: ct-scan-screenshots
@@ -133,6 +157,12 @@ jobs:
             screenshots/
             *.png
           retention-days: 5
+
+      - name: Skip Existing Analysis
+        if: steps.check_existing.outputs.has_analysis == 'true'
+        run: |
+          echo "Skipping CT image analysis as it has already been performed for this MorphoSource release."
+          exit 0
 
       - name: Handle Errors
         if: failure()
