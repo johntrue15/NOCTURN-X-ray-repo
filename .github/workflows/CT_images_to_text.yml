@@ -1,4 +1,4 @@
-name: CT Images to Text
+name: CT Image to Text
 
 on:
   workflow_run:
@@ -39,11 +39,28 @@ jobs:
           body=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['body'])")
           tag_name=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['tag_name'])")
           
-          # Extract URL from release body using Python
-          url=$(echo "$body" | python -c "import sys, re; print(re.search(r'https://[^\s]+', sys.stdin.read()).group(0))")
+          # Extract URL from release body using Python with error handling
+          url=$(echo "$body" | python -c '
+import sys, re
+try:
+    content = sys.stdin.read()
+    match = re.search(r"https://[^\s\)\"\']+", content)
+    if match:
+        print(match.group(0))
+    else:
+        print("NO_URL_FOUND")
+except Exception as e:
+    print("NO_URL_FOUND")
+')
           
           echo "Found release tag_name=$tag_name"
-          echo "Found URL=$url"
+          if [ "$url" != "NO_URL_FOUND" ]; then
+              echo "Found URL=$url"
+              echo "morphosource_url=$url" >> "$GITHUB_OUTPUT"
+          else
+              echo "No valid URL found in release body"
+              echo "morphosource_url=" >> "$GITHUB_OUTPUT"
+          fi
           
           echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
           echo "$body" >> "$GITHUB_OUTPUT"
@@ -73,11 +90,16 @@ jobs:
 
       - name: Process CT Images
         id: process_images
-        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        if: steps.check_morpho.outputs.is_morphosource == 'true' && steps.fetch_release.outputs.morphosource_url != ''
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           MORPHOSOURCE_URL: ${{ steps.fetch_release.outputs.morphosource_url }}
         run: |
+          if [ -z "$MORPHOSOURCE_URL" ]; then
+            echo "No valid MorphoSource URL found in release. Skipping image processing."
+            exit 1
+          fi
+          
           mkdir -p screenshots
           python .github/scripts/ct_image_to_text.py "$MORPHOSOURCE_URL" screenshots > ct_image_output.txt
           
