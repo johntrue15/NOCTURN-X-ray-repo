@@ -14,11 +14,11 @@ OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
 def get_image_paths(folder_path):
     """Get specific image file paths from the given folder."""
-    valid_files = {"Forward_90_Z-_Up.png", "Default_Yplus_Up.png", "Upside_Down_Y-_Up.png", "Back_90_Zplus_Up.png"}
+    valid_suffixes = {"Forward_90_Z-_Up.png", "Default_Yplus_Up.png", "Upside_Down_Y-_Up.png", "Back_90_Zplus_Up.png"}
     return [
         os.path.join(folder_path, f)
         for f in os.listdir(folder_path)
-        if f in valid_files
+        if any(f.endswith(suffix) for suffix in valid_suffixes)
     ]
 
 def generate_text_with_images(image_paths):
