@@ -22,8 +22,9 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-browser
-          pip install requests beautifulsoup4 openai selenium pillow webdriver-manager
+          sudo apt-get install -y chromium-browser libnss3 libgbm1 libasound2
+          pip install --upgrade pip
+          pip install openai selenium pillow webdriver-manager urllib3
 
       - name: Fetch MorphoSource Release
         id: fetch_release
@@ -81,10 +82,16 @@ jobs:
           fi
           
           mkdir -p screenshots
-          python3 .github/scripts/ct_image_to_text.py "$MORPHOSOURCE_URL" screenshots > ct_image_output.txt
+          python3 .github/scripts/ct_image_to_text.py "$MORPHOSOURCE_URL" screenshots 2>&1 | tee process.log
           
+          if [ ! -f "screenshots/*.png" ]; then
+            echo "No screenshots were generated. Check process.log for details."
+            exit 1
+          fi
+          
+          # Save the analysis output
           echo "description<<EOF" >> "$GITHUB_OUTPUT"
-          cat ct_image_output.txt >> "$GITHUB_OUTPUT"
+          cat process.log | grep -v "INFO" | grep -v "WARNING" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Create Image Analysis Release
@@ -99,12 +106,24 @@ jobs:
           draft: false
           prerelease: false
 
+      - name: Upload Screenshots
+        if: steps.fetch_release.outputs.is_morphosource == 'true' && success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: ct-scan-screenshots
+          path: screenshots/*.png
+
       - name: Handle Errors
         if: failure()
         run: |
           echo "Workflow failed. Please check:"
           echo "1. Release tag format"
           echo "2. Valid MorphoSource URL in release body"
-          echo "3. OpenAI API key configuration"
-          echo "4. Python dependencies installation"
+          echo "3. WebGL support in Chrome"
+          echo "4. Screenshot capture process"
+          
+          if [ -f "process.log" ]; then
+            echo "Process log contents:"
+            cat process.log
+          fi
           exit 1
