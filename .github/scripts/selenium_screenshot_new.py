@@ -59,7 +59,7 @@ def set_orientation(driver, actions, orientation):
         actions.move_to_element(combobox)
         actions.click()
         actions.perform()
-        time.sleep(1)
+        time.sleep(9)
         
         # Verify dropdown is open
         is_expanded = driver.execute_script("""
@@ -74,13 +74,13 @@ def set_orientation(driver, actions, orientation):
             actions.pause(1)
             actions.release()
             actions.perform()
-            time.sleep(1)
+            time.sleep(9)
 
             actions.move_to_element(combobox)
             actions.click()
             actions.send_keys(Keys.ARROW_DOWN)
             actions.perform()
-            time.sleep(1)
+            time.sleep(9)
         
         # Look for and click the specified option
         try:
@@ -90,7 +90,7 @@ def set_orientation(driver, actions, orientation):
                 actions.move_to_element(option)
                 actions.click()
                 actions.perform()
-                time.sleep(2)  # Wait for view to update
+                time.sleep(9)  # Wait for view to update
                 return True
         except Exception as e:
             print(f"Failed to find or click option: {str(e)}")
@@ -131,7 +131,7 @@ def take_screenshot(url):
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
         )
         full_screen_btn.click()
-        time.sleep(2)
+        time.sleep(9)
 
         # Click expand button
         print("\nExpanding controls...")
@@ -142,7 +142,7 @@ def take_screenshot(url):
             actions.move_to_element(expand_button)
             actions.click()
             actions.perform()
-            time.sleep(2)
+            time.sleep(9)
         
         # Cycle through orientations and take screenshots
         successful_orientations = 0
@@ -157,7 +157,7 @@ def take_screenshot(url):
                     successful_orientations += 1
                 except Exception as e:
                     print(f"Error saving screenshot: {str(e)}")
-            time.sleep(2)
+            time.sleep(9)
 
         return successful_orientations == len(orientations)
 
