@@ -27,20 +27,46 @@ def setup_driver(max_retries=3, retry_delay=5):
     chrome_options.add_argument('--headless=new')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
-    chrome_options.add_argument('--use-gl=swiftshader')
-    chrome_options.add_argument('--disable-software-rasterizer')
-    chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument('--disable-gpu-driver-bug-workarounds')
-    chrome_options.add_argument('--ignore-gpu-blocklist')
-    chrome_options.add_argument('--window-size=1920,1080')
     
-    # Additional options to improve stability
+    # WebGL and GPU settings
+    chrome_options.add_argument('--use-angle=swiftshader')
+    chrome_options.add_argument('--use-gl=angle')
+    chrome_options.add_argument('--use-angle=gl')
+    chrome_options.add_argument('--enable-webgl')
+    chrome_options.add_argument('--enable-gpu-rasterization')
+    chrome_options.add_argument('--enable-zero-copy')
+    chrome_options.add_argument('--enable-features=VaapiVideoDecoder')
+    
+    # Force GPU hardware acceleration
+    chrome_options.add_argument('--ignore-gpu-blocklist')
+    chrome_options.add_argument('--enable-gpu-rasterization')
+    chrome_options.add_argument('--enable-native-gpu-memory-buffers')
+    
+    # Window size and display settings
+    chrome_options.add_argument('--window-size=1920,1080')
+    chrome_options.add_argument('--start-maximized')
+    chrome_options.add_argument('--hide-scrollbars')
+    chrome_options.add_argument('--force-device-scale-factor=1')
+    
+    # Additional stability options
     chrome_options.add_argument('--disable-extensions')
     chrome_options.add_argument('--disable-infobars')
     chrome_options.add_argument('--disable-popup-blocking')
     chrome_options.add_argument('--disable-notifications')
     chrome_options.add_argument('--disable-dev-tools')
+    chrome_options.add_argument('--no-first-run')
+    chrome_options.add_argument('--no-default-browser-check')
     chrome_options.add_argument('--remote-debugging-port=9222')
+    
+    # Set Chrome preferences
+    chrome_prefs = {
+        'profile.default_content_settings.popups': 0,
+        'profile.password_manager_enabled': False,
+        'credentials_enable_service': False,
+        'webgl.disabled': False,
+        'webgl.force_enabled': True,
+    }
+    chrome_options.add_experimental_option('prefs', chrome_prefs)
     
     for attempt in range(max_retries):
         try:
@@ -59,17 +85,35 @@ def setup_driver(max_retries=3, retry_delay=5):
             driver.set_script_timeout(300)     # 5 minutes
             driver.implicitly_wait(30)         # 30 seconds
             
+            # Verify WebGL is working
+            webgl_working = driver.execute_script("""
+                try {
+                    var canvas = document.createElement('canvas');
+                    var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                    var extension = gl.getExtension('WEBGL_debug_renderer_info');
+                    var vendor = gl.getParameter(extension.UNMASKED_VENDOR_WEBGL);
+                    var renderer = gl.getParameter(extension.UNMASKED_RENDERER_WEBGL);
+                    return {
+                        vendor: vendor,
+                        renderer: renderer,
+                        working: true
+                    };
+                } catch (e) {
+                    return {
+                        error: e.toString(),
+                        working: false
+                    };
+                }
+            """)
+            
+            logger.info(f"WebGL Status: {webgl_working}")
+            
+            if not webgl_working.get('working', False):
+                raise Exception(f"WebGL not working: {webgl_working.get('error', 'Unknown error')}")
+            
             logger.info("WebDriver setup successful")
             return driver
             
-        except ReadTimeoutError as e:
-            logger.error(f"Timeout during WebDriver setup: {str(e)}")
-            if attempt < max_retries - 1:
-                logger.info(f"Retrying in {retry_delay} seconds...")
-                time.sleep(retry_delay)
-            else:
-                raise Exception("Max retries reached for WebDriver setup")
-                
         except Exception as e:
             logger.error(f"Error during WebDriver setup: {str(e)}")
             if attempt < max_retries - 1:
@@ -97,46 +141,85 @@ def extract_id_from_url(url):
 def wait_for_model_load(driver, timeout=180):
     """Wait for the 3D model to be fully loaded"""
     try:
-        # Wait for canvas
-        WebDriverWait(driver, timeout).until(
-            EC.presence_of_element_located((By.TAG_NAME, "canvas"))
-        )
+        # Initial wait for any loading indicators
+        time.sleep(10)
         
-        # Wait for loading spinner to disappear (if it exists)
-        try:
-            WebDriverWait(driver, timeout).until_not(
-                EC.presence_of_element_located((By.CLASS_NAME, "loading"))
-            )
-        except:
-            pass
-            
-        # Additional checks for model load
-        def check_model_loaded():
+        # Wait for canvas with retries
+        for attempt in range(3):
             try:
-                # Check if canvas has content
-                return driver.execute_script("""
-                    const canvas = document.querySelector('canvas');
-                    if (!canvas) return false;
-                    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-                    if (!gl) return false;
-                    
-                    // Check if canvas has been drawn to
-                    const pixels = new Uint8Array(4);
-                    gl.readPixels(canvas.width/2, canvas.height/2, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
-                    return pixels[3] > 0; // Check alpha channel
-                """)
+                canvas = WebDriverWait(driver, 60).until(
+                    EC.presence_of_element_located((By.TAG_NAME, "canvas"))
+                )
+                logger.info("Canvas element found")
+                break
             except:
-                return False
-                
-        # Wait for model to actually render
-        WebDriverWait(driver, timeout).until(lambda d: check_model_loaded())
+                if attempt < 2:
+                    logger.warning(f"Canvas not found, attempt {attempt + 1}/3")
+                    time.sleep(10)
+                else:
+                    raise
         
+        # Wait for loading indicators to disappear
+        loading_wait_start = time.time()
+        while time.time() - loading_wait_start < timeout:
+            loading_elements = driver.find_elements(By.CLASS_NAME, "loading")
+            if not loading_elements or not any(elem.is_displayed() for elem in loading_elements):
+                logger.info("No visible loading indicators")
+                break
+            time.sleep(5)
+            
+        # Check WebGL context and rendering
+        webgl_check = driver.execute_script("""
+            try {
+                const canvas = document.querySelector('canvas');
+                if (!canvas) return { status: false, error: 'No canvas found' };
+                
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (!gl) return { status: false, error: 'No WebGL context' };
+                
+                // Check if anything has been rendered
+                const pixels = new Uint8Array(4);
+                gl.readPixels(
+                    canvas.width/2,
+                    canvas.height/2,
+                    1, 1,
+                    gl.RGBA,
+                    gl.UNSIGNED_BYTE,
+                    pixels
+                );
+                
+                // Check if any pixel values are non-zero
+                const hasContent = pixels.some(value => value > 0);
+                
+                return {
+                    status: hasContent,
+                    pixels: Array.from(pixels),
+                    canvasSize: {
+                        width: canvas.width,
+                        height: canvas.height
+                    }
+                };
+            } catch (e) {
+                return {
+                    status: false,
+                    error: e.toString()
+                };
+            }
+        """)
+        
+        logger.info(f"WebGL check results: {webgl_check}")
+        
+        if not webgl_check.get('status', False):
+            logger.error(f"WebGL check failed: {webgl_check.get('error', 'Unknown error')}")
+            return False
+            
         # Additional safety sleep
         time.sleep(20)
         return True
         
     except Exception as e:
         logger.error(f"Error waiting for model load: {str(e)}")
+        traceback.print_exc()
         return False
 
 def set_orientation(driver, actions, orientation):
@@ -144,21 +227,37 @@ def set_orientation(driver, actions, orientation):
     try:
         logger.info(f"Setting orientation to: {orientation}")
         
-        # Find orientation controls
-        orientation_label = driver.find_element(By.XPATH, "//label[text()='Orientation']")
-        parent_div = orientation_label.find_element(By.XPATH, "./ancestor::div[contains(@class, 'grid gap-4')]")
-        combobox = parent_div.find_element(By.CSS_SELECTOR, 'button[role="combobox"]')
+        # Find orientation controls with retry
+        max_attempts = 3
+        for attempt in range(max_attempts):
+            try:
+                # Find orientation label and controls
+                orientation_label = WebDriverWait(driver, 30).until(
+                    EC.presence_of_element_located((By.XPATH, "//label[text()='Orientation']"))
+                )
+                parent_div = orientation_label.find_element(By.XPATH, "./ancestor::div[contains(@class, 'grid gap-4')]")
+                combobox = parent_div.find_element(By.CSS_SELECTOR, 'button[role="combobox"]')
+                
+                # Open dropdown
+                actions.move_to_element(combobox).click().perform()
+                time.sleep(5)
+                
+                # Select orientation
+                option = WebDriverWait(driver, 30).until(
+                    EC.presence_of_element_located((By.XPATH, f"//*[contains(text(), '{orientation}')]"))
+                )
+                actions.move_to_element(option).click().perform()
+                time.sleep(10)  # Wait for view update
+                
+                return True
+            except Exception as e:
+                if attempt < max_attempts - 1:
+                    logger.warning(f"Attempt {attempt + 1} failed, retrying: {str(e)}")
+                    time.sleep(5)
+                else:
+                    raise
         
-        # Open dropdown
-        actions.move_to_element(combobox).click().perform()
-        time.sleep(2)
-        
-        # Select orientation
-        option = driver.find_element(By.XPATH, f"//*[contains(text(), '{orientation}')]")
-        actions.move_to_element(option).click().perform()
-        time.sleep(5)  # Wait for view update
-        
-        return True
+        return False
         
     except Exception as e:
         logger.error(f"Error setting orientation: {str(e)}")
@@ -287,13 +386,4 @@ def main():
         logger.info(f"\nProcessing complete")
         logger.info(f"Successfully processed: {success_count}/{len(urls)}")
         
-        if success_count != len(urls):
-            sys.exit(1)
-            
-    except Exception as e:
-        logger.error(f"Error reading URL file: {str(e)}")
-        traceback.print_exc()
-        sys.exit(1)
-
-if __name__ == "__main__":
-    main()
+        if success_count != len(
