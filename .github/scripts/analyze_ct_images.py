@@ -13,12 +13,12 @@ except ImportError:
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 
 def get_image_paths(folder_path):
-    """Get all image file paths from the given folder."""
-    valid_extensions = {".png", ".jpg", ".jpeg"}
+    """Get specific image file paths from the given folder."""
+    valid_files = {"Forward_90_Z-_Up.png", "Default_Yplus_Up.png", "Upside_Down_Y-_Up.png", "Back_90_Zplus_Up.png"}
     return [
         os.path.join(folder_path, f)
         for f in os.listdir(folder_path)
-        if os.path.splitext(f)[1].lower() in valid_extensions
+        if f in valid_files
     ]
 
 def generate_text_with_images(image_paths):
@@ -94,7 +94,7 @@ def main():
         print(f"Folder '{folder_path}' not found.")
         sys.exit(1)
 
-    # Get image paths
+    # Get specific image paths
     image_paths = get_image_paths(folder_path)
     if not image_paths:
         print("No valid image files found in the folder.")
