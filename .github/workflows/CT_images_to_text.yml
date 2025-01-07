@@ -38,37 +38,40 @@ jobs:
           echo "$response" > latest_release.json
           
           # Extract fields with error checking
-          body=$(echo "$response" | python -c '
-import sys, json
+          body=$(echo "$response" | python3 -c "
+import sys
+import json
 try:
     data = json.load(sys.stdin)
-    print(data.get("body", ""))
+    print(data.get('body', ''))
 except Exception as e:
-    print("")
-')
+    print('')
+")
           
-          tag_name=$(echo "$response" | python -c '
-import sys, json
+          tag_name=$(echo "$response" | python3 -c "
+import sys
+import json
 try:
     data = json.load(sys.stdin)
-    print(data.get("tag_name", ""))
+    print(data.get('tag_name', ''))
 except Exception as e:
-    print("")
-')
+    print('')
+")
           
-          # Extract URL from release body using Python with error handling
-          url=$(echo "$body" | python -c '
-import sys, re
+          # Extract URL from release body
+          url=$(echo "$body" | python3 -c "
+import sys
+import re
 try:
     content = sys.stdin.read()
-    match = re.search(r"https://[^\s\)\"\']+", content)
+    match = re.search(r'https://[^\s\)\"\']+', content)
     if match:
         print(match.group(0))
     else:
-        print("NO_URL_FOUND")
+        print('NO_URL_FOUND')
 except Exception as e:
-    print("NO_URL_FOUND")
-')
+    print('NO_URL_FOUND')
+")
           
           # Check if we got valid data
           if [ -z "$tag_name" ]; then
