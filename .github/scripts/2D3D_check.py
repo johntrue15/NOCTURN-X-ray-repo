@@ -8,6 +8,7 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from webdriver_manager.chrome import ChromeDriverManager
 import re
 import sys
+import os
 import json
 import logging
 from datetime import datetime
