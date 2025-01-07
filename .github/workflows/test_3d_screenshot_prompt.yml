@@ -1,119 +1,94 @@
-name: CT Image to Text
+name: Test 3D Screenshot with Prompt
 
 on:
-  workflow_run:
-    workflows: ["Parse MorphoSource Data"]
-    types: [completed]
+  workflow_dispatch:
+    inputs:
+      url_list:
+        description: 'URLs to process (one per line)'
+        required: false
+        default: 'https://www.morphosource.org/concern/media/000699581?locale=en'
+        type: string
 
 jobs:
-  ct_image_text_job:
+  screenshot-test:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    env:
+      PYTHONUNBUFFERED: 1
+      DISPLAY: :99
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Setup virtual display
+      run: |
+        Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+        sleep 2
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y xvfb libopengl0 mesa-utils
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install selenium webdriver-manager requests Pillow
+        pip install openai  # Required for ChatGPT integration
+
+    - name: Create URL file
+      run: |
+        echo "${{ github.event.inputs.url_list }}" > urls.txt
+    
+    - name: Run screenshot tests
+      run: python .github/scripts/test_3D_screenshot.py urls.txt
+      
+    - name: List generated files
+      if: always()
+      run: |
+        echo "Generated files:"
+        ls -la *.png || true
+        ls -la error_*.txt || true
+    
+    - name: Upload screenshots
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: screenshots
+        path: |
+          *.png
+          error_*.txt
+        retention-days: 7
+
+  analyze-screenshots:
+    needs: screenshot-test
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repo
-        uses: actions/checkout@v3
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install openai  # Required for ChatGPT integration
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.9"
-
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser
-          pip install requests beautifulsoup4 openai selenium pillow webdriver-manager
-
-      - name: Fetch Latest Release
-        id: fetch_release
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        run: |
-          echo "Fetching the latest release from this repo..."
-          response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
-            https://api.github.com/repos/${{ github.repository }}/releases/latest)
-          
-          echo "$response" > latest_release.json
-          
-          body=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['body'])")
-          tag_name=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['tag_name'])")
-          
-          # Extract URL from release body using Python with error handling
-          url=$(echo "$body" | python -c '
-import sys, re
-try:
-    content = sys.stdin.read()
-    match = re.search(r"https://[^\s\)\"\']+", content)
-    if match:
-        print(match.group(0))
-    else:
-        print("NO_URL_FOUND")
-except Exception as e:
-    print("NO_URL_FOUND")
-')
-          
-          echo "Found release tag_name=$tag_name"
-          if [ "$url" != "NO_URL_FOUND" ]; then
-              echo "Found URL=$url"
-              echo "morphosource_url=$url" >> "$GITHUB_OUTPUT"
-          else
-              echo "No valid URL found in release body"
-              echo "morphosource_url=" >> "$GITHUB_OUTPUT"
-          fi
-          
-          echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$body" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-          
-          echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
-          echo "morphosource_url=$url" >> "$GITHUB_OUTPUT"
-
-      - name: Check if morphosource-updates
-        id: check_morpho
-        run: |
-          TAG_NAME="${{ steps.fetch_release.outputs.release_tag }}"
-          echo "Found TAG_NAME=$TAG_NAME"
-          
-          if [[ "$TAG_NAME" == morphosource-updates-* ]]; then
-            echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "is_morphosource=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Generate Timestamp
-        id: gen_ts
-        if: steps.check_morpho.outputs.is_morphosource == 'true'
-        run: |
-          TS=$(date +'%Y-%m-%d_%H-%M-%S')
-          echo "timestamp=$TS" >> "$GITHUB_OUTPUT"
-
-      - name: Process CT Images
-        id: process_images
-        if: steps.check_morpho.outputs.is_morphosource == 'true'
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          MORPHOSOURCE_URL: ${{ steps.fetch_release.outputs.morphosource_url }}
-        run: |
-          mkdir -p screenshots
-          python .github/scripts/ct_image_to_text.py "$MORPHOSOURCE_URL" screenshots > ct_image_output.txt
-          
-          echo "description<<EOF" >> "$GITHUB_OUTPUT"
-          cat ct_image_output.txt >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-
-      - name: Create Image Analysis Release
-        if: steps.check_morpho.outputs.is_morphosource == 'true'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        with:
-          tag_name: "ct_image_analysis-${{ steps.gen_ts.outputs.timestamp }}"
-          release_name: "CT Image Analysis #${{ steps.gen_ts.outputs.timestamp }}"
-          body: ${{ steps.process_images.outputs.description }}
-          draft: false
-          prerelease: false
-
-      - name: No new morphosource release
-        if: steps.check_morpho.outputs.is_morphosource == 'false'
-        run: echo "No 'morphosource-updates-*' release found. Skipping CT image analysis."
+    - name: Download screenshots artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: screenshots
+        path: screenshots
+    
+    - name: Run analysis on screenshots
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      run: python .github/scripts/analyze_ct_images.py screenshots/
