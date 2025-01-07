@@ -1,4 +1,4 @@
-name: CT Image to Text
+name: CT Images to Text
 
 on:
   workflow_run:
@@ -30,36 +30,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
+          echo "Fetching the latest release from this repo..."
           response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
             https://api.github.com/repos/${{ github.repository }}/releases/latest)
           
-          body=$(echo "$response" | python3 -c "
-import sys, json
-try:
-    data = json.load(sys.stdin)
-    print(data.get('body', ''))
-except:
-    print('')
-")
+          # Extract body
+          body=$(echo "$response" | python3 -c $'import sys, json\ntry:\n    data = json.load(sys.stdin)\n    print(data.get("body", ""))\nexcept:\n    print("")')
           
-          tag_name=$(echo "$response" | python3 -c "
-import sys, json
-try:
-    data = json.load(sys.stdin)
-    print(data.get('tag_name', ''))
-except:
-    print('')
-")
+          # Extract tag name
+          tag_name=$(echo "$response" | python3 -c $'import sys, json\ntry:\n    data = json.load(sys.stdin)\n    print(data.get("tag_name", ""))\nexcept:\n    print("")')
           
-          url=$(echo "$body" | python3 -c "
-import sys, re
-try:
-    content = sys.stdin.read()
-    match = re.search(r'https://[^\s\)\"\']+', content)
-    print(match.group(0) if match else 'NO_URL_FOUND')
-except:
-    print('NO_URL_FOUND')
-")
+          # Extract URL from body
+          url=$(echo "$body" | python3 -c $'import sys, re\ntry:\n    content = sys.stdin.read()\n    match = re.search(r"https://[^\s\)\\"\']+", content)\n    print(match.group(0) if match else "NO_URL_FOUND")\nexcept:\n    print("NO_URL_FOUND")')
           
           if [ -z "$tag_name" ]; then
             echo "Error: Could not extract tag_name from release"
