@@ -4,9 +4,9 @@ on:
   #release:
   #  types: [published]
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Parse MorphoSource Data"]
-    types: [completed]
+  #workflow_run:
+  #  workflows: ["Parse MorphoSource Data"]
+  #  types: [completed]
 
 jobs:
   url_check:
