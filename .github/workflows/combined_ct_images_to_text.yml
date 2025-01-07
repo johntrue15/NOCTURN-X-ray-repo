@@ -408,6 +408,55 @@ jobs:
             !error_*.png
             !screenshots/error_*.png
 
+  handle_errors2:
+    needs: [url_check, process_3d, process_2d]
+    if: ${{ always() && 
+      (failure() || 
+      needs.url_check.outputs.has_media_error == 'true' || 
+      needs.url_check.outputs.has_server_error == 'true') 
+      }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Analysis Status
+        id: check_status
+        run: |
+          if [ "${{ needs.url_check.outputs.has_analysis }}" == "true" ]; then
+            echo "Skipping CT analysis as it has already been performed for this MorphoSource release."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload Error Screenshots
+        if: steps.check_status.outputs.skip != 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: error_screenshots
+          path: |
+            error_*.png
+            screenshots/error_*.png
+            process.log
+            
+      - name: Check Overall Status
+        if: steps.check_status.outputs.skip != 'true'
+        run: |
+          if [ "${{ needs.url_check.outputs.has_media_error }}" == "true" ]; then
+            echo "Media error occurred during processing"
+            exit 1
+          fi
+          
+          if [ "${{ needs.url_check.outputs.has_server_error }}" == "true" ]; then
+            echo "Server error occurred during processing"
+            exit 1
+          fi
+          
+          if [ "${{ needs.process_3d.result }}" == "success" ] || [ "${{ needs.process_2d.result }}" == "success" ]; then
+            echo "Analysis completed successfully"
+            exit 0
+          else
+            echo "Analysis failed"
+            exit 1
+          fi
 
   notify_completion:
     needs: [url_check, process_3d, process_2d]
