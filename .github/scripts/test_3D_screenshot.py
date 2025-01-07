@@ -94,35 +94,74 @@ def extract_id_from_url(url):
     numbers = re.findall(r'\d+', url)
     return numbers[0] if numbers else 'unknown'
 
-def verify_page_loaded(driver, timeout=60):
-    """Verify that the page has loaded properly"""
+def wait_for_model_load(driver, timeout=180):
+    """Wait for the 3D model to be fully loaded"""
     try:
-        # Wait for body to be present
+        # Wait for canvas
         WebDriverWait(driver, timeout).until(
-            EC.presence_of_element_located((By.TAG_NAME, "body"))
+            EC.presence_of_element_located((By.TAG_NAME, "canvas"))
         )
         
-        # Check page readyState
-        ready_state = driver.execute_script("return document.readyState")
-        if ready_state != "complete":
-            raise Exception(f"Page not fully loaded. Ready state: {ready_state}")
+        # Wait for loading spinner to disappear (if it exists)
+        try:
+            WebDriverWait(driver, timeout).until_not(
+                EC.presence_of_element_located((By.CLASS_NAME, "loading"))
+            )
+        except:
+            pass
             
+        # Additional checks for model load
+        def check_model_loaded():
+            try:
+                # Check if canvas has content
+                return driver.execute_script("""
+                    const canvas = document.querySelector('canvas');
+                    if (!canvas) return false;
+                    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                    if (!gl) return false;
+                    
+                    // Check if canvas has been drawn to
+                    const pixels = new Uint8Array(4);
+                    gl.readPixels(canvas.width/2, canvas.height/2, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+                    return pixels[3] > 0; // Check alpha channel
+                """)
+            except:
+                return False
+                
+        # Wait for model to actually render
+        WebDriverWait(driver, timeout).until(lambda d: check_model_loaded())
+        
+        # Additional safety sleep
+        time.sleep(20)
         return True
+        
     except Exception as e:
-        logger.error(f"Page load verification failed: {str(e)}")
+        logger.error(f"Error waiting for model load: {str(e)}")
         return False
 
-def wait_for_iframe(driver, timeout=60):
-    """Wait for iframe to be present and switch to it"""
+def set_orientation(driver, actions, orientation):
+    """Set the model orientation"""
     try:
-        iframe = WebDriverWait(driver, timeout).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
-        )
-        driver.switch_to.frame(iframe)
-        time.sleep(5)  # Give iframe content time to load
+        logger.info(f"Setting orientation to: {orientation}")
+        
+        # Find orientation controls
+        orientation_label = driver.find_element(By.XPATH, "//label[text()='Orientation']")
+        parent_div = orientation_label.find_element(By.XPATH, "./ancestor::div[contains(@class, 'grid gap-4')]")
+        combobox = parent_div.find_element(By.CSS_SELECTOR, 'button[role="combobox"]')
+        
+        # Open dropdown
+        actions.move_to_element(combobox).click().perform()
+        time.sleep(2)
+        
+        # Select orientation
+        option = driver.find_element(By.XPATH, f"//*[contains(text(), '{orientation}')]")
+        actions.move_to_element(option).click().perform()
+        time.sleep(5)  # Wait for view update
+        
         return True
+        
     except Exception as e:
-        logger.error(f"Iframe wait/switch failed: {str(e)}")
+        logger.error(f"Error setting orientation: {str(e)}")
         return False
 
 def process_url(url):
@@ -135,26 +174,73 @@ def process_url(url):
     logger.info(f"Extracted ID: {file_id}")
     
     try:
-        # Setup WebDriver with retry logic
         driver = setup_driver(max_retries=3, retry_delay=5)
+        wait = WebDriverWait(driver, 180)  # Increased timeout
+        actions = ActionChains(driver)
         
-        # Load the page
+        # Load page
         logger.info("Loading page...")
         driver.get(url)
-        
-        # Verify page load
-        if not verify_page_loaded(driver):
-            raise Exception("Page failed to load properly")
+        time.sleep(10)  # Initial wait for page load
         
         # Take initial screenshot
         driver.save_screenshot(f"initial_{file_id}.png")
         
-        # Switch to iframe
-        if not wait_for_iframe(driver):
-            raise Exception("Failed to switch to iframe")
+        # Wait for and switch to iframe
+        logger.info("Waiting for iframe...")
+        iframe = wait.until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
+        )
+        logger.info("Switching to iframe...")
+        driver.switch_to.frame(iframe)
+        time.sleep(10)  # Wait after iframe switch
         
-        # Process rest of the workflow...
-        # (Rest of the code remains the same)
+        # Wait for model to load
+        logger.info("Waiting for 3D model to load...")
+        if not wait_for_model_load(driver):
+            raise Exception("3D model failed to load properly")
+            
+        # Take post-model-load screenshot
+        driver.save_screenshot(f"model_loaded_{file_id}.png")
+        
+        # Enter fullscreen
+        logger.info("Entering fullscreen mode...")
+        full_screen_btn = wait.until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
+        )
+        full_screen_btn.click()
+        time.sleep(10)  # Wait for fullscreen transition
+        
+        # Expand controls
+        logger.info("Expanding controls...")
+        try:
+            expand_button = driver.find_element(By.CSS_SELECTOR, '.expandButton[title="Expand Contents"]')
+            if expand_button.is_displayed():
+                actions.move_to_element(expand_button).click().perform()
+                time.sleep(10)
+        except Exception as e:
+            logger.warning(f"Could not expand controls: {str(e)}")
+        
+        # Take screenshots for each orientation
+        orientations = [
+            'Default (Y+ Up)',
+            'Upside Down (Y- Up)',
+            'Forward 90° (Z- Up)',
+            'Back 90° (Z+ Up)'
+        ]
+        
+        for orientation in orientations:
+            try:
+                logger.info(f"Processing orientation: {orientation}")
+                if set_orientation(driver, actions, orientation):
+                    filename = f"{file_id}_{orientation.replace(' ', '_').replace('(', '').replace(')', '').replace('+', 'plus').replace('°', '')}.png"
+                    time.sleep(10)  # Wait for orientation change
+                    driver.save_screenshot(filename)
+                    logger.info(f"Saved screenshot: {filename}")
+                time.sleep(5)
+            except Exception as e:
+                logger.error(f"Error processing orientation {orientation}: {str(e)}")
+                driver.save_screenshot(f"orientation_error_{file_id}_{orientation}.png")
         
         return True
         
