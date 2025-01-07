@@ -1,0 +1,66 @@
+name: 3D Screenshot Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      url_list:
+        description: 'URLs to process (one per line)'
+        required: false
+        default: 'https://www.morphosource.org/concern/media/000699581?locale=en'
+        type: string
+
+jobs:
+  screenshot-test:
+    runs-on: ubuntu-latest
+    
+    env:
+      PYTHONUNBUFFERED: 1
+      DISPLAY: :99
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Setup virtual display
+      run: |
+        Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+        sleep 2
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y xvfb libopengl0 mesa-utils
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install selenium webdriver-manager requests Pillow
+        pip install packaging  # Required for webdriver-manager
+
+    - name: Create URL file
+      run: |
+        echo "${{ github.event.inputs.url_list }}" > urls.txt
+    
+    - name: Run screenshot tests
+      run: python screenshot_test.py urls.txt
+      
+    - name: List generated files
+      if: always()
+      run: |
+        echo "Generated files:"
+        ls -la *.png || true
+        ls -la error_*.txt || true
+    
+    - name: Upload screenshots
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: screenshots-$(date +%Y%m%d_%H%M%S)
+        path: |
+          *.png
+          error_*.txt
+        retention-days: 7
