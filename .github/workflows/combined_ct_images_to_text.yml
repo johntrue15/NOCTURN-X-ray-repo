@@ -36,12 +36,12 @@ jobs:
             !error_*.png
             !screenshots/error_*.png
 
-handle_errors:
+  handle_errors:
     needs: [url_check, process_3d, process_2d]
-    if: ${{ always() &&
-      (failure() ||
-      needs.url_check.outputs.has_media_error == 'true' ||
-      needs.url_check.outputs.has_server_error == 'true')
+    if: ${{ always() && 
+      (failure() || 
+      needs.url_check.outputs.has_media_error == 'true' || 
+      needs.url_check.outputs.has_server_error == 'true') 
       }}
     runs-on: ubuntu-latest
     steps:
@@ -60,19 +60,10 @@ handle_errors:
             error_*.png
             screenshots/error_*.png
             process.log
-
-  notify_completion:
-    needs: [url_check, process_3d, process_2d]
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
+            
       - name: Check Overall Status
+        if: needs.url_check.outputs.has_analysis != 'true'
         run: |
-          if [ "${{ needs.url_check.outputs.has_analysis }}" == "true" ]; then
-            echo "Analysis already exists for this MorphoSource release"
-            exit 0
-          fi
-          
           if [ "${{ needs.url_check.outputs.has_media_error }}" == "true" ]; then
             echo "Media error occurred during processing"
             exit 1
