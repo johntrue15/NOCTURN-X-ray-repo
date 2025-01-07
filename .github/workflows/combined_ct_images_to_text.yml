@@ -25,7 +25,72 @@ jobs:
       release_body: ${{ steps.read_release_body.outputs.content }}
       release_tag: ${{ steps.release_info.outputs.release_tag }}
     steps:
-      - name: Check out repository
+      - name: Upload 2D Screenshots
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: morphosource_2d_screenshots
+          path: |
+            *.png
+            screenshots/*.png
+            !error_*.png
+            !screenshots/error_*.png
+
+  handle_errors:
+    needs: [url_check, process_3d, process_2d]
+    if: |
+      always() && (
+        failure() || 
+        needs.url_check.outputs.has_media_error == 'true' || 
+        needs.url_check.outputs.has_server_error == 'true'
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Handle Analysis Skip
+        if: needs.url_check.outputs.has_analysis == 'true'
+        run: |
+          echo "Skipping CT analysis as it has already been performed for this MorphoSource release."
+          exit 0
+
+      - name: Upload Error Screenshots
+        if: needs.url_check.outputs.has_analysis != 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: error_screenshots
+          path: |
+            error_*.png
+            screenshots/error_*.png
+            process.log
+
+  notify_completion:
+    needs: [url_check, process_3d, process_2d]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Overall Status
+        run: |
+          if [ "${{ needs.url_check.outputs.has_analysis }}" == "true" ]; then
+            echo "Analysis already exists for this MorphoSource release"
+            exit 0
+          fi
+          
+          if [ "${{ needs.url_check.outputs.has_media_error }}" == "true" ]; then
+            echo "Media error occurred during processing"
+            exit 1
+          fi
+          
+          if [ "${{ needs.url_check.outputs.has_server_error }}" == "true" ]; then
+            echo "Server error occurred during processing"
+            exit 1
+          fi
+          
+          if [ "${{ needs.process_3d.result }}" == "success" ] || [ "${{ needs.process_2d.result }}" == "success" ]; then
+            echo "Analysis completed successfully"
+            exit 0
+          else
+            echo "Analysis failed"
+            exit 1
+          fi Check out repository
         uses: actions/checkout@v3
         
       - name: Set up Python
@@ -81,7 +146,8 @@ jobs:
                       print(json.dumps({
                           "found": True,
                           "tag_name": tag,
-                          "urls": urls
+                          "urls": urls,
+                          "created_at": release.get("created_at", "")
                       }, indent=2))
                       sys.exit(0)
           
@@ -91,8 +157,10 @@ jobs:
           found=$(cat release_out.json | python -c "import sys, json; j=json.load(sys.stdin); print(j.get('found', False))")
           if [ "$found" = "True" ]; then
             tag_name=$(cat release_out.json | python -c "import sys, json; j=json.load(sys.stdin); print(j['tag_name'])")
+            created_at=$(cat release_out.json | python -c "import sys, json; j=json.load(sys.stdin); print(j['created_at'])")
             urls=$(cat release_out.json | python -c "import sys, json; j=json.load(sys.stdin); print('\n'.join(j['urls']))")
             echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
+            echo "morphosource_created_at=$created_at" >> "$GITHUB_OUTPUT"
             echo "$urls" > release_body.txt
           fi
           
@@ -115,29 +183,10 @@ jobs:
           releases=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
           
-          release_tag="${{ steps.release_info.outputs.release_tag }}"
+          morphosource_date="${{ steps.release_info.outputs.morphosource_created_at }}"
           
-          # Add parse check and convert to JSON array if needed
-          if ! echo "$releases" | jq empty; then
-            echo "Error: Invalid JSON response"
-            echo "has_analysis=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          
-          # Check for any ct analysis releases for this morphosource tag
-          existing_analysis=$(echo "$releases" | jq -r --arg tag "$release_tag" '
-            if type == "array" then
-              .[] | 
-              select(.tag_name != null) |
-              select(
-                (.tag_name | startswith("ct_image_analysis-") or startswith("ct_slice_analysis-")) and
-                (.body | contains($tag))
-              ) |
-              .tag_name
-            else
-              empty
-            end
-          ')
+          # Check for any ct_image_analysis releases created after this morphosource release
+          existing_analysis=$(echo "$releases" | jq -r ".[] | select(.tag_name | startswith(\"ct_image_analysis-\")) | select(.created_at > \"$morphosource_date\") | .tag_name")
           
           if [ ! -z "$existing_analysis" ]; then
             echo "Found existing analysis: $existing_analysis"
