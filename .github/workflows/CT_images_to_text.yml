@@ -25,28 +25,74 @@ jobs:
           sudo apt-get install -y chromium-browser
           pip install requests beautifulsoup4 openai selenium pillow webdriver-manager
 
-      - name: Fetch Latest Release
+      - name: Fetch MorphoSource Release
         id: fetch_release
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
-          echo "Fetching the latest release from this repo..."
-          response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
-            https://api.github.com/repos/${{ github.repository }}/releases/latest)
+          echo "Fetching releases from this repo..."
           
-          # Extract body
-          body=$(echo "$response" | python3 -c $'import sys, json\ntry:\n    data = json.load(sys.stdin)\n    print(data.get("body", ""))\nexcept:\n    print("")')
+          # Get all releases (paginate through them)
+          releases=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
           
-          # Extract tag name
-          tag_name=$(echo "$response" | python3 -c $'import sys, json\ntry:\n    data = json.load(sys.stdin)\n    print(data.get("tag_name", ""))\nexcept:\n    print("")')
+          # Find the most recent morphosource-updates release
+          morphosource_release=$(echo "$releases" | python3 -c $'
+import sys, json
+try:
+    releases = json.load(sys.stdin)
+    # Filter for morphosource-updates releases
+    morpho_releases = [r for r in releases if r.get("tag_name", "").startswith("morphosource-updates-")]
+    if morpho_releases:
+        latest = morpho_releases[0]  # Most recent is first
+        print(json.dumps({
+            "body": latest.get("body", ""),
+            "tag_name": latest.get("tag_name", ""),
+        }))
+    else:
+        print("{}")
+except Exception as e:
+    print("{}")
+')
+          
+          # Extract data from the found release
+          body=$(echo "$morphosource_release" | python3 -c $'
+import sys, json
+try:
+    data = json.load(sys.stdin)
+    print(data.get("body", ""))
+except:
+    print("")
+')
+          
+          tag_name=$(echo "$morphosource_release" | python3 -c $'
+import sys, json
+try:
+    data = json.load(sys.stdin)
+    print(data.get("tag_name", ""))
+except:
+    print("")
+')
           
           # Extract URL from body
-          url=$(echo "$body" | python3 -c $'import sys, re\ntry:\n    content = sys.stdin.read()\n    match = re.search(r"https://[^\s\)\\"\']+", content)\n    print(match.group(0) if match else "NO_URL_FOUND")\nexcept:\n    print("NO_URL_FOUND")')
+          url=$(echo "$body" | python3 -c $'
+import sys, re
+try:
+    content = sys.stdin.read()
+    match = re.search(r"https://[^\s\)\\"\']+", content)
+    print(match.group(0) if match else "NO_URL_FOUND")
+except:
+    print("NO_URL_FOUND")
+')
           
-          if [ -z "$tag_name" ]; then
-            echo "Error: Could not extract tag_name from release"
-            exit 1
+          if [ -z "$tag_name" ] || [[ "$tag_name" != morphosource-updates-* ]]; then
+            echo "No morphosource-updates release found"
+            echo "is_morphosource=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+          
+          echo "Found morphosource release: $tag_name"
+          echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
           
           if [ "$url" != "NO_URL_FOUND" ]; then
             echo "morphosource_url=$url" >> "$GITHUB_OUTPUT"
@@ -56,26 +102,16 @@ jobs:
           
           echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
 
-      - name: Check if morphosource-updates
-        id: check_morpho
-        run: |
-          TAG_NAME="${{ steps.fetch_release.outputs.release_tag }}"
-          if [[ "$TAG_NAME" == morphosource-updates-* ]]; then
-            echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "is_morphosource=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Generate Timestamp
         id: gen_ts
-        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        if: steps.fetch_release.outputs.is_morphosource == 'true'
         run: |
           TS=$(date +'%Y-%m-%d_%H-%M-%S')
           echo "timestamp=$TS" >> "$GITHUB_OUTPUT"
 
       - name: Process CT Images
         id: process_images
-        if: steps.check_morpho.outputs.is_morphosource == 'true' && steps.fetch_release.outputs.morphosource_url != ''
+        if: steps.fetch_release.outputs.is_morphosource == 'true' && steps.fetch_release.outputs.morphosource_url != ''
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           MORPHOSOURCE_URL: ${{ steps.fetch_release.outputs.morphosource_url }}
@@ -93,7 +129,7 @@ jobs:
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Create Image Analysis Release
-        if: steps.check_morpho.outputs.is_morphosource == 'true' && success()
+        if: steps.fetch_release.outputs.is_morphosource == 'true' && success()
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
@@ -114,7 +150,3 @@ jobs:
           echo "4. Python dependencies installation"
           echo "5. Screenshot capture process"
           exit 1
-
-      - name: No new morphosource release
-        if: steps.check_morpho.outputs.is_morphosource == 'false'
-        run: echo "No 'morphosource-updates-*' release found. Skipping CT image analysis."
