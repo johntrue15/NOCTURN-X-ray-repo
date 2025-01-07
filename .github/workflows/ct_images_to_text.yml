@@ -1,9 +1,10 @@
 name: CT Images to Text
 
 on:
-  workflow_run:
-    workflows: ["Parse MorphoSource Data"]
-    types: [completed]
+   workflow_dispatch:
+ # workflow_run:
+ #   workflows: ["Parse MorphoSource Data"]
+ #   types: [completed]
 
 jobs:
   ct_image_text_job:
