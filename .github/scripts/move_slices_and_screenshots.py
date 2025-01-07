@@ -74,7 +74,8 @@ def move_slices_and_screenshots():
         print("Found <al-settings>!")
 
         # 3. Loop from slices-index=0.1..0.9
-        slice_values = [round(i * 0.01, 2) for i in range(1, 100)]
+        #slice_values = [round(i * 0.01, 2) for i in range(1, 100)]
+        slice_values = [round(i * 0.1, 1) for i in range(1, 10)]
         for val in slice_values:
             # Set slices-index
             driver.execute_script(
