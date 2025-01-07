@@ -1,11 +1,11 @@
 name: MorphoSource URL and Screenshot Check
 on:
-  release:
-    types: [published]
+  #release:
+  #  types: [published]
   workflow_dispatch:
-  workflow_run:
-    workflows: ["CT to Text"]
-    types: [completed]
+  #workflow_run:
+  #  workflows: ["CT to Text"]
+  #  types: [completed]
 
 jobs:
   url_check:
