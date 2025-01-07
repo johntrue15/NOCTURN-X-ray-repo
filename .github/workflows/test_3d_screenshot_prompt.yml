@@ -6,7 +6,7 @@ on:
       url_list:
         description: 'URLs to process (one per line)'
         required: false
-        default: 'https://www.morphosource.org/concern/media/000699581?locale=en'
+        default: 'https://www.morphosource.org/concern/media/000699666?locale=en'
         type: string
 
 jobs:
