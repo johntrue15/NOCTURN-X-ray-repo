@@ -1,16 +1,13 @@
 # .github/scripts/ct_image_to_text.py
-
-import sys
 import os
+import sys
 import re
 import time
 import traceback
-import logging
-import base64
 from datetime import datetime
+import logging
 from urllib3.exceptions import ReadTimeoutError
 import urllib3
-from openai import OpenAI
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -20,6 +17,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import TimeoutException, WebDriverException
 from webdriver_manager.chrome import ChromeDriverManager
+from openai import OpenAI
 
 # Configure logging
 logging.basicConfig(level=logging.INFO,
@@ -32,53 +30,104 @@ def setup_driver(max_retries=3, retry_delay=5):
     chrome_options.add_argument('--headless=new')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
-    chrome_options.add_argument('--window-size=1920,1080')
-    chrome_options.add_argument('--disable-gpu')
     
-    service = Service(ChromeDriverManager().install())
-    return webdriver.Chrome(service=service, options=chrome_options)
-
-def wait_for_element(driver, locator, timeout=30):
-    """Wait for an element to be present and visible."""
-    try:
-        element = WebDriverWait(driver, timeout).until(
-            EC.presence_of_element_located(locator)
-        )
-        return element
-    except TimeoutException:
-        logger.error(f"Timeout waiting for element: {locator}")
-        raise
+    # WebGL and GPU settings
+    chrome_options.add_argument('--use-angle=swiftshader')
+    chrome_options.add_argument('--use-gl=angle')
+    chrome_options.add_argument('--use-angle=gl')
+    chrome_options.add_argument('--enable-webgl')
+    chrome_options.add_argument('--enable-gpu-rasterization')
+    chrome_options.add_argument('--enable-zero-copy')
+    chrome_options.add_argument('--enable-features=VaapiVideoDecoder')
+    chrome_options.add_argument('--ignore-gpu-blocklist')
+    chrome_options.add_argument('--enable-native-gpu-memory-buffers')
+    
+    # Window size and display settings
+    chrome_options.add_argument('--window-size=1920,1080')
+    chrome_options.add_argument('--start-maximized')
+    chrome_options.add_argument('--hide-scrollbars')
+    chrome_options.add_argument('--force-device-scale-factor=1')
+    
+    # Additional stability options
+    chrome_options.add_argument('--disable-extensions')
+    chrome_options.add_argument('--disable-infobars')
+    chrome_options.add_argument('--disable-popup-blocking')
+    chrome_options.add_argument('--disable-notifications')
+    chrome_options.add_argument('--disable-dev-tools')
+    chrome_options.add_argument('--no-first-run')
+    chrome_options.add_argument('--no-default-browser-check')
+    chrome_options.add_argument('--remote-debugging-port=9222')
+    
+    chrome_prefs = {
+        'profile.default_content_settings.popups': 0,
+        'profile.password_manager_enabled': False,
+        'credentials_enable_service': False,
+        'webgl.disabled': False,
+        'webgl.force_enabled': True,
+    }
+    chrome_options.add_experimental_option('prefs', chrome_prefs)
+    
+    for attempt in range(max_retries):
+        try:
+            logger.info(f"Attempt {attempt + 1}/{max_retries} to setup WebDriver")
+            driver_path = ChromeDriverManager().install()
+            service = Service(driver_path)
+            
+            urllib3.Timeout.DEFAULT_TIMEOUT = 300.0
+            driver = webdriver.Chrome(service=service, options=chrome_options)
+            
+            driver.set_page_load_timeout(300)
+            driver.set_script_timeout(300)
+            driver.implicitly_wait(30)
+            
+            webgl_working = driver.execute_script("""
+                try {
+                    var canvas = document.createElement('canvas');
+                    var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                    var extension = gl.getExtension('WEBGL_debug_renderer_info');
+                    return {
+                        vendor: gl.getParameter(extension.UNMASKED_VENDOR_WEBGL),
+                        renderer: gl.getParameter(extension.UNMASKED_RENDERER_WEBGL),
+                        working: true
+                    };
+                } catch (e) {
+                    return {
+                        error: e.toString(),
+                        working: false
+                    };
+                }
+            """)
+            
+            logger.info(f"WebGL Status: {webgl_working}")
+            return driver
+            
+        except Exception as e:
+            logger.error(f"Error during WebDriver setup: {str(e)}")
+            if attempt < max_retries - 1:
+                logger.info(f"Retrying in {retry_delay} seconds...")
+                time.sleep(retry_delay)
+            else:
+                raise
 
 def extract_id_from_url(url):
     """Extract the media ID from a MorphoSource URL"""
-    patterns = [
-        r'/media/(\d+)',
-        r'/media/0*(\d+)',
-        r'media/0*(\d+)\?'
-    ]
-    
+    patterns = [r'/media/(\d+)', r'/media/0*(\d+)', r'media/0*(\d+)\?']
     for pattern in patterns:
         match = re.search(pattern, url)
         if match:
             return match.group(1)
-    
     numbers = re.findall(r'\d+', url)
     return numbers[0] if numbers else 'unknown'
 
-def take_screenshots(url, output_folder):
-    """Take screenshots of the CT scan from different angles"""
+def process_url(url, output_folder):
+    """Process a single URL and take screenshots"""
     driver = None
+    start_time = datetime.now()
     file_id = extract_id_from_url(url)
-    screenshots = []
-    orientations = [
-        ('Default (Y+ Up)', 'Default_Yplus_Up.png'),
-        ('Upside Down (Y- Up)', 'Upside_Down_Y-_Up.png'),
-        ('Forward 90° (Z- Up)', 'Forward_90_Z-_Up.png'),
-        ('Back 90° (Z+ Up)', 'Back_90_Zplus_Up.png')
-    ]
+    screenshot_paths = []
     
     try:
-        driver = setup_driver()
+        driver = setup_driver(max_retries=3, retry_delay=5)
         wait = WebDriverWait(driver, 180)
         actions = ActionChains(driver)
         
@@ -98,7 +147,7 @@ def take_screenshots(url, output_folder):
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
         )
         full_screen_btn.click()
-        time.sleep(2)
+        time.sleep(10)
         
         try:
             expand_button = driver.find_element(By.CSS_SELECTOR, '.expandButton[title="Expand Contents"]')
@@ -108,73 +157,85 @@ def take_screenshots(url, output_folder):
         except Exception as e:
             logger.warning(f"Could not expand controls: {str(e)}")
         
-        for orientation_name, file_name in orientations:
+        orientations = [
+            ('Default (Y+ Up)', 'Default_Yplus_Up.png'),
+            ('Upside Down (Y- Up)', 'Upside_Down_Y-_Up.png'),
+            ('Forward 90° (Z- Up)', 'Forward_90_Z-_Up.png'),
+            ('Back 90° (Z+ Up)', 'Back_90_Zplus_Up.png')
+        ]
+        
+        for orientation_name, filename in orientations:
             try:
-                if set_orientation(driver, actions, orientation_name):
-                    filepath = os.path.join(output_folder, file_name)
-                    time.sleep(10)
-                    driver.save_screenshot(filepath)
-                    screenshots.append(filepath)
-                    logger.info(f"Saved screenshot: {filepath}")
+                logger.info(f"Processing orientation: {orientation_name}")
+                orientation_label = WebDriverWait(driver, 30).until(
+                    EC.presence_of_element_located((By.XPATH, "//label[text()='Orientation']"))
+                )
+                parent_div = orientation_label.find_element(By.XPATH, "./ancestor::div[contains(@class, 'grid gap-4')]")
+                combobox = parent_div.find_element(By.CSS_SELECTOR, 'button[role="combobox"]')
+                
+                actions.move_to_element(combobox).click().perform()
                 time.sleep(5)
+                
+                option = WebDriverWait(driver, 30).until(
+                    EC.presence_of_element_located((By.XPATH, f"//*[contains(text(), '{orientation_name}')]"))
+                )
+                actions.move_to_element(option).click().perform()
+                time.sleep(10)
+                
+                filepath = os.path.join(output_folder, filename)
+                driver.save_screenshot(filepath)
+                screenshot_paths.append(filepath)
+                logger.info(f"Saved screenshot: {filepath}")
+                time.sleep(5)
+                
             except Exception as e:
                 logger.error(f"Error processing orientation {orientation_name}: {str(e)}")
+                continue
         
-        return screenshots
+        return screenshot_paths
         
     except Exception as e:
-        logger.error(f"Error taking screenshots: {str(e)}")
+        logger.error(f"Error processing URL: {str(e)}")
         traceback.print_exc()
-        raise
+        return screenshot_paths
     
     finally:
         if driver:
             driver.quit()
+        duration = datetime.now() - start_time
+        logger.info(f"Processing time: {duration}")
 
-def set_orientation(driver, actions, orientation):
-    """Set the model orientation"""
-    try:
-        logger.info(f"Setting orientation to: {orientation}")
-        orientation_label = WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.XPATH, "//label[text()='Orientation']"))
-        )
-        parent_div = orientation_label.find_element(By.XPATH, "./ancestor::div[contains(@class, 'grid gap-4')]")
-        combobox = parent_div.find_element(By.CSS_SELECTOR, 'button[role="combobox"]')
-        
-        actions.move_to_element(combobox).click().perform()
-        time.sleep(5)
-        
-        option = WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.XPATH, f"//*[contains(text(), '{orientation}')]"))
-        )
-        actions.move_to_element(option).click().perform()
-        time.sleep(10)
-        return True
-        
-    except Exception as e:
-        logger.error(f"Error setting orientation: {str(e)}")
-        return False
+def get_image_paths(folder_path):
+    """Get specific image file paths from the given folder."""
+    valid_suffixes = {
+        "Forward_90_Z-_Up.png",
+        "Default_Yplus_Up.png",
+        "Upside_Down_Y-_Up.png",
+        "Back_90_Zplus_Up.png"
+    }
+    return [
+        os.path.join(folder_path, f)
+        for f in os.listdir(folder_path)
+        if any(f.endswith(suffix) for suffix in valid_suffixes)
+    ]
 
 def generate_text_with_images(image_paths):
-    """Analyze CT scan images using OpenAI's model"""
-    logger.info("Starting OpenAI analysis")
-    
+    """Pass image paths and super prompt to the o1-mini model."""
     if not os.environ.get("OPENAI_API_KEY"):
-        raise Exception("OPENAI_API_KEY is missing")
-    
+        return "Error: OPENAI_API_KEY is missing."
+
     client = OpenAI()
-    
     user_content = [
         "You are an advanced AI model tasked with analyzing 3D X-ray CT scan data from Morphosource.org. "
         "Below, I will describe the provided data and 3D orientation images. Your task is to extract meaningful "
         "details about the structure, material composition, and any observable anomalies or characteristics of the object. "
         "Provide a detailed textual analysis based on the images provided."
     ]
-    
+
     user_content.append("The following images are provided:")
     for i, image_path in enumerate(image_paths, 1):
         user_content.append(f"{i}. {image_path}")
-    
+
     user_content.append("""
         Input Details:
         1. Orientation Views: The object is presented in multiple perspectives.
@@ -196,19 +257,16 @@ def generate_text_with_images(image_paths):
     """)
 
     try:
-        response = client.chat.completions.create(
+        resp = client.chat.completions.create(
             model="o1-mini",
-            messages=[
-                {
-                    "role": "user",
-                    "content": "\n".join(user_content)
-                }
-            ]
+            messages=[{
+                "role": "user",
+                "content": "\n".join(user_content)
+            }]
         )
-        return response.choices[0].message.content.strip()
+        return resp.choices[0].message.content.strip()
     except Exception as e:
-        logger.error(f"Error during OpenAI analysis: {e}")
-        raise
+        return f"Error calling o1-mini model: {e}"
 
 def main():
     if len(sys.argv) != 3:
@@ -221,7 +279,7 @@ def main():
     
     try:
         logger.info(f"Processing URL: {url}")
-        screenshot_paths = take_screenshots(url, output_folder)
+        screenshot_paths = process_url(url, output_folder)
         
         if not screenshot_paths:
             logger.error("No screenshots were captured")
