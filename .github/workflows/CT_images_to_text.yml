@@ -108,10 +108,11 @@ jobs:
 
       - name: Upload Screenshots
         if: steps.fetch_release.outputs.is_morphosource == 'true' && success()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ct-scan-screenshots
           path: screenshots/*.png
+          retention-days: 90
 
       - name: Handle Errors
         if: failure()
