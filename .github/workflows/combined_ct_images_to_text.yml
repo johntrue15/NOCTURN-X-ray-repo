@@ -36,14 +36,13 @@ jobs:
             !error_*.png
             !screenshots/error_*.png
 
-  handle_errors:
+handle_errors:
     needs: [url_check, process_3d, process_2d]
-    if: |
-      always() && (
-        failure() || 
-        needs.url_check.outputs.has_media_error == 'true' || 
-        needs.url_check.outputs.has_server_error == 'true'
-      )
+    if: ${{ always() &&
+      (failure() ||
+      needs.url_check.outputs.has_media_error == 'true' ||
+      needs.url_check.outputs.has_server_error == 'true')
+      }}
     runs-on: ubuntu-latest
     steps:
       - name: Handle Analysis Skip
