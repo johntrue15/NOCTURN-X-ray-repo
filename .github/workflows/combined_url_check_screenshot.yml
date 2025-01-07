@@ -18,6 +18,8 @@ jobs:
       is_morphosource: ${{ steps.check_morpho.outputs.is_morphosource }}
       has_media_error: ${{ steps.url_check.outputs.has_media_error }}
       has_server_error: ${{ steps.url_check.outputs.has_server_error }}
+      has_mesh: ${{ steps.type_check.outputs.has_mesh }}
+      has_volumetric_images: ${{ steps.type_check.outputs.has_volumetric_images }}
       release_body: ${{ steps.read_release_body.outputs.content }}
     steps:
       - name: Check out repository
@@ -122,6 +124,21 @@ jobs:
             echo "has_media_error=false" >> "$GITHUB_OUTPUT"
             echo "has_server_error=false" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Run 2D/3D Type Check
+        id: type_check
+        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        run: |
+          python .github/scripts/2D3D_check.py release_body.txt || true
+          if [ -f "url_check_status.json" ]; then
+            has_mesh=$(cat url_check_status.json | jq -r .has_mesh)
+            has_volumetric=$(cat url_check_status.json | jq -r .has_volumetric_images)
+            echo "has_mesh=$has_mesh" >> "$GITHUB_OUTPUT"
+            echo "has_volumetric_images=$has_volumetric" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_mesh=false" >> "$GITHUB_OUTPUT"
+            echo "has_volumetric_images=false" >> "$GITHUB_OUTPUT"
+          fi
           
       - name: Read release body
         id: read_release_body
@@ -146,7 +163,8 @@ jobs:
     if: |
       needs.url_check.outputs.is_morphosource == 'true' && 
       needs.url_check.outputs.has_media_error != 'true' &&
-      needs.url_check.outputs.has_server_error != 'true'
+      needs.url_check.outputs.has_server_error != 'true' &&
+      (needs.url_check.outputs.has_mesh == 'true' || needs.url_check.outputs.has_volumetric_images == 'true')
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -175,14 +193,30 @@ jobs:
           ${{ needs.url_check.outputs.release_body }}
           EOF
           
-      - name: Process URLs and take screenshots
+      - name: Process URLs and take screenshots for 3D mesh
+        if: needs.url_check.outputs.has_mesh == 'true'
         run: |
-          python .github/scripts/selenium_screenshot_new.py release_body.txt
+          python .github/scripts/3D_screenshot.py release_body.txt
           
-      - name: Upload screenshots
+      - name: Process URLs and take screenshots for volumetric images
+        if: needs.url_check.outputs.has_volumetric_images == 'true'
+        run: |
+          python .github/scripts/2D_screenshot.py release_body.txt
+          
+      - name: Upload mesh screenshots
+        if: needs.url_check.outputs.has_mesh == 'true'
         uses: actions/upload-artifact@v3
         with:
-          name: morphosource_screenshots
+          name: morphosource_3d_screenshots
+          path: |
+            *.png
+            !error_*.png
+            
+      - name: Upload volumetric screenshots
+        if: needs.url_check.outputs.has_volumetric_images == 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: morphosource_2d_screenshots
           path: |
             *.png
             !error_*.png
@@ -193,5 +227,4 @@ jobs:
         with:
           name: error_screenshots
           path: |
-            *.png
-            !error_*.png
+            error_*.png
