@@ -386,4 +386,13 @@ def main():
         logger.info(f"\nProcessing complete")
         logger.info(f"Successfully processed: {success_count}/{len(urls)}")
         
-        if success_count != len(
+        if success_count != len(urls):
+            sys.exit(1)
+            
+    except Exception as e:
+        logger.error(f"Error reading URL file: {str(e)}")
+        traceback.print_exc()
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
