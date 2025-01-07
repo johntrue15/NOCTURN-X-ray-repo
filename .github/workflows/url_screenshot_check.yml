@@ -1,7 +1,7 @@
 name: URL Screenshot Check for 2D/3D
 on:
-  release:
-    types: [published]
+  #release:
+    #types: [published]
   workflow_dispatch:
   #workflow_run:
   #  workflows: ["CT to Text"]
