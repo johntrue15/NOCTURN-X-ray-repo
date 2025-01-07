@@ -1,4 +1,4 @@
-name: MorphoSource Analysis Workflow
+name: MorphoSource Analysis Workflow New
 
 on:
   workflow_dispatch:
