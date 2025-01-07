@@ -46,7 +46,7 @@ jobs:
         echo "${{ github.event.inputs.url_list }}" > urls.txt
     
     - name: Run screenshot tests
-      run: python screenshot_test.py urls.txt
+      run: python .github/scripts/test_3D_screenshot.py urls.txt
       
     - name: List generated files
       if: always()
