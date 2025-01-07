@@ -1,0 +1,216 @@
+name: Combined 2D/3D Check with CT Images to Text and 2D Screenshot
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Parse MorphoSource Data"]
+    types: [completed]
+
+jobs:
+  url_check:
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' || 
+      github.event_name == 'release' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    outputs:
+      is_morphosource: ${{ steps.check_morpho.outputs.is_morphosource }}
+      has_media_error: ${{ steps.url_check.outputs.has_media_error }}
+      has_server_error: ${{ steps.url_check.outputs.has_server_error }}
+      has_mesh: ${{ steps.type_check.outputs.has_mesh }}
+      has_volumetric_images: ${{ steps.type_check.outputs.has_volumetric_images }}
+      release_body: ${{ steps.read_release_body.outputs.content }}
+      release_tag: ${{ steps.release_info.outputs.release_tag }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+          
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install selenium webdriver-manager
+          
+      - name: Install and setup Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget gnupg2 unzip
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+          
+      # Your existing URL check steps here...
+      # [Previous URL check steps remain identical through "Upload initial screenshots"]
+
+  process_3d:
+    needs: url_check
+    if: |
+      needs.url_check.outputs.is_morphosource == 'true' && 
+      needs.url_check.outputs.has_media_error != 'true' &&
+      needs.url_check.outputs.has_server_error != 'true' &&
+      needs.url_check.outputs.has_mesh == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser libnss3 libgbm1 libasound2t64 xvfb
+          pip install --upgrade pip
+          pip install --upgrade openai selenium pillow webdriver-manager urllib3
+
+      - name: Start Xvfb
+        run: |
+          Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
+
+      - name: Check for existing analysis
+        id: check_existing
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          releases=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
+          
+          release_tag="${{ needs.url_check.outputs.release_tag }}"
+          
+          # Check for any ct_image_analysis releases for this morphosource tag
+          existing_analysis=$(echo "$releases" | jq -r ".[] | select(.tag_name | startswith(\"ct_image_analysis-\")) | select(.body | contains(\"$release_tag\")) | .tag_name")
+          
+          if [ ! -z "$existing_analysis" ]; then
+            echo "Found existing analysis: $existing_analysis"
+            echo "has_analysis=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No existing analysis found"
+            echo "has_analysis=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate Timestamp
+        id: gen_ts
+        if: steps.check_existing.outputs.has_analysis != 'true'
+        run: |
+          TS=$(date +'%Y-%m-%d_%H-%M-%S')
+          echo "timestamp=$TS" >> "$GITHUB_OUTPUT"
+
+      - name: Process CT Images
+        id: process_images
+        if: steps.check_existing.outputs.has_analysis != 'true'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PYTHONUNBUFFERED: 1
+        run: |
+          # Create release body file from previous job
+          echo "${{ needs.url_check.outputs.release_body }}" > release_body.txt
+          
+          mkdir -p screenshots
+          
+          # Run with increased timeouts
+          timeout 30m python3 .github/scripts/ct_image_to_text.py release_body.txt screenshots 2>&1 | tee process.log
+          
+          if [ ! -f screenshots/*.png ]; then
+            echo "No screenshots were generated. Check process.log for details."
+            cat process.log
+            exit 1
+          fi
+          
+          # Clean the output for the release description
+          echo "description<<EOF" >> "$GITHUB_OUTPUT"
+          cat process.log | grep -v "DEBUG" | grep -v "INFO" | grep -v "WARNING" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Create Image Analysis Release
+        if: steps.check_existing.outputs.has_analysis != 'true' && success()
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          tag_name: "ct_image_analysis-${{ steps.gen_ts.outputs.timestamp }}"
+          release_name: "CT Image Analysis #${{ steps.gen_ts.outputs.timestamp }}"
+          body: |
+            Analysis for MorphoSource release: ${{ needs.url_check.outputs.release_tag }}
+            
+            ${{ steps.process_images.outputs.description }}
+          draft: false
+          prerelease: false
+
+      - name: Upload 3D Screenshots
+        if: steps.check_existing.outputs.has_analysis != 'true' && success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ct-scan-screenshots
+          path: screenshots/*.png
+          retention-days: 90
+
+  process_2d:
+    needs: url_check
+    if: |
+      needs.url_check.outputs.is_morphosource == 'true' && 
+      needs.url_check.outputs.has_media_error != 'true' &&
+      needs.url_check.outputs.has_server_error != 'true' &&
+      needs.url_check.outputs.has_volumetric_images == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+          
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install selenium webdriver-manager
+          
+      - name: Install and setup Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget gnupg2 unzip
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+
+      - name: Create screenshots directory
+        run: mkdir -p screenshots
+
+      - name: Process 2D Screenshots
+        run: |
+          # Create release body file from previous job
+          echo "${{ needs.url_check.outputs.release_body }}" > release_body.txt
+          python .github/scripts/2D_screenshot.py release_body.txt
+
+      - name: Upload 2D Screenshots
+        uses: actions/upload-artifact@v3
+        with:
+          name: morphosource_2d_screenshots
+          path: |
+            *.png
+            screenshots/*.png
+            !error_*.png
+            !screenshots/error_*.png
+
+  handle_errors:
+    needs: [url_check, process_3d, process_2d]
+    if: always() && (failure() || needs.url_check.outputs.has_media_error == 'true' || needs.url_check.outputs.has_server_error == 'true')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload Error Screenshots
+        uses: actions/upload-artifact@v3
+        with:
+          name: error_screenshots
+          path: |
+            error_*.png
+            screenshots/error_*.png
+            process.log
