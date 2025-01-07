@@ -59,7 +59,7 @@ jobs:
       uses: actions/upload-artifact@v3
       if: always()
       with:
-        name: screenshots-$(date +%Y%m%d_%H%M%S)
+        name: screenshots
         path: |
           *.png
           error_*.txt
@@ -85,8 +85,10 @@ jobs:
     - name: Download screenshots artifact
       uses: actions/download-artifact@v3
       with:
-        name: screenshots-$(date +%Y%m%d_%H%M%S)
+        name: screenshots
         path: screenshots
     
     - name: Run analysis on screenshots
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: python .github/scripts/analyze_ct_images.py screenshots/
