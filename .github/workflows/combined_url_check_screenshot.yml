@@ -47,71 +47,70 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
-          # Create Python script to handle releases
-          cat > process_release.py << 'END_SCRIPT'
-          import json
-          import re
-          import sys
-          import os
-          
-          def extract_url_from_body(body):
-              if not body:
-                  return None
-              pattern = r'https://www\.morphosource\.org/concern/media/\d+'
-              urls = re.findall(pattern, body)
-              return urls if urls else None
-          
-          def process_releases(file_path):
-              try:
-                  with open(file_path, 'r', encoding='utf-8') as f:
-                      data = json.load(f)
-                      
-                  if not isinstance(data, list):
-                      data = [data]
-                      
-                  for release in data:
-                      tag = release.get("tag_name", "")
-                      body = release.get("body", "")
-                      if tag and tag.startswith("morphosource-updates-"):
-                          urls = extract_url_from_body(body)
-                          if urls:
-                              return {
-                                  "found": True,
-                                  "tag_name": tag,
-                                  "urls": urls
-                              }
-                  
-                  return {"found": False}
-                  
-              except Exception as e:
-                  return {
-                      "found": False,
-                      "error": str(e)
-                  }
-          
-          if __name__ == "__main__":
-              result = process_releases("all_releases.json")
-              print(json.dumps(result, indent=2))
-          END_SCRIPT
-          
+          cat << 'ENDSCRIPT' > process_release.py
+import json
+import re
+import sys
+import os
+
+def extract_url_from_body(body):
+    if not body:
+        return None
+    pattern = r'https://www\.morphosource\.org/concern/media/\d+'
+    urls = re.findall(pattern, body)
+    return urls if urls else None
+
+def process_releases(file_path):
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            
+        if not isinstance(data, list):
+            data = [data]
+            
+        for release in data:
+            tag = release.get("tag_name", "")
+            body = release.get("body", "")
+            if tag and tag.startswith("morphosource-updates-"):
+                urls = extract_url_from_body(body)
+                if urls:
+                    return {
+                        "found": True,
+                        "tag_name": tag,
+                        "urls": urls
+                    }
+        
+        return {"found": False}
+        
+    except Exception as e:
+        return {
+            "found": False,
+            "error": str(e)
+        }
+
+if __name__ == "__main__":
+    result = process_releases("all_releases.json")
+    print(json.dumps(result, indent=2))
+ENDSCRIPT
+
           # Process the release data
           if [[ "${{ github.event_name }}" == "workflow_dispatch" || "${{ github.event_name }}" == "workflow_run" ]]; then
             response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
               "https://api.github.com/repos/${{ github.repository }}/releases?per_page=10")
             echo "$response" > all_releases.json
           else
-            echo '${{ toJSON(github.event.release) }}' > release.json
-            echo "[$(cat release.json)]" > all_releases.json
+            # Save release to file using jq for proper JSON formatting
+            echo '${{ toJSON(github.event.release) }}' | jq '.' > release.json
+            jq -s '.' release.json > all_releases.json
           fi
           
           # Run the Python script and process results
           python process_release.py > release_out.json
           
           # Parse results safely using jq
-          FOUND=$(cat release_out.json | jq -r '.found')
+          FOUND=$(jq -r '.found' release_out.json)
           if [[ "$FOUND" == "true" ]]; then
-            TAG_NAME=$(cat release_out.json | jq -r '.tag_name')
-            # Process URLs safely using jq
+            TAG_NAME=$(jq -r '.tag_name' release_out.json)
             jq -r '.urls[]' release_out.json > release_body.txt
             echo "release_tag=$TAG_NAME" >> "$GITHUB_OUTPUT"
           fi
