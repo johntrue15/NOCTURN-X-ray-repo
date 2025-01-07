@@ -24,7 +24,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y chromium-browser libnss3 libgbm1 libasound2t64 xvfb
           pip install --upgrade pip
-          pip install openai selenium pillow webdriver-manager urllib3
+          pip install --upgrade openai selenium pillow webdriver-manager urllib3
+
+      - name: Start Xvfb
+        run: |
+          Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
 
       - name: Fetch MorphoSource Release
         id: fetch_release
@@ -75,6 +80,7 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           MORPHOSOURCE_URL: ${{ steps.fetch_release.outputs.morphosource_url }}
+          PYTHONUNBUFFERED: 1
         run: |
           if [ -z "$MORPHOSOURCE_URL" ]; then
             echo "No valid MorphoSource URL found in release."
@@ -83,20 +89,18 @@ jobs:
           
           mkdir -p screenshots
           
-          # Start Xvfb
-          Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
-          export DISPLAY=:99
+          # Run with increased timeouts
+          timeout 30m python3 .github/scripts/ct_image_to_text.py "$MORPHOSOURCE_URL" screenshots 2>&1 | tee process.log
           
-          python3 .github/scripts/ct_image_to_text.py "$MORPHOSOURCE_URL" screenshots 2>&1 | tee process.log
-          
-          if [ ! -f "screenshots/*.png" ]; then
+          if [ ! -f screenshots/*.png ]; then
             echo "No screenshots were generated. Check process.log for details."
+            cat process.log
             exit 1
           fi
           
-          # Save the analysis output
+          # Clean the output for the release description
           echo "description<<EOF" >> "$GITHUB_OUTPUT"
-          cat process.log | grep -v "INFO" | grep -v "WARNING" >> "$GITHUB_OUTPUT"
+          cat process.log | grep -v "DEBUG" | grep -v "INFO" | grep -v "WARNING" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Create Image Analysis Release
@@ -119,6 +123,17 @@ jobs:
           path: screenshots/*.png
           retention-days: 90
 
+      - name: Upload Debug Logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: debug-logs
+          path: |
+            process.log
+            screenshots/
+            *.png
+          retention-days: 5
+
       - name: Handle Errors
         if: failure()
         run: |
@@ -127,6 +142,7 @@ jobs:
           echo "2. Valid MorphoSource URL in release body"
           echo "3. WebGL support in Chrome"
           echo "4. Screenshot capture process"
+          echo "5. Xvfb configuration"
           
           if [ -f "process.log" ]; then
             echo "Process log contents:"
