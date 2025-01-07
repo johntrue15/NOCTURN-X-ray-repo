@@ -31,59 +31,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
           echo "Fetching releases from this repo..."
-          
-          # Get all releases (paginate through them)
           releases=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
           
-          # Find the most recent morphosource-updates release
-          morphosource_release=$(echo "$releases" | python3 -c $'
-import sys, json
-try:
-    releases = json.load(sys.stdin)
-    # Filter for morphosource-updates releases
-    morpho_releases = [r for r in releases if r.get("tag_name", "").startswith("morphosource-updates-")]
-    if morpho_releases:
-        latest = morpho_releases[0]  # Most recent is first
-        print(json.dumps({
-            "body": latest.get("body", ""),
-            "tag_name": latest.get("tag_name", ""),
-        }))
-    else:
-        print("{}")
-except Exception as e:
-    print("{}")
-')
+          # Get latest morphosource release
+          morphosource_release=$(echo "$releases" | python3 .github/scripts/get_morphosource_release.py)
           
-          # Extract data from the found release
-          body=$(echo "$morphosource_release" | python3 -c $'
-import sys, json
-try:
-    data = json.load(sys.stdin)
-    print(data.get("body", ""))
-except:
-    print("")
-')
-          
-          tag_name=$(echo "$morphosource_release" | python3 -c $'
-import sys, json
-try:
-    data = json.load(sys.stdin)
-    print(data.get("tag_name", ""))
-except:
-    print("")
-')
+          # Extract data
+          body=$(echo "$morphosource_release" | jq -r '.body // empty')
+          tag_name=$(echo "$morphosource_release" | jq -r '.tag_name // empty')
           
           # Extract URL from body
-          url=$(echo "$body" | python3 -c $'
-import sys, re
-try:
-    content = sys.stdin.read()
-    match = re.search(r"https://[^\s\)\\"\']+", content)
-    print(match.group(0) if match else "NO_URL_FOUND")
-except:
-    print("NO_URL_FOUND")
-')
+          url=$(echo "$body" | python3 .github/scripts/extract_url.py)
           
           if [ -z "$tag_name" ] || [[ "$tag_name" != morphosource-updates-* ]]; then
             echo "No morphosource-updates release found"
@@ -122,7 +81,7 @@ except:
           fi
           
           mkdir -p screenshots
-          python .github/scripts/ct_image_to_text.py "$MORPHOSOURCE_URL" screenshots > ct_image_output.txt
+          python3 .github/scripts/ct_image_to_text.py "$MORPHOSOURCE_URL" screenshots > ct_image_output.txt
           
           echo "description<<EOF" >> "$GITHUB_OUTPUT"
           cat ct_image_output.txt >> "$GITHUB_OUTPUT"
@@ -148,5 +107,4 @@ except:
           echo "2. Valid MorphoSource URL in release body"
           echo "3. OpenAI API key configuration"
           echo "4. Python dependencies installation"
-          echo "5. Screenshot capture process"
           exit 1
