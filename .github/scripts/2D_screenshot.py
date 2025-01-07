@@ -55,7 +55,7 @@ def move_slices_and_screenshots():
         full_screen_btn.click()
 
         # Give the viewer time to load fully in fullscreen
-        time.sleep(360)
+        time.sleep(36)
 
         # Locate <al-control-panel> in the DOM
         host_element = wait.until(
