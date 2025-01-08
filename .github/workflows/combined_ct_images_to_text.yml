@@ -154,16 +154,27 @@ jobs:
         run: |
           echo "${{ needs.check_and_analyze.outputs.release_body }}" > release_body.txt
           
+      - name: Create Screenshots Directory
+        run: mkdir -p screenshots
+
       - name: Run URL check
         id: url_check
         run: |
           python .github/scripts/url_screenshot_check.py release_body.txt || true
+          
+          # Move any generated screenshots to screenshots directory
+          mv *.png screenshots/ 2>/dev/null || true
+          
           if [ -f "url_check_status.json" ]; then
             status=$(cat url_check_status.json | jq -r .status)
             if [ "$status" = "media_error" ]; then
               echo "has_media_error=true" >> "$GITHUB_OUTPUT"
               echo "has_server_error=false" >> "$GITHUB_OUTPUT"
-              # Exit successfully to prevent loops
+              
+              # Upload error screenshots immediately
+              if [ -f "screenshots/*.png" ]; then
+                echo "Error screenshots captured"
+              fi
               exit 0
             elif [ "$status" = "server_error" ]; then
               echo "has_media_error=false" >> "$GITHUB_OUTPUT"
@@ -176,6 +187,15 @@ jobs:
             echo "has_media_error=false" >> "$GITHUB_OUTPUT"
             echo "has_server_error=false" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Upload URL Check Screenshots
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: url-check-screenshots
+          path: |
+            screenshots/*.png
+          retention-days: 90
 
       - name: Run 2D/3D Type Check
         id: type_check
