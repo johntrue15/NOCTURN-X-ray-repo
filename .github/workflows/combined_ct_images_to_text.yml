@@ -7,12 +7,17 @@ on:
     types: [completed]
 
 jobs:
-  check_concurrent:
-    needs: check_concurrent
-    if: needs.check_concurrent.outputs.should_proceed == 'true'
+  check_and_analyze:
+    runs-on: ubuntu-latest
     outputs:
-      should_proceed: ${{ steps.check_runs.outputs.should_proceed }}
+      is_morphosource: ${{ steps.check_morpho.outputs.is_morphosource }}
+      has_analysis: ${{ steps.check_existing.outputs.has_analysis }}
+      release_body: ${{ steps.fetch_release.outputs.release_body }}
+      release_tag: ${{ steps.fetch_release.outputs.release_tag }}
     steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
       - name: Check for running workflows
         id: check_runs
         env:
@@ -40,25 +45,11 @@ jobs:
           # Only proceed if this is the only workflow (count of 1 includes this run)
           if [ "$total_workflows" -le 1 ]; then
             echo "No other workflows running or queued, proceeding"
-            echo "should_proceed=true" >> "$GITHUB_OUTPUT"
           else
             echo "Other workflows are already running or queued, skipping"
-            echo "should_proceed=false" >> "$GITHUB_OUTPUT"
+            exit 1
           fi
 
-  check_release:
-    runs-on: ubuntu-latest
-    outputs:
-      is_morphosource: ${{ steps.check_morpho.outputs.is_morphosource }}
-      release_body: ${{ steps.fetch_release.outputs.release_body }}
-      release_tag: ${{ steps.fetch_release.outputs.release_tag }}
-      has_analysis: ${{ steps.check_existing.outputs.has_analysis }}
-    steps:
-      # Check out repository
-      - name: Check out repo
-        uses: actions/checkout@v3
-
-      # Fetch Latest MorphoSource Release
       - name: Fetch Latest MorphoSource Release
         id: fetch_release
         env:
@@ -71,12 +62,10 @@ jobs:
           # Use Python to find the latest morphosource-updates release
           python3 -c 'import json; f=open("releases.json", "r"); releases=json.load(f); f.close(); morpho_releases=[r for r in releases if r["tag_name"].startswith("morphosource-updates-")]; result={"found": True, "tag_name": morpho_releases[0]["tag_name"], "body": morpho_releases[0]["body"], "created_at": morpho_releases[0]["created_at"]} if morpho_releases else {"found": False}; f=open("release_info.json", "w"); json.dump(result, f, indent=2); f.close()'
           
-          # Check if we found a morphosource release
           if [ "$(cat release_info.json | jq -r .found)" = "true" ]; then
               tag_name=$(cat release_info.json | jq -r .tag_name)
               echo "Found morphosource release: $tag_name"
               
-              # Store outputs (multi-line safe)
               echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
               cat release_info.json | jq -r .body >> "$GITHUB_OUTPUT"
               echo "EOF" >> "$GITHUB_OUTPUT"
@@ -90,21 +79,16 @@ jobs:
               echo "morphosource_created_at=" >> "$GITHUB_OUTPUT"
           fi
 
-      # Check if it's a morphosource release
-      # Check if it's a morphosource release and hasn't been analyzed yet
       - name: Check if morphosource-updates
         id: check_morpho
         run: |
           TAG_NAME="${{ steps.fetch_release.outputs.release_tag }}"
-          echo "Found TAG_NAME=$TAG_NAME"
-
           if [[ -z "$TAG_NAME" ]]; then
             echo "is_morphosource=false" >> "$GITHUB_OUTPUT"
           else
             echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
           fi
-          
-      # Check for existing analysis of this morphosource release
+
       - name: Check for existing analysis
         id: check_existing
         if: steps.check_morpho.outputs.is_morphosource == 'true'
@@ -122,7 +106,6 @@ jobs:
             select(.created_at > "'$morphosource_date'") | 
             .tag_name')
           
-          
           if [ ! -z "$existing_analysis" ]; then
             echo "Found existing analysis: $existing_analysis"
             echo "has_analysis=true" >> "$GITHUB_OUTPUT"
@@ -132,10 +115,10 @@ jobs:
           fi
 
   url_check:
-    needs: check_release
+    needs: check_and_analyze
     if: |
-      needs.check_release.outputs.is_morphosource == 'true' &&
-      needs.check_release.outputs.has_analysis != 'true'
+      needs.check_and_analyze.outputs.is_morphosource == 'true' &&
+      needs.check_and_analyze.outputs.has_analysis != 'true'
     runs-on: ubuntu-latest
     outputs:
       has_media_error: ${{ steps.url_check.outputs.has_media_error }}
@@ -165,7 +148,7 @@ jobs:
 
       - name: Create Release Body File
         run: |
-          echo "${{ needs.check_release.outputs.release_body }}" > release_body.txt
+          echo "${{ needs.check_and_analyze.outputs.release_body }}" > release_body.txt
           
       - name: Run URL check
         id: url_check
@@ -203,9 +186,10 @@ jobs:
           fi
 
   process_3d:
-    needs: [check_release, url_check]
+    needs: [check_and_analyze, url_check]
     if: |
-      needs.check_release.outputs.is_morphosource == 'true' &&
+      needs.check_and_analyze.outputs.is_morphosource == 'true' &&
+      needs.check_and_analyze.outputs.has_analysis != 'true' &&
       needs.url_check.outputs.has_media_error != 'true' &&
       needs.url_check.outputs.has_server_error != 'true' &&
       needs.url_check.outputs.has_mesh == 'true'
@@ -243,7 +227,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           PYTHONUNBUFFERED: 1
         run: |
-          echo "${{ needs.check_release.outputs.release_body }}" > release_body.txt
+          echo "${{ needs.check_and_analyze.outputs.release_body }}" > release_body.txt
           mkdir -p screenshots
           
           timeout 30m python3 .github/scripts/ct_image_to_text.py release_body.txt screenshots 2>&1 | tee process.log
@@ -267,7 +251,7 @@ jobs:
           tag_name: "ct_image_analysis-${{ steps.gen_ts.outputs.timestamp }}"
           release_name: "CT Image Analysis #${{ steps.gen_ts.outputs.timestamp }}"
           body: |
-            Analysis for MorphoSource release: ${{ needs.check_release.outputs.release_tag }}
+            Analysis for MorphoSource release: ${{ needs.check_and_analyze.outputs.release_tag }}
             
             ${{ steps.process_images.outputs.description }}
           draft: false
@@ -282,9 +266,10 @@ jobs:
           retention-days: 90
 
   process_2d:
-    needs: [check_release, url_check]
+    needs: [check_and_analyze, url_check]
     if: |
-      needs.check_release.outputs.is_morphosource == 'true' &&
+      needs.check_and_analyze.outputs.is_morphosource == 'true' &&
+      needs.check_and_analyze.outputs.has_analysis != 'true' &&
       needs.url_check.outputs.has_media_error != 'true' &&
       needs.url_check.outputs.has_server_error != 'true' &&
       needs.url_check.outputs.has_volumetric_images == 'true'
@@ -322,7 +307,7 @@ jobs:
       - name: Process 2D Screenshots
         id: process_slices
         run: |
-          echo "${{ needs.check_release.outputs.release_body }}" > release_body.txt
+          echo "${{ needs.check_and_analyze.outputs.release_body }}" > release_body.txt
           python .github/scripts/2D_screenshot.py release_body.txt 2>&1 | tee process.log
           
           echo "description<<EOF" >> "$GITHUB_OUTPUT"
@@ -338,7 +323,7 @@ jobs:
           tag_name: "ct_slice_analysis-${{ steps.gen_ts.outputs.timestamp }}"
           release_name: "CT Slice Analysis #${{ steps.gen_ts.outputs.timestamp }}"
           body: |
-            Analysis for MorphoSource release: ${{ needs.check_release.outputs.release_tag }}
+            Analysis for MorphoSource release: ${{ needs.check_and_analyze.outputs.release_tag }}
             
             ${{ steps.process_slices.outputs.description }}
           draft: false
@@ -356,10 +341,10 @@ jobs:
             !screenshots/error_*.png
 
   handle_errors:
-    needs: [check_release, url_check, process_3d, process_2d]
+    needs: [check_and_analyze, url_check, process_3d, process_2d]
     if: |
       always() && 
-      needs.check_release.outputs.is_morphosource == 'true' &&
+      needs.check_and_analyze.outputs.is_morphosource == 'true' &&
       (needs.url_check.outputs.has_media_error == 'true' || 
        needs.url_check.outputs.has_server_error == 'true' ||
        failure())
