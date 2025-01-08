@@ -8,7 +8,7 @@ on:
 
 jobs:
   check_and_analyze:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       is_morphosource: ${{ steps.check_morpho.outputs.is_morphosource }}
       has_analysis: ${{ steps.check_existing.outputs.has_analysis }}
@@ -119,7 +119,7 @@ jobs:
     if: |
       needs.check_and_analyze.outputs.is_morphosource == 'true' &&
       needs.check_and_analyze.outputs.has_analysis != 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       is_morphosource: ${{ steps.check_morpho.outputs.is_morphosource }}
       has_analysis: ${{ steps.check_existing.outputs.has_analysis }}
@@ -219,7 +219,7 @@ jobs:
       needs.url_check.outputs.has_media_error != 'true' &&
       needs.url_check.outputs.has_server_error != 'true' &&
       needs.url_check.outputs.has_mesh == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
@@ -285,7 +285,7 @@ jobs:
 
       - name: Upload Screenshots
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: ct-scan-screenshots
           path: screenshots/*.png
@@ -299,7 +299,7 @@ jobs:
       needs.url_check.outputs.has_media_error != 'true' &&
       needs.url_check.outputs.has_server_error != 'true' &&
       needs.url_check.outputs.has_volumetric_images == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -366,7 +366,7 @@ jobs:
 
       - name: Upload Screenshots
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: morphosource_2d_screenshots
           path: |
@@ -381,7 +381,7 @@ jobs:
       (failure() || 
        needs.url_check.outputs.has_media_error == 'true' || 
        needs.url_check.outputs.has_server_error == 'true')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check for Existing Error Release
         id: check_error
