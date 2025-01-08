@@ -13,53 +13,103 @@ jobs:
       is_morphosource: ${{ steps.check_morpho.outputs.is_morphosource }}
       release_body: ${{ steps.fetch_release.outputs.release_body }}
       release_tag: ${{ steps.fetch_release.outputs.release_tag }}
+      has_analysis: ${{ steps.check_existing.outputs.has_analysis }}
     steps:
       # Check out repository
       - name: Check out repo
         uses: actions/checkout@v3
 
-      # Fetch Latest Release (using the working approach from CT to Text)
-      - name: Fetch Latest Release
+      # Fetch Latest MorphoSource Release
+      - name: Fetch Latest MorphoSource Release
         id: fetch_release
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
-          echo "Fetching the latest release from this repo..."
+          echo "Fetching releases to find latest morphosource-updates..."
           response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
-            https://api.github.com/repos/${{ github.repository }}/releases/latest)
-
-          # Save JSON for debugging
-          echo "$response" > latest_release.json
-
-          # Extract fields
-          body=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['body'])")
-          tag_name=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['tag_name'])")
-
-          echo "Found release tag_name=$tag_name"
-
-          # Store outputs (multi-line safe)
-          echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$body" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-
-          echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=10")
+          
+          # Use Python to find the latest morphosource-updates release
+          echo "$response" | python3 - <<EOF > release_info.json
+          import sys
+          import json
+          
+          releases = json.load(sys.stdin)
+          morpho_releases = [r for r in releases if r['tag_name'].startswith('morphosource-updates-')]
+          
+          if morpho_releases:
+              latest = morpho_releases[0]  # Releases are ordered by date
+              print(json.dumps({
+                  'found': True,
+                  'tag_name': latest['tag_name'],
+                  'body': latest['body'],
+                  'created_at': latest['created_at']
+              }))
+          else:
+              print(json.dumps({'found': False}))
+          EOF
+          
+          # Check if we found a morphosource release
+          if [ "$(cat release_info.json | jq -r .found)" = "true" ]; then
+              tag_name=$(cat release_info.json | jq -r .tag_name)
+              echo "Found morphosource release: $tag_name"
+              
+              # Store outputs (multi-line safe)
+              echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
+              cat release_info.json | jq -r .body >> "$GITHUB_OUTPUT"
+              echo "EOF" >> "$GITHUB_OUTPUT"
+              
+              echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
+              echo "morphosource_created_at=$(cat release_info.json | jq -r .created_at)" >> "$GITHUB_OUTPUT"
+          else
+              echo "No morphosource-updates release found"
+              echo "release_tag=" >> "$GITHUB_OUTPUT"
+              echo "release_body=" >> "$GITHUB_OUTPUT"
+              echo "morphosource_created_at=" >> "$GITHUB_OUTPUT"
+          fi
 
       # Check if it's a morphosource release
+      # Check if it's a morphosource release and hasn't been analyzed yet
       - name: Check if morphosource-updates
         id: check_morpho
         run: |
           TAG_NAME="${{ steps.fetch_release.outputs.release_tag }}"
           echo "Found TAG_NAME=$TAG_NAME"
 
-          if [[ "$TAG_NAME" == morphosource-updates-* ]]; then
-            echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
-          else
+          if [[ -z "$TAG_NAME" ]]; then
             echo "is_morphosource=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
+          fi
+          
+      # Check for existing analysis of this morphosource release
+      - name: Check for existing analysis
+        id: check_existing
+        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          releases=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
+          
+          morphosource_date="${{ steps.fetch_release.outputs.morphosource_created_at }}"
+          
+          # Check for any ct_image_analysis releases created after this morphosource release
+          existing_analysis=$(echo "$releases" | jq -r ".[] | select(.tag_name | startswith(\"ct_image_analysis-\")) | select(.created_at > \"$morphosource_date\") | .tag_name")
+          
+          if [ ! -z "$existing_analysis" ]; then
+            echo "Found existing analysis: $existing_analysis"
+            echo "has_analysis=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No existing analysis found"
+            echo "has_analysis=false" >> "$GITHUB_OUTPUT"
           fi
 
   url_check:
     needs: check_release
-    if: needs.check_release.outputs.is_morphosource == 'true'
+    if: |
+      needs.check_release.outputs.is_morphosource == 'true' &&
+      needs.check_release.outputs.has_analysis != 'true'
     runs-on: ubuntu-latest
     outputs:
       has_media_error: ${{ steps.url_check.outputs.has_media_error }}
