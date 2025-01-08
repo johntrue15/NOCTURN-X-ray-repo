@@ -7,6 +7,45 @@ on:
     types: [completed]
 
 jobs:
+  check_concurrent:
+    needs: check_concurrent
+    if: needs.check_concurrent.outputs.should_proceed == 'true'
+    outputs:
+      should_proceed: ${{ steps.check_runs.outputs.should_proceed }}
+    steps:
+      - name: Check for running workflows
+        id: check_runs
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          # Get current workflow ID from workflow name
+          workflow_id=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows" | \
+            jq -r '.workflows[] | select(.name=="MorphoSource Analysis Workflow") | .id')
+          
+          echo "Current workflow ID: $workflow_id"
+          
+          # Get running/queued workflows excluding the current run
+          running_workflows=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?status=in_progress&per_page=100" | \
+            jq -r ".workflow_runs | length")
+            
+          queued_workflows=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?status=queued&per_page=100" | \
+            jq -r ".workflow_runs | length")
+          
+          total_workflows=$((running_workflows + queued_workflows))
+          echo "Found $running_workflows running and $queued_workflows queued workflows"
+          
+          # Only proceed if this is the only workflow (count of 1 includes this run)
+          if [ "$total_workflows" -le 1 ]; then
+            echo "No other workflows running or queued, proceeding"
+            echo "should_proceed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Other workflows are already running or queued, skipping"
+            echo "should_proceed=false" >> "$GITHUB_OUTPUT"
+          fi
+
   check_release:
     runs-on: ubuntu-latest
     outputs:
