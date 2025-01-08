@@ -190,7 +190,7 @@ jobs:
 
       - name: Upload URL Check Screenshots
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: url-check-screenshots
           path: |
@@ -285,7 +285,7 @@ jobs:
 
       - name: Upload Screenshots
         if: success()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ct-scan-screenshots
           path: screenshots/*.png
@@ -366,7 +366,7 @@ jobs:
 
       - name: Upload Screenshots
         if: success()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: morphosource_2d_screenshots
           path: |
@@ -429,7 +429,7 @@ jobs:
 
       - name: Upload Error Screenshots
         if: steps.check_error.outputs.skip != 'true'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: error_screenshots
           path: |
