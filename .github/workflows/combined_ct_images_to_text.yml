@@ -23,32 +23,25 @@ jobs:
             parse_run_id="${{ github.event.workflow_run.id }}"
             echo "parse_run_id=$parse_run_id" >> "$GITHUB_OUTPUT"
             
-            # Check if this Parse run created any releases
+            # Get releases with more detailed filtering
             response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
               "https://api.github.com/repos/${{ github.repository }}/releases?per_page=10")
             
-            # Look for releases created after this Parse run started
+            # Look specifically for morphosource-updates releases created after Parse started
             parse_start_time="${{ github.event.workflow_run.created_at }}"
-            has_new_releases=$(echo "$response" | jq -r "map(select(.created_at > \"$parse_start_time\")) | length")
+            has_new_releases=$(echo "$response" | jq -r "
+              map(
+                select(
+                  .tag_name | startswith(\"morphosource-updates-\") and
+                  .created_at > \"$parse_start_time\"
+                )
+              ) | length")
             
             if [ "$has_new_releases" = "0" ]; then
-              echo "Parse workflow did not create any new releases"
-              
-              # Check if MorphoSource Analysis has already run for this Parse run
-              workflow_runs=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
-                "https://api.github.com/repos/${{ github.repository }}/actions/runs?event=workflow_run&per_page=100")
-              
-              previous_run=$(echo "$workflow_runs" | jq -r ".workflow_runs[] | select(.name == \"MorphoSource Analysis Workflow\" and .triggering_actor.id == ${{ github.event.workflow_run.actor.id }} and .id != ${{ github.run_id }}) | .id" | head -n 1)
-              
-              if [ ! -z "$previous_run" ]; then
-                echo "MorphoSource Analysis has already run for this Parse workflow"
-                echo "should_continue=false" >> "$GITHUB_OUTPUT"
-              else
-                echo "No previous MorphoSource Analysis run found"
-                echo "should_continue=false" >> "$GITHUB_OUTPUT"
-              fi
+              echo "Parse workflow did not create any new morphosource-updates releases"
+              echo "should_continue=false" >> "$GITHUB_OUTPUT"
             else
-              echo "Parse workflow created new releases"
+              echo "Parse workflow created new morphosource-updates releases"
               echo "should_continue=true" >> "$GITHUB_OUTPUT"
             fi
           else
