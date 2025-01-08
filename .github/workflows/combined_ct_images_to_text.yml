@@ -30,12 +30,13 @@ jobs:
             # Look specifically for morphosource-updates releases created after Parse started
             parse_start_time="${{ github.event.workflow_run.created_at }}"
             has_new_releases=$(echo "$response" | jq -r "
-              map(
+              [
+                .[] | 
                 select(
-                  .tag_name | startswith(\"morphosource-updates-\") and
-                  .created_at > \"$parse_start_time\"
+                  (.tag_name | startswith(\"morphosource-updates-\")) and
+                  (.created_at > \"$parse_start_time\")
                 )
-              ) | length")
+              ] | length")
             
             if [ "$has_new_releases" = "0" ]; then
               echo "Parse workflow did not create any new morphosource-updates releases"
