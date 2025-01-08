@@ -121,10 +121,14 @@ jobs:
       needs.check_and_analyze.outputs.has_analysis != 'true'
     runs-on: ubuntu-latest
     outputs:
+      is_morphosource: ${{ steps.check_morpho.outputs.is_morphosource }}
+      has_analysis: ${{ steps.check_existing.outputs.has_analysis }}
       has_media_error: ${{ steps.url_check.outputs.has_media_error }}
       has_server_error: ${{ steps.url_check.outputs.has_server_error }}
       has_mesh: ${{ steps.type_check.outputs.has_mesh }}
       has_volumetric_images: ${{ steps.type_check.outputs.has_volumetric_images }}
+      release_body: ${{ steps.fetch_release.outputs.release_body }}
+      release_tag: ${{ steps.fetch_release.outputs.release_tag }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -159,6 +163,8 @@ jobs:
             if [ "$status" = "media_error" ]; then
               echo "has_media_error=true" >> "$GITHUB_OUTPUT"
               echo "has_server_error=false" >> "$GITHUB_OUTPUT"
+              # Exit successfully to prevent loops
+              exit 0
             elif [ "$status" = "server_error" ]; then
               echo "has_media_error=false" >> "$GITHUB_OUTPUT"
               echo "has_server_error=true" >> "$GITHUB_OUTPUT"
@@ -352,12 +358,41 @@ jobs:
     if: |
       always() && 
       needs.check_and_analyze.outputs.is_morphosource == 'true' &&
-      (needs.url_check.outputs.has_media_error == 'true' || 
-       needs.url_check.outputs.has_server_error == 'true' ||
-       failure())
+      (failure() || 
+       needs.url_check.outputs.has_media_error == 'true' || 
+       needs.url_check.outputs.has_server_error == 'true')
     runs-on: ubuntu-latest
     steps:
+      - name: Check Analysis Status
+        id: check_status
+        run: |
+          if [ "${{ needs.check_and_analyze.outputs.has_analysis }}" == "true" ]; then
+            echo "Skipping CT analysis as it has already been performed for this MorphoSource release."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create Error Release
+        if: steps.check_status.outputs.skip != 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          tag_name: "ct_analysis_error-${{ github.run_id }}"
+          release_name: "CT Analysis Error #${{ github.run_id }}"
+          body: |
+            Error occurred during analysis of MorphoSource release: ${{ needs.check_and_analyze.outputs.release_tag }}
+            
+            Status:
+            - Media Error: ${{ needs.url_check.outputs.has_media_error }}
+            - Server Error: ${{ needs.url_check.outputs.has_server_error }}
+            - 3D Process: ${{ needs.process_3d.result }}
+            - 2D Process: ${{ needs.process_2d.result }}
+
       - name: Upload Error Screenshots
+        if: steps.check_status.outputs.skip != 'true'
         uses: actions/upload-artifact@v3
         with:
           name: error_screenshots
@@ -366,16 +401,17 @@ jobs:
             screenshots/error_*.png
             process.log
             
-      - name: Report Error Status
+      - name: Set Error Status
+        if: steps.check_status.outputs.skip != 'true'
         run: |
           if [ "${{ needs.url_check.outputs.has_media_error }}" == "true" ]; then
-            echo "Media error occurred during processing"
-            exit 1
+            echo "Media error occurred - marking as completed to prevent loops"
+            exit 0
           fi
           
           if [ "${{ needs.url_check.outputs.has_server_error }}" == "true" ]; then
-            echo "Server error occurred during processing"
-            exit 1
+            echo "Server error occurred - marking as completed to prevent loops"
+            exit 0
           fi
           
           if [ "${{ needs.process_3d.result }}" == "success" ] || [ "${{ needs.process_2d.result }}" == "success" ]; then
@@ -383,5 +419,5 @@ jobs:
             exit 0
           else
             echo "Analysis failed"
-            exit 1
+            exit 0  # Changed from exit 1 to prevent loops
           fi
