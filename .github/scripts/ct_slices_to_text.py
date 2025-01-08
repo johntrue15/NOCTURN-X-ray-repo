@@ -51,35 +51,42 @@ def analyze_screenshot_with_gpt4(image_path, slice_index):
         client = OpenAI()
         
         # Read and encode the image
-        with open(image_path, "rb") as image_file:
-            image_data = base64.b64encode(image_file.read()).decode("utf-8")
+        def encode_image(image_path):
+            with open(image_path, "rb") as image_file:
+                return base64.b64encode(image_file.read()).decode("utf-8")
+        
+        # Getting the base64 string
+        base64_image = encode_image(image_path)
         logger.info(f"Successfully encoded image: {image_path}")
 
         logger.info("Calling GPT-4 Vision API")
         response = client.chat.completions.create(
-            model="gpt-4-vision-preview",
+            model="gpt-4o-mini",
             messages=[
                 {
                     "role": "user",
                     "content": [
                         {
                             "type": "text",
-                            "text": f"This is a CT slice image (slice index: {slice_index}) from a MorphoSource specimen. Please analyze the image and describe:\n1. What anatomical features are visible\n2. The quality and clarity of the scan\n3. Any notable artifacts or issues in the image"
+                            "text": f"This is a CT slice image (slice index: {slice_index}) from a MorphoSource specimen. Please analyze the image and describe: 1. What anatomical features are visible 2. The quality and clarity of the scan 3. Any notable artifacts or issues in the image"
                         },
                         {
                             "type": "image_url",
                             "image_url": {
-                                "url": f"data:image/png;base64,{image_data}"
+                                "url": f"data:image/png;base64,{base64_image}"
                             }
                         }
                     ]
                 }
-            ],
-            max_tokens=500
+            ]
         )
         logger.info("Successfully received GPT-4 Vision response")
-
+        
         return response.choices[0].message.content
+    except Exception as e:
+        error_msg = f"Error analyzing image with GPT-4: {str(e)}"
+        logger.error(error_msg)
+        return error_msg
     except Exception as e:
         logger.error(f"Error analyzing image with GPT-4: {e}")
         return f"Error analyzing image: {str(e)}"
