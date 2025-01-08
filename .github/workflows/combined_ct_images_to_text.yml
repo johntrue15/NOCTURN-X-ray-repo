@@ -28,7 +28,10 @@ jobs:
               "https://api.github.com/repos/${{ github.repository }}/releases?per_page=10")
             
             # Look specifically for morphosource-updates releases created after Parse started
-            parse_start_time="${{ github.event.workflow_run.created_at }}"
+            # Subtract 60 seconds from parse_start_time to create a buffer
+            parse_start_time=$(date -d "${{ github.event.workflow_run.created_at }} - 60 seconds" -u +"%Y-%m-%dT%H:%M:%SZ")
+            echo "Checking for releases after: $parse_start_time"
+            
             has_new_releases=$(echo "$response" | jq -r "
               [
                 .[] | 
