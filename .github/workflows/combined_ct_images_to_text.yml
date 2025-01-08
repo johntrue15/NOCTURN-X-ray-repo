@@ -281,19 +281,19 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.x"
+          python-version: "3.9"
           
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
-          pip install selenium webdriver-manager
-          
-      - name: Install Chrome
-        run: |
           sudo apt-get update
-          sudo apt-get install -y wget gnupg2 unzip
-          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+          sudo apt-get install -y chromium-browser libnss3 libgbm1 libasound2 xvfb
+          pip install --upgrade pip
+          pip install --upgrade openai selenium pillow webdriver-manager urllib3
+
+      - name: Start Xvfb
+        run: |
+          Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
 
       - name: Create screenshots directory
         run: mkdir -p screenshots
@@ -304,14 +304,23 @@ jobs:
           TS=$(date +'%Y-%m-%d_%H-%M-%S')
           echo "timestamp=$TS" >> "$GITHUB_OUTPUT"
 
-      - name: Process 2D Screenshots
+      - name: Process CT Slices
         id: process_slices
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PYTHONUNBUFFERED: 1
         run: |
           echo "${{ needs.check_and_analyze.outputs.release_body }}" > release_body.txt
-          python .github/scripts/2D_screenshot.py release_body.txt 2>&1 | tee process.log
+          timeout 30m python3 .github/scripts/ct_slices_to_text.py release_body.txt screenshots 2>&1 | tee process.log
+          
+          if [ ! -f screenshots/*.png ]; then
+            echo "No screenshots were generated. Check process.log for details."
+            cat process.log
+            exit 1
+          fi
           
           echo "description<<EOF" >> "$GITHUB_OUTPUT"
-          cat process.log >> "$GITHUB_OUTPUT"
+          cat process.log | grep -v "DEBUG" | grep -v "INFO" | grep -v "WARNING" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Create Slice Analysis Release
@@ -335,11 +344,9 @@ jobs:
         with:
           name: morphosource_2d_screenshots
           path: |
-            *.png
             screenshots/*.png
-            !error_*.png
             !screenshots/error_*.png
-
+            
   handle_errors:
     needs: [check_and_analyze, url_check, process_3d, process_2d]
     if: |
