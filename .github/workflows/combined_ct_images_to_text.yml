@@ -1,4 +1,4 @@
-name: MorphoSource Analysis Workflow New
+name: MorphoSource Analysis Workflow
 
 on:
   workflow_dispatch:
@@ -7,70 +7,65 @@ on:
     types: [completed]
 
 jobs:
-  check_parse_status:
+  check_release:
     runs-on: ubuntu-latest
     outputs:
-      should_continue: ${{ steps.check_parse.outputs.should_continue }}
-      parse_run_id: ${{ steps.check_parse.outputs.parse_run_id }}
+      is_morphosource: ${{ steps.check_morpho.outputs.is_morphosource }}
+      release_body: ${{ steps.fetch_release.outputs.release_body }}
+      release_tag: ${{ steps.fetch_release.outputs.release_tag }}
     steps:
-      - name: Check Parse Workflow Status
-        id: check_parse
+      # Check out repository
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      # Fetch Latest Release (using the working approach from CT to Text)
+      - name: Fetch Latest Release
+        id: fetch_release
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_run" ]; then
-            # Get the Parse workflow run ID
-            parse_run_id="${{ github.event.workflow_run.id }}"
-            echo "parse_run_id=$parse_run_id" >> "$GITHUB_OUTPUT"
-            
-            # Get releases with more detailed filtering
-            response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
-              "https://api.github.com/repos/${{ github.repository }}/releases?per_page=10")
-            
-            # Look specifically for morphosource-updates releases created after Parse started
-            # Subtract 60 seconds from parse_start_time to create a buffer
-            parse_start_time=$(date -d "${{ github.event.workflow_run.created_at }} - 60 seconds" -u +"%Y-%m-%dT%H:%M:%SZ")
-            echo "Checking for releases after: $parse_start_time"
-            
-            has_new_releases=$(echo "$response" | jq -r "
-              [
-                .[] | 
-                select(
-                  (.tag_name | startswith(\"morphosource-updates-\")) and
-                  (.created_at > \"$parse_start_time\")
-                )
-              ] | length")
-            
-            if [ "$has_new_releases" = "0" ]; then
-              echo "Parse workflow did not create any new morphosource-updates releases"
-              echo "should_continue=false" >> "$GITHUB_OUTPUT"
-            else
-              echo "Parse workflow created new morphosource-updates releases"
-              echo "should_continue=true" >> "$GITHUB_OUTPUT"
-            fi
+          echo "Fetching the latest release from this repo..."
+          response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+            https://api.github.com/repos/${{ github.repository }}/releases/latest)
+
+          # Save JSON for debugging
+          echo "$response" > latest_release.json
+
+          # Extract fields
+          body=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['body'])")
+          tag_name=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['tag_name'])")
+
+          echo "Found release tag_name=$tag_name"
+
+          # Store outputs (multi-line safe)
+          echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$body" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+          echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
+
+      # Check if it's a morphosource release
+      - name: Check if morphosource-updates
+        id: check_morpho
+        run: |
+          TAG_NAME="${{ steps.fetch_release.outputs.release_tag }}"
+          echo "Found TAG_NAME=$TAG_NAME"
+
+          if [[ "$TAG_NAME" == morphosource-updates-* ]]; then
+            echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
           else
-            # For workflow_dispatch, always continue
-            echo "should_continue=true" >> "$GITHUB_OUTPUT"
-            echo "parse_run_id=manual" >> "$GITHUB_OUTPUT"
+            echo "is_morphosource=false" >> "$GITHUB_OUTPUT"
           fi
 
   url_check:
-    needs: check_parse_status
+    needs: check_release
+    if: needs.check_release.outputs.is_morphosource == 'true'
     runs-on: ubuntu-latest
-    if: |
-      needs.check_parse_status.outputs.should_continue == 'true' &&
-      (github.event_name == 'workflow_dispatch' || 
-       github.event_name == 'release' ||
-       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'))
     outputs:
-      is_morphosource: ${{ steps.check_morpho.outputs.is_morphosource }}
-      has_analysis: ${{ steps.check_existing.outputs.has_analysis }}
       has_media_error: ${{ steps.url_check.outputs.has_media_error }}
       has_server_error: ${{ steps.url_check.outputs.has_server_error }}
       has_mesh: ${{ steps.type_check.outputs.has_mesh }}
       has_volumetric_images: ${{ steps.type_check.outputs.has_volumetric_images }}
-      release_body: ${{ steps.read_release_body.outputs.content }}
-      release_tag: ${{ steps.release_info.outputs.release_tag }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -85,104 +80,19 @@ jobs:
           pip install --upgrade pip
           pip install selenium webdriver-manager
           
-      - name: Install and setup Chrome
+      - name: Install Chrome
         run: |
           sudo apt-get update
           sudo apt-get install -y wget gnupg2 unzip
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
-          
-      - name: Extract release URL
-        id: release_info
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "${{ github.event_name }}" = "workflow_run" ]; then
-            response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
-              "https://api.github.com/repos/${{ github.repository }}/releases?per_page=10")
-            echo "$response" > all_releases.json
-          else
-            echo '${{ toJSON(github.event.release) }}' > release.json
-            response="[$(cat release.json)]"
-            echo "$response" > all_releases.json
-          fi
-          
-          python <<EOF > release_out.json
-          import json
-          import re
-          import sys
-          
-          def extract_url_from_body(body):
-              pattern = r'https://www\.morphosource\.org/concern/media/\d+'
-              urls = re.findall(pattern, body)
-              return urls if urls else None
-          
-          with open("all_releases.json", "r", encoding="utf-8") as f:
-              data = json.load(f)
-              
-          for release in data:
-              tag = release.get("tag_name", "")
-              if tag.startswith("morphosource-updates-"):
-                  urls = extract_url_from_body(release["body"])
-                  if urls:
-                      print(json.dumps({
-                          "found": True,
-                          "tag_name": tag,
-                          "urls": urls,
-                          "created_at": release.get("created_at", "")
-                      }, indent=2))
-                      sys.exit(0)
-          
-          print(json.dumps({"found": False}))
-          EOF
-          
-          found=$(cat release_out.json | python -c "import sys, json; j=json.load(sys.stdin); print(j.get('found', False))")
-          if [ "$found" = "True" ]; then
-            tag_name=$(cat release_out.json | python -c "import sys, json; j=json.load(sys.stdin); print(j['tag_name'])")
-            created_at=$(cat release_out.json | python -c "import sys, json; j=json.load(sys.stdin); print(j['created_at'])")
-            urls=$(cat release_out.json | python -c "import sys, json; j=json.load(sys.stdin); print('\n'.join(j['urls']))")
-            echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
-            echo "morphosource_created_at=$created_at" >> "$GITHUB_OUTPUT"
-            echo "$urls" > release_body.txt
-          fi
-          
-      - name: Check if morphosource-updates found
-        id: check_morpho
-        run: |
-          TAG_NAME="${{ steps.release_info.outputs.release_tag }}"
-          if [[ -z "$TAG_NAME" ]]; then
-            echo "is_morphosource=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
-          fi
 
-      - name: Check for existing analysis
-        id: check_existing
-        if: steps.check_morpho.outputs.is_morphosource == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+      - name: Create Release Body File
         run: |
-          releases=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
-          
-          morphosource_date="${{ steps.release_info.outputs.morphosource_created_at }}"
-          
-          # Check for any ct_image_analysis releases created after this morphosource release
-          existing_analysis=$(echo "$releases" | jq -r ".[] | select(.tag_name | startswith(\"ct_image_analysis-\")) | select(.created_at > \"$morphosource_date\") | .tag_name")
-          
-          if [ ! -z "$existing_analysis" ]; then
-            echo "Found existing analysis: $existing_analysis"
-            echo "has_analysis=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "No existing analysis found"
-            echo "has_analysis=false" >> "$GITHUB_OUTPUT"
-          fi
+          echo "${{ needs.check_release.outputs.release_body }}" > release_body.txt
           
       - name: Run URL check
         id: url_check
-        if: |
-          steps.check_morpho.outputs.is_morphosource == 'true' && 
-          steps.check_existing.outputs.has_analysis != 'true'
         run: |
           python .github/scripts/url_screenshot_check.py release_body.txt || true
           if [ -f "url_check_status.json" ]; then
@@ -204,9 +114,6 @@ jobs:
 
       - name: Run 2D/3D Type Check
         id: type_check
-        if: |
-          steps.check_morpho.outputs.is_morphosource == 'true' && 
-          steps.check_existing.outputs.has_analysis != 'true'
         run: |
           python .github/scripts/2D3D_check.py release_body.txt || true
           if [ -f "url_check_status.json" ]; then
@@ -218,34 +125,11 @@ jobs:
             echo "has_mesh=false" >> "$GITHUB_OUTPUT"
             echo "has_volumetric_images=false" >> "$GITHUB_OUTPUT"
           fi
-          
-      - name: Read release body
-        id: read_release_body
-        if: |
-          steps.check_morpho.outputs.is_morphosource == 'true' && 
-          steps.check_existing.outputs.has_analysis != 'true'
-        run: |
-          CONTENT=$(cat release_body.txt)
-          echo "content<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$CONTENT" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-
-      - name: Upload initial screenshots
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: initial_screenshots
-          path: |
-            *.png
-            screenshots/error_*.png
-            error_*.png
 
   process_3d:
-    needs: [check_parse_status, url_check]
+    needs: [check_release, url_check]
     if: |
-      needs.check_parse_status.outputs.should_continue == 'true' &&
-      needs.url_check.outputs.is_morphosource == 'true' && 
-      needs.url_check.outputs.has_analysis != 'true' &&
+      needs.check_release.outputs.is_morphosource == 'true' &&
       needs.url_check.outputs.has_media_error != 'true' &&
       needs.url_check.outputs.has_server_error != 'true' &&
       needs.url_check.outputs.has_mesh == 'true'
@@ -262,7 +146,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y chromium-browser libnss3 libgbm1 libasound2t64 xvfb
+          sudo apt-get install -y chromium-browser libnss3 libgbm1 libasound2 xvfb
           pip install --upgrade pip
           pip install --upgrade openai selenium pillow webdriver-manager urllib3
 
@@ -283,12 +167,9 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           PYTHONUNBUFFERED: 1
         run: |
-          # Create release body file from previous job
-          echo "${{ needs.url_check.outputs.release_body }}" > release_body.txt
-          
+          echo "${{ needs.check_release.outputs.release_body }}" > release_body.txt
           mkdir -p screenshots
           
-          # Run with increased timeouts
           timeout 30m python3 .github/scripts/ct_image_to_text.py release_body.txt screenshots 2>&1 | tee process.log
           
           if [ ! -f screenshots/*.png ]; then
@@ -297,7 +178,6 @@ jobs:
             exit 1
           fi
           
-          # Clean the output for the release description
           echo "description<<EOF" >> "$GITHUB_OUTPUT"
           cat process.log | grep -v "DEBUG" | grep -v "INFO" | grep -v "WARNING" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
@@ -311,13 +191,13 @@ jobs:
           tag_name: "ct_image_analysis-${{ steps.gen_ts.outputs.timestamp }}"
           release_name: "CT Image Analysis #${{ steps.gen_ts.outputs.timestamp }}"
           body: |
-            Analysis for MorphoSource release: ${{ needs.url_check.outputs.release_tag }}
+            Analysis for MorphoSource release: ${{ needs.check_release.outputs.release_tag }}
             
             ${{ steps.process_images.outputs.description }}
           draft: false
           prerelease: false
 
-      - name: Upload 3D Screenshots
+      - name: Upload Screenshots
         if: success()
         uses: actions/upload-artifact@v3
         with:
@@ -326,11 +206,9 @@ jobs:
           retention-days: 90
 
   process_2d:
-    needs: [check_parse_status, url_check]
+    needs: [check_release, url_check]
     if: |
-      needs.check_parse_status.outputs.should_continue == 'true' &&
-      needs.url_check.outputs.is_morphosource == 'true' && 
-      needs.url_check.outputs.has_analysis != 'true' &&
+      needs.check_release.outputs.is_morphosource == 'true' &&
       needs.url_check.outputs.has_media_error != 'true' &&
       needs.url_check.outputs.has_server_error != 'true' &&
       needs.url_check.outputs.has_volumetric_images == 'true'
@@ -349,7 +227,7 @@ jobs:
           pip install --upgrade pip
           pip install selenium webdriver-manager
           
-      - name: Install and setup Chrome
+      - name: Install Chrome
         run: |
           sudo apt-get update
           sudo apt-get install -y wget gnupg2 unzip
@@ -368,30 +246,14 @@ jobs:
       - name: Process 2D Screenshots
         id: process_slices
         run: |
-          # Create release body file from previous job
-          echo "${{ needs.url_check.outputs.release_body }}" > release_body.txt
+          echo "${{ needs.check_release.outputs.release_body }}" > release_body.txt
           python .github/scripts/2D_screenshot.py release_body.txt 2>&1 | tee process.log
           
           echo "description<<EOF" >> "$GITHUB_OUTPUT"
           cat process.log >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
-     # - name: Create Slice Analysis Release
-     #   if: success()
-     #   uses: actions/create-release@v1
-     #   env:
-     #     GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-     #   with:
-     #     tag_name: "ct_slice_analysis-${{ steps.gen_ts.outputs.timestamp }}"
-     #     release_name: "CT Slice Analysis #${{ steps.gen_ts.outputs.timestamp }}"
-     #     body: |
-     #       Analysis for MorphoSource release: ${{ needs.url_check.outputs.release_tag }}
-     #       
-     #       ${{ steps.process_slices.outputs.description }}
-     #     draft: false
-     #     prerelease: false
-
-      - name: Upload 2D Screenshots
+      - name: Upload Screenshots
         if: success()
         uses: actions/upload-artifact@v3
         with:
@@ -403,27 +265,16 @@ jobs:
             !screenshots/error_*.png
 
   handle_errors:
-    needs: [check_parse_status, url_check, process_3d, process_2d]
+    needs: [check_release, url_check, process_3d, process_2d]
     if: |
       always() && 
-      needs.check_parse_status.outputs.should_continue == 'true' &&
-      (failure() || 
-      needs.url_check.outputs.has_media_error == 'true' || 
-      needs.url_check.outputs.has_server_error == 'true')
+      needs.check_release.outputs.is_morphosource == 'true' &&
+      (needs.url_check.outputs.has_media_error == 'true' || 
+       needs.url_check.outputs.has_server_error == 'true' ||
+       failure())
     runs-on: ubuntu-latest
     steps:
-      - name: Check Analysis Status
-        id: check_status
-        run: |
-          if [ "${{ needs.url_check.outputs.has_analysis }}" == "true" ]; then
-            echo "Skipping CT analysis as it has already been performed for this MorphoSource release."
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "skip=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Upload Error Screenshots
-        if: steps.check_status.outputs.skip != 'true'
         uses: actions/upload-artifact@v3
         with:
           name: error_screenshots
@@ -432,8 +283,7 @@ jobs:
             screenshots/error_*.png
             process.log
             
-      - name: Check Overall Status
-        if: steps.check_status.outputs.skip != 'true'
+      - name: Report Error Status
         run: |
           if [ "${{ needs.url_check.outputs.has_media_error }}" == "true" ]; then
             echo "Media error occurred during processing"
