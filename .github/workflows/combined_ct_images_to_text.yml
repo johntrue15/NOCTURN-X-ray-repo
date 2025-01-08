@@ -77,8 +77,12 @@ jobs:
           
           morphosource_date="${{ steps.fetch_release.outputs.morphosource_created_at }}"
           
-          # Check for any ct_image_analysis releases created after this morphosource release
-          existing_analysis=$(echo "$releases" | jq -r ".[] | select(.tag_name | startswith(\"ct_image_analysis-\")) | select(.created_at > \"$morphosource_date\") | .tag_name")
+          # Check for any ct_image_analysis or ct_slice_analysis releases created after this morphosource release
+          existing_analysis=$(echo "$releases" | jq -r '.[] | 
+            select(.tag_name | startswith("ct_image_analysis-") or startswith("ct_slice_analysis-")) | 
+            select(.created_at > "'$morphosource_date'") | 
+            .tag_name')
+          
           
           if [ ! -z "$existing_analysis" ]; then
             echo "Found existing analysis: $existing_analysis"
@@ -285,6 +289,21 @@ jobs:
           echo "description<<EOF" >> "$GITHUB_OUTPUT"
           cat process.log >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Create Slice Analysis Release
+        if: success()
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          tag_name: "ct_slice_analysis-${{ steps.gen_ts.outputs.timestamp }}"
+          release_name: "CT Slice Analysis #${{ steps.gen_ts.outputs.timestamp }}"
+          body: |
+            Analysis for MorphoSource release: ${{ needs.check_release.outputs.release_tag }}
+            
+            ${{ steps.process_slices.outputs.description }}
+          draft: false
+          prerelease: false
 
       - name: Upload Screenshots
         if: success()
