@@ -10,7 +10,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, WebDriverException
-import openai
+from openai import OpenAI
 from PIL import Image
 import io
 import base64
@@ -47,34 +47,34 @@ def analyze_screenshot_with_gpt4(image_path, slice_index):
     """Analyze a CT slice screenshot using GPT-4 Vision."""
     logger.info(f"Analyzing screenshot for slice index {slice_index}")
     try:
+        # Initialize OpenAI client
+        client = OpenAI()
+        
         # Read and encode the image
-        with open(image_path, 'rb') as image_file:
-            image_data = base64.b64encode(image_file.read()).decode('utf-8')
+        with open(image_path, "rb") as image_file:
+            image_data = base64.b64encode(image_file.read()).decode("utf-8")
         logger.info(f"Successfully encoded image: {image_path}")
 
-        # Prepare the message for GPT-4 Vision
-        messages = [
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": f"This is a CT slice image (slice index: {slice_index}) from a MorphoSource specimen. Please analyze the image and describe:\n1. What anatomical features are visible\n2. The quality and clarity of the scan\n3. Any notable artifacts or issues in the image"
-                    },
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/png;base64,{image_data}"
-                        }
-                    }
-                ]
-            }
-        ]
-
         logger.info("Calling GPT-4 Vision API")
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-4-vision-preview",
-            messages=messages,
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": f"This is a CT slice image (slice index: {slice_index}) from a MorphoSource specimen. Please analyze the image and describe:\n1. What anatomical features are visible\n2. The quality and clarity of the scan\n3. Any notable artifacts or issues in the image"
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/png;base64,{image_data}"
+                            }
+                        }
+                    ]
+                }
+            ],
             max_tokens=500
         )
         logger.info("Successfully received GPT-4 Vision response")
