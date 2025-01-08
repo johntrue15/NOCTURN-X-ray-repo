@@ -4,6 +4,7 @@ import sys
 import time
 import re
 import json
+import logging
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -14,29 +15,42 @@ from PIL import Image
 import io
 import base64
 
+# Set up logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
+
 def extract_morphosource_url(release_body_file):
     """Extract MorphoSource URL from release body file."""
+    logger.info(f"Reading release body from: {release_body_file}")
     try:
         with open(release_body_file, 'r') as f:
             content = f.read()
+        logger.info("Successfully read release body file")
             
         # Look for MorphoSource URLs in the content
         matches = re.findall(r'https://www\.morphosource\.org/concern/media/\d+', content)
         if matches:
+            logger.info(f"Found MorphoSource URL: {matches[0]}")
             return matches[0]
         else:
-            print("No MorphoSource URL found in release body")
+            logger.error("No MorphoSource URL found in release body")
             return None
     except Exception as e:
-        print(f"Error reading release body file: {e}")
+        logger.error(f"Error reading release body file: {e}")
         return None
 
 def analyze_screenshot_with_gpt4(image_path, slice_index):
     """Analyze a CT slice screenshot using GPT-4 Vision."""
+    logger.info(f"Analyzing screenshot for slice index {slice_index}")
     try:
         # Read and encode the image
         with open(image_path, 'rb') as image_file:
             image_data = base64.b64encode(image_file.read()).decode('utf-8')
+        logger.info(f"Successfully encoded image: {image_path}")
 
         # Prepare the message for GPT-4 Vision
         messages = [
@@ -57,21 +71,22 @@ def analyze_screenshot_with_gpt4(image_path, slice_index):
             }
         ]
 
-        # Call GPT-4 Vision API
+        logger.info("Calling GPT-4 Vision API")
         response = openai.ChatCompletion.create(
             model="gpt-4-vision-preview",
             messages=messages,
             max_tokens=500
         )
+        logger.info("Successfully received GPT-4 Vision response")
 
         return response.choices[0].message.content
     except Exception as e:
-        print(f"Error analyzing image with GPT-4: {e}")
+        logger.error(f"Error analyzing image with GPT-4: {e}")
         return f"Error analyzing image: {str(e)}"
 
 def capture_ct_slices(url, screenshots_dir):
     """Capture CT slice screenshots using Selenium."""
-    # Chrome setup
+    logger.info("Setting up Chrome options")
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     options.add_argument("--no-sandbox")
@@ -79,6 +94,7 @@ def capture_ct_slices(url, screenshots_dir):
     options.add_argument("--disable-gpu")
     options.add_argument("--window-size=1920,1080")
     
+    logger.info("Initializing Chrome driver")
     driver = webdriver.Chrome(options=options)
     driver.set_page_load_timeout(30)
     driver.set_script_timeout(30)
@@ -87,49 +103,60 @@ def capture_ct_slices(url, screenshots_dir):
     
     try:
         # Navigate to URL
-        print(f"Navigating to {url}")
+        logger.info(f"Navigating to URL: {url}")
         driver.get(url)
+        logger.info("Successfully loaded page")
         
         # Switch to uv-iframe
+        logger.info("Waiting for uv-iframe")
         wait = WebDriverWait(driver, 20)
         uv_iframe = wait.until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "iframe#uv-iframe"))
         )
+        logger.info("Found uv-iframe, switching to it")
         driver.switch_to.frame(uv_iframe)
         
         # Click Full Screen
+        logger.info("Looking for full screen button")
         full_screen_btn = wait.until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
         )
+        logger.info("Clicking full screen button")
         full_screen_btn.click()
         
         # Wait for viewer to load
+        logger.info("Waiting for viewer to load (180s)")
         time.sleep(180)
         
         # Find control panel
+        logger.info("Looking for control panel")
         host_element = wait.until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "al-control-panel"))
         )
-        print("Found control panel")
+        logger.info("Found control panel")
         
         # Get settings element
+        logger.info("Accessing settings element through shadow DOM")
         al_settings = driver.execute_script(
             "return arguments[0].shadowRoot.querySelector('al-settings')",
             host_element
         )
         if not al_settings:
+            logger.error("Could not find settings element")
             raise Exception("Could not find settings element")
+        logger.info("Successfully found settings element")
         
         # Capture slices
         slice_values = [round(i * 0.1, 1) for i in range(1, 10)]
         for val in slice_values:
+            logger.info(f"Processing slice {val}")
             # Set slice index
             driver.execute_script(
                 "arguments[0].setAttribute('slices-index', arguments[1])",
                 al_settings,
                 str(val)
             )
-            print(f"Set slice index to {val}")
+            logger.info(f"Set slice index to {val}")
             
             # Wait for slice to load
             time.sleep(2)
@@ -137,50 +164,62 @@ def capture_ct_slices(url, screenshots_dir):
             # Take screenshot
             screenshot_path = os.path.join(screenshots_dir, f"slice_{val}.png")
             driver.save_screenshot(screenshot_path)
-            print(f"Saved screenshot: {screenshot_path}")
+            logger.info(f"Saved screenshot: {screenshot_path}")
             
             # Analyze screenshot
+            logger.info(f"Starting analysis for slice {val}")
             analysis = analyze_screenshot_with_gpt4(screenshot_path, val)
             analyses.append({
                 "slice_index": val,
                 "analysis": analysis
             })
+            logger.info(f"Completed analysis for slice {val}")
             
             time.sleep(2)
             
         return analyses
         
     except Exception as e:
-        print(f"Error during CT slice capture: {e}")
+        logger.error(f"Error during CT slice capture: {e}")
         # Save error screenshot if possible
         try:
-            driver.save_screenshot(os.path.join(screenshots_dir, "error_screenshot.png"))
-        except:
-            pass
+            error_path = os.path.join(screenshots_dir, "error_screenshot.png")
+            driver.save_screenshot(error_path)
+            logger.info(f"Saved error screenshot to {error_path}")
+        except Exception as screenshot_error:
+            logger.error(f"Failed to save error screenshot: {screenshot_error}")
         raise
         
     finally:
+        logger.info("Closing Chrome driver")
         driver.quit()
 
 def main():
     if len(sys.argv) != 3:
+        logger.error("Incorrect number of arguments")
         print("Usage: python ct_slices_to_text.py <release_body_file> <screenshots_dir>")
         sys.exit(1)
         
     release_body_file = sys.argv[1]
     screenshots_dir = sys.argv[2]
     
+    logger.info(f"Starting CT slice analysis with:")
+    logger.info(f"Release body file: {release_body_file}")
+    logger.info(f"Screenshots directory: {screenshots_dir}")
+    
     # Ensure screenshots directory exists
     os.makedirs(screenshots_dir, exist_ok=True)
+    logger.info("Created screenshots directory")
     
     # Extract URL
     url = extract_morphosource_url(release_body_file)
     if not url:
-        print("Could not find MorphoSource URL")
+        logger.error("Could not find MorphoSource URL")
         sys.exit(1)
     
     try:
         # Capture and analyze slices
+        logger.info("Starting CT slice capture and analysis")
         analyses = capture_ct_slices(url, screenshots_dir)
         
         # Print analyses
@@ -192,8 +231,10 @@ def main():
             print(analysis['analysis'])
             print("-" * 80)
             
+        logger.info("Successfully completed CT slice analysis")
+            
     except Exception as e:
-        print(f"Error processing CT slices: {e}")
+        logger.error(f"Error processing CT slices: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
