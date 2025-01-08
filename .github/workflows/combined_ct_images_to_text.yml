@@ -383,19 +383,35 @@ jobs:
        needs.url_check.outputs.has_server_error == 'true')
     runs-on: ubuntu-latest
     steps:
-      - name: Check Analysis Status
-        id: check_status
+      - name: Check for Existing Error Release
+        id: check_error
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
-          if [ "${{ needs.check_and_analyze.outputs.has_analysis }}" == "true" ]; then
-            echo "Skipping CT analysis as it has already been performed for this MorphoSource release."
+          # Get the morphosource release tag
+          MS_TAG="${{ needs.check_and_analyze.outputs.release_tag }}"
+          
+          # Check for existing error releases for this morphosource release
+          response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
+          
+          has_error=$(echo "$response" | jq -r "
+            [.[] | 
+            select(
+              (.tag_name | startswith(\"ct_analysis_error-\")) and
+              (.body | contains(\"$MS_TAG\"))
+            )] | length")
+            
+          if [ "$has_error" -gt "0" ]; then
+            echo "Error release already exists for $MS_TAG"
             echo "skip=true" >> "$GITHUB_OUTPUT"
-            exit 0
           else
+            echo "No existing error release found for $MS_TAG"
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Create Error Release
-        if: steps.check_status.outputs.skip != 'true'
+        if: steps.check_error.outputs.skip != 'true'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
@@ -412,7 +428,7 @@ jobs:
             - 2D Process: ${{ needs.process_2d.result }}
 
       - name: Upload Error Screenshots
-        if: steps.check_status.outputs.skip != 'true'
+        if: steps.check_error.outputs.skip != 'true'
         uses: actions/upload-artifact@v3
         with:
           name: error_screenshots
@@ -422,7 +438,7 @@ jobs:
             process.log
             
       - name: Set Error Status
-        if: steps.check_status.outputs.skip != 'true'
+        if: steps.check_error.outputs.skip != 'true'
         run: |
           if [ "${{ needs.url_check.outputs.has_media_error }}" == "true" ]; then
             echo "Media error occurred - marking as completed to prevent loops"
@@ -439,5 +455,5 @@ jobs:
             exit 0
           else
             echo "Analysis failed"
-            exit 0  # Changed from exit 1 to prevent loops
+            exit 0
           fi
