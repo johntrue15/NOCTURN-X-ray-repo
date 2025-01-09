@@ -60,7 +60,7 @@ def analyze_ct_slices(screenshots_dir):
         content = [
             {
                 "type": "text",
-                "text": "These are CT slice images from a MorphoSource specimen. For each slice, please analyze:\n1. What anatomical features are visible\n2. The quality and clarity of each scan\n3. Any notable artifacts or issues in the images\n4. How the anatomy changes across the sequence of slices"
+                "text": "These are CT slice images from a MorphoSource describe what you see"
             }
         ]
         
@@ -87,7 +87,7 @@ def analyze_ct_slices(screenshots_dir):
                     "content": content
                 }
             ],
-            max_tokens=300
+            max_tokens=500
         )
         logger.info("Successfully received GPT-4 Vision response")
         
