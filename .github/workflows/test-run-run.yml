@@ -28,12 +28,39 @@ jobs:
           RELEASE_INFO=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/releases/tags/$RELEASE_TAG")
           
-          # Extract and escape release body
+          # Debug: Print raw release info
+          echo "Raw release info:"
+          echo "$RELEASE_INFO"
+          
+          # Check if release was found
+          if [ "$(echo "$RELEASE_INFO" | jq -r '.message')" = "Not Found" ]; then
+            echo "Error: Release not found"
+            exit 1
+          fi
+          
+          # Extract body and debug
+          RELEASE_BODY=$(echo "$RELEASE_INFO" | jq -r '.body')
+          echo "Extracted release body:"
+          echo "$RELEASE_BODY"
+          
+          # Save release body with proper escaping
           echo "release_body<<EOF" >> $GITHUB_OUTPUT
-          echo "$RELEASE_INFO" | jq -r .body >> $GITHUB_OUTPUT
+          echo "$RELEASE_BODY" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
           
           echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
+
+      # Add verification step
+      - name: Verify Release Body
+        if: success()
+        run: |
+          echo "Verifying release body content:"
+          echo "${{ steps.get_release.outputs.release_body }}"
+          
+          if [ -z "${{ steps.get_release.outputs.release_body }}" ]; then
+            echo "Error: Release body is empty"
+            exit 1
+          fi
 
   url_check:
     needs: fetch_release
