@@ -211,6 +211,15 @@ jobs:
           cat process.log | grep -v "DEBUG" | grep -v "INFO" | grep -v "WARNING" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
+      - name: Upload CT Image Screenshots
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ct-image-screenshots-${{ steps.gen_ts.outputs.timestamp }}
+          path: |
+            screenshots/*.png
+          retention-days: 90
+
       - name: Create Image Analysis Release
         if: success()
         uses: actions/create-release@v1
@@ -289,6 +298,15 @@ jobs:
           echo "description<<EOF" >> "$GITHUB_OUTPUT"
           cat process.log | grep -v "DEBUG" | grep -v "INFO" | grep -v "WARNING" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Upload CT Slice Screenshots
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ct-slice-screenshots-${{ steps.gen_ts.outputs.timestamp }}
+          path: |
+            screenshots/*.png
+          retention-days: 90
 
       - name: Create Slice Analysis Release
         if: success()
