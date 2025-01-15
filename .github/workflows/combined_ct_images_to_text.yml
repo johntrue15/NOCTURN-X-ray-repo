@@ -285,6 +285,46 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./screenshots/Default_Yplus_Up.png
+          asset_name: Default_Yplus_Up.png
+          asset_content_type: image/png
+
+      - name: Upload Upside Down Orientation
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./screenshots/Upside_Down_Y-_Up.png
+          asset_name: Upside_Down_Y-_Up.png
+          asset_content_type: image/png
+
+      - name: Upload Forward Orientation
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./screenshots/Forward_90_Z-_Up.png
+          asset_name: Forward_90_Z-_Up.png
+          asset_content_type: image/png
+
+      - name: Upload Back Orientation
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./screenshots/Back_90_Zplus_Up.png
+          asset_name: Back_90_Zplus_Up.png
+          asset_content_type: image/png
+
+      - name: Upload Log File
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./process.log
           asset_name: process.log
           asset_content_type: text/plain
@@ -462,44 +502,4 @@ jobs:
           else
             echo "Analysis failed"
             exit 0
-          fi.outputs.upload_url }}
-          asset_path: ./screenshots/Default_Yplus_Up.png
-          asset_name: Default_Yplus_Up.png
-          asset_content_type: image/png
-
-      - name: Upload Upside Down Orientation
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./screenshots/Upside_Down_Y-_Up.png
-          asset_name: Upside_Down_Y-_Up.png
-          asset_content_type: image/png
-
-      - name: Upload Forward Orientation
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./screenshots/Forward_90_Z-_Up.png
-          asset_name: Forward_90_Z-_Up.png
-          asset_content_type: image/png
-
-      - name: Upload Back Orientation
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./screenshots/Back_90_Zplus_Up.png
-          asset_name: Back_90_Zplus_Up.png
-          asset_content_type: image/png
-
-      - name: Upload Log File
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release
+          fi
