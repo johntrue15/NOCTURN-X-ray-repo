@@ -1,4 +1,3 @@
-# .github/scripts/ct_image_to_text.py
 import os
 import sys
 import re
@@ -108,6 +107,28 @@ def setup_driver(max_retries=3, retry_delay=5):
                 time.sleep(retry_delay)
             else:
                 raise
+
+def extract_url_from_file(filepath):
+    """Extract MorphoSource URL from the release body file."""
+    try:
+        with open(filepath, 'r') as f:
+            content = f.read()
+            
+        # Look for MorphoSource URL pattern
+        url_match = re.search(r'https://www\.morphosource\.org/concern/media/\d+', content)
+        if url_match:
+            return url_match.group(0)
+            
+        # Alternative pattern if the first one doesn't match
+        url_match = re.search(r'Detail Page URL:\s*(https://www\.morphosource\.org[^\s]+)', content)
+        if url_match:
+            return url_match.group(1)
+            
+        logger.error("No MorphoSource URL found in file")
+        return None
+    except Exception as e:
+        logger.error(f"Error reading file: {str(e)}")
+        return None
 
 def extract_id_from_url(url):
     """Extract the media ID from a MorphoSource URL"""
@@ -270,15 +291,22 @@ def generate_text_with_images(image_paths):
 
 def main():
     if len(sys.argv) != 3:
-        logger.error("Usage: ct_image_to_text.py <url> <output_folder>")
+        logger.error("Usage: ct_image_to_text.py <release_body_file> <output_folder>")
         sys.exit(1)
     
-    url = sys.argv[1]
+    release_body_file = sys.argv[1]
     output_folder = sys.argv[2]
     os.makedirs(output_folder, exist_ok=True)
     
     try:
-        logger.info(f"Processing URL: {url}")
+        logger.info(f"Processing release body file: {release_body_file}")
+        url = extract_url_from_file(release_body_file)
+        
+        if not url:
+            logger.error("Could not extract URL from release body")
+            sys.exit(1)
+            
+        logger.info(f"Extracted URL: {url}")
         screenshot_paths = process_url(url, output_folder)
         
         if not screenshot_paths:
