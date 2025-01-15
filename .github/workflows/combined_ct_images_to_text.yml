@@ -121,14 +121,10 @@ jobs:
       needs.check_and_analyze.outputs.has_analysis != 'true'
     runs-on: ubuntu-22.04
     outputs:
-      is_morphosource: ${{ steps.check_morpho.outputs.is_morphosource }}
-      has_analysis: ${{ steps.check_existing.outputs.has_analysis }}
       has_media_error: ${{ steps.url_check.outputs.has_media_error }}
       has_server_error: ${{ steps.url_check.outputs.has_server_error }}
       has_mesh: ${{ steps.type_check.outputs.has_mesh }}
       has_volumetric_images: ${{ steps.type_check.outputs.has_volumetric_images }}
-      release_body: ${{ steps.fetch_release.outputs.release_body }}
-      release_tag: ${{ steps.fetch_release.outputs.release_tag }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -162,20 +158,11 @@ jobs:
         run: |
           python .github/scripts/url_screenshot_check.py release_body.txt || true
           
-          # Move any generated screenshots to screenshots directory
-          mv *.png screenshots/ 2>/dev/null || true
-          
           if [ -f "url_check_status.json" ]; then
             status=$(cat url_check_status.json | jq -r .status)
             if [ "$status" = "media_error" ]; then
               echo "has_media_error=true" >> "$GITHUB_OUTPUT"
               echo "has_server_error=false" >> "$GITHUB_OUTPUT"
-              
-              # Upload error screenshots immediately
-              if [ -f "screenshots/*.png" ]; then
-                echo "Error screenshots captured"
-              fi
-              exit 0
             elif [ "$status" = "server_error" ]; then
               echo "has_media_error=false" >> "$GITHUB_OUTPUT"
               echo "has_server_error=true" >> "$GITHUB_OUTPUT"
@@ -268,8 +255,8 @@ jobs:
           cat process.log | grep -v "DEBUG" | grep -v "INFO" | grep -v "WARNING" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
-      - name: Create Image Analysis Release
-        if: success()
+      - name: Create Release
+        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
@@ -280,8 +267,27 @@ jobs:
             Analysis for MorphoSource release: ${{ needs.check_and_analyze.outputs.release_tag }}
             
             ${{ steps.process_images.outputs.description }}
+            
+            ### Orientation Views
+            The following orientation views were captured:
+            - Default (Y+ Up)
+            - Upside Down (Y- Up)
+            - Forward 90° (Z- Up)
+            - Back 90° (Z+ Up)
+            
+            See attached images for details.
           draft: false
           prerelease: false
+
+      - name: Upload Default Orientation
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./process.log
+          asset_name: process.log
+          asset_content_type: text/plain
 
       - name: Upload Screenshots
         if: success()
@@ -456,5 +462,44 @@ jobs:
           else
             echo "Analysis failed"
             exit 0
-          fi
+          fi.outputs.upload_url }}
+          asset_path: ./screenshots/Default_Yplus_Up.png
+          asset_name: Default_Yplus_Up.png
+          asset_content_type: image/png
 
+      - name: Upload Upside Down Orientation
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./screenshots/Upside_Down_Y-_Up.png
+          asset_name: Upside_Down_Y-_Up.png
+          asset_content_type: image/png
+
+      - name: Upload Forward Orientation
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./screenshots/Forward_90_Z-_Up.png
+          asset_name: Forward_90_Z-_Up.png
+          asset_content_type: image/png
+
+      - name: Upload Back Orientation
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./screenshots/Back_90_Zplus_Up.png
+          asset_name: Back_90_Zplus_Up.png
+          asset_content_type: image/png
+
+      - name: Upload Log File
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release
