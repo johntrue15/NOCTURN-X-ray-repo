@@ -1,0 +1,100 @@
+name: "Auto Code Generation with Claude on Issue"
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  codegen:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out the repo
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      # 2. Set up Git identity so we can commit
+      - name: Set up Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      # 3. Create a new branch from main named "issue-<number>"
+      - name: Create Issue Branch
+        id: create_branch
+        run: |
+          ISSUE_NUMBER=${{ github.event.issue.number }}
+          BRANCH_NAME="issue-${ISSUE_NUMBER}"
+
+          # Make sure we have the latest main
+          git fetch origin main
+          git checkout main
+
+          # Create & switch to the new branch
+          git checkout -b "$BRANCH_NAME"
+
+          # Save the branch name to output for later steps
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
+      # 4. Generate code using Anthropic's Claude API
+      - name: Generate code with Claude
+        id: generate_code
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          # Collect the issue body as prompt input
+          ISSUE_BODY="${{ github.event.issue.body }}"
+          
+          # Construct the Claude "prompt" in Anthropics format:
+          # Usually, you label "Human:" / "Assistant:" blocks. Claude often expects that format.
+          # We'll keep it simple, focusing on code generation.
+          
+          PROMPT=$(cat <<EOF
+Human: The user has opened an issue requesting code changes or new code. Here are the details:
+---------------
+${ISSUE_BODY}
+---------------
+
+Please provide ONLY the code implementation that addresses this request. Do not include explanations or disclaimers.
+
+Assistant:
+EOF
+)
+
+          # Call the Anthropic API (Claude) via curl
+          # model: choose e.g. "claude-2", "claude-instant-1", etc.
+          RESPONSE=$(curl -s https://api.anthropic.com/v1/complete \
+            -H "Content-Type: application/json" \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -d '{
+              "prompt": "'"$PROMPT"'",
+              "model": "claude-2",
+              "max_tokens_to_sample": 1024,
+              "temperature": 0.7,
+              "stop_sequences": ["Human:"]
+            }')
+
+          # Extract just the completion text from the JSON
+          CODE=$(echo "$RESPONSE" | jq -r '.completion')
+
+          # Save the code to a file. Feel free to change the filename or path.
+          echo "$CODE" > new_code_file.js
+
+      # 5. Commit and push the generated file to the new branch
+      - name: Commit changes
+        run: |
+          BRANCH_NAME=${{ steps.create_branch.outputs.BRANCH_NAME }}
+          git add .
+          git commit -m "Auto-generated code for issue #${{ github.event.issue.number }}"
+          # If no changes exist, this will fail, so we handle it:
+          git push origin "$BRANCH_NAME" || echo "No changes to push."
+
+      # 6. (Optional) Automatically open a Pull Request back to main
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          source: ${{ steps.create_branch.outputs.BRANCH_NAME }}
+          base: main
+          title: "Auto-generated code for Issue #${{ github.event.issue.number }}"
+          body: "This pull request was created automatically from Issue #${{ github.event.issue.number }}."
