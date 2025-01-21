@@ -13,7 +13,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
-      # 2. Set up Git identity so we can commit
+      # 2. Configure Git identity (so we can commit later)
       - name: Set up Git
         run: |
           git config user.name "github-actions[bot]"
@@ -45,9 +45,20 @@ jobs:
           # Capture the issue body as prompt input
           ISSUE_BODY="${{ github.event.issue.body }}"
 
-          # Construct the Claude-style prompt. We keep it simple:
+          # Build a multi-line prompt carefully.
+          # We do this within a single-quoted "EOF" block so special characters don't break YAML.
+          # But we still want $ISSUE_BODY to expand, so we switch to a double-quoted EOF carefully.
           PROMPT=$(cat <<EOF
 Human: The user has opened an issue requesting code changes or new code. Here are the details:
+
+Check failure on line 50 in .github/workflows/Claude_issue_automation.yml
+
+GitHub Actions
+/ .github/workflows/Claude_issue_automation.yml
+
+Invalid workflow file
+
+You have an error in your yaml syntax on line 50
 
 ${ISSUE_BODY}
 
@@ -57,10 +68,14 @@ Assistant:
 EOF
 )
 
+          echo "=== Prompt to Claude ==="
+          echo "$PROMPT"
+          echo "========================"
+
           # Call the Anthropic API (Claude) via curl
           RESPONSE=$(curl -s https://api.anthropic.com/v1/complete \
             -H "Content-Type: application/json" \
-            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "x-api-key: "$ANTHROPIC_API_KEY"" \
             -d '{
               "prompt": "'"$PROMPT"'",
               "model": "claude-2",
@@ -69,10 +84,10 @@ EOF
               "stop_sequences": ["Human:"]
             }')
 
-          # Extract just the completion text from the JSON
+          # Extract just the completion text from JSON (using jq)
           CODE=$(echo "$RESPONSE" | jq -r '.completion')
 
-          # Save the code to a file. Change filename/path as needed
+          # Save the code to a file. Change filename/path as needed.
           echo "$CODE" > new_code_file.js
 
       # 5. Commit & push the generated file to the new branch
