@@ -45,11 +45,31 @@ def main():
     # Get issue details including comments
     issue_content = get_issue_details(issue_number, repo, github_token)
     
-    # Prepare the prompt
-    prompt = f"""Human: The user has opened an issue requesting code changes or new code. 
-Here are the full issue details and any subsequent comments:
+    # Create message for Claude
+    message = client.messages.create(
+        model="claude-3-sonnet-20240229",
+        max_tokens=4096,
+        temperature=0.7,
+        system="You are a helpful AI assistant that generates code based on GitHub issues. Provide only the code implementation without any explanations or markdown formatting.",
+        messages=[
+            {
+                "role": "user",
+                "content": f"Here are the full issue details and comments:\n\n{issue_content}\n\nPlease provide the code implementation that addresses this request."
+            }
+        ]
+    )
+    
+    # Extract the response
+    code_response = message.content[0].text
+    
+    # Create the .github/generated directory if it doesn't exist
+    output_dir = Path('.github/generated')
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Save the generated code
+    output_file = output_dir / 'generated_code.py'
+    with open(output_file, 'w') as f:
+        f.write(code_response)
 
-{issue_content}
-
-Please provide ONLY the code implementation that addresses this request. 
-Do not include explanations or disclaimers.
+if __name__ == "__main__":
+    main()
