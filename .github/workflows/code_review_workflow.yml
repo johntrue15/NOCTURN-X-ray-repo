@@ -23,6 +23,15 @@ jobs:
           fetch-depth: 0
           ref: main
 
+      - name: Install GitHub CLI
+        run: |
+          type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+          && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+          && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+          && sudo apt update \
+          && sudo apt install gh -y
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -33,17 +42,34 @@ jobs:
           python -m pip install --upgrade pip
           pip install anthropic requests
 
+      - name: Download workflow artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: ${{ github.event.workflow_run.workflow_id }}
+          run_id: ${{ github.event.workflow_run.id }}
+          name: workflow-data
+
       - name: Get PR and Generated Code
         id: get_context
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Get the most recent PR created by the previous workflow
-          PR_NUMBER=$(gh pr list --author "github-actions[bot]" --limit 1 --json number -q '.[0].number')
-          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
+          # Get the issue number from the previous workflow
+          ISSUE_NUMBER=$(cat issue_number.txt)
+          echo "Looking for PR related to issue #$ISSUE_NUMBER"
           
-          # Get the branch name from the PR
-          BRANCH_NAME=$(gh pr view $PR_NUMBER --json headRefName -q '.headRefName')
+          # Look for PR with branch name containing the issue number
+          PR_DATA=$(gh pr list --search "claude-pr/issue-$ISSUE_NUMBER" --json number,headRefName)
+          if [ -z "$PR_DATA" ]; then
+            echo "No PRs found for issue #$ISSUE_NUMBER. Exiting."
+            exit 1
+          fi
+          
+          PR_NUMBER=$(echo "$PR_DATA" | jq -r '.[0].number')
+          BRANCH_NAME=$(echo "$PR_DATA" | jq -r '.[0].headRefName')
+          
+          echo "Found PR #$PR_NUMBER on branch $BRANCH_NAME"
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
           
           # Checkout the PR branch
@@ -51,6 +77,7 @@ jobs:
           git checkout $BRANCH_NAME
 
       - name: Analyze Code with Claude
+        if: success()
         id: analyze_code
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -59,12 +86,15 @@ jobs:
         run: python .github/scripts/analyze_code.py
 
       - name: Update PR with Analysis
+        if: success()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ steps.get_context.outputs.PR_NUMBER }}
         run: |
-          # Read Claude's analysis
-          ANALYSIS=$(cat .github/generated/analysis.md)
-          
-          # Add analysis as PR comment
-          gh pr comment $PR_NUMBER --body "$ANALYSIS"
+          if [ -f .github/generated/analysis.md ]; then
+            ANALYSIS=$(cat .github/generated/analysis.md)
+            gh pr comment $PR_NUMBER --body "$ANALYSIS"
+          else
+            echo "Analysis file not found"
+            exit 1
+          fi
