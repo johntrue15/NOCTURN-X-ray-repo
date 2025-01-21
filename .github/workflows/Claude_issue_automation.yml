@@ -1,8 +1,12 @@
 name: "Auto Code Generation with Claude on Issue"
 
 on:
-  issues:
-    types: [opened]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to process'
+        required: true
+        type: string
 
 jobs:
   codegen:
@@ -13,98 +17,60 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
-      # 2. Configure Git identity (so we can commit later)
+      # 2. Configure Git identity
       - name: Set up Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      # 3. Create a new branch named "issue-<number>" from main
+      # 3. Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      # 4. Install Python dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install anthropic requests
+
+      # 5. Create a new branch named "issue-<number>" from main
       - name: Create Issue Branch
         id: create_branch
         run: |
-          ISSUE_NUMBER=${{ github.event.issue.number }}
+          ISSUE_NUMBER=${{ inputs.issue_number }}
           BRANCH_NAME="issue-${ISSUE_NUMBER}"
-
-          # Make sure we have the latest main
+          
           git fetch origin main
           git checkout main
-
-          # Create & switch to the new branch
           git checkout -b "$BRANCH_NAME"
-
-          # Save the branch name to output for later steps
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
-      # 4. Generate code using Anthropic's Claude API
+      # 6. Generate code using Claude via Python script
       - name: Generate code with Claude
         id: generate_code
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          # Capture the issue body as prompt input
-          ISSUE_BODY="${{ github.event.issue.body }}"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          REPO: ${{ github.repository }}
+        run: python .github/scripts/generate_code.py
 
-          # Build a multi-line prompt carefully.
-          # We do this within a single-quoted "EOF" block so special characters don't break YAML.
-          # But we still want $ISSUE_BODY to expand, so we switch to a double-quoted EOF carefully.
-          PROMPT=$(cat <<EOF
-Human: The user has opened an issue requesting code changes or new code. Here are the details:
-
-Check failure on line 50 in .github/workflows/Claude_issue_automation.yml
-
-GitHub Actions
-/ .github/workflows/Claude_issue_automation.yml
-
-Invalid workflow file
-
-You have an error in your yaml syntax on line 50
-
-${ISSUE_BODY}
-
-Please provide ONLY the code implementation that addresses this request. Do not include explanations or disclaimers.
-
-Assistant:
-EOF
-)
-
-          echo "=== Prompt to Claude ==="
-          echo "$PROMPT"
-          echo "========================"
-
-          # Call the Anthropic API (Claude) via curl
-          RESPONSE=$(curl -s https://api.anthropic.com/v1/complete \
-            -H "Content-Type: application/json" \
-            -H "x-api-key: "$ANTHROPIC_API_KEY"" \
-            -d '{
-              "prompt": "'"$PROMPT"'",
-              "model": "claude-2",
-              "max_tokens_to_sample": 1024,
-              "temperature": 0.7,
-              "stop_sequences": ["Human:"]
-            }')
-
-          # Extract just the completion text from JSON (using jq)
-          CODE=$(echo "$RESPONSE" | jq -r '.completion')
-
-          # Save the code to a file. Change filename/path as needed.
-          echo "$CODE" > new_code_file.js
-
-      # 5. Commit & push the generated file to the new branch
+      # 7. Commit & push the generated file
       - name: Commit changes
         run: |
           BRANCH_NAME=${{ steps.create_branch.outputs.BRANCH_NAME }}
           git add .
-          git commit -m "Auto-generated code for issue #${{ github.event.issue.number }}"
-          # If no changes exist, this will fail, so catch the error:
+          git commit -m "Auto-generated code for issue #${{ inputs.issue_number }}"
           git push origin "$BRANCH_NAME" || echo "No changes to push."
 
-      # 6. (Optional) Automatically open a Pull Request to main
+      # 8. Create Pull Request
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           source: ${{ steps.create_branch.outputs.BRANCH_NAME }}
           base: main
-          title: "Auto-generated code for Issue #${{ github.event.issue.number }}"
-          body: "This pull request was created automatically from Issue #${{ github.event.issue.number }}."
+          title: "Auto-generated code for Issue #${{ inputs.issue_number }}"
+          body: "This pull request was created automatically from Issue #${{ inputs.issue_number }}."
