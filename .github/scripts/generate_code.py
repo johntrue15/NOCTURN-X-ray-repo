@@ -39,8 +39,8 @@ def main():
     issue_number = os.getenv('ISSUE_NUMBER')
     repo = os.getenv('REPO')
     
-    # Initialize Claude client
-    client = anthropic.Client(api_key)
+    # Initialize Claude client with the correct syntax
+    client = anthropic.Anthropic(api_key=api_key)
     
     # Get issue details including comments
     issue_content = get_issue_details(issue_number, repo, github_token)
