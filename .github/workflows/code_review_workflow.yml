@@ -1,0 +1,70 @@
+name: "Code Review and Next Steps with Claude"
+
+on:
+  workflow_run:
+    workflows: ["Auto Code Generation with Claude on Issue"]
+    types:
+      - completed
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install anthropic requests
+
+      - name: Get PR and Generated Code
+        id: get_context
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the most recent PR created by the previous workflow
+          PR_NUMBER=$(gh pr list --author "github-actions[bot]" --limit 1 --json number -q '.[0].number')
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
+          
+          # Get the branch name from the PR
+          BRANCH_NAME=$(gh pr view $PR_NUMBER --json headRefName -q '.headRefName')
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          
+          # Checkout the PR branch
+          git fetch origin $BRANCH_NAME
+          git checkout $BRANCH_NAME
+
+      - name: Analyze Code with Claude
+        id: analyze_code
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.get_context.outputs.PR_NUMBER }}
+        run: python .github/scripts/analyze_code.py
+
+      - name: Update PR with Analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ steps.get_context.outputs.PR_NUMBER }}
+        run: |
+          # Read Claude's analysis
+          ANALYSIS=$(cat .github/generated/analysis.md)
+          
+          # Add analysis as PR comment
+          gh pr comment $PR_NUMBER --body "$ANALYSIS"
