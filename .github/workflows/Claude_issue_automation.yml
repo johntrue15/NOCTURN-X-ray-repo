@@ -8,6 +8,12 @@ on:
         required: true
         type: string
 
+# Add permissions block
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+
 jobs:
   codegen:
     runs-on: ubuntu-latest
@@ -35,16 +41,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install anthropic requests
 
-      # 5. Create a new branch named "issue-<number>" from main
+      # 5. Create a new branch named "claude-pr/issue-<number>" from origin/main
       - name: Create Issue Branch
         id: create_branch
         run: |
           ISSUE_NUMBER=${{ inputs.issue_number }}
-          BRANCH_NAME="issue-${ISSUE_NUMBER}"
+          BRANCH_NAME="claude-pr/issue-${ISSUE_NUMBER}"
           
+          # Create new branch from origin/main without checking it out
           git fetch origin main
-          git checkout main
-          git checkout -b "$BRANCH_NAME"
+          git branch "$BRANCH_NAME" origin/main
+          git checkout "$BRANCH_NAME"
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
       # 6. Generate code using Claude via Python script
@@ -63,14 +70,14 @@ jobs:
           BRANCH_NAME=${{ steps.create_branch.outputs.BRANCH_NAME }}
           git add .
           git commit -m "Auto-generated code for issue #${{ inputs.issue_number }}"
-          git push origin "$BRANCH_NAME" || echo "No changes to push."
+          git push origin "$BRANCH_NAME"
 
-      # 8. Create Pull Request
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          source: ${{ steps.create_branch.outputs.BRANCH_NAME }}
-          base: main
-          title: "Auto-generated code for Issue #${{ inputs.issue_number }}"
-          body: "This pull request was created automatically from Issue #${{ inputs.issue_number }}."
+      # 8. Create Pull Request (fix the parameters)
+     # - name: Create Pull Request
+     #   uses: peter-evans/create-pull-request@v4
+     #   with:
+     #     token: ${{ secrets.GITHUB_TOKEN }}
+     #     branch: ${{ steps.create_branch.outputs.BRANCH_NAME }}
+     #     base: main
+     #     title: "Auto-generated code for Issue #${{ inputs.issue_number }}"
+     #     body: "This pull request was created automatically from Issue #${{ inputs.issue_number }}."
