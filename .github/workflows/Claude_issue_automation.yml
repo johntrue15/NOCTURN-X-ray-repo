@@ -64,6 +64,17 @@ jobs:
           REPO: ${{ github.repository }}
         run: python .github/scripts/generate_code.py
 
+      # After generating code but before creating PR
+      - name: Save workflow data
+        run: |
+          echo "${{ inputs.issue_number }}" > issue_number.txt
+
+      - name: Upload workflow data
+        uses: actions/upload-artifact@v3
+        with:
+          name: workflow-data
+          path: issue_number.txt
+
       # 7. Commit & push the generated file
       - name: Commit changes
         run: |
@@ -73,11 +84,11 @@ jobs:
           git push origin "$BRANCH_NAME"
 
       # 8. Create Pull Request (fix the parameters)
-     # - name: Create Pull Request
-     #   uses: peter-evans/create-pull-request@v4
-     #   with:
-     #     token: ${{ secrets.GITHUB_TOKEN }}
-     #     branch: ${{ steps.create_branch.outputs.BRANCH_NAME }}
-     #     base: main
-     #     title: "Auto-generated code for Issue #${{ inputs.issue_number }}"
-     #     body: "This pull request was created automatically from Issue #${{ inputs.issue_number }}."
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.create_branch.outputs.BRANCH_NAME }}
+          base: main
+          title: "Auto-generated code for Issue #${{ inputs.issue_number }}"
+          body: "This pull request was created automatically from Issue #${{ inputs.issue_number }}."
