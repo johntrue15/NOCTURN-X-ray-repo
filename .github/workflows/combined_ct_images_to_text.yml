@@ -331,7 +331,7 @@ jobs:
 
       - name: Upload Screenshots
         if: success()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ct-scan-screenshots
           path: screenshots/*.png
@@ -412,7 +412,7 @@ jobs:
 
       - name: Upload Screenshots
         if: success()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: morphosource_2d_screenshots
           path: |
