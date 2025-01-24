@@ -33,6 +33,22 @@ def get_files_from_metadata():
     logger.info(f"Found {len(files)} files in metadata: {files}")
     return files
 
+def find_file(file_name):
+    """Find a file in the generated directories"""
+    base_dir = Path('.github/generated')
+    
+    # List all files in generated directory
+    logger.info(f"Searching for {file_name} in {base_dir}")
+    all_files = list(base_dir.rglob('*'))
+    logger.info(f"Found {len(all_files)} total files")
+    
+    # Find files matching the name
+    matches = [f for f in all_files if f.is_file() and f.name == Path(file_name).name]
+    if matches:
+        logger.info(f"Found matching file at: {matches[0]}")
+        return matches[0]
+    return None
+
 def process_files():
     """Main function to process and analyze files"""
     try:
@@ -47,40 +63,27 @@ def process_files():
         success_count = 0
         for file in files:
             try:
-                # Try multiple possible locations for each file
-                possible_paths = [
-                    Path('.github/generated') / file,  # Direct path
-                    Path('.github/generated/scripts') / Path(file).name,  # In scripts subdir
-                    Path('.github/generated/workflows') / Path(file).name,  # In workflows subdir
-                    Path('.github/generated/.github/scripts') / Path(file).name,  # Nested scripts
-                    Path('.github/generated/.github/workflows') / Path(file).name,  # Nested workflows
-                ]
-                
-                file_found = False
-                for original_path in possible_paths:
-                    logger.info(f"Looking for file at: {original_path}")
-                    if original_path.exists():
-                        file_found = True
-                        logger.info(f"Found file at: {original_path}")
-                        # Read the file
-                        with open(original_path) as f:
-                            file_content = f.read()
-                        
-                        # Save to staging
-                        output_path = staging_dir / file
-                        os.makedirs(output_path.parent, exist_ok=True)
-                        with open(output_path, 'w') as f:
-                            f.write(file_content)
-                        logger.info(f"Saved file to staging: {output_path}")
-                        success_count += 1
-                        break
-                
-                if not file_found:
-                    logger.warning(f"File not found in any location: {file}")
+                # Find the file
+                source_path = find_file(Path(file).name)
+                if not source_path:
+                    logger.warning(f"File not found: {file}")
                     logger.info("Contents of .github/generated:")
                     for p in Path('.github/generated').rglob('*'):
                         logger.info(f"  {p}")
-                    
+                    continue
+                
+                # Read and save the file
+                with open(source_path) as f:
+                    file_content = f.read()
+                
+                # Save to staging
+                output_path = staging_dir / file
+                os.makedirs(output_path.parent, exist_ok=True)
+                with open(output_path, 'w') as f:
+                    f.write(file_content)
+                logger.info(f"Saved file to staging: {output_path}")
+                success_count += 1
+                
             except Exception as e:
                 logger.error(f"Error processing {file}: {e}", exc_info=True)
                 continue
