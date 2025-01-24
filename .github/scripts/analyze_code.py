@@ -197,6 +197,7 @@ def main():
         # Create output directory
         output_dir = Path('.github/generated/complete')
         output_dir.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Created output directory: {output_dir}")
         
         review_comments = []
         processed_files = []
@@ -205,6 +206,12 @@ def main():
             try:
                 # Analyze the generated code
                 needs_merge, merge_markers = analyze_code_block(generated_content)
+                
+                # Create full output path
+                output_file = output_dir / file_path
+                # Ensure parent directories exist
+                output_file.parent.mkdir(parents=True, exist_ok=True)
+                logger.info(f"Created directory structure for: {output_file}")
                 
                 if needs_merge:
                     # Get original file content
@@ -224,26 +231,32 @@ def main():
                     logger.info(f"Generated new file {file_path}")
                 
                 # Save the final code
-                output_file = output_dir / file_path
-                output_file.parent.mkdir(parents=True, exist_ok=True)
-                
                 with open(output_file, 'w') as f:
                     f.write(final_content)
                 
-                processed_files.append(file_path)
-                logger.info(f"Saved {file_path} to {output_file}")
+                processed_files.append(str(output_file))
+                logger.info(f"Saved file to: {output_file}")
                 
             except Exception as e:
-                logger.error(f"Error processing {file_path}: {e}")
+                logger.error(f"Error processing {file_path}: {e}", exc_info=True)
                 continue
         
         if not processed_files:
             raise ValueError("No files were processed successfully")
+            
+        # List all generated files
+        logger.info("Generated files:")
+        for path in Path(output_dir).rglob('*'):
+            if path.is_file():
+                logger.info(f"  {path}")
         
         # Create review comment
         review_comment = "## Code Analysis Results\n\n"
         review_comment += "Analyzed generated code and performed the following actions:\n\n"
         review_comment += '\n'.join(review_comments)
+        review_comment += "\n\nGenerated files:\n"
+        for file in processed_files:
+            review_comment += f"- {file}\n"
         
         review_file = Path('.github/generated/review_comment.md')
         review_file.parent.mkdir(parents=True, exist_ok=True)
