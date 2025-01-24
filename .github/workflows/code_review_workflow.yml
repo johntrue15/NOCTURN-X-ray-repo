@@ -45,45 +45,47 @@ jobs:
           token: ${{ secrets.WORKFLOW_PAT }}
           repository: johntrue15/NOCTURN-X-ray-repo
 
-      # Debug branch state
-      - name: Debug branch state
-        run: |
-          echo "Current branch:"
-          git branch
-          echo "Current directory contents:"
-          ls -la
-          echo "Repository root contents:"
-          ls -la /home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/.github/generated/ || echo "generated dir not found"
+      # Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
           
-          if [ -f "/home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/.github/generated/metadata.json" ]; then
-            echo "==== Contents of metadata.json ===="
-            cat "/home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/.github/generated/metadata.json"
-          else
-            echo "metadata.json not found in repository"
-            echo "Full repository structure:"
-            find /home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/.github -type f
-          fi
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pathlib
 
       # Set up the directory structure
       - name: Setup directories
         run: |
+          # Debug current state
+          echo "Current workspace:"
+          pwd
+          ls -la
+          
+          echo "Main files location:"
+          ls -la main-files/.github/scripts/
+          
           # Create necessary directories
-          mkdir -p .github/{main,scripts,generated}
+          mkdir -p .github/generated
           
-          # Copy files from repository root
-          cp -r /home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/.github/generated/* .github/generated/ || true
+          # Copy analyze_code.py from main to workspace root
+          if [ -f "main-files/.github/scripts/analyze_code.py" ]; then
+            cp main-files/.github/scripts/analyze_code.py ./analyze_code.py
+            echo "Copied analyze_code.py to workspace root"
+          else
+            echo "Error: analyze_code.py not found in main-files"
+            find main-files -type f
+            exit 1
+          fi
           
-          # Copy analyze_code.py from main to workspace
-          cp main-files/.github/scripts/analyze_code.py analyze_code.py
-          
-          rm -rf main-files
-          
-          # Debug directory structure
-          echo "==== Full directory structure ===="
+          # Debug final structure
+          echo "Final workspace structure:"
           find . -type f
           
-          echo "==== Contents of .github/generated ===="
-          ls -la .github/generated/ || echo "generated dir not found"
+          echo "Contents of .github/generated:"
+          ls -la .github/generated/
 
       # Run the analysis using analyze_code from main
       - name: Analyze code
