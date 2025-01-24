@@ -144,27 +144,24 @@ jobs:
           # Create staging directory with complete file structure
           mkdir -p staging/.github/{workflows,scripts}
           
-          # Copy files directly from the issue branch
-          while IFS= read -r file; do
-            # Remove .github prefix if present
-            file_without_prefix=${file#.github/}
-            src_file=".github/generated/$file_without_prefix"
-            dst_dir="staging/.github/$(dirname $file_without_prefix)"
-            
-            echo "Copying $file:"
-            echo "  From: $src_file"
-            echo "  To: $dst_dir/"
-            
-            if [ -f "$src_file" ]; then
+          # Copy files from generated directory
+          for file in .github/generated/workflows/combined_ct_images_to_text.yml \
+                     .github/generated/scripts/url_screenshot_check.py; do
+            if [ -f "$file" ]; then
+              # Get the relative path after .github/generated/
+              rel_path=${file#.github/generated/}
+              dst_dir="staging/.github/$(dirname $rel_path)"
+              
+              echo "Copying $file to $dst_dir/"
               mkdir -p "$dst_dir"
-              cp "$src_file" "$dst_dir/"
+              cp "$file" "$dst_dir/"
               echo "Successfully copied file"
             else
-              echo "Warning: Generated file not found: $src_file"
+              echo "Warning: Generated file not found: $file"
               echo "Contents of .github/generated:"
               ls -R .github/generated/
             fi
-          done <<< "$required_files"
+          done
           
           # Verify staging contents
           echo "Staging directory contents:"
