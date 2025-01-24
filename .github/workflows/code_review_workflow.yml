@@ -103,13 +103,21 @@ jobs:
           # Run analyze_code.py
           python .github/scripts/analyze_code.py
           
-          # Create staging directory with combined files
-          mkdir -p staging
-          cp .github/generated/complete/* staging/ || true
+          # Create staging directory with complete file structure
+          mkdir -p staging/.github/{workflows,scripts}
+          
+          # Copy files preserving directory structure
+          if [ -f ".github/generated/complete/.github/workflows/combined_ct_images_to_text.yml" ]; then
+            cp ".github/generated/complete/.github/workflows/combined_ct_images_to_text.yml" "staging/.github/workflows/"
+          fi
+          
+          if [ -f ".github/generated/complete/.github/scripts/url_screenshot_check.py" ]; then
+            cp ".github/generated/complete/.github/scripts/url_screenshot_check.py" "staging/.github/scripts/"
+          fi
           
           # Verify staging contents
           echo "Staging directory contents:"
-          ls -R staging/
+          find staging -type f
 
       - name: Upload combined code
         uses: actions/upload-artifact@v4
