@@ -146,17 +146,32 @@ jobs:
           echo "Remote URL:"
           git remote -v
           
+          # Debug staging contents
+          echo "Staging contents:"
+          find staging -type f
+          
           # Copy files from staging to their final locations
-          cp -r staging/.github/* .github/
+          if [ -d "staging/.github" ]; then
+            cp -r staging/.github/* .github/
+            echo "Copied files from staging to .github"
+          else
+            echo "Error: staging/.github directory not found"
+            exit 1
+          fi
           
           # Configure git with PAT for workflow push
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git remote set-url origin https://x-access-token:${WORKFLOW_PAT}@github.com/${{ github.repository }}.git
           
-          # Add and commit the changes
-          git add .github/workflows/combined_ct_images_to_text.yml
-          git add .github/scripts/url_screenshot_check.py
+          # Get files from metadata
+          files=$(jq -r '.generated_files[]' .github/generated/metadata.json)
+          
+          # Add and commit each file
+          while IFS= read -r file; do
+            echo "Adding file: $file"
+            git add "$file"
+          done <<< "$files"
           
           # Commit and push
           git commit -m "Combined code updates for issue #${{ github.event.inputs.issue_number || github.event.workflow_run.pull_requests[0].number }}"
