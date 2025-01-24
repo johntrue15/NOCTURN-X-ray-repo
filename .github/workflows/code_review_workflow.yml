@@ -52,6 +52,10 @@ jobs:
           mkdir -p .github/main
           cp -r main-files/.github/scripts .github/main/ || true
           cp -r main-files/.github/workflows .github/main/ || true
+          
+          # Copy analyze_code.py from main to workspace
+          cp main-files/.github/scripts/analyze_code.py .github/scripts/ || true
+          
           rm -rf main-files
           
           # Debug directory structure
