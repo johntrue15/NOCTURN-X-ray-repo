@@ -5,6 +5,7 @@ import argparse
 from pathlib import Path
 from github import Github
 import logging
+import shutil
 
 # Set up logging
 logging.basicConfig(
@@ -180,6 +181,64 @@ def parse_code_blocks(response):
     
     return parsed_blocks
 
+def combine_code_files(original_path, generated_path, output_path):
+    """Combine original file with generated updates"""
+    if not os.path.exists(original_path):
+        # If original doesn't exist, just copy generated file
+        shutil.copy2(generated_path, output_path)
+        return
+        
+    with open(original_path, 'r') as f:
+        original = f.read()
+    with open(generated_path, 'r') as f:
+        generated = f.read()
+        
+    # TODO: Implement smart merging logic here
+    # For now, use generated version if it exists, otherwise keep original
+    output = generated if os.path.exists(generated_path) else original
+    
+    # Write combined output
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'w') as f:
+        f.write(output)
+
+def process_code_blocks(repo_path, generated_dir):
+    """Process code blocks and combine with original files"""
+    complete_dir = os.path.join(generated_dir, 'complete')
+    os.makedirs(complete_dir, exist_ok=True)
+    
+    # Track file mappings
+    path_mapping = {}
+    
+    for root, _, files in os.walk(generated_dir):
+        for file in files:
+            if file.endswith(('.py', '.yml', '.yaml', '.json')):
+                generated_path = os.path.join(root, file)
+                
+                # Skip files in complete dir
+                if 'complete' in generated_path:
+                    continue
+                    
+                # Get original path relative to repo
+                rel_path = os.path.relpath(generated_path, generated_dir)
+                original_path = os.path.join(repo_path, rel_path)
+                
+                # Output path in complete dir
+                output_path = os.path.join(complete_dir, os.path.basename(file))
+                
+                # Combine files
+                combine_code_files(original_path, generated_path, output_path)
+                
+                # Track mapping
+                path_mapping[os.path.basename(file)] = rel_path
+                
+    # Save path mapping
+    mapping_path = os.path.join(complete_dir, 'path_mapping.json')
+    with open(mapping_path, 'w') as f:
+        json.dump(path_mapping, f, indent=2)
+        
+    return list(path_mapping.values())
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--issue', required=True)
@@ -204,77 +263,11 @@ def main():
             
         logger.info(f"Found {len(code_blocks)} code blocks to process")
         
-        # Create output directory with simpler structure
-        output_dir = Path('.github/generated/complete')
-        output_dir.mkdir(parents=True, exist_ok=True)
-        logger.info(f"Created output directory: {output_dir}")
-        
-        review_comments = []
-        processed_files = []
-        
-        for file_path, generated_content in code_blocks:
-            try:
-                # Analyze the generated code
-                needs_merge, merge_markers = analyze_code_block(generated_content)
-                
-                # Use just the filename for output
-                simple_name = Path(file_path).name
-                output_file = output_dir / simple_name
-                logger.info(f"Saving to simplified path: {output_file}")
-                
-                if needs_merge:
-                    # Get original file content
-                    original_content = get_original_file(repo, file_path)
-                    if original_content:
-                        # Merge the code
-                        final_content = merge_code_blocks(original_content, generated_content, merge_markers)
-                        review_comments.append(f"- Merged changes in `{file_path}` with existing code")
-                        logger.info(f"Merged changes for {file_path}")
-                    else:
-                        final_content = generated_content
-                        review_comments.append(f"- Could not find original file `{file_path}` to merge with")
-                        logger.warning(f"Could not find original file {file_path} for merging")
-                else:
-                    final_content = generated_content
-                    review_comments.append(f"- Generated new file `{file_path}`")
-                    logger.info(f"Generated new file {file_path}")
-                
-                # Save the final code
-                with open(output_file, 'w') as f:
-                    f.write(final_content)
-                
-                processed_files.append(str(output_file))
-                logger.info(f"Saved file to: {output_file}")
-                
-                # Also save original path mapping
-                with open(output_dir / 'path_mapping.json', 'w') as f:
-                    json.dump({simple_name: file_path}, f, indent=2)
-                
-            except Exception as e:
-                logger.error(f"Error processing {file_path}: {e}", exc_info=True)
-                continue
-        
-        if not processed_files:
-            raise ValueError("No files were processed successfully")
-            
-        # List all generated files
-        logger.info("Generated files:")
-        for path in Path(output_dir).rglob('*'):
-            if path.is_file():
-                logger.info(f"  {path}")
-        
-        # Create review comment
-        review_comment = "## Code Analysis Results\n\n"
-        review_comment += "Analyzed generated code and performed the following actions:\n\n"
-        review_comment += '\n'.join(review_comments)
-        review_comment += "\n\nGenerated files:\n"
-        for file in processed_files:
-            review_comment += f"- {file}\n"
-        
-        review_file = Path('.github/generated/review_comment.md')
-        review_file.parent.mkdir(parents=True, exist_ok=True)
-        with open(review_file, 'w') as f:
-            f.write(review_comment)
+        # Process code blocks
+        processed_files = process_code_blocks(
+            repo_path='.',
+            generated_dir=os.path.join('.github', 'generated')
+        )
         
         logger.info(f"Successfully processed {len(processed_files)} files")
         
