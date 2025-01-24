@@ -276,31 +276,80 @@ def process_code_blocks(repo_path, generated_dir):
     complete_dir = os.path.join(generated_dir, 'complete')
     os.makedirs(complete_dir, exist_ok=True)
     
+    # Load Claude conversation to get code blocks
+    try:
+        conversation = load_claude_conversation(generated_dir)
+        code_blocks = parse_code_blocks(conversation['claude_response'])
+        logger.info(f"Found {len(code_blocks)} code blocks to process")
+    except Exception as e:
+        logger.error(f"Error loading code blocks: {e}")
+        return []
+    
     # Track file mappings
     path_mapping = {}
     
-    for root, _, files in os.walk(generated_dir):
-        for file in files:
-            if file.endswith(('.py', '.yml', '.yaml', '.json')):
-                generated_path = os.path.join(root, file)
-                
-                # Skip files in complete dir
-                if 'complete' in generated_path:
-                    continue
+    # Process each code block
+    for file_path, generated_code in code_blocks.items():
+        try:
+            # Get paths
+            rel_path = os.path.relpath(file_path, repo_path)
+            original_path = os.path.join(repo_path, rel_path)
+            output_path = os.path.join(complete_dir, os.path.basename(file_path))
+            
+            # Create prompt for Claude
+            if os.path.exists(original_path):
+                with open(original_path, 'r') as f:
+                    original_code = f.read()
                     
-                # Get original path relative to repo
-                rel_path = os.path.relpath(generated_path, generated_dir)
-                original_path = os.path.join(repo_path, rel_path)
+                prompt = f"""Please combine these two code files into a single updated version.
+The first file is the original, and the second contains updates to be integrated.
+
+Original file:
+```python
+{original_code}
+```
+
+Generated updates:
+```python
+{generated_code}
+```
+
+Please provide the complete combined code incorporating the updates while preserving the original structure.
+Return only the code without any explanation."""
+
+                # Get Claude's response
+                try:
+                    response = call_claude(prompt)
+                    
+                    # Extract code from response
+                    code_pattern = r'```(?:python)?\n(.*?)```'
+                    match = re.search(code_pattern, response, re.DOTALL)
+                    if match:
+                        combined_code = match.group(1).strip()
+                    else:
+                        logger.error(f"Could not extract code from Claude's response for {file_path}")
+                        combined_code = generated_code
+                except Exception as e:
+                    logger.error(f"Error getting Claude response for {file_path}: {e}")
+                    combined_code = generated_code
+            else:
+                # If no original file exists, use generated code
+                combined_code = generated_code
+            
+            # Write output file
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            with open(output_path, 'w') as f:
+                f.write(combined_code)
                 
-                # Output path in complete dir
-                output_path = os.path.join(complete_dir, os.path.basename(file))
-                
-                # Combine files
-                combine_code_files(original_path, generated_path, output_path)
-                
-                # Track mapping
-                path_mapping[os.path.basename(file)] = rel_path
-                
+            logger.info(f"Saved combined file to: {output_path}")
+            
+            # Track mapping
+            path_mapping[os.path.basename(file_path)] = rel_path
+            
+        except Exception as e:
+            logger.error(f"Error processing {file_path}: {e}")
+            continue
+            
     # Save path mapping
     mapping_path = os.path.join(complete_dir, 'path_mapping.json')
     with open(mapping_path, 'w') as f:
