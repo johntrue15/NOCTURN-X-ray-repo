@@ -15,13 +15,25 @@ logger = logging.getLogger(__name__)
 
 def load_claude_conversation(artifacts_dir):
     """Load the Claude conversation from artifacts"""
-    conv_file = Path(artifacts_dir) / 'claude_conversation.json'
-    if not conv_file.exists():
-        logger.warning("Claude conversation file not found")
-        return None
+    # List all files in artifacts directory
+    logger.info(f"Searching for Claude conversation in {artifacts_dir}")
+    for path in Path(artifacts_dir).rglob('*'):
+        logger.info(f"Found: {path}")
         
-    with open(conv_file) as f:
-        return json.load(f)
+        # Try to load any JSON file that might be the conversation
+        if path.suffix == '.json':
+            try:
+                with open(path) as f:
+                    data = json.load(f)
+                    # Verify it's a Claude conversation by checking for required fields
+                    if all(key in data for key in ['claude_response', 'system_prompt', 'user_prompt']):
+                        logger.info(f"Found valid Claude conversation at {path}")
+                        return data
+            except Exception as e:
+                logger.warning(f"Failed to load {path}: {e}")
+                continue
+    
+    raise ValueError(f"Could not find valid Claude conversation file in {artifacts_dir}")
 
 def analyze_code_block(content):
     """Analyze a code block for merge markers and existing code references"""
@@ -112,64 +124,71 @@ def main():
     parser.add_argument('--artifacts-dir', required=True)
     args = parser.parse_args()
     
-    # Initialize GitHub client
-    gh = Github(os.environ['GITHUB_TOKEN'])
-    repo = gh.get_repo(args.repo)
-    
-    # Load Claude conversation
-    conversation = load_claude_conversation(args.artifacts_dir)
-    if not conversation:
-        raise ValueError("Could not load Claude conversation")
+    try:
+        # Initialize GitHub client
+        gh = Github(os.environ['GITHUB_TOKEN'])
+        repo = gh.get_repo(args.repo)
         
-    # Parse code blocks from Claude's response
-    code_blocks = re.finditer(r'```(?:\w+:)?([^\n]+)\n(.*?)```', conversation['claude_response'], re.DOTALL)
-    
-    # Create output directory
-    output_dir = Path('.github/generated/complete')
-    output_dir.mkdir(parents=True, exist_ok=True)
-    
-    review_comments = []
-    processed_files = []
-    
-    for block in code_blocks:
-        file_path = block.group(1).strip()
-        generated_content = block.group(2).strip()
+        # Load Claude conversation with better error handling
+        try:
+            conversation = load_claude_conversation(args.artifacts_dir)
+        except Exception as e:
+            logger.error(f"Error loading Claude conversation: {str(e)}")
+            raise
         
-        # Analyze the generated code
-        needs_merge, merge_markers = analyze_code_block(generated_content)
+        # Parse code blocks from Claude's response
+        code_blocks = re.finditer(r'```(?:\w+:)?([^\n]+)\n(.*?)```', conversation['claude_response'], re.DOTALL)
         
-        if needs_merge:
-            # Get original file content
-            original_content = get_original_file(repo, file_path)
-            if original_content:
-                # Merge the code
-                final_content = merge_code_blocks(original_content, generated_content, merge_markers)
-                review_comments.append(f"- Merged changes in `{file_path}` with existing code")
+        # Create output directory
+        output_dir = Path('.github/generated/complete')
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        review_comments = []
+        processed_files = []
+        
+        for block in code_blocks:
+            file_path = block.group(1).strip()
+            generated_content = block.group(2).strip()
+            
+            # Analyze the generated code
+            needs_merge, merge_markers = analyze_code_block(generated_content)
+            
+            if needs_merge:
+                # Get original file content
+                original_content = get_original_file(repo, file_path)
+                if original_content:
+                    # Merge the code
+                    final_content = merge_code_blocks(original_content, generated_content, merge_markers)
+                    review_comments.append(f"- Merged changes in `{file_path}` with existing code")
+                else:
+                    final_content = generated_content
+                    review_comments.append(f"- Could not find original file `{file_path}` to merge with")
             else:
                 final_content = generated_content
-                review_comments.append(f"- Could not find original file `{file_path}` to merge with")
-        else:
-            final_content = generated_content
-            review_comments.append(f"- Generated new file `{file_path}`")
-        
-        # Save the final code
-        output_file = output_dir / file_path
-        output_file.parent.mkdir(parents=True, exist_ok=True)
-        
-        with open(output_file, 'w') as f:
-            f.write(final_content)
+                review_comments.append(f"- Generated new file `{file_path}`")
             
-        processed_files.append(file_path)
+            # Save the final code
+            output_file = output_dir / file_path
+            output_file.parent.mkdir(parents=True, exist_ok=True)
+            
+            with open(output_file, 'w') as f:
+                f.write(final_content)
+            
+            processed_files.append(file_path)
         
-    # Create review comment
-    review_comment = "## Code Analysis Results\n\n"
-    review_comment += "Analyzed generated code and performed the following actions:\n\n"
-    review_comment += '\n'.join(review_comments)
-    
-    with open('.github/generated/review_comment.md', 'w') as f:
-        f.write(review_comment)
+        # Create review comment
+        review_comment = "## Code Analysis Results\n\n"
+        review_comment += "Analyzed generated code and performed the following actions:\n\n"
+        review_comment += '\n'.join(review_comments)
         
-    logger.info(f"Processed {len(processed_files)} files")
+        with open('.github/generated/review_comment.md', 'w') as f:
+            f.write(review_comment)
+        
+        logger.info(f"Processed {len(processed_files)} files")
+        
+    except Exception as e:
+        logger.error(f"Error in analysis: {str(e)}", exc_info=True)
+        raise
 
 if __name__ == '__main__':
     main()
