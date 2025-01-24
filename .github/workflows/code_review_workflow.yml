@@ -173,6 +173,7 @@ jobs:
           retention-days: 90
 
       - name: Add review comment
+        if: github.event_name == 'workflow_run'  # Only add comments for workflow_run trigger
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -185,4 +186,15 @@ jobs:
               echo "No PR found for branch $BRANCH_NAME"
               exit 1
             fi
+          fi
+
+      # For workflow_dispatch, just output the review comment
+      - name: Show review comment
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          if [ -f ".github/generated/review_comment.md" ]; then
+            echo "Review comment contents:"
+            cat ".github/generated/review_comment.md"
+          else
+            echo "No review comment generated"
           fi
