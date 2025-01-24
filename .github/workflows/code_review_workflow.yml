@@ -32,25 +32,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ steps.set-branch.outputs.branch_name }}
-          path: issue-branch
-          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: true
 
-      # Then checkout main branch
+      # Then checkout main branch files
       - uses: actions/checkout@v4
         with:
           ref: main
           path: main-files
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       # Set up the directory structure
       - name: Setup directories
         run: |
-          # Move issue branch contents to workspace root
-          mv issue-branch/* ./
-          mv issue-branch/.github ./ || true
-          mv issue-branch/.git ./ || true  # Keep Git history
-          rm -rf issue-branch
-
           # Copy relevant files from main to .github/main
           mkdir -p .github/main
           cp -r main-files/.github/scripts .github/main/ || true
@@ -129,30 +121,22 @@ jobs:
             exit 1
           fi
 
-      - name: Configure Git
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-
       - name: Commit combined files
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Copy files from staging to their final locations
           cp -r staging/.github/* .github/
           
+          # Configure git
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          
           # Add and commit the changes
-          git status
           git add .github/workflows/combined_ct_images_to_text.yml
           git add .github/scripts/url_screenshot_check.py
           
-          # Commit with issue number in message
+          # Commit and push
           git commit -m "Combined code updates for issue #${{ github.event.inputs.issue_number || github.event.workflow_run.pull_requests[0].number }}"
-          
-          # Push using GitHub CLI
-          gh auth setup-git
-          gh auth status
-          git push origin HEAD:${{ steps.set-branch.outputs.branch_name }}
+          git push
 
       - name: Add review comment
         if: github.event_name == 'workflow_run'
