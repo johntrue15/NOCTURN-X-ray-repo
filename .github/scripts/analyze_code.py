@@ -118,15 +118,21 @@ def merge_code_blocks(original_content, generated_content, merge_markers):
 
 def parse_code_blocks(response):
     """Parse code blocks from Claude's response"""
-    pattern = r'```(?:(\w+):)?([^\n]+)\n(.*?)```'
+    # First try exact pattern
+    pattern = r'```(\w+):([^`\n]+)\n(.*?)```'
     matches = list(re.finditer(pattern, response, re.DOTALL))
+    
+    if not matches:
+        # Try more lenient pattern
+        pattern = r'```.*?:([^`\n]+)\n(.*?)```'
+        matches = list(re.finditer(pattern, response, re.DOTALL))
     
     if not matches:
         logger.error("No code blocks found in response")
         logger.error("Response preview:")
         logger.error(response[:1000])
         return []
-        
+    
     parsed_blocks = []
     for match in matches:
         try:
@@ -135,22 +141,33 @@ def parse_code_blocks(response):
             else:
                 file_path = match.group(1)
                 content = match.group(2)
-                language = ''
-                
+            
             file_path = file_path.strip()
             content = content.strip()
             
             if not file_path:
                 logger.warning("Code block found without file path")
                 continue
-                
+            
             logger.info(f"Found code block for {file_path} ({len(content)} chars)")
+            # Log preview of content for debugging
+            preview = content[:100] + "..." if len(content) > 100 else content
+            logger.debug(f"Content preview:\n{preview}")
+            
             parsed_blocks.append((file_path, content))
             
         except Exception as e:
             logger.error(f"Error parsing code block: {e}")
+            logger.error(f"Match groups: {match.groups()}")
             continue
-            
+    
+    if parsed_blocks:
+        logger.info(f"Successfully parsed {len(parsed_blocks)} code blocks")
+    else:
+        logger.error("No valid code blocks could be parsed")
+        logger.error("Full response:")
+        logger.error(response)
+    
     return parsed_blocks
 
 def main():
