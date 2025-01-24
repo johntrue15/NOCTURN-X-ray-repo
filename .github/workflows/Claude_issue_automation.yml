@@ -62,18 +62,34 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
           REPO: ${{ github.repository }}
-        run: python .github/scripts/generate_code.py
+        run: |
+          python .github/scripts/generate_code.py
+          
+          # Verify generated files exist
+          if [ ! -d ".github/generated" ]; then
+            echo "Error: Generated code directory not found"
+            exit 1
+          fi
+          
+          if [ ! -f ".github/generated/generated_code.py" ]; then
+            echo "Error: No code was generated"
+            exit 1
+          fi
 
       # After generating code but before creating PR
       - name: Save workflow data
         run: |
-          echo "${{ inputs.issue_number }}" > issue_number.txt
+          if [ -f ".github/generated/metadata.json" ]; then
+            cp .github/generated/metadata.json ./workflow-data.json
+          else
+            echo "{\"issue_number\": \"${{ inputs.issue_number }}\"}" > workflow-data.json
+          fi
 
       - name: Upload workflow data
         uses: actions/upload-artifact@v3
         with:
           name: workflow-data
-          path: issue_number.txt
+          path: workflow-data.json
 
       # 7. Commit & push the generated file
       - name: Commit changes
