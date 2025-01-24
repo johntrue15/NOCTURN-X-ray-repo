@@ -96,7 +96,7 @@ jobs:
           fi
 
       - name: Upload workflow data
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: workflow-data
           path: workflow-data.json
@@ -109,28 +109,20 @@ jobs:
           git commit -m "Auto-generated code for issue #${{ inputs.issue_number }}"
           git push origin "$BRANCH_NAME"
 
-      # 8. Create Pull Request using GitHub API directly
-      - name: Create Pull Request
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH_NAME: ${{ steps.create_branch.outputs.BRANCH_NAME }}
+      # Save Claude conversation artifact
+      - name: Save Claude conversation
+        if: always()
         run: |
-          # Create the pull request using GitHub API
-          PR_RESPONSE=$(curl -X POST \
-            -H "Authorization: token $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/${{ github.repository }}/pulls \
-            -d '{
-              "title": "Auto-generated code for Issue #${{ inputs.issue_number }}",
-              "body": "This pull request was created automatically from Issue #${{ inputs.issue_number }}.",
-              "head": "'$BRANCH_NAME'",
-              "base": "main"
-            }')
-          
-          # Check if PR was created successfully
-          if [ "$(echo $PR_RESPONSE | jq -r '.id')" = "null" ]; then
-            echo "Error creating PR: $PR_RESPONSE"
-            exit 1
+          if [ -f ".github/generated/claude_conversation.json" ]; then
+            cp .github/generated/claude_conversation.json ./claude-conversation.json
           fi
-          
-          echo "Pull request created successfully"
+
+      - name: Upload Claude conversation
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: claude-conversation
+          path: |
+            claude-conversation.json
+            .github/generated/claude_conversation.json
+          if-no-files-found: ignore
