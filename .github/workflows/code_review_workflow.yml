@@ -39,6 +39,8 @@ jobs:
           run_id: ${{ github.event.workflow_run.id }}
           name: claude-conversation
           path: artifacts
+          search_artifacts: true  # Search in case name is different
+          if_no_artifact_found: warn
 
       # Also download workflow-data to get issue number
       - name: Download workflow data
@@ -48,6 +50,15 @@ jobs:
           run_id: ${{ github.event.workflow_run.id }}
           name: workflow-data
           path: workflow-data
+          search_artifacts: true
+          if_no_artifact_found: error
+
+      - name: List artifacts
+        run: |
+          echo "Contents of artifacts directory:"
+          ls -R artifacts/
+          echo "Contents of workflow-data directory:"
+          ls -R workflow-data/
 
       - name: Get PR and analyze code
         id: analyze
@@ -55,19 +66,36 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Get the issue number from workflow data
+          if [ ! -f "workflow-data/workflow-data.json" ]; then
+            echo "Error: workflow-data.json not found"
+            exit 1
+          fi
+          
           ISSUE_NUMBER=$(cat workflow-data/workflow-data.json | jq -r .issue_number)
+          if [ -z "$ISSUE_NUMBER" ] || [ "$ISSUE_NUMBER" = "null" ]; then
+            echo "Error: Could not get issue number from workflow data"
+            exit 1
+          fi
+          
           echo "Processing issue #$ISSUE_NUMBER"
           
           # Find the PR branch
           BRANCH_NAME="claude-pr/issue-${ISSUE_NUMBER}"
           
           # Checkout the PR branch
-          git fetch origin $BRANCH_NAME
-          git checkout $BRANCH_NAME
+          git fetch origin "$BRANCH_NAME" || {
+            echo "Error: Could not fetch branch $BRANCH_NAME"
+            exit 1
+          }
+          
+          git checkout "$BRANCH_NAME" || {
+            echo "Error: Could not checkout branch $BRANCH_NAME"
+            exit 1
+          }
           
           # Run analysis
           python .github/scripts/analyze_code.py \
-            --issue $ISSUE_NUMBER \
+            --issue "$ISSUE_NUMBER" \
             --branch "$BRANCH_NAME" \
             --repo "${{ github.repository }}" \
             --artifacts-dir "artifacts"
