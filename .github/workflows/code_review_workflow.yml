@@ -11,6 +11,7 @@ on:
     workflows: ["Auto Code Generation with Claude on Issue"]
     types: [completed]
 
+
 permissions: write-all
 
 jobs:
@@ -97,37 +98,45 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          # Verify generated files exist
-          if [ ! -d ".github/generated" ]; then
-            echo "Error: .github/generated directory not found"
+          # Get the list of files from the issue branch
+          if [ -f ".github/generated/metadata.json" ]; then
+            # Extract required files from metadata
+            required_files=$(jq -r '.generated_files[]' .github/generated/metadata.json)
+            echo "Files to analyze from metadata:"
+            echo "$required_files"
+          else
+            echo "Error: metadata.json not found"
             exit 1
           fi
-          
-          # Run analyze_code.py
-          python .github/scripts/analyze_code.py
           
           # Create staging directory with complete file structure
           mkdir -p staging/.github/{workflows,scripts}
           
-          # Copy files preserving directory structure
-          if [ -f ".github/generated/complete/.github/workflows/combined_ct_images_to_text.yml" ]; then
-            cp ".github/generated/complete/.github/workflows/combined_ct_images_to_text.yml" "staging/.github/workflows/"
-          fi
-          
-          if [ -f ".github/generated/complete/.github/scripts/url_screenshot_check.py" ]; then
-            cp ".github/generated/complete/.github/scripts/url_screenshot_check.py" "staging/.github/scripts/"
-          fi
+          # Copy only the required files from generated/complete
+          while IFS= read -r file; do
+            src_file=".github/generated/complete/$file"
+            dst_dir="staging/.github/$(dirname ${file#.github/})"
+            
+            if [ -f "$src_file" ]; then
+              mkdir -p "$dst_dir"
+              cp "$src_file" "$dst_dir/"
+              echo "Copied $src_file to staging"
+            else
+              echo "Warning: Generated file not found: $src_file"
+            fi
+          done <<< "$required_files"
           
           # Verify staging contents
           echo "Staging directory contents:"
           find staging -type f
           
-          # Verify files exist before commit
-          if [ ! -f "staging/.github/workflows/combined_ct_images_to_text.yml" ] || \
-             [ ! -f "staging/.github/scripts/url_screenshot_check.py" ]; then
-            echo "Error: Required files not found in staging"
-            exit 1
-          fi
+          # Verify required files exist in staging
+          while IFS= read -r file; do
+            if [ ! -f "staging/$file" ]; then
+              echo "Error: Required file not found in staging: $file"
+              exit 1
+            fi
+          done <<< "$required_files"
 
       - name: Commit combined files
         env:
