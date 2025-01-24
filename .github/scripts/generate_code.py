@@ -88,69 +88,34 @@ def get_issue_details(issue_number, repo, token):
     
     return "".join(full_conversation)
 
-def parse_code_blocks(response):
-    """Parse code blocks from Claude's response"""
-    # First try exact pattern with language
-    pattern = r'```(\w+):([^`\n]+)\n(.*?)\n```'
-    matches = list(re.finditer(pattern, response, re.DOTALL))
+def extract_code_blocks(response):
+    """Extract code blocks from Claude's response"""
+    # Updated patterns to handle file paths in code block headers
+    patterns = [
+        r'```(?:yaml|python)?:?(?:[^\n]*?)\n(.*?)```',  # Code block with optional language and file path
+        r'```(.*?)```',                                  # Simple code block
+        r'^(.*?)$'                                       # Entire response if no code blocks
+    ]
     
-    if not matches:
-        # Try without language
-        pattern = r'```([^`\n]+)\n(.*?)\n```'
-        matches = list(re.finditer(pattern, response, re.DOTALL))
+    code_blocks = []
+    for pattern in patterns:
+        matches = re.finditer(pattern, response, re.DOTALL)
+        for match in matches:
+            code = match.group(1).strip()
+            # Remove any language or file path markers
+            code = re.sub(r'^```(?:yaml|python)?:?[^\n]*\n', '', code)
+            code = re.sub(r'\n```$', '', code)
+            if code:
+                code_blocks.append(code)
+                logger.info(f"Found code block using pattern: {pattern}")
+                logger.info(f"Code preview: {code[:100]}...")
     
-    if not matches:
-        # Try most lenient pattern
-        pattern = r'```.*?([^:\n]+)(?:\n|\s*)(.*?)```'
-        matches = list(re.finditer(pattern, response, re.DOTALL))
-    
-    if not matches:
+    if not code_blocks:
         logger.error("No code blocks found in response")
-        logger.error("Response preview:")
-        logger.error(response[:1000])
-        return []
-    
-    parsed_blocks = []
-    for match in matches:
-        try:
-            groups = match.groups()
-            if len(groups) == 3:
-                # First pattern with language
-                _, file_path, content = groups
-            elif len(groups) == 2:
-                # Second or third pattern
-                file_path, content = groups
-            else:
-                logger.warning(f"Unexpected match groups: {groups}")
-                continue
-            
-            file_path = file_path.strip().strip(':')  # Remove any trailing colons
-            content = content.strip()
-            
-            if not file_path:
-                logger.warning("Code block found without file path")
-                continue
-            
-            # Log the raw match for debugging
-            logger.debug(f"Raw match: {match.group(0)[:100]}...")
-            logger.info(f"Found code block for {file_path} ({len(content)} chars)")
-            
-            parsed_blocks.append((file_path, content))
-            
-        except Exception as e:
-            logger.error(f"Error parsing code block: {e}")
-            logger.error(f"Match groups: {match.groups()}")
-            logger.error(f"Raw match: {match.group(0)[:100]}...")
-            continue
-    
-    if parsed_blocks:
-        logger.info(f"Successfully parsed {len(parsed_blocks)} code blocks")
-    else:
-        logger.error("No valid code blocks could be parsed")
-        logger.error("Full response:")
-        logger.error(response)
-    
-    return parsed_blocks
+        logger.error(f"Response preview:\n{response[:500]}")
+        raise ValueError("No valid code blocks found in Claude's response")
+        
+    return code_blocks
 
 def save_claude_conversation(output_dir, conversation_data, is_error=False):
     """Save Claude conversation to a consistent location"""
@@ -164,6 +129,27 @@ def save_claude_conversation(output_dir, conversation_data, is_error=False):
         json.dump(conversation_data, f, indent=2)
     logger.info(f"Saved Claude conversation to {conv_file}")
     return conv_file
+
+def save_generated_files(code_blocks, needed_files):
+    """Save code blocks to appropriate files"""
+    os.makedirs('.github/generated', exist_ok=True)
+    
+    # Map file paths to code blocks
+    file_map = {}
+    for code in code_blocks:
+        for file_path in needed_files:
+            if file_path.endswith('.yml') and 'name: MorphoSource Analysis Workflow' in code:
+                file_map[file_path] = code
+            elif file_path.endswith('.py') and 'from selenium import webdriver' in code:
+                file_map[file_path] = code
+    
+    # Save files
+    for file_path, code in file_map.items():
+        output_path = os.path.join('.github/generated', file_path)
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        with open(output_path, 'w') as f:
+            f.write(code)
+        logger.info(f"Saved generated file: {output_path}")
 
 def main():
     try:
@@ -259,7 +245,7 @@ def main():
         conv_file = save_claude_conversation(output_dir, conversation)
         
         # Parse code blocks using the new function
-        parsed_blocks = parse_code_blocks(code_response)
+        parsed_blocks = extract_code_blocks(code_response)
         if not parsed_blocks:
             # Log the first part of the response for debugging
             logger.error("Response preview:")
