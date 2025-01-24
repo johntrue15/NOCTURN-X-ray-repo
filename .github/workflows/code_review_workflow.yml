@@ -43,6 +43,43 @@ jobs:
           ref: main
           path: main-files
 
+      # Download artifacts from previous workflow
+      - name: Download workflow artifacts
+        if: github.event_name == 'workflow_run'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the workflow run ID
+          run_id="${{ github.event.workflow_run.id }}"
+          echo "Workflow run ID: $run_id"
+          
+          # Create directory for artifacts
+          mkdir -p .github/generated
+          
+          # Download and extract artifacts
+          artifacts_url="https://api.github.com/repos/${{ github.repository }}/actions/runs/$run_id/artifacts"
+          artifacts=$(curl -H "Authorization: token $GITHUB_TOKEN" $artifacts_url)
+          
+          # Get artifact ID for generated files
+          artifact_id=$(echo "$artifacts" | jq -r '.artifacts[] | select(.name=="generated-files") | .id')
+          
+          if [ -n "$artifact_id" ]; then
+            echo "Downloading artifact ID: $artifact_id"
+            curl -L -H "Authorization: token $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/${{ github.repository }}/actions/artifacts/$artifact_id/zip" \
+              -o artifact.zip
+              
+            unzip artifact.zip -d .github/generated/
+            rm artifact.zip
+            
+            echo "Downloaded and extracted artifacts:"
+            ls -R .github/generated/
+          else
+            echo "No generated-files artifact found"
+            exit 1
+          fi
+
       # Set up the directory structure
       - name: Setup directories
         run: |
