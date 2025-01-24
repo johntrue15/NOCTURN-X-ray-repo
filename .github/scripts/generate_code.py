@@ -5,6 +5,7 @@ import requests
 from pathlib import Path
 import logging
 import datetime
+import re
 
 # Set up logging with more detailed format
 logging.basicConfig(
@@ -12,6 +13,52 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+def extract_code_needed(issue_content):
+    """Extract file paths listed under 'Code Needed:' section"""
+    code_needed_match = re.search(r'Code Needed:\s*(.*?)(?=\n\n|\Z)', issue_content, re.DOTALL)
+    if not code_needed_match:
+        return []
+    
+    # Extract file paths after "Code Needed:"
+    file_paths = []
+    lines = code_needed_match.group(1).strip().split('\n')
+    for line in lines:
+        # Clean up the line and check if it's a file path
+        path = line.strip()
+        if path and ('/' in path or '.' in path):
+            file_paths.append(path)
+    
+    logger.info(f"Found code needed files: {file_paths}")
+    return file_paths
+
+def download_existing_code(file_paths, repo, token):
+    """Download existing code from the repository"""
+    headers = {
+        'Authorization': f'token {token}',
+        'Accept': 'application/vnd.github.v3.raw'
+    }
+    
+    existing_code = {}
+    for path in file_paths:
+        try:
+            # Get file content from GitHub
+            url = f'https://api.github.com/repos/{repo}/contents/{path}'
+            response = requests.get(url, headers=headers)
+            
+            if response.status_code == 200:
+                content = response.text
+                existing_code[path] = content
+                logger.info(f"Successfully downloaded: {path}")
+            else:
+                logger.warning(f"File not found or error downloading {path}: {response.status_code}")
+                existing_code[path] = None
+                
+        except Exception as e:
+            logger.error(f"Error downloading {path}: {str(e)}")
+            existing_code[path] = None
+    
+    return existing_code
 
 def get_issue_details(issue_number, repo, token):
     """Fetch issue details including comments from GitHub API"""
@@ -61,15 +108,36 @@ def main():
         issue_content = get_issue_details(issue_number, repo, github_token)
         logger.info("Successfully fetched issue details")
         
+        # Extract required file paths
+        required_files = extract_code_needed(issue_content)
+        if not required_files:
+            logger.warning("No 'Code Needed:' section found in issue")
+            
+        # Download existing code if available
+        existing_code = download_existing_code(required_files, repo, github_token)
+        
+        # Create prompt with existing code context
+        context = "Here are the files that need to be created or modified:\n\n"
+        for path, content in existing_code.items():
+            if content:
+                context += f"Existing file {path}:\n```\n{content}\n```\n\n"
+            else:
+                context += f"New file to create: {path}\n\n"
+        
         # Improved system prompt
         system_prompt = """You are a helpful AI assistant that generates code based on GitHub issues. 
         Your task is to:
         1. Analyze the issue description and comments
-        2. Generate appropriate code implementation
+        2. Generate or modify the requested files
         3. Include necessary imports and documentation
         4. Return complete, working code files
         
-        IMPORTANT: You must return valid Python code that can be executed. Do not include any markdown formatting or explanations - only the code itself."""
+        For each file, format your response as:
+        ```language:path/to/file
+        // complete file contents here
+        ```
+        
+        Do not include any explanations or markdown formatting outside the code blocks."""
         
         logger.info("Sending request to Claude...")
         
@@ -82,7 +150,7 @@ def main():
             messages=[
                 {
                     "role": "user",
-                    "content": f"Generate code implementation for this issue. Return only the code, no explanations or markdown:\n\n{issue_content}"
+                    "content": f"Generate or modify the following files based on this issue:\n\n{context}\nIssue details:\n{issue_content}"
                 }
             ]
         )
@@ -94,35 +162,42 @@ def main():
         if not code_response:
             raise ValueError("Claude returned empty response")
         
-        # Log first few characters of response for debugging
-        logger.info(f"First 100 chars of response: {code_response[:100]}")
-            
+        # Parse code blocks from response
+        code_blocks = re.finditer(r'```[\w-]*:?(.*?)\n(.*?)```', code_response, re.DOTALL)
+        
         # Create the output directory
         output_dir = Path('.github/generated')
         output_dir.mkdir(parents=True, exist_ok=True)
-        logger.info(f"Created output directory: {output_dir}")
         
-        # Save the generated code
-        output_file = output_dir / 'generated_code.py'
-        with open(output_file, 'w') as f:
-            f.write(code_response)
+        generated_files = []
+        for block in code_blocks:
+            file_path = block.group(1).strip()
+            code_content = block.group(2).strip()
             
-        logger.info(f"Saved generated code to {output_file}")
-        
-        # Verify file was written correctly
-        if not output_file.exists():
-            raise ValueError(f"Failed to create output file: {output_file}")
+            if not file_path:
+                logger.warning("Code block found without file path, skipping")
+                continue
+                
+            # Create subdirectories if needed
+            full_path = output_dir / file_path
+            full_path.parent.mkdir(parents=True, exist_ok=True)
             
-        file_size = output_file.stat().st_size
-        logger.info(f"Generated file size: {file_size} bytes")
+            # Save the generated code
+            with open(full_path, 'w') as f:
+                f.write(code_content)
+                
+            generated_files.append(str(full_path))
+            logger.info(f"Saved generated code to {full_path}")
         
-        # Create a metadata file with issue information
+        if not generated_files:
+            raise ValueError("No valid code blocks found in Claude's response")
+        
+        # Create metadata file
         metadata = {
             "issue_number": issue_number,
             "repo": repo,
-            "generated_files": [str(output_file)],
+            "generated_files": generated_files,
             "generation_timestamp": datetime.datetime.now().isoformat(),
-            "code_length": len(code_response)
         }
         
         metadata_file = output_dir / 'metadata.json'
