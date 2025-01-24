@@ -43,6 +43,7 @@ jobs:
           fetch-depth: 0  # Get full history
           persist-credentials: true
           token: ${{ secrets.WORKFLOW_PAT }}
+          repository: johntrue15/NOCTURN-X-ray-repo
 
       # Debug branch state
       - name: Debug branch state
@@ -51,21 +52,26 @@ jobs:
           git branch
           echo "Current directory contents:"
           ls -la
-          echo "Generated directory contents:"
-          ls -la .github/generated/ || echo "generated dir not found"
+          echo "Repository root contents:"
+          ls -la /home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/.github/generated/ || echo "generated dir not found"
           
-          if [ -f ".github/generated/metadata.json" ]; then
+          if [ -f "/home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/.github/generated/metadata.json" ]; then
             echo "==== Contents of metadata.json ===="
-            cat .github/generated/metadata.json
+            cat "/home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/.github/generated/metadata.json"
           else
-            echo "metadata.json not found in: $(pwd)/.github/generated/"
+            echo "metadata.json not found in repository"
+            echo "Full repository structure:"
+            find /home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/.github -type f
           fi
 
       # Set up the directory structure
       - name: Setup directories
         run: |
           # Create necessary directories
-          mkdir -p .github/{main,scripts}
+          mkdir -p .github/{main,scripts,generated}
+          
+          # Copy files from repository root
+          cp -r /home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/.github/generated/* .github/generated/ || true
           
           # Copy relevant files from main to .github/main
           cp -r main-files/.github/scripts .github/main/ || true
