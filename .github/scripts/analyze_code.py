@@ -154,53 +154,33 @@ def process_files():
         # Get files from metadata
         files = get_files_from_metadata()
         
-        # Copy files to staging
-        copy_generated_files(files, staging_dir)
-        
-        # Verify files
-        verify_staged_files(files, staging_dir)
-        
         # Process each file
         success_count = 0
         for file in files:
             try:
-                # Get original file from main
-                if file.startswith('workflows/'):
-                    original_path = Path('.github/main/workflows') / Path(file).name
-                elif file.startswith('scripts/'):
-                    original_path = Path('.github/main/scripts') / Path(file).name
-                else:
-                    original_path = Path('.github/main') / file
+                # Get files from generated directory
+                original_path = Path('.github/generated') / file
+                generated_path = original_path  # We'll use the same file for now
                 
-                generated_path = staging_dir / file
-                
-                logger.info(f"Looking for original file at: {original_path}")
+                logger.info(f"Looking for file at: {original_path}")
                 if not original_path.exists():
-                    logger.warning(f"Original file not found: {original_path}")
-                    logger.info("Contents of .github/main:")
-                    for p in Path('.github/main').rglob('*'):
+                    logger.warning(f"File not found: {original_path}")
+                    logger.info("Contents of .github/generated:")
+                    for p in Path('.github/generated').rglob('*'):
                         logger.info(f"  {p}")
                     continue
                     
-                # Read both files
+                # Read the file
                 with open(original_path) as f:
-                    original_content = f.read()
-                with open(generated_path) as f:
-                    generated_content = f.read()
+                    file_content = f.read()
                     
-                # Get Claude's combined version
-                prompt = get_claude_prompt(original_content, generated_content, str(file))
-                response = call_claude(prompt)
-                
-                # Extract and save code
-                combined_code = extract_code(response, file)
-                if combined_code:
-                    output_path = staging_dir / file
-                    os.makedirs(output_path.parent, exist_ok=True)
-                    with open(output_path, 'w') as f:
-                        f.write(combined_code)
-                    logger.info(f"Saved combined file: {output_path}")
-                    success_count += 1
+                # Save to staging
+                output_path = staging_dir / file
+                os.makedirs(output_path.parent, exist_ok=True)
+                with open(output_path, 'w') as f:
+                    f.write(file_content)
+                logger.info(f"Saved file to staging: {output_path}")
+                success_count += 1
                 
             except Exception as e:
                 logger.error(f"Error processing {file}: {e}")
