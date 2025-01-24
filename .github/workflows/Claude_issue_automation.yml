@@ -100,7 +100,7 @@ jobs:
           fi
 
       - name: Upload workflow data
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: workflow-data
           path: workflow-data.json
@@ -113,12 +113,28 @@ jobs:
           git commit -m "Auto-generated code for issue #${{ inputs.issue_number }}"
           git push origin "$BRANCH_NAME"
 
-      # 8. Create Pull Request (fix the parameters)
+      # 8. Create Pull Request using GitHub API directly
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ steps.create_branch.outputs.BRANCH_NAME }}
-          base: main
-          title: "Auto-generated code for Issue #${{ inputs.issue_number }}"
-          body: "This pull request was created automatically from Issue #${{ inputs.issue_number }}."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_NAME: ${{ steps.create_branch.outputs.BRANCH_NAME }}
+        run: |
+          # Create the pull request using GitHub API
+          PR_RESPONSE=$(curl -X POST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/pulls \
+            -d '{
+              "title": "Auto-generated code for Issue #${{ inputs.issue_number }}",
+              "body": "This pull request was created automatically from Issue #${{ inputs.issue_number }}.",
+              "head": "'$BRANCH_NAME'",
+              "base": "main"
+            }')
+          
+          # Check if PR was created successfully
+          if [ "$(echo $PR_RESPONSE | jq -r '.id')" = "null" ]; then
+            echo "Error creating PR: $PR_RESPONSE"
+            exit 1
+          fi
+          
+          echo "Pull request created successfully"
