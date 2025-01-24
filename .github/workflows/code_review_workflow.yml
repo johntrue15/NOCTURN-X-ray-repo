@@ -34,8 +34,30 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ steps.set-branch.outputs.branch_name }}
+          fetch-depth: 0  # Get full history
           persist-credentials: true
-          token: ${{ secrets.WORKFLOW_PAT }}  # Use PAT for checkout
+          token: ${{ secrets.WORKFLOW_PAT }}
+
+      # Debug branch state
+      - name: Debug branch state
+        run: |
+          echo "Current branch before switch:"
+          git branch
+          
+          # Switch to the issue branch
+          git checkout ${{ steps.set-branch.outputs.branch_name }}
+          
+          echo "Current branch after switch:"
+          git branch
+          echo "Current directory contents:"
+          ls -la .github/
+          
+          if [ -f ".github/generated/metadata.json" ]; then
+            echo "==== Contents of metadata.json ===="
+            cat .github/generated/metadata.json
+          else
+            echo "metadata.json not found in: $(pwd)/.github/generated/"
+          fi
 
       # Then checkout main branch files
       - uses: actions/checkout@v4
