@@ -108,14 +108,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          # Get the list of files from the issue branch
+          # Run analyze_code.py first
+          python .github/scripts/analyze_code.py
+          
+          # Now get the list of files from metadata
           if [ -f ".github/generated/metadata.json" ]; then
             # Extract required files from metadata
             required_files=$(jq -r '.generated_files[]' .github/generated/metadata.json)
             echo "Files to analyze from metadata:"
             echo "$required_files"
           else
-            echo "Error: metadata.json not found"
+            echo "Error: metadata.json not found after running analyze_code.py"
+            echo "Contents of .github/generated:"
+            ls -R .github/generated/
             exit 1
           fi
           
