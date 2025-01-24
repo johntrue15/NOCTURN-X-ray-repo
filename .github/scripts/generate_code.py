@@ -90,28 +90,56 @@ def get_issue_details(issue_number, repo, token):
 
 def parse_code_blocks(response):
     """Parse code blocks from Claude's response with better error handling"""
-    # More specific regex pattern for code blocks
-    pattern = r'```(?:(\w+):)?([^\n]+)?\n(.*?)```'
+    # Log the full response for debugging
+    logger.debug("Full response from Claude:")
+    logger.debug(response)
+    
+    # First try the more specific pattern
+    pattern = r'```(\w+):([^\n]+)\n(.*?)```'
     matches = list(re.finditer(pattern, response, re.DOTALL))
     
     if not matches:
+        # Try alternate pattern that might match
+        pattern = r'```.*?:(.+?)\n(.*?)```'
+        matches = list(re.finditer(pattern, response, re.DOTALL))
+        
+    if not matches:
         logger.error("No code blocks found in response")
-        logger.debug(f"Response content:\n{response[:500]}...")  # Log first 500 chars
+        logger.error("Response preview:")
+        logger.error(response[:1000])  # Show first 1000 chars
         return []
     
     parsed_blocks = []
     for match in matches:
-        language = match.group(1) or ''
-        file_path = match.group(2) or ''
-        content = match.group(3).strip()
-        
-        if not file_path:
-            logger.warning(f"Code block found without file path: {language}")
-            continue
+        try:
+            if len(match.groups()) == 3:
+                language, file_path, content = match.groups()
+            else:
+                file_path, content = match.groups()
+                language = ''
+                
+            file_path = file_path.strip()
+            content = content.strip()
             
-        logger.info(f"Found code block - Path: {file_path}, Language: {language}, Content length: {len(content)}")
-        parsed_blocks.append((file_path, content))
+            if not file_path:
+                logger.warning(f"Code block found without file path: {language}")
+                continue
+                
+            logger.info(f"Found code block - Path: {file_path}, Language: {language}, Content length: {len(content)}")
+            
+            # Log preview of content
+            content_preview = content[:100] + "..." if len(content) > 100 else content
+            logger.debug(f"Content preview for {file_path}:\n{content_preview}")
+            
+            parsed_blocks.append((file_path, content))
+            
+        except Exception as e:
+            logger.error(f"Error parsing code block: {str(e)}")
+            continue
     
+    if not parsed_blocks:
+        logger.error("No valid code blocks could be parsed")
+        
     return parsed_blocks
 
 def main():
@@ -200,12 +228,12 @@ def main():
         if not code_response:
             raise ValueError("Claude returned empty response")
         
-        # Log the first part of the response for debugging
-        logger.debug(f"Response preview:\n{code_response[:500]}")
-        
         # Parse code blocks using the new function
         parsed_blocks = parse_code_blocks(code_response)
         if not parsed_blocks:
+            # Log the first part of the response for debugging
+            logger.error("Response preview:")
+            logger.error(code_response[:1000])
             raise ValueError("No valid code blocks found in Claude's response")
         
         # Create the output directory
@@ -214,17 +242,25 @@ def main():
         
         generated_files = []
         for file_path, content in parsed_blocks:
-            # Create subdirectories if needed
-            full_path = output_dir / file_path
-            full_path.parent.mkdir(parents=True, exist_ok=True)
-            
-            # Save the generated code
-            with open(full_path, 'w') as f:
-                f.write(content)
+            try:
+                # Create subdirectories if needed
+                full_path = output_dir / file_path
+                full_path.parent.mkdir(parents=True, exist_ok=True)
                 
-            generated_files.append(str(full_path))
-            logger.info(f"Saved generated code to {full_path}")
+                # Save the generated code
+                with open(full_path, 'w') as f:
+                    f.write(content)
+                    
+                generated_files.append(str(full_path))
+                logger.info(f"Saved generated code to {full_path}")
+                
+            except Exception as e:
+                logger.error(f"Error saving file {file_path}: {str(e)}")
+                continue
         
+        if not generated_files:
+            raise ValueError("Failed to save any generated files")
+            
         # Create metadata file
         metadata = {
             "issue_number": issue_number,
@@ -241,8 +277,9 @@ def main():
         
     except Exception as e:
         logger.error(f"Error generating code: {str(e)}", exc_info=True)
-        logger.error("Full response from Claude:")
-        logger.error(code_response)
+        if 'code_response' in locals():
+            logger.error("Full response from Claude:")
+            logger.error(code_response)
         raise
 
 if __name__ == "__main__":
