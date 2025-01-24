@@ -46,6 +46,7 @@ jobs:
           # Move issue branch contents to workspace root
           mv issue-branch/* ./
           mv issue-branch/.github ./ || true
+          mv issue-branch/.git ./ || true  # Keep Git history
           rm -rf issue-branch
 
           # Copy relevant files from main to .github/main
@@ -137,6 +138,7 @@ jobs:
           cp -r staging/.github/* .github/
           
           # Add and commit the changes
+          git status
           git add .github/workflows/combined_ct_images_to_text.yml
           git add .github/scripts/url_screenshot_check.py
           
