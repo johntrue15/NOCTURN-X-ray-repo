@@ -17,6 +17,7 @@ permissions:
   pull-requests: write # For adding PR comments
   checks: write       # For workflow operations
   statuses: write     # For commit statuses
+  actions: write
 
 jobs:
   analyze:
