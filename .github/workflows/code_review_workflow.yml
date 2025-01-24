@@ -119,21 +119,32 @@ jobs:
           echo "Staging directory contents:"
           find staging -type f
           
-          # Verify files exist before upload
+          # Verify files exist before commit
           if [ ! -f "staging/.github/workflows/combined_ct_images_to_text.yml" ] || \
              [ ! -f "staging/.github/scripts/url_screenshot_check.py" ]; then
             echo "Error: Required files not found in staging"
             exit 1
           fi
 
-      - name: Upload combined code
-        uses: actions/upload-artifact@v4
-        with:
-          name: combined-code
-          path: |
-            staging/.github/workflows/combined_ct_images_to_text.yml
-            staging/.github/scripts/url_screenshot_check.py
-          if-no-files-found: error
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Commit combined files
+        run: |
+          # Copy files from staging to their final locations
+          cp -r staging/.github/* .github/
+          
+          # Add and commit the changes
+          git add .github/workflows/combined_ct_images_to_text.yml
+          git add .github/scripts/url_screenshot_check.py
+          
+          # Commit with issue number in message
+          git commit -m "Combined code updates for issue #${{ github.event.inputs.issue_number || github.event.workflow_run.pull_requests[0].number }}"
+          
+          # Push to the issue branch
+          git push origin HEAD:${{ steps.set-branch.outputs.branch_name }}
 
       - name: Add review comment
         if: github.event_name == 'workflow_run'
