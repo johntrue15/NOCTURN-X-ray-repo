@@ -193,14 +193,56 @@ def combine_code_files(original_path, generated_path, output_path):
     with open(generated_path, 'r') as f:
         generated = f.read()
         
-    # TODO: Implement smart merging logic here
-    # For now, use generated version if it exists, otherwise keep original
-    output = generated if os.path.exists(generated_path) else original
+    # Parse the generated code to identify sections to merge
+    output_lines = []
+    gen_lines = generated.split('\n')
+    orig_lines = original.split('\n')
+    
+    i = 0
+    while i < len(gen_lines):
+        line = gen_lines[i].strip()
+        
+        # Check for placeholder comments
+        if re.match(r'#\s*\.\.\.\s*\((existing.*?)\)\s*\.\.\.\s*', line):
+            # Extract the section name from comment
+            section_name = re.search(r'\((existing.*?)\)', line).group(1)
+            
+            # Find matching section in original file
+            if section_name == 'existing imports':
+                # Add imports from original file
+                for orig_line in orig_lines:
+                    if orig_line.startswith(('import ', 'from ')):
+                        output_lines.append(orig_line)
+            elif section_name == 'existing functions':
+                # Add all functions from original file
+                in_function = False
+                for orig_line in orig_lines:
+                    if orig_line.startswith('def '):
+                        in_function = True
+                    if in_function:
+                        output_lines.append(orig_line)
+                    if in_function and not orig_line.strip():
+                        in_function = False
+            else:
+                # For other sections, keep original code between similar comments
+                in_section = False
+                for orig_line in orig_lines:
+                    if re.search(section_name, orig_line, re.IGNORECASE):
+                        in_section = True
+                    if in_section:
+                        output_lines.append(orig_line)
+                    if in_section and not orig_line.strip():
+                        in_section = False
+        else:
+            # Keep the generated line
+            output_lines.append(gen_lines[i])
+        
+        i += 1
     
     # Write combined output
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, 'w') as f:
-        f.write(output)
+        f.write('\n'.join(output_lines))
 
 def process_code_blocks(repo_path, generated_dir):
     """Process code blocks and combine with original files"""
