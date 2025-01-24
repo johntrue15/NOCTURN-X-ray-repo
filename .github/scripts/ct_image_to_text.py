@@ -17,6 +17,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import TimeoutException, WebDriverException
 from webdriver_manager.chrome import ChromeDriverManager
 from openai import OpenAI
+import base64
 
 # Configure logging
 logging.basicConfig(level=logging.INFO,
@@ -241,53 +242,56 @@ def get_image_paths(folder_path):
     ]
 
 def generate_text_with_images(image_paths):
-    """Pass image paths and super prompt to the o1-mini model."""
+    """Pass base64 encoded images to GPT-4 Vision for analysis."""
     if not os.environ.get("OPENAI_API_KEY"):
         return "Error: OPENAI_API_KEY is missing."
 
     client = OpenAI()
-    user_content = [
-        "You are an advanced AI model tasked with analyzing 3D X-ray CT scan data from Morphosource.org. "
-        "Below, I will describe the provided data and 3D orientation images. Your task is to extract meaningful "
-        "details about the structure, material composition, and any observable anomalies or characteristics of the object. "
-        "Provide a detailed textual analysis based on the images provided."
-    ]
+    
+    # Create content list starting with the text prompt
+    content = [{
+        "type": "text",
+        "text": (
+            "You are analyzing 3D X-ray CT scan data from Morphosource.org. "
+            "The images show different orientations of the same specimen. "
+            "Please provide a detailed analysis of the structural characteristics, "
+            "material composition, and any notable features or anomalies visible "
+            "across these different views."
+        )
+    }]
 
-    user_content.append("The following images are provided:")
-    for i, image_path in enumerate(image_paths, 1):
-        user_content.append(f"{i}. {image_path}")
-
-    user_content.append("""
-        Input Details:
-        1. Orientation Views: The object is presented in multiple perspectives.
-        2. Image Details: The 3D scans reflect internal and external structures derived from high-resolution CT imaging.
-        
-        Expected Analysis:
-        - Interpret structural characteristics (e.g., fractures, voids, density distributions).
-        - Highlight material inconsistencies or patterns visible across orientations.
-        - Describe potential applications or implications based on observed features.
-        - Summarize any limitations of the imagery or areas requiring additional focus.
-        
-        Output Format:
-        Provide a detailed textual analysis structured as:
-        1. General Overview
-        2. Observations from each orientation
-        3. Synthesis of insights
-        4. Potential applications or research directions
-        5. Areas for further investigation
-    """)
+    # Add each image as base64 encoded content
+    for image_path in image_paths:
+        try:
+            with open(image_path, "rb") as image_file:
+                base64_image = base64.b64encode(image_file.read()).decode("utf-8")
+            content.append({
+                "type": "image_url",
+                "image_url": {"url": f"data:image/png;base64,{base64_image}"}
+            })
+            logger.info(f"Added image {os.path.basename(image_path)} to analysis batch")
+        except Exception as e:
+            logger.error(f"Error encoding image {image_path}: {e}")
+            continue
 
     try:
-        resp = client.chat.completions.create(
-            model="o1-mini",
+        logger.info("Sending images to GPT-4 Vision API")
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",  # Using gpt-4o-mini model
             messages=[{
                 "role": "user",
-                "content": "\n".join(user_content)
-            }]
+                "content": content
+            }],
+            max_tokens=500
         )
-        return resp.choices[0].message.content.strip()
+        logger.info("Successfully received GPT-4 Vision response")
+        
+        return response.choices[0].message.content
+
     except Exception as e:
-        return f"Error calling o1-mini model: {e}"
+        error_msg = f"Error analyzing images: {str(e)}"
+        logger.error(error_msg)
+        return error_msg
 
 def main():
     if len(sys.argv) != 3:
