@@ -54,13 +54,18 @@ jobs:
           cp -r main-files/.github/workflows .github/main/ || true
           rm -rf main-files
           
-          # List directory structure for debugging
-          echo "Directory structure:"
-          ls -la
-          echo ".github directory:"
-          ls -la .github/
-          echo ".github/main directory:"
-          ls -la .github/main/
+          # Debug directory structure
+          echo "==== Full directory structure ===="
+          find . -type f
+          
+          echo "==== Contents of .github/scripts ===="
+          ls -la .github/scripts/ || echo "scripts dir not found"
+          
+          echo "==== Contents of .github/main ===="
+          ls -la .github/main/ || echo "main dir not found"
+          
+          echo "==== Contents of .github/main/scripts ===="
+          ls -la .github/main/scripts/ || echo "main/scripts dir not found"
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -91,7 +96,8 @@ jobs:
             exit 1
           fi
           
-          python analyze_code.py \
+          # Use correct path to analyze_code.py
+          python .github/scripts/analyze_code.py \
             --issue ${{ github.event.inputs.issue_number }} \
             --branch ${{ steps.set-branch.outputs.branch_name }} \
             --repo ${{ github.repository }} \
