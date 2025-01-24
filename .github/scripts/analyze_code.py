@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 # Initialize Claude client
 anthropic = Anthropic(api_key=os.environ.get('ANTHROPIC_API_KEY'))
-CLAUDE_MODEL = "claude-3-sonnet-20241022"
+CLAUDE_MODEL = "claude-3-5-sonnet-20241022"
 
 @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
 def call_claude(prompt):
