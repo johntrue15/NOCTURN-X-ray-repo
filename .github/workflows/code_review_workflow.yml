@@ -1,11 +1,10 @@
 name: "Code Review and Analysis"
 
 on:
-  pull_request:
-    types: [opened, synchronize]
-    branches:
-      - 'claude-pr/issue-*'
-      - 'testing/issue-*'
+  workflow_run:
+    workflows: ["Auto Code Generation with Claude on Issue"]
+    types:
+      - completed
 
 permissions:
   contents: write
@@ -14,7 +13,7 @@ permissions:
 jobs:
   analyze:
     runs-on: ubuntu-latest
-    if: startsWith(github.head_ref, 'claude-pr/issue-') || startsWith(github.head_ref, 'testing/issue-')
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     
     steps:
       - name: Check out repository
@@ -32,20 +31,39 @@ jobs:
           python -m pip install --upgrade pip
           pip install PyGithub
 
+      # Download artifacts from the triggering workflow
       - name: Download workflow artifacts
-        uses: actions/download-artifact@v3
+        uses: dawidd6/action-download-artifact@v2
         with:
+          workflow: ${{ github.event.workflow_run.workflow_id }}
+          run_id: ${{ github.event.workflow_run.id }}
           name: claude-conversation
           path: artifacts
 
-      - name: Analyze and combine code
+      # Also download workflow-data to get issue number
+      - name: Download workflow data
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: ${{ github.event.workflow_run.workflow_id }}
+          run_id: ${{ github.event.workflow_run.id }}
+          name: workflow-data
+          path: workflow-data
+
+      - name: Get PR and analyze code
         id: analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Get the issue number from branch name
-          BRANCH_NAME="${{ github.head_ref }}"
-          ISSUE_NUMBER=$(echo $BRANCH_NAME | grep -oE '[0-9]+$')
+          # Get the issue number from workflow data
+          ISSUE_NUMBER=$(cat workflow-data/workflow-data.json | jq -r .issue_number)
+          echo "Processing issue #$ISSUE_NUMBER"
+          
+          # Find the PR branch
+          BRANCH_NAME="claude-pr/issue-${ISSUE_NUMBER}"
+          
+          # Checkout the PR branch
+          git fetch origin $BRANCH_NAME
+          git checkout $BRANCH_NAME
           
           # Run analysis
           python .github/scripts/analyze_code.py \
@@ -66,5 +84,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -f ".github/generated/review_comment.md" ]; then
-            gh pr comment "${{ github.event.pull_request.number }}" --body-file ".github/generated/review_comment.md"
+            # Find PR number for the branch
+            PR_NUMBER=$(gh pr list --head "$BRANCH_NAME" --json number -q '.[0].number')
+            if [ ! -z "$PR_NUMBER" ]; then
+              gh pr comment "$PR_NUMBER" --body-file ".github/generated/review_comment.md"
+            else
+              echo "No PR found for branch $BRANCH_NAME"
+              exit 1
+            fi
           fi
