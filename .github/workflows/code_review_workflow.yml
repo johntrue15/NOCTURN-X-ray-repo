@@ -30,7 +30,13 @@ jobs:
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
           echo "Using branch: $BRANCH_NAME"
 
-      # First checkout the issue branch
+      # First checkout main branch files to a separate directory
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main-files
+
+      # Then checkout the issue branch to the workspace root
       - uses: actions/checkout@v4
         with:
           ref: ${{ steps.set-branch.outputs.branch_name }}
@@ -41,16 +47,12 @@ jobs:
       # Debug branch state
       - name: Debug branch state
         run: |
-          echo "Current branch before switch:"
-          git branch
-          
-          # Switch to the issue branch
-          git checkout ${{ steps.set-branch.outputs.branch_name }}
-          
-          echo "Current branch after switch:"
+          echo "Current branch:"
           git branch
           echo "Current directory contents:"
-          ls -la .github/
+          ls -la
+          echo "Generated directory contents:"
+          ls -la .github/generated/ || echo "generated dir not found"
           
           if [ -f ".github/generated/metadata.json" ]; then
             echo "==== Contents of metadata.json ===="
@@ -59,60 +61,9 @@ jobs:
             echo "metadata.json not found in: $(pwd)/.github/generated/"
           fi
 
-      # Then checkout main branch files
-      - uses: actions/checkout@v4
-        with:
-          ref: main
-          path: main-files
-
-      # Download files from issue branch
-      - name: Download issue branch files
-        run: |
-          # Debug current state
-          echo "Current branch:"
-          git branch
-          echo "Current directory contents:"
-          ls -la
-          
-          # Create generated directory if it doesn't exist
-          mkdir -p .github/generated
-          
-          # Copy files from current branch to generated directory
-          if [ -f ".github/generated/metadata.json" ]; then
-            echo "==== Contents of metadata.json ===="
-            cat .github/generated/metadata.json
-            
-            # Extract file paths and copy each file
-            while IFS= read -r file; do
-              echo "Processing $file"
-              src_file="$file"
-              dst_dir=".github/generated/$(dirname "$file")"
-              
-              mkdir -p "$dst_dir"
-              if [ -f "$src_file" ]; then
-                cp "$src_file" ".github/generated/$file"
-                echo "Copied $src_file to .github/generated/$file"
-              else
-                echo "Warning: Source file not found: $src_file"
-              fi
-            done < <(jq -r '.generated_files[]' .github/generated/metadata.json)
-            
-            echo "==== Generated directory contents ===="
-            ls -R .github/generated/
-          else
-            echo "Error: metadata.json not found in current branch"
-            echo "Current directory structure:"
-            find . -type f
-            exit 1
-          fi
-
       # Set up the directory structure
       - name: Setup directories
         run: |
-          # Debug initial state
-          echo "==== Initial directory structure ===="
-          ls -la .github/ || echo ".github not found"
-          
           # Create necessary directories
           mkdir -p .github/{main,scripts}
           
