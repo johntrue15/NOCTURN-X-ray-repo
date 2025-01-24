@@ -123,6 +123,7 @@ jobs:
     outputs:
       has_media_error: ${{ steps.url_check.outputs.has_media_error }}
       has_server_error: ${{ steps.url_check.outputs.has_server_error }}
+      has_no_file: ${{ steps.url_check.outputs.has_no_file }}
       has_mesh: ${{ steps.type_check.outputs.has_mesh }}
       has_volumetric_images: ${{ steps.type_check.outputs.has_volumetric_images }}
     steps:
@@ -163,16 +164,24 @@ jobs:
             if [ "$status" = "media_error" ]; then
               echo "has_media_error=true" >> "$GITHUB_OUTPUT"
               echo "has_server_error=false" >> "$GITHUB_OUTPUT"
+              echo "has_no_file=false" >> "$GITHUB_OUTPUT"
             elif [ "$status" = "server_error" ]; then
               echo "has_media_error=false" >> "$GITHUB_OUTPUT"
               echo "has_server_error=true" >> "$GITHUB_OUTPUT"
+              echo "has_no_file=false" >> "$GITHUB_OUTPUT"
+            elif [ "$status" = "no_file" ]; then
+              echo "has_media_error=false" >> "$GITHUB_OUTPUT"
+              echo "has_server_error=false" >> "$GITHUB_OUTPUT"
+              echo "has_no_file=true" >> "$GITHUB_OUTPUT"
             else
               echo "has_media_error=false" >> "$GITHUB_OUTPUT"
               echo "has_server_error=false" >> "$GITHUB_OUTPUT"
+              echo "has_no_file=false" >> "$GITHUB_OUTPUT"
             fi
           else
             echo "has_media_error=false" >> "$GITHUB_OUTPUT"
             echo "has_server_error=false" >> "$GITHUB_OUTPUT"
+            echo "has_no_file=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Upload URL Check Screenshots
@@ -205,6 +214,7 @@ jobs:
       needs.check_and_analyze.outputs.has_analysis != 'true' &&
       needs.url_check.outputs.has_media_error != 'true' &&
       needs.url_check.outputs.has_server_error != 'true' &&
+      needs.url_check.outputs.has_no_file != 'true' &&
       needs.url_check.outputs.has_mesh == 'true'
     runs-on: ubuntu-22.04
     steps:
@@ -344,6 +354,7 @@ jobs:
       needs.check_and_analyze.outputs.has_analysis != 'true' &&
       needs.url_check.outputs.has_media_error != 'true' &&
       needs.url_check.outputs.has_server_error != 'true' &&
+      needs.url_check.outputs.has_no_file != 'true' &&
       needs.url_check.outputs.has_volumetric_images == 'true'
     runs-on: ubuntu-22.04
     steps:
