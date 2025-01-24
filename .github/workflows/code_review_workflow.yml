@@ -8,189 +8,92 @@ on:
         required: true
         type: string
       branch_name:
-        description: 'Branch to analyze (default: claude-pr/issue-{number})'
-        required: false
+        description: 'Branch to analyze'
+        required: true
         type: string
   workflow_run:
-    workflows: ["Auto Code Generation with Claude on Issue"]
+    workflows: ["Claude Issue Automation"]
     types:
       - completed
-
-permissions:
-  contents: write
-  pull-requests: write
 
 jobs:
   analyze:
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'workflow_dispatch' || 
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history for file comparisons
-
+          ref: ${{ github.event.inputs.branch_name || 'main' }}
+          fetch-depth: 0
+          
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-
+          
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install PyGithub
-
-      # Download artifacts only for workflow_run trigger
-      - name: Download workflow artifacts
-        if: github.event_name == 'workflow_run'
-        id: download_artifacts
-        continue-on-error: true
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          workflow: ${{ github.event.workflow_run.workflow_id }}
-          run_id: ${{ github.event.workflow_run.id }}
-          name: claude-conversation
-          path: artifacts
-          search_artifacts: true
-          if_no_artifact_found: warn
-
-      - name: Download workflow data
-        if: github.event_name == 'workflow_run'
-        id: download_data
-        continue-on-error: true
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          workflow: ${{ github.event.workflow_run.workflow_id }}
-          run_id: ${{ github.event.workflow_run.id }}
-          name: workflow-data
-          path: workflow-data
-          search_artifacts: true
-          if_no_artifact_found: warn
-
-      # Process artifacts or inputs
-      - name: Process artifacts and inputs
-        id: process
+          pip install anthropic tenacity PyGithub
+          
+      - name: Process branch
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            # Use input parameters
-            ISSUE_NUMBER="${{ github.event.inputs.issue_number }}"
-            BRANCH_NAME="${{ github.event.inputs.branch_name }}"
-            if [ -z "$BRANCH_NAME" ]; then
-              BRANCH_NAME="claude-pr/issue-${ISSUE_NUMBER}"
-            fi
+            echo "Processing issue #${{ github.event.inputs.issue_number }} on branch ${{ github.event.inputs.branch_name }}"
           else
-            # Check for claude conversation
-            if [ ! -d "artifacts" ] || [ -z "$(ls -A artifacts)" ]; then
-              echo "::error::Claude conversation artifact not found"
-              exit 1
-            fi
-            
-            # Try different methods to get issue number
-            if [ -f "workflow-data/workflow-data.json" ]; then
-              ISSUE_NUMBER=$(cat workflow-data/workflow-data.json | jq -r .issue_number)
-            elif [ -f "artifacts/claude_conversation.json" ]; then
-              ISSUE_NUMBER=$(cat artifacts/claude_conversation.json | jq -r .issue_number)
-            else
-              ISSUE_NUMBER=$(echo "${{ github.event.workflow_run.head_branch }}" | grep -oE '[0-9]+$')
-            fi
-            BRANCH_NAME="claude-pr/issue-${ISSUE_NUMBER}"
+            echo "Processing workflow run from Claude automation"
           fi
-          
-          if [ -z "$ISSUE_NUMBER" ] || [ "$ISSUE_NUMBER" = "null" ]; then
-            echo "::error::Could not determine issue number"
-            exit 1
-          fi
-          
-          echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
-          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
-          echo "Processing issue #$ISSUE_NUMBER on branch $BRANCH_NAME"
 
-      - name: Get PR and analyze code
-        id: analyze
+      - name: Download Claude conversation
+        uses: actions/download-artifact@v4
+        with:
+          name: claude-conversation
+          path: .github/generated
+          
+      - name: Analyze code
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ISSUE_NUMBER: ${{ steps.process.outputs.issue_number }}
-          BRANCH_NAME: ${{ steps.process.outputs.branch_name }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          # Checkout the PR branch
-          git fetch origin "$BRANCH_NAME" || {
-            echo "Error: Could not fetch branch $BRANCH_NAME"
-            exit 1
-          }
+          # Add delay to ensure Claude API is ready
+          sleep 5
           
-          git checkout "$BRANCH_NAME" || {
-            echo "Error: Could not checkout branch $BRANCH_NAME"
-            exit 1
-          }
-          
-          # Run analysis
-          python .github/scripts/analyze_code.py \
-            --issue "$ISSUE_NUMBER" \
-            --branch "$BRANCH_NAME" \
-            --repo "${{ github.repository }}" \
-            --artifacts-dir "${{ github.event_name == 'workflow_run' && 'artifacts' || '.' }}"
-
-      - name: Upload combined code
-        run: |
-          # Verify directory exists and contains files
-          if [ ! -d ".github/generated/complete" ]; then
-            echo "Error: Output directory not found"
-            exit 1
-          fi
-          
-          # List generated files
+          python analyze_code.py \
+            --issue ${{ github.event.inputs.issue_number }} \
+            --branch ${{ github.event.inputs.branch_name }} \
+            --repo ${{ github.repository }} \
+            --artifacts-dir .github/generated
+            
+          # Verify files were generated
           echo "Generated files:"
-          find .github/generated/complete -type f
+          find .github/generated/complete -type f -print
           
-          # Count files
-          file_count=$(find .github/generated/complete -type f | wc -l)
-          if [ "$file_count" -eq 0 ]; then
-            echo "Error: No files found in output directory"
-            exit 1
-          fi
-          
-          echo "Found $file_count generated files"
-          
-          # Copy files to a staging directory with simpler structure
+          # Create staging directory
           mkdir -p staging
-          cp -r .github/generated/complete/* staging/
+          cp .github/generated/complete/* staging/
           
-          # List staging directory
+          echo "Found $(ls staging | wc -l) generated files"
           echo "Staging directory contents:"
           ls -R staging/
 
-      - name: Upload artifacts
+      - name: Upload combined code
         uses: actions/upload-artifact@v4
         with:
           name: combined-code
           path: staging
           if-no-files-found: error
-          compression-level: 0  # No compression for text files
-          overwrite: true
-          retention-days: 90
 
       - name: Add review comment
-        if: github.event_name == 'workflow_run'  # Only add comments for workflow_run trigger
+        if: github.event_name == 'workflow_run'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ -f ".github/generated/review_comment.md" ]; then
-            # Find PR number for the branch
-            PR_NUMBER=$(gh pr list --head "$BRANCH_NAME" --json number -q '.[0].number')
-            if [ ! -z "$PR_NUMBER" ]; then
-              gh pr comment "$PR_NUMBER" --body-file ".github/generated/review_comment.md"
-            else
-              echo "No PR found for branch $BRANCH_NAME"
-              exit 1
-            fi
+            gh pr comment ${{ github.event.workflow_run.pull_requests[0].number }} -F .github/generated/review_comment.md
           fi
 
-      # For workflow_dispatch, just output the review comment
       - name: Show review comment
-        if: github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch' 
         run: |
           if [ -f ".github/generated/review_comment.md" ]; then
             echo "Review comment contents:"
