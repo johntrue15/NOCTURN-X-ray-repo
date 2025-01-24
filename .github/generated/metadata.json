@@ -1,0 +1,10 @@
+{
+  "issue_number": "20",
+  "repo": "johntrue15/NOCTURN-X-ray-repo",
+  "generated_files": [
+    ".github/generated/.github/workflows/combined_ct_images_to_text.yml",
+    ".github/generated/.github/scripts/url_screenshot_check.py"
+  ],
+  "generation_timestamp": "2025-01-24T14:57:21.891209",
+  "claude_conversation": ".github/generated/claude_conversation.json"
+}
