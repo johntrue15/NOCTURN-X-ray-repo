@@ -43,23 +43,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install anthropic tenacity PyGithub
           
-      - name: Download Claude conversation
-        if: github.event_name == 'workflow_run'
-        uses: actions/download-artifact@v4
-        with:
-          name: claude-conversation
-          path: .github/generated
-          
-      - name: Generate Claude conversation
-        if: github.event_name == 'workflow_dispatch'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          python generate_code.py \
-            --issue ${{ github.event.inputs.issue_number }} \
-            --repo ${{ github.repository }}
-          
       - name: Process branch
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
@@ -73,8 +56,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          # Add delay to ensure Claude API is ready
-          sleep 5
+          # Verify generated files exist
+          if [ ! -d ".github/generated" ]; then
+            echo "Error: .github/generated directory not found"
+            exit 1
+          fi
           
           python analyze_code.py \
             --issue ${{ github.event.inputs.issue_number }} \
