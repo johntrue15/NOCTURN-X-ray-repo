@@ -142,6 +142,19 @@ def parse_code_blocks(response):
         
     return parsed_blocks
 
+def save_claude_conversation(output_dir, conversation_data, is_error=False):
+    """Save Claude conversation to a consistent location"""
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    filename = 'claude_conversation_error.json' if is_error else 'claude_conversation.json'
+    conv_file = output_dir / filename
+    
+    with open(conv_file, 'w') as f:
+        json.dump(conversation_data, f, indent=2)
+    logger.info(f"Saved Claude conversation to {conv_file}")
+    return conv_file
+
 def main():
     try:
         # Get environment variables
@@ -216,19 +229,14 @@ def main():
             max_tokens=4096,
             temperature=0.7,
             system=system_prompt,
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
+            messages=[{"role": "user", "content": prompt}]
         )
         
-        # Extract the response and verify it's not empty
+        # Extract the response
         code_response = message.content[0].text.strip()
         logger.info(f"Received response from Claude (length: {len(code_response)})")
         
-        # Save Claude conversation
+        # Save conversation immediately after receiving response
         conversation = {
             "timestamp": datetime.datetime.now().isoformat(),
             "issue_number": issue_number,
@@ -237,15 +245,8 @@ def main():
             "claude_response": code_response
         }
         
-        # Create the output directory
         output_dir = Path('.github/generated')
-        output_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Save conversation
-        conversation_file = output_dir / 'claude_conversation.json'
-        with open(conversation_file, 'w') as f:
-            json.dump(conversation, f, indent=2)
-        logger.info("Saved Claude conversation to file")
+        conv_file = save_claude_conversation(output_dir, conversation)
         
         # Parse code blocks using the new function
         parsed_blocks = parse_code_blocks(code_response)
@@ -282,7 +283,7 @@ def main():
             "repo": repo,
             "generated_files": generated_files,
             "generation_timestamp": datetime.datetime.now().isoformat(),
-            "claude_conversation": str(conversation_file)
+            "claude_conversation": str(conv_file)
         }
         
         metadata_file = output_dir / 'metadata.json'
@@ -293,29 +294,20 @@ def main():
         
     except Exception as e:
         logger.error(f"Error generating code: {str(e)}", exc_info=True)
-        if 'code_response' in locals():
-            logger.error("Full response from Claude:")
-            logger.error(code_response)
-            
-            # Try to save error conversation
+        if 'prompt' in locals() and 'code_response' in locals():
+            # Save error conversation
+            error_conversation = {
+                "timestamp": datetime.datetime.now().isoformat(),
+                "issue_number": issue_number,
+                "system_prompt": system_prompt,
+                "user_prompt": prompt,
+                "claude_response": code_response,
+                "error": str(e)
+            }
             try:
-                error_conversation = {
-                    "timestamp": datetime.datetime.now().isoformat(),
-                    "issue_number": issue_number,
-                    "system_prompt": system_prompt,
-                    "user_prompt": prompt,
-                    "claude_response": code_response,
-                    "error": str(e)
-                }
-                
-                output_dir = Path('.github/generated')
-                output_dir.mkdir(parents=True, exist_ok=True)
-                
-                with open(output_dir / 'claude_conversation_error.json', 'w') as f:
-                    json.dump(error_conversation, f, indent=2)
+                save_claude_conversation(Path('.github/generated'), error_conversation, is_error=True)
             except:
-                pass
-                
+                logger.error("Failed to save error conversation", exc_info=True)
         raise
 
 if __name__ == "__main__":
