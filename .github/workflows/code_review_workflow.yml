@@ -118,12 +118,21 @@ jobs:
           # Verify staging contents
           echo "Staging directory contents:"
           find staging -type f
+          
+          # Verify files exist before upload
+          if [ ! -f "staging/.github/workflows/combined_ct_images_to_text.yml" ] || \
+             [ ! -f "staging/.github/scripts/url_screenshot_check.py" ]; then
+            echo "Error: Required files not found in staging"
+            exit 1
+          fi
 
       - name: Upload combined code
         uses: actions/upload-artifact@v4
         with:
           name: combined-code
-          path: staging
+          path: |
+            staging/.github/workflows/combined_ct_images_to_text.yml
+            staging/.github/scripts/url_screenshot_check.py
           if-no-files-found: error
 
       - name: Add review comment
