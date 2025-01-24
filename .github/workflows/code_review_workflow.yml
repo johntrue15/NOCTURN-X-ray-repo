@@ -7,10 +7,6 @@ on:
         description: 'Issue number to process'
         required: true
         type: string
-      branch_name:
-        description: 'Branch to analyze'
-        required: true
-        type: string
   workflow_run:
     workflows: ["Claude Issue Automation"]
     types:
@@ -21,9 +17,20 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Set branch name
+        id: set-branch
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            BRANCH_NAME="claude-pr/issue-${{ github.event.inputs.issue_number }}"
+          else
+            BRANCH_NAME="${{ github.event.workflow_run.head_branch }}"
+          fi
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          echo "Using branch: $BRANCH_NAME"
+
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch_name || 'main' }}
+          ref: ${{ steps.set-branch.outputs.branch_name }}
           fetch-depth: 0
           
       - name: Set up Python
@@ -39,7 +46,7 @@ jobs:
       - name: Process branch
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "Processing issue #${{ github.event.inputs.issue_number }} on branch ${{ github.event.inputs.branch_name }}"
+            echo "Processing issue #${{ github.event.inputs.issue_number }}"
           else
             echo "Processing workflow run from Claude automation"
           fi
@@ -60,7 +67,7 @@ jobs:
           
           python analyze_code.py \
             --issue ${{ github.event.inputs.issue_number }} \
-            --branch ${{ github.event.inputs.branch_name }} \
+            --branch ${{ steps.set-branch.outputs.branch_name }} \
             --repo ${{ github.repository }} \
             --artifacts-dir .github/generated
             
