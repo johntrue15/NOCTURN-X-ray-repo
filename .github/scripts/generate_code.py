@@ -89,24 +89,20 @@ def get_issue_details(issue_number, repo, token):
     return "".join(full_conversation)
 
 def parse_code_blocks(response):
-    """Parse code blocks from Claude's response with better error handling"""
-    # Log the full response for debugging
-    logger.debug("Full response from Claude:")
-    logger.debug(response)
-    
-    # First try the more specific pattern
-    pattern = r'```(\w+):([^\n]+)\n(.*?)```'
+    """Parse code blocks from Claude's response"""
+    # First try exact pattern
+    pattern = r'```(\w+):([^`\n]+)\n(.*?)```'
     matches = list(re.finditer(pattern, response, re.DOTALL))
     
     if not matches:
-        # Try alternate pattern that might match
-        pattern = r'```.*?:(.+?)\n(.*?)```'
+        # Try more lenient pattern
+        pattern = r'```.*?:([^`\n]+)\n(.*?)```'
         matches = list(re.finditer(pattern, response, re.DOTALL))
-        
+    
     if not matches:
         logger.error("No code blocks found in response")
         logger.error("Response preview:")
-        logger.error(response[:1000])  # Show first 1000 chars
+        logger.error(response[:1000])
         return []
     
     parsed_blocks = []
@@ -115,31 +111,24 @@ def parse_code_blocks(response):
             if len(match.groups()) == 3:
                 language, file_path, content = match.groups()
             else:
-                file_path, content = match.groups()
-                language = ''
-                
+                file_path = match.group(1)
+                content = match.group(2)
+            
             file_path = file_path.strip()
             content = content.strip()
             
             if not file_path:
-                logger.warning(f"Code block found without file path: {language}")
+                logger.warning("Code block found without file path")
                 continue
-                
-            logger.info(f"Found code block - Path: {file_path}, Language: {language}, Content length: {len(content)}")
             
-            # Log preview of content
-            content_preview = content[:100] + "..." if len(content) > 100 else content
-            logger.debug(f"Content preview for {file_path}:\n{content_preview}")
-            
+            logger.info(f"Found code block for {file_path} ({len(content)} chars)")
             parsed_blocks.append((file_path, content))
             
         except Exception as e:
-            logger.error(f"Error parsing code block: {str(e)}")
+            logger.error(f"Error parsing code block: {e}")
+            logger.error(f"Match groups: {match.groups()}")
             continue
     
-    if not parsed_blocks:
-        logger.error("No valid code blocks could be parsed")
-        
     return parsed_blocks
 
 def save_claude_conversation(output_dir, conversation_data, is_error=False):
