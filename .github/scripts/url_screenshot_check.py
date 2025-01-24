@@ -27,6 +27,10 @@ class MorphoSourceTemporarilyUnavailable(Exception):
     """Custom exception for when MorphoSource is temporarily unavailable"""
     pass
 
+class NoFileUploaded(Exception):
+    """Custom exception for when no file is uploaded on MorphoSource"""
+    pass
+
 def setup_driver():
     chrome_options = Options()
     chrome_options.add_argument('--headless=new')
@@ -120,6 +124,31 @@ def handle_server_error(url, driver=None):
     
     return False
 
+def handle_no_file_error(url, driver):
+    """Handle no file uploaded case and create status file"""
+    file_id = extract_id_from_url(url)
+    status_data = {
+        'status': 'no_file',
+        'url': url,
+        'file_id': file_id,
+        'timestamp': datetime.now().isoformat()
+    }
+
+    # Save the error state screenshot
+    error_file = f"error_{file_id}_no_file.png"
+    try:
+        driver.save_screenshot(error_file)
+        logging.info(f"No file error screenshot saved to {error_file}")
+    except Exception as e:
+        logging.error(f"Failed to save no file error screenshot: {str(e)}")
+
+    # Save status file
+    with open('url_check_status.json', 'w') as f:
+        json.dump(status_data, f, indent=2)
+    logging.info("No file status file saved")
+
+    return True
+
 def take_screenshot(url):
     file_id = extract_id_from_url(url)
     output_file = f"{file_id}.png"
@@ -132,10 +161,10 @@ def take_screenshot(url):
         try:
             logging.info(f"\nAttempt {attempt + 1}/{max_retries} for ID {file_id}")
             logging.info(f"Loading URL: {url}")
-            
+
             driver = setup_driver()
             driver.get(url)
-            
+
             # Check for 500 error first
             if check_for_server_error(driver):
                 server_error_count += 1
@@ -144,17 +173,19 @@ def take_screenshot(url):
                 logging.warning(f"Server error detected (attempt {attempt + 1}), waiting 5 seconds before retry...")
                 time.sleep(5)
                 continue
-            
+
             # Check for the not-ready message
             try:
                 not_ready = driver.find_element(By.CSS_SELECTOR, 'div.not-ready')
                 if "Media preview currently unavailable" in not_ready.text:
-                    logging.info("morphosource media error")
-                    print("morphosource media error")
+                    logging.info("Morphosource media error")
                     return handle_media_error(url, driver)
+                elif "No file uploaded" in not_ready.text:
+                    logging.info("No file uploaded on MorphoSource")
+                    return handle_no_file_error(url, driver)
             except NoSuchElementException:
                 pass
-            
+
             # If no errors, proceed with screenshot
             wait = WebDriverWait(driver, 10)
             uv_iframe = wait.until(
@@ -162,7 +193,7 @@ def take_screenshot(url):
             )
 
             driver.switch_to.frame(uv_iframe)
-            
+
             full_screen_btn = wait.until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn.imageBtn.fullScreen"))
             )
@@ -191,7 +222,7 @@ def take_screenshot(url):
     # If we got here and all attempts were server errors, handle it
     if server_error_count == max_retries:
         return handle_server_error(url)
-    
+
     return False
 
 def process_urls_from_file(input_file):
