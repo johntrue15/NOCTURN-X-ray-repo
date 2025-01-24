@@ -13,9 +13,10 @@ on:
       - completed
 
 permissions:
-  contents: write
-  pull-requests: write
-  actions: write    # This covers workflow permissions
+  contents: write      # For pushing commits
+  pull-requests: write # For adding PR comments
+  checks: write       # For workflow operations
+  statuses: write     # For commit statuses
 
 jobs:
   analyze:
