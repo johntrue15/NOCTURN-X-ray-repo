@@ -90,20 +90,26 @@ Return only the code without any explanation, wrapped in triple backticks."""
     return prompt
 
 def process_files():
-    """Process original and generated files"""
-    generated_dir = '.github/generated'
-    output_dir = os.path.join(generated_dir, 'complete')
+    """Process all generated files"""
+    # Get paths relative to .github/generated
+    generated_dir = Path('.github/generated')
+    output_dir = generated_dir / 'complete'
+    output_dir.mkdir(parents=True, exist_ok=True)
     
-    # Create output directory
-    os.makedirs(output_dir, exist_ok=True)
-    
-    # Find generated files
+    # Track generated files
     generated_files = {}
+    
+    # Find all relevant files
     for path in Path(generated_dir).rglob('*'):
         if path.is_file() and path.suffix in ['.py', '.yml', '.yaml', '.json']:
             # Skip files already in complete directory
             if 'complete' in str(path):
                 continue
+            # Skip metadata files
+            if str(path).endswith(('metadata.json', 'claude_conversation.json')):
+                logger.info(f"Skipping metadata file: {path.name}")
+                continue
+                
             rel_path = path.relative_to(generated_dir)
             generated_files[rel_path] = path
 
@@ -113,11 +119,6 @@ def process_files():
     # Process each file
     for rel_path, generated_path in generated_files.items():
         try:
-            # Skip metadata files
-            if str(rel_path).endswith(('metadata.json', 'claude_conversation.json')):
-                logger.info(f"Skipping metadata file: {rel_path}")
-                continue
-                
             # Get original file from main branch files
             search_path = str(rel_path)
             if search_path.startswith('.github/'):
@@ -141,7 +142,7 @@ def process_files():
             # Extract and save code
             combined_code = extract_code(response, rel_path)
             if combined_code:
-                output_path = Path(output_dir) / rel_path
+                output_path = output_dir / rel_path
                 os.makedirs(output_path.parent, exist_ok=True)
                 with open(output_path, 'w') as f:
                     f.write(combined_code)
