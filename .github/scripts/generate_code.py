@@ -178,32 +178,8 @@ def main():
             else:
                 context += f"New file to create: {path}\n\n"
         
-        # Improved system prompt with clearer formatting instructions
-        system_prompt = """You are a helpful AI assistant that generates code based on GitHub issues. 
-        Your task is to:
-        1. Analyze the issue description and comments
-        2. Generate or modify the requested files
-        3. Include necessary imports and documentation
-        4. Return complete, working code files
-        
-        IMPORTANT: For each file, you must format your response exactly like this:
-        ```language:full/path/to/file
-        [file contents here]
-        ```
-        
-        For example:
-        ```yaml:.github/workflows/example.yml
-        name: Example Workflow
-        on: push
-        ```
-        
-        ```python:.github/scripts/example.py
-        import os
-        def main():
-            pass
-        ```
-        
-        Do not include any explanations or markdown formatting outside the code blocks."""
+        # Store the full prompt
+        prompt = f"Generate or modify the following files based on this issue:\n\n{context}\nIssue details:\n{issue_content}"
         
         logger.info("Sending request to Claude...")
         
@@ -216,7 +192,7 @@ def main():
             messages=[
                 {
                     "role": "user",
-                    "content": f"Generate or modify the following files based on this issue:\n\n{context}\nIssue details:\n{issue_content}"
+                    "content": prompt
                 }
             ]
         )
@@ -225,8 +201,24 @@ def main():
         code_response = message.content[0].text.strip()
         logger.info(f"Received response from Claude (length: {len(code_response)})")
         
-        if not code_response:
-            raise ValueError("Claude returned empty response")
+        # Save Claude conversation
+        conversation = {
+            "timestamp": datetime.datetime.now().isoformat(),
+            "issue_number": issue_number,
+            "system_prompt": system_prompt,
+            "user_prompt": prompt,
+            "claude_response": code_response
+        }
+        
+        # Create the output directory
+        output_dir = Path('.github/generated')
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Save conversation
+        conversation_file = output_dir / 'claude_conversation.json'
+        with open(conversation_file, 'w') as f:
+            json.dump(conversation, f, indent=2)
+        logger.info("Saved Claude conversation to file")
         
         # Parse code blocks using the new function
         parsed_blocks = parse_code_blocks(code_response)
@@ -235,10 +227,6 @@ def main():
             logger.error("Response preview:")
             logger.error(code_response[:1000])
             raise ValueError("No valid code blocks found in Claude's response")
-        
-        # Create the output directory
-        output_dir = Path('.github/generated')
-        output_dir.mkdir(parents=True, exist_ok=True)
         
         generated_files = []
         for file_path, content in parsed_blocks:
@@ -261,12 +249,13 @@ def main():
         if not generated_files:
             raise ValueError("Failed to save any generated files")
             
-        # Create metadata file
+        # Update metadata to include conversation file
         metadata = {
             "issue_number": issue_number,
             "repo": repo,
             "generated_files": generated_files,
             "generation_timestamp": datetime.datetime.now().isoformat(),
+            "claude_conversation": str(conversation_file)
         }
         
         metadata_file = output_dir / 'metadata.json'
@@ -280,6 +269,26 @@ def main():
         if 'code_response' in locals():
             logger.error("Full response from Claude:")
             logger.error(code_response)
+            
+            # Try to save error conversation
+            try:
+                error_conversation = {
+                    "timestamp": datetime.datetime.now().isoformat(),
+                    "issue_number": issue_number,
+                    "system_prompt": system_prompt,
+                    "user_prompt": prompt,
+                    "claude_response": code_response,
+                    "error": str(e)
+                }
+                
+                output_dir = Path('.github/generated')
+                output_dir.mkdir(parents=True, exist_ok=True)
+                
+                with open(output_dir / 'claude_conversation_error.json', 'w') as f:
+                    json.dump(error_conversation, f, indent=2)
+            except:
+                pass
+                
         raise
 
 if __name__ == "__main__":
