@@ -2,6 +2,7 @@ import os
 import json
 import logging
 from pathlib import Path
+from anthropic import Anthropic
 
 # Set up logging
 logging.basicConfig(
@@ -9,6 +10,10 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# Initialize Claude client
+anthropic = Anthropic(api_key=os.environ.get('ANTHROPIC_API_KEY'))
+CLAUDE_MODEL = "claude-3-5-sonnet-20241022"
 
 def setup_directories():
     """Create necessary directory structure"""
@@ -26,63 +31,156 @@ def get_files_from_metadata():
     with open(metadata_path) as f:
         metadata = json.load(f)
         
-    # Get files and ensure they're in the correct format
     files = metadata.get('generated_files', [])
-    # Remove .github/ prefix if present
     files = [f.replace('.github/', '') for f in files]
     logger.info(f"Found {len(files)} files in metadata: {files}")
     return files
 
-def find_file(file_name):
-    """Find a file in the generated directories"""
-    base_dir = Path('.github/generated')
-    
-    # List all files in generated directory
+def find_file(file_name, directory):
+    """Find a file in the specified directory"""
+    base_dir = Path(directory)
     logger.info(f"Searching for {file_name} in {base_dir}")
-    all_files = list(base_dir.rglob('*'))
-    logger.info(f"Found {len(all_files)} total files")
     
-    # Find files matching the name
+    # List of possible subdirectories to check
+    subdirs = [
+        '',  # Root directory
+        'workflows',
+        'scripts',
+        '.github/workflows',
+        '.github/scripts',
+        'generated/workflows',
+        'generated/scripts'
+    ]
+    
+    # Try each possible location
+    for subdir in subdirs:
+        search_path = base_dir / subdir / file_name
+        logger.info(f"Checking path: {search_path}")
+        if search_path.exists():
+            logger.info(f"Found file at: {search_path}")
+            return search_path
+            
+    # If not found, do a full recursive search
+    logger.info("File not found in expected locations, doing recursive search...")
+    all_files = list(base_dir.rglob('*'))
     matches = [f for f in all_files if f.is_file() and f.name == Path(file_name).name]
+    
     if matches:
         logger.info(f"Found matching file at: {matches[0]}")
         return matches[0]
+        
+    logger.warning(f"File not found: {file_name}")
+    logger.info("Directory contents:")
+    for p in base_dir.rglob('*'):
+        logger.info(f"  {p}")
+    return None
+
+def get_claude_prompt(original_content, generated_content, file_path):
+    """Create prompt for Claude to analyze and combine code"""
+    prompt = f"""Please analyze and combine these two code files into a single improved version.
+The first is the original code, and the second contains updates to be integrated.
+
+Original file ({file_path}):
+```
+{original_content}
+```
+
+Generated updates ({file_path}):
+```
+{generated_content}
+```
+
+Please provide the complete combined code incorporating the updates while preserving the original structure.
+Return only the code without any explanation, wrapped in triple backticks."""
+
+    return prompt
+
+def call_claude(prompt):
+    """Call Claude API to get combined code"""
+    try:
+        system_prompt = """You are an expert programmer helping to combine code files.
+        You will receive an original file and updates to be integrated.
+        Your response must be the combined code wrapped in triple backticks."""
+        
+        response = anthropic.messages.create(
+            model=CLAUDE_MODEL,
+            max_tokens=8192,
+            temperature=0,
+            system=system_prompt,
+            messages=[{
+                "role": "user",
+                "content": prompt
+            }],
+            extra_headers={
+                "anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15"
+            }
+        )
+        
+        logger.info(f"Got response from Claude: {response.content[0].text[:100]}...")
+        return response.content[0].text
+
+    except Exception as e:
+        logger.error(f"Error calling Claude API: {e}")
+        raise
+
+def extract_code(response):
+    """Extract code from Claude's response"""
+    # Remove any explanatory text before/after code block
+    start = response.find("```")
+    end = response.rfind("```")
+    
+    if start != -1 and end != -1:
+        code = response[start+3:end].strip()
+        # Remove language identifier if present
+        if code.startswith(('python', 'yaml')):
+            code = code[code.find('\n')+1:]
+        return code.strip()
+    
+    logger.error("Could not extract code from Claude response")
     return None
 
 def process_files():
     """Main function to process and analyze files"""
     try:
-        # Setup directories
         staging_dir = setup_directories()
-        
-        # Get files from metadata
         files = get_files_from_metadata()
         logger.info("Processing files from metadata...")
         
-        # Process each file
         success_count = 0
         for file in files:
             try:
-                # Find the file
-                source_path = find_file(Path(file).name)
-                if not source_path:
-                    logger.warning(f"File not found: {file}")
-                    logger.info("Contents of .github/generated:")
-                    for p in Path('.github/generated').rglob('*'):
-                        logger.info(f"  {p}")
+                file_name = Path(file).name
+                logger.info(f"Processing file: {file_name}")
+                
+                # Find original and generated files
+                original_path = find_file(file_name, 'main-files/.github')
+                generated_path = find_file(file_name, '.github/generated')
+                
+                if not original_path or not generated_path:
+                    logger.warning(f"Could not find both versions of {file}")
+                    logger.info(f"Original path: {original_path}")
+                    logger.info(f"Generated path: {generated_path}")
                     continue
                 
-                # Read and save the file
-                with open(source_path) as f:
-                    file_content = f.read()
+                # Read both files
+                with open(original_path) as f:
+                    original_content = f.read()
+                with open(generated_path) as f:
+                    generated_content = f.read()
                 
-                # Save to staging
-                output_path = staging_dir / file
-                os.makedirs(output_path.parent, exist_ok=True)
-                with open(output_path, 'w') as f:
-                    f.write(file_content)
-                logger.info(f"Saved file to staging: {output_path}")
-                success_count += 1
+                # Get Claude's combined version
+                prompt = get_claude_prompt(original_content, generated_content, file)
+                response = call_claude(prompt)
+                
+                # Extract and save code
+                combined_code = extract_code(response)
+                if combined_code:
+                    output_path = staging_dir / file
+                    os.makedirs(output_path.parent, exist_ok=True)
+                    with open(output_path, 'w') as f:
+                        f.write(combined_code)
+                    logger.info(f"Saved combined file: {output_path}")
+                    success_count += 1
                 
             except Exception as e:
                 logger.error(f"Error processing {file}: {e}", exc_info=True)
