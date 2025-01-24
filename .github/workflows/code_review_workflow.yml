@@ -50,7 +50,15 @@ jobs:
           token: ${{ secrets.WORKFLOW_PAT }}
           fetch-depth: 1
 
-      # Set up Python
+      # Download artifacts from previous workflow if this is a workflow_run trigger
+      - name: Download workflow artifacts
+        if: github.event_name == 'workflow_run'
+        uses: actions/download-artifact@v3
+        with:
+          name: workflow-data
+          path: .github/generated
+
+      # Set up Python and dependencies
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -59,7 +67,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pathlib
+          pip install pathlib anthropic
 
       # Set up the directory structure
       - name: Setup directories
@@ -103,17 +111,44 @@ jobs:
 
       # Run the analysis using analyze_code from main
       - name: Analyze code
+        id: analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          # Run analyze_code.py from main
-          echo "Running code analysis..."
-          python analyze_code.py
+          # Create log directory
+          mkdir -p logs
           
-          # Debug staging contents
+          # Run analyze_code.py and capture output
+          echo "Running code analysis..."
+          python analyze_code.py 2>&1 | tee logs/analyze.log
+          
+          # Check if analysis was successful
+          if [ -f "logs/analyze.log" ]; then
+            echo "Analysis log:"
+            cat logs/analyze.log
+            
+            # Check for Claude responses in log
+            if grep -q "Got response from Claude" logs/analyze.log; then
+              echo "Claude analysis complete"
+            else
+              echo "Warning: No Claude responses found in log"
+            fi
+          fi
+          
+          # Verify staging contents
           echo "Staging directory contents:"
           find staging -type f
+          
+          # Save log as artifact
+          echo "logs_path=logs/analyze.log" >> $GITHUB_OUTPUT
+
+      # Upload analysis logs
+      - name: Upload analysis logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: analysis-logs
+          path: logs/analyze.log
 
       # Commit the changes
       - name: Commit combined files
@@ -153,8 +188,15 @@ jobs:
             git add ".github/$file"
           done <<< "$files"
           
+          # Check analyze logs for success
+          if [ -f "logs/analyze.log" ] && grep -q "Got response from Claude" logs/analyze.log; then
+            commit_msg="Combined code updates from Claude analysis for issue #${{ github.event.inputs.issue_number || github.event.workflow_run.pull_requests[0].number }}"
+          else
+            commit_msg="Updated code files for issue #${{ github.event.inputs.issue_number || github.event.workflow_run.pull_requests[0].number }}"
+          fi
+          
           # Commit and push
-          git commit -m "Combined code updates for issue #${{ github.event.inputs.issue_number || github.event.workflow_run.pull_requests[0].number }}"
+          git commit -m "$commit_msg"
           git push origin HEAD:${{ steps.set-branch.outputs.branch_name }}
 
       - name: Add review comment
