@@ -56,9 +56,14 @@ jobs:
           # Copy analyze_code.py from main to workspace
           cp main-files/.github/scripts/analyze_code.py .github/scripts/ || true
           
-          # Copy files to be combined to .github/generated
-          cp -r .github/workflows .github/generated/ || true
-          cp -r .github/scripts .github/generated/ || true
+          # Copy generated files and metadata from issue branch
+          if [ -d ".github/generated" ]; then
+            echo "Copying generated files from issue branch"
+            cp -r .github/generated/* .github/generated/
+          else
+            echo "No .github/generated directory found in issue branch"
+            ls -la .github/
+          fi
           
           rm -rf main-files
           
@@ -74,6 +79,14 @@ jobs:
           
           echo "==== Contents of .github/generated ===="
           ls -la .github/generated/ || echo "generated dir not found"
+          
+          # Check for metadata.json
+          if [ -f ".github/generated/metadata.json" ]; then
+            echo "==== Contents of metadata.json ===="
+            cat .github/generated/metadata.json
+          else
+            echo "metadata.json not found"
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v4
