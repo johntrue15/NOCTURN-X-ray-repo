@@ -8,9 +8,8 @@ on:
         required: true
         type: string
 
-permissions:
-  contents: write
-  actions: write
+permissions: write-all
+
 
 jobs:
   test:
@@ -28,11 +27,18 @@ jobs:
         with:
           ref: ${{ steps.set-branch.outputs.branch_name }}
           persist-credentials: true
+          token: ${{ secrets.WORKFLOW_PAT }}
 
       - name: Create and commit workflow
         env:
           WORKFLOW_PAT: ${{ secrets.WORKFLOW_PAT }}
         run: |
+          # Debug git status
+          echo "Current branch:"
+          git branch
+          echo "Remote URL:"
+          git remote -v
+          
           # Create test workflow file
           mkdir -p .github/workflows
           cat > .github/workflows/hello_world.yml << 'EOL'
