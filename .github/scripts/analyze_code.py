@@ -2,7 +2,7 @@ import os
 import re
 import json
 import logging
-import anthropic
+from anthropic import Anthropic
 from pathlib import Path
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -14,7 +14,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Initialize Claude client
-claude = anthropic.Client(os.environ.get('ANTHROPIC_API_KEY'))
+anthropic = Anthropic(api_key=os.environ.get('ANTHROPIC_API_KEY'))
 CLAUDE_MODEL = "claude-3-sonnet-20240229"
 
 @retry(stop=after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
@@ -25,7 +25,7 @@ def call_claude(prompt):
         You will receive an original file from main and updates to be integrated. 
         Provide only the combined code without any explanation."""
         
-        response = claude.messages.create(
+        response = anthropic.messages.create(
             model=CLAUDE_MODEL,
             max_tokens=4096,
             temperature=0,
