@@ -46,8 +46,12 @@ jobs:
       # Set up the directory structure
       - name: Setup directories
         run: |
+          # Debug initial state
+          echo "==== Initial directory structure ===="
+          ls -la .github/ || echo ".github not found"
+          
           # Create necessary directories
-          mkdir -p .github/{main,generated,scripts}
+          mkdir -p .github/{main,scripts}
           
           # Copy relevant files from main to .github/main
           cp -r main-files/.github/scripts .github/main/ || true
@@ -55,15 +59,6 @@ jobs:
           
           # Copy analyze_code.py from main to workspace
           cp main-files/.github/scripts/analyze_code.py .github/scripts/ || true
-          
-          # Copy generated files and metadata from issue branch
-          if [ -d ".github/generated" ]; then
-            echo "Copying generated files from issue branch"
-            cp -r .github/generated/* .github/generated/
-          else
-            echo "No .github/generated directory found in issue branch"
-            ls -la .github/
-          fi
           
           rm -rf main-files
           
@@ -85,7 +80,9 @@ jobs:
             echo "==== Contents of metadata.json ===="
             cat .github/generated/metadata.json
           else
-            echo "metadata.json not found"
+            echo "metadata.json not found in: $(pwd)/.github/generated/"
+            echo "Listing .github contents:"
+            ls -R .github/
           fi
 
       - name: Set up Python
