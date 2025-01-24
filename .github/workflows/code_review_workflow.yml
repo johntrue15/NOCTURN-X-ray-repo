@@ -144,24 +144,25 @@ jobs:
           # Create staging directory with complete file structure
           mkdir -p staging/.github/{workflows,scripts}
           
-          # Copy files from generated directory
-          for file in .github/generated/workflows/combined_ct_images_to_text.yml \
-                     .github/generated/scripts/url_screenshot_check.py; do
-            if [ -f "$file" ]; then
-              # Get the relative path after .github/generated/
-              rel_path=${file#.github/generated/}
-              dst_dir="staging/.github/$(dirname $rel_path)"
-              
-              echo "Copying $file to $dst_dir/"
+          # Copy files from generated directory using metadata
+          while IFS= read -r file; do
+            src_file=".github/generated/$file"
+            dst_dir="staging/.github/$(dirname $file)"
+            
+            echo "Copying $file:"
+            echo "  From: $src_file"
+            echo "  To: $dst_dir/"
+            
+            if [ -f "$src_file" ]; then
               mkdir -p "$dst_dir"
-              cp "$file" "$dst_dir/"
+              cp "$src_file" "$dst_dir/"
               echo "Successfully copied file"
             else
-              echo "Warning: Generated file not found: $file"
+              echo "Warning: Generated file not found: $src_file"
               echo "Contents of .github/generated:"
               ls -R .github/generated/
             fi
-          done
+          done <<< "$required_files"
           
           # Run analyze_code.py to process the files
           echo "Running code analysis..."
@@ -173,7 +174,7 @@ jobs:
           
           # Verify required files exist in staging
           while IFS= read -r file; do
-            if [ ! -f "staging/$file" ]; then
+            if [ ! -f "staging/.github/$file" ]; then
               echo "Error: Required file not found in staging: $file"
               exit 1
             fi
