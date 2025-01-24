@@ -118,13 +118,18 @@ def merge_code_blocks(original_content, generated_content, merge_markers):
 
 def parse_code_blocks(response):
     """Parse code blocks from Claude's response"""
-    # First try exact pattern
-    pattern = r'```(\w+):([^`\n]+)\n(.*?)```'
+    # First try exact pattern with language
+    pattern = r'```(\w+):([^`\n]+)\n(.*?)\n```'
     matches = list(re.finditer(pattern, response, re.DOTALL))
     
     if not matches:
-        # Try more lenient pattern
-        pattern = r'```.*?:([^`\n]+)\n(.*?)```'
+        # Try without language
+        pattern = r'```([^`\n]+)\n(.*?)\n```'
+        matches = list(re.finditer(pattern, response, re.DOTALL))
+    
+    if not matches:
+        # Try most lenient pattern
+        pattern = r'```.*?([^:\n]+)(?:\n|\s*)(.*?)```'
         matches = list(re.finditer(pattern, response, re.DOTALL))
     
     if not matches:
@@ -136,29 +141,34 @@ def parse_code_blocks(response):
     parsed_blocks = []
     for match in matches:
         try:
-            if len(match.groups()) == 3:
-                language, file_path, content = match.groups()
+            groups = match.groups()
+            if len(groups) == 3:
+                # First pattern with language
+                _, file_path, content = groups
+            elif len(groups) == 2:
+                # Second or third pattern
+                file_path, content = groups
             else:
-                file_path = match.group(1)
-                content = match.group(2)
+                logger.warning(f"Unexpected match groups: {groups}")
+                continue
             
-            file_path = file_path.strip()
+            file_path = file_path.strip().strip(':')  # Remove any trailing colons
             content = content.strip()
             
             if not file_path:
                 logger.warning("Code block found without file path")
                 continue
             
+            # Log the raw match for debugging
+            logger.debug(f"Raw match: {match.group(0)[:100]}...")
             logger.info(f"Found code block for {file_path} ({len(content)} chars)")
-            # Log preview of content for debugging
-            preview = content[:100] + "..." if len(content) > 100 else content
-            logger.debug(f"Content preview:\n{preview}")
             
             parsed_blocks.append((file_path, content))
             
         except Exception as e:
             logger.error(f"Error parsing code block: {e}")
             logger.error(f"Match groups: {match.groups()}")
+            logger.error(f"Raw match: {match.group(0)[:100]}...")
             continue
     
     if parsed_blocks:
