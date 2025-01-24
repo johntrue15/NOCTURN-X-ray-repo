@@ -31,15 +31,18 @@ jobs:
           echo "Using branch: $BRANCH_NAME"
 
       # First checkout main branch files
-      - uses: actions/checkout@v4
+      - name: Checkout main branch
+        uses: actions/checkout@v4
         with:
           ref: main
           path: main-files
-          repository: johntrue15/NOCTURN-X-ray-repo
-          token: ${{ secrets.WORKFLOW_PAT }}
+          repository: ${{ github.repository }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
 
       # Then checkout the issue branch to the workspace root
-      - uses: actions/checkout@v4
+      - name: Checkout issue branch
+        uses: actions/checkout@v4
         with:
           ref: ${{ steps.set-branch.outputs.branch_name }}
           fetch-depth: 0  # Get full history
@@ -67,10 +70,18 @@ jobs:
           ls -la
           
           echo "Main files location:"
-          ls -la main-files/
+          ls -la main-files/ || echo "main-files not found"
           
           # Create necessary directories
           mkdir -p .github/generated
+          
+          # Verify main files checkout
+          if [ ! -d "main-files" ]; then
+            echo "Error: main-files directory not found"
+            echo "Current directory contents:"
+            ls -la
+            exit 1
+          fi
           
           # Copy analyze_code.py from main to workspace root
           if [ -f "main-files/.github/scripts/analyze_code.py" ]; then
