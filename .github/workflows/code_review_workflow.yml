@@ -101,6 +101,27 @@ jobs:
             --artifacts-dir "artifacts"
 
       - name: Upload combined code
+        run: |
+          # Verify directory exists and contains files
+          if [ ! -d ".github/generated/complete" ]; then
+            echo "Error: Output directory not found"
+            exit 1
+          fi
+          
+          # List generated files
+          echo "Generated files:"
+          find .github/generated/complete -type f
+          
+          # Count files
+          file_count=$(find .github/generated/complete -type f | wc -l)
+          if [ "$file_count" -eq 0 ]; then
+            echo "Error: No files found in output directory"
+            exit 1
+          fi
+          
+          echo "Found $file_count generated files"
+
+      - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: combined-code
