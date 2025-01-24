@@ -4,9 +4,13 @@ import anthropic
 import requests
 from pathlib import Path
 import logging
+import datetime
 
-# Set up logging
-logging.basicConfig(level=logging.INFO)
+# Set up logging with more detailed format
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 def get_issue_details(issue_number, repo, token):
@@ -55,6 +59,7 @@ def main():
         
         # Get issue details including comments
         issue_content = get_issue_details(issue_number, repo, github_token)
+        logger.info("Successfully fetched issue details")
         
         # Improved system prompt
         system_prompt = """You are a helpful AI assistant that generates code based on GitHub issues. 
@@ -64,7 +69,9 @@ def main():
         3. Include necessary imports and documentation
         4. Return complete, working code files
         
-        Format your response as valid Python code without any markdown or explanations."""
+        IMPORTANT: You must return valid Python code that can be executed. Do not include any markdown formatting or explanations - only the code itself."""
+        
+        logger.info("Sending request to Claude...")
         
         # Create message for Claude
         message = client.messages.create(
@@ -75,21 +82,25 @@ def main():
             messages=[
                 {
                     "role": "user",
-                    "content": f"Generate code implementation for this issue:\n\n{issue_content}"
+                    "content": f"Generate code implementation for this issue. Return only the code, no explanations or markdown:\n\n{issue_content}"
                 }
             ]
         )
         
         # Extract the response and verify it's not empty
         code_response = message.content[0].text.strip()
+        logger.info(f"Received response from Claude (length: {len(code_response)})")
+        
         if not code_response:
             raise ValueError("Claude returned empty response")
-            
-        logger.info("Successfully generated code response")
         
+        # Log first few characters of response for debugging
+        logger.info(f"First 100 chars of response: {code_response[:100]}")
+            
         # Create the output directory
         output_dir = Path('.github/generated')
         output_dir.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Created output directory: {output_dir}")
         
         # Save the generated code
         output_file = output_dir / 'generated_code.py'
@@ -98,18 +109,30 @@ def main():
             
         logger.info(f"Saved generated code to {output_file}")
         
+        # Verify file was written correctly
+        if not output_file.exists():
+            raise ValueError(f"Failed to create output file: {output_file}")
+            
+        file_size = output_file.stat().st_size
+        logger.info(f"Generated file size: {file_size} bytes")
+        
         # Create a metadata file with issue information
         metadata = {
             "issue_number": issue_number,
             "repo": repo,
-            "generated_files": [str(output_file)]
+            "generated_files": [str(output_file)],
+            "generation_timestamp": datetime.datetime.now().isoformat(),
+            "code_length": len(code_response)
         }
         
-        with open(output_dir / 'metadata.json', 'w') as f:
+        metadata_file = output_dir / 'metadata.json'
+        with open(metadata_file, 'w') as f:
             json.dump(metadata, f, indent=2)
             
+        logger.info("Successfully created metadata file")
+        
     except Exception as e:
-        logger.error(f"Error generating code: {str(e)}")
+        logger.error(f"Error generating code: {str(e)}", exc_info=True)
         raise
 
 if __name__ == "__main__":
