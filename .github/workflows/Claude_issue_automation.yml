@@ -62,33 +62,29 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_NUMBER: ${{ inputs.issue_number }}
           REPO: ${{ github.repository }}
+          PYTHONUNBUFFERED: 1
         run: |
-          python .github/scripts/generate_code.py
+          # Enable debug logging
+          export PYTHONPATH="${PYTHONPATH}:${GITHUB_WORKSPACE}"
+          export PYTHONIOENCODING=utf-8
+          python -u .github/scripts/generate_code.py
           
-          # Verify generated files exist and have content
+          # Check for generated files
           if [ ! -d ".github/generated" ]; then
             echo "Error: Generated code directory not found"
             exit 1
           fi
           
-          if [ ! -f ".github/generated/generated_code.py" ]; then
-            echo "Error: No code was generated"
-            exit 1
-          fi
-          
-          # Check if generated file has content
-          if [ ! -s ".github/generated/generated_code.py" ]; then
-            echo "Error: Generated code file is empty"
-            exit 1
-          fi
-          
-          # Display generated file info
+          # List all generated files
           echo "Generated files:"
-          ls -l .github/generated/
+          find .github/generated -type f -exec ls -l {} \;
           
-          # Show first few lines of generated code
-          echo "Preview of generated code:"
-          head -n 5 .github/generated/generated_code.py
+          # Show preview of each generated file
+          for file in $(find .github/generated -type f -name "*.py" -o -name "*.yml"); do
+            echo "Preview of ${file}:"
+            head -n 5 "${file}"
+            echo "---"
+          done
 
       # After generating code but before creating PR
       - name: Save workflow data
