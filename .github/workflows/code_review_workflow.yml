@@ -146,13 +146,12 @@ jobs:
           git add .github/workflows/combined_ct_images_to_text.yml
           git add .github/scripts/url_screenshot_check.py
           
-          # Configure Git with token-based authentication
-          git config --global url."https://x-access-token:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
-          
           # Commit with issue number in message
           git commit -m "Combined code updates for issue #${{ github.event.inputs.issue_number || github.event.workflow_run.pull_requests[0].number }}"
           
-          # Push to the issue branch
+          # Push using GitHub CLI
+          gh auth setup-git
+          gh auth status
           git push origin HEAD:${{ steps.set-branch.outputs.branch_name }}
 
       - name: Add review comment
