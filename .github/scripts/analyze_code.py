@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 anthropic = Anthropic(api_key=os.environ.get('ANTHROPIC_API_KEY'))
 CLAUDE_MODEL = "claude-3-sonnet-20240229"
 
-@retry(stop=after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
 def call_claude(prompt):
     """Call Claude API to get response with retries"""
     try:
