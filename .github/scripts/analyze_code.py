@@ -194,7 +194,7 @@ def main():
             
         logger.info(f"Found {len(code_blocks)} code blocks to process")
         
-        # Create output directory
+        # Create output directory with simpler structure
         output_dir = Path('.github/generated/complete')
         output_dir.mkdir(parents=True, exist_ok=True)
         logger.info(f"Created output directory: {output_dir}")
@@ -207,11 +207,10 @@ def main():
                 # Analyze the generated code
                 needs_merge, merge_markers = analyze_code_block(generated_content)
                 
-                # Create full output path
-                output_file = output_dir / file_path
-                # Ensure parent directories exist
-                output_file.parent.mkdir(parents=True, exist_ok=True)
-                logger.info(f"Created directory structure for: {output_file}")
+                # Use just the filename for output
+                simple_name = Path(file_path).name
+                output_file = output_dir / simple_name
+                logger.info(f"Saving to simplified path: {output_file}")
                 
                 if needs_merge:
                     # Get original file content
@@ -236,6 +235,10 @@ def main():
                 
                 processed_files.append(str(output_file))
                 logger.info(f"Saved file to: {output_file}")
+                
+                # Also save original path mapping
+                with open(output_dir / 'path_mapping.json', 'w') as f:
+                    json.dump({simple_name: file_path}, f, indent=2)
                 
             except Exception as e:
                 logger.error(f"Error processing {file_path}: {e}", exc_info=True)
