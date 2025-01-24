@@ -178,6 +178,33 @@ def main():
             else:
                 context += f"New file to create: {path}\n\n"
         
+        # Define system prompt
+        system_prompt = """You are a helpful AI assistant that generates code based on GitHub issues. 
+        Your task is to:
+        1. Analyze the issue description and comments
+        2. Generate or modify the requested files
+        3. Include necessary imports and documentation
+        4. Return complete, working code files
+        
+        IMPORTANT: For each file, you must format your response exactly like this:
+        ```language:full/path/to/file
+        [file contents here]
+        ```
+        
+        For example:
+        ```yaml:.github/workflows/example.yml
+        name: Example Workflow
+        on: push
+        ```
+        
+        ```python:.github/scripts/example.py
+        import os
+        def main():
+            pass
+        ```
+        
+        Do not include any explanations or markdown formatting outside the code blocks."""
+        
         # Store the full prompt
         prompt = f"Generate or modify the following files based on this issue:\n\n{context}\nIssue details:\n{issue_content}"
         
