@@ -1,0 +1,65 @@
+# Previous content unchanged until url_check job outputs section
+    outputs:
+      has_media_error: ${{ steps.url_check.outputs.has_media_error }}
+      has_server_error: ${{ steps.url_check.outputs.has_server_error }}
+      has_no_file: ${{ steps.url_check.outputs.has_no_file }}
+      has_mesh: ${{ steps.type_check.outputs.has_mesh }}
+      has_volumetric_images: ${{ steps.type_check.outputs.has_volumetric_images }}
+
+# ... other content unchanged until url_check step
+
+      - name: Run URL check
+        id: url_check
+        run: |
+          python .github/scripts/url_screenshot_check.py release_body.txt || true
+          
+          if [ -f "url_check_status.json" ]; then
+            status=$(cat url_check_status.json | jq -r .status)
+            if [ "$status" = "media_error" ]; then
+              echo "has_media_error=true" >> "$GITHUB_OUTPUT"
+              echo "has_server_error=false" >> "$GITHUB_OUTPUT"
+              echo "has_no_file=false" >> "$GITHUB_OUTPUT"
+            elif [ "$status" = "server_error" ]; then
+              echo "has_media_error=false" >> "$GITHUB_OUTPUT"
+              echo "has_server_error=true" >> "$GITHUB_OUTPUT"
+              echo "has_no_file=false" >> "$GITHUB_OUTPUT"
+            elif [ "$status" = "no_file" ]; then
+              echo "has_media_error=false" >> "$GITHUB_OUTPUT"
+              echo "has_server_error=false" >> "$GITHUB_OUTPUT"
+              echo "has_no_file=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "has_media_error=false" >> "$GITHUB_OUTPUT"
+              echo "has_server_error=false" >> "$GITHUB_OUTPUT"
+              echo "has_no_file=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "has_media_error=false" >> "$GITHUB_OUTPUT"
+            echo "has_server_error=false" >> "$GITHUB_OUTPUT"
+            echo "has_no_file=false" >> "$GITHUB_OUTPUT"
+          fi
+
+# ... other content unchanged until process_3d job conditions
+
+  process_3d:
+    needs: [check_and_analyze, url_check]
+    if: |
+      needs.check_and_analyze.outputs.is_morphosource == 'true' &&
+      needs.check_and_analyze.outputs.has_analysis != 'true' &&
+      needs.url_check.outputs.has_media_error != 'true' &&
+      needs.url_check.outputs.has_server_error != 'true' &&
+      needs.url_check.outputs.has_no_file != 'true' &&
+      needs.url_check.outputs.has_mesh == 'true'
+
+# ... other content unchanged until process_2d job conditions
+
+  process_2d:
+    needs: [check_and_analyze, url_check]
+    if: |
+      needs.check_and_analyze.outputs.is_morphosource == 'true' &&
+      needs.check_and_analyze.outputs.has_analysis != 'true' &&
+      needs.url_check.outputs.has_media_error != 'true' &&
+      needs.url_check.outputs.has_server_error != 'true' &&
+      needs.url_check.outputs.has_no_file != 'true' &&
+      needs.url_check.outputs.has_volumetric_images == 'true'
+
+# ... rest of the file remains unchanged
