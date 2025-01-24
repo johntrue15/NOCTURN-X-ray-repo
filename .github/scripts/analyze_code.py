@@ -1,10 +1,10 @@
 import os
 import re
 import json
-import argparse
-from pathlib import Path
-from github import Github
 import logging
+import anthropic
+from pathlib import Path
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 # Set up logging
 logging.basicConfig(
@@ -13,277 +13,129 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-def load_claude_conversation(artifacts_dir):
-    """Load the Claude conversation from artifacts"""
-    # List all files in artifacts directory
-    logger.info(f"Searching for Claude conversation in {artifacts_dir}")
-    for path in Path(artifacts_dir).rglob('*'):
-        logger.info(f"Found: {path}")
-        
-        # Try to load any JSON file that might be the conversation
-        if path.suffix == '.json':
-            try:
-                with open(path) as f:
-                    data = json.load(f)
-                    # Verify it's a Claude conversation by checking for required fields
-                    if all(key in data for key in ['claude_response', 'system_prompt', 'user_prompt']):
-                        logger.info(f"Found valid Claude conversation at {path}")
-                        return data
-            except Exception as e:
-                logger.warning(f"Failed to load {path}: {e}")
-                continue
-    
-    raise ValueError(f"Could not find valid Claude conversation file in {artifacts_dir}")
+# Initialize Claude client
+claude = anthropic.Client(os.environ.get('ANTHROPIC_API_KEY'))
+CLAUDE_MODEL = "claude-3-sonnet-20240229"
 
-def analyze_code_block(content):
-    """Analyze a code block for merge markers and existing code references"""
-    needs_merge = False
-    merge_markers = []
-    
-    # Look for common markers of existing code
-    patterns = [
-        r'#\s*\.\.\.\s*\(existing\s+(?:steps|code)\s*\.\.\.\s*\)',
-        r'#\s*\.{3}\s*existing\s+(?:steps|code)\s*\.{3}\s*',
-        r'#\s*existing\s+(?:steps|code)\s*\.{3}\s*',
-        r'\/\/\s*\.{3}\s*existing\s+(?:code|steps)\s*\.{3}\s*'
-    ]
-    
-    lines = content.split('\n')
-    for i, line in enumerate(lines):
-        for pattern in patterns:
-            if re.search(pattern, line, re.IGNORECASE):
-                needs_merge = True
-                merge_markers.append({
-                    'line': i + 1,
-                    'marker': line.strip()
-                })
-                
-    return needs_merge, merge_markers
-
-def get_original_file(repo, file_path, branch='main'):
-    """Get the original file content from the repository"""
+@retry(stop=after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
+def call_claude(prompt):
+    """Call Claude API to get response with retries"""
     try:
-        content = repo.get_contents(file_path, ref=branch)
-        return content.decoded_content.decode('utf-8')
+        system_prompt = """You are an expert programmer helping to combine code files. 
+        You will receive an original file from main and updates to be integrated. 
+        Provide only the combined code without any explanation."""
+        
+        response = claude.messages.create(
+            model=CLAUDE_MODEL,
+            max_tokens=4096,
+            temperature=0,
+            system=system_prompt,
+            messages=[{
+                "role": "user",
+                "content": prompt
+            }]
+        )
+        
+        return response.content[0].text
+
     except Exception as e:
-        logger.warning(f"Could not get original file {file_path}: {str(e)}")
-        return None
+        logger.error(f"Error calling Claude API: {e}")
+        raise
 
-def merge_code_blocks(original_content, generated_content, merge_markers):
-    """Merge original and generated code based on merge markers"""
-    if not original_content:
-        return generated_content
-        
-    result = []
-    gen_lines = generated_content.split('\n')
-    orig_lines = original_content.split('\n')
-    
-    i = 0
-    while i < len(gen_lines):
-        line = gen_lines[i]
-        
-        # Check if this line is a merge marker
-        is_marker = False
-        for marker in merge_markers:
-            if marker['line'] - 1 == i:
-                is_marker = True
-                # Find the corresponding section in original code
-                section_start = None
-                section_end = None
-                
-                # Simple heuristic: look for the next non-empty line after the marker
-                j = i + 1
-                while j < len(gen_lines) and not gen_lines[j].strip():
-                    j += 1
-                    
-                if j < len(gen_lines):
-                    next_content = gen_lines[j].strip()
-                    # Find this content in original file
-                    for k, orig_line in enumerate(orig_lines):
-                        if orig_line.strip() == next_content:
-                            section_start = k
-                            break
-                            
-                if section_start is not None:
-                    # Add original code section
-                    result.extend(orig_lines[section_start:])
-                    i = j  # Skip past the marker
-                    break
-                
-        if not is_marker:
-            result.append(line)
-            i += 1
-            
-    return '\n'.join(result)
+def get_claude_prompt(original_file, generated_file, file_path):
+    """Create prompt for Claude to combine files"""
+    prompt = f"""Please combine these two code files into a single updated version.
+The first file is the original from main, and the second contains updates to be integrated.
 
-def parse_code_blocks(response):
-    """Parse code blocks from Claude's response"""
-    # First try exact pattern with language
-    pattern = r'```(\w+):([^`\n]+)\n(.*?)\n```'
-    matches = list(re.finditer(pattern, response, re.DOTALL))
+Original file ({file_path}):
+```
+{original_file}
+```
+
+Generated updates ({file_path}):
+```
+{generated_file}
+```
+
+Please provide the complete combined code incorporating the updates while preserving the original structure.
+Return only the code without any explanation, wrapped in triple backticks."""
+
+    return prompt
+
+def process_files(generated_dir, output_dir):
+    """Process original and generated files"""
+    # Create output directory
+    os.makedirs(output_dir, exist_ok=True)
     
-    if not matches:
-        # Try without language
-        pattern = r'```([^`\n]+)\n(.*?)\n```'
-        matches = list(re.finditer(pattern, response, re.DOTALL))
+    # Find generated files
+    generated_files = {}
+    for path in Path(generated_dir).rglob('*'):
+        if path.is_file() and path.suffix in ['.py', '.yml', '.yaml', '.json']:
+            # Skip files already in complete directory
+            if 'complete' in str(path):
+                continue
+            rel_path = path.relative_to(generated_dir)
+            generated_files[rel_path] = path
+
+    logger.info(f"Found {len(generated_files)} generated files to process")
     
-    if not matches:
-        # Try most lenient pattern
-        pattern = r'```.*?([^:\n]+)(?:\n|\s*)(.*?)```'
-        matches = list(re.finditer(pattern, response, re.DOTALL))
-    
-    if not matches:
-        logger.error("No code blocks found in response")
-        logger.error("Response preview:")
-        logger.error(response[:1000])
-        return []
-    
-    parsed_blocks = []
-    for match in matches:
+    # Process each file
+    for rel_path, generated_path in generated_files.items():
         try:
-            groups = match.groups()
-            if len(groups) == 3:
-                # First pattern with language
-                _, file_path, content = groups
-            elif len(groups) == 2:
-                # Second or third pattern
-                file_path, content = groups
-            else:
-                logger.warning(f"Unexpected match groups: {groups}")
+            # Get original file from main branch files in .github/main directory
+            original_path = Path('.github/main') / rel_path
+            if not original_path.exists():
+                logger.warning(f"Original file not found: {original_path}")
                 continue
+                
+            # Read both files
+            with open(original_path) as f:
+                original_content = f.read()
+            with open(generated_path) as f:
+                generated_content = f.read()
+                
+            # Get Claude's combined version
+            prompt = get_claude_prompt(original_content, generated_content, str(rel_path))
+            response = call_claude(prompt)
             
-            file_path = file_path.strip().strip(':')  # Remove any trailing colons
-            content = content.strip()
-            
-            if not file_path:
-                logger.warning("Code block found without file path")
+            # Extract code from response
+            code_pattern = r'```(?:\w+)?\n(.*?)```'
+            match = re.search(code_pattern, response, re.DOTALL)
+            if not match:
+                logger.error(f"Could not extract code from Claude's response for {rel_path}")
                 continue
+                
+            combined_code = match.group(1).strip()
             
-            # Log the raw match for debugging
-            logger.debug(f"Raw match: {match.group(0)[:100]}...")
-            logger.info(f"Found code block for {file_path} ({len(content)} chars)")
-            
-            parsed_blocks.append((file_path, content))
+            # Save combined file to complete directory in issue branch
+            output_path = Path(output_dir) / rel_path
+            os.makedirs(output_path.parent, exist_ok=True)
+            with open(output_path, 'w') as f:
+                f.write(combined_code)
+                
+            logger.info(f"Saved combined file: {output_path}")
             
         except Exception as e:
-            logger.error(f"Error parsing code block: {e}")
-            logger.error(f"Match groups: {match.groups()}")
-            logger.error(f"Raw match: {match.group(0)[:100]}...")
+            logger.error(f"Error processing {rel_path}: {e}")
             continue
-    
-    if parsed_blocks:
-        logger.info(f"Successfully parsed {len(parsed_blocks)} code blocks")
-    else:
-        logger.error("No valid code blocks could be parsed")
-        logger.error("Full response:")
-        logger.error(response)
-    
-    return parsed_blocks
 
 def main():
+    import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--issue', required=True)
-    parser.add_argument('--branch', required=True)
     parser.add_argument('--repo', required=True)
+    parser.add_argument('--branch', required=True)
     parser.add_argument('--artifacts-dir', required=True)
     args = parser.parse_args()
     
     try:
-        # Initialize GitHub client
-        gh = Github(os.environ['GITHUB_TOKEN'])
-        repo = gh.get_repo(args.repo)
-        
-        # Load Claude conversation
-        conversation = load_claude_conversation(args.artifacts_dir)
-        logger.info("Successfully loaded Claude conversation")
-        
-        # Parse code blocks from Claude's response
-        code_blocks = parse_code_blocks(conversation['claude_response'])
-        if not code_blocks:
-            raise ValueError("No code blocks found in Claude's response")
-            
-        logger.info(f"Found {len(code_blocks)} code blocks to process")
-        
-        # Create output directory with simpler structure
-        output_dir = Path('.github/generated/complete')
-        output_dir.mkdir(parents=True, exist_ok=True)
-        logger.info(f"Created output directory: {output_dir}")
-        
-        review_comments = []
-        processed_files = []
-        
-        for file_path, generated_content in code_blocks:
-            try:
-                # Analyze the generated code
-                needs_merge, merge_markers = analyze_code_block(generated_content)
-                
-                # Use just the filename for output
-                simple_name = Path(file_path).name
-                output_file = output_dir / simple_name
-                logger.info(f"Saving to simplified path: {output_file}")
-                
-                if needs_merge:
-                    # Get original file content
-                    original_content = get_original_file(repo, file_path)
-                    if original_content:
-                        # Merge the code
-                        final_content = merge_code_blocks(original_content, generated_content, merge_markers)
-                        review_comments.append(f"- Merged changes in `{file_path}` with existing code")
-                        logger.info(f"Merged changes for {file_path}")
-                    else:
-                        final_content = generated_content
-                        review_comments.append(f"- Could not find original file `{file_path}` to merge with")
-                        logger.warning(f"Could not find original file {file_path} for merging")
-                else:
-                    final_content = generated_content
-                    review_comments.append(f"- Generated new file `{file_path}`")
-                    logger.info(f"Generated new file {file_path}")
-                
-                # Save the final code
-                with open(output_file, 'w') as f:
-                    f.write(final_content)
-                
-                processed_files.append(str(output_file))
-                logger.info(f"Saved file to: {output_file}")
-                
-                # Also save original path mapping
-                with open(output_dir / 'path_mapping.json', 'w') as f:
-                    json.dump({simple_name: file_path}, f, indent=2)
-                
-            except Exception as e:
-                logger.error(f"Error processing {file_path}: {e}", exc_info=True)
-                continue
-        
-        if not processed_files:
-            raise ValueError("No files were processed successfully")
-            
-        # List all generated files
-        logger.info("Generated files:")
-        for path in Path(output_dir).rglob('*'):
-            if path.is_file():
-                logger.info(f"  {path}")
-        
-        # Create review comment
-        review_comment = "## Code Analysis Results\n\n"
-        review_comment += "Analyzed generated code and performed the following actions:\n\n"
-        review_comment += '\n'.join(review_comments)
-        review_comment += "\n\nGenerated files:\n"
-        for file in processed_files:
-            review_comment += f"- {file}\n"
-        
-        review_file = Path('.github/generated/review_comment.md')
-        review_file.parent.mkdir(parents=True, exist_ok=True)
-        with open(review_file, 'w') as f:
-            f.write(review_comment)
-        
-        logger.info(f"Successfully processed {len(processed_files)} files")
+        # Process files using paths in the issue branch
+        process_files(
+            generated_dir=args.artifacts_dir,
+            output_dir=os.path.join(args.artifacts_dir, 'complete')
+        )
         
     except Exception as e:
         logger.error(f"Error in analysis: {str(e)}", exc_info=True)
-        # List directory contents for debugging
-        logger.error("Directory contents:")
-        for path in Path('.').rglob('*'):
-            logger.error(f"  {path}")
         raise
 
 if __name__ == '__main__':
