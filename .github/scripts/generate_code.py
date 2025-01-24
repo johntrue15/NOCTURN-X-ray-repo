@@ -88,6 +88,32 @@ def get_issue_details(issue_number, repo, token):
     
     return "".join(full_conversation)
 
+def parse_code_blocks(response):
+    """Parse code blocks from Claude's response with better error handling"""
+    # More specific regex pattern for code blocks
+    pattern = r'```(?:(\w+):)?([^\n]+)?\n(.*?)```'
+    matches = list(re.finditer(pattern, response, re.DOTALL))
+    
+    if not matches:
+        logger.error("No code blocks found in response")
+        logger.debug(f"Response content:\n{response[:500]}...")  # Log first 500 chars
+        return []
+    
+    parsed_blocks = []
+    for match in matches:
+        language = match.group(1) or ''
+        file_path = match.group(2) or ''
+        content = match.group(3).strip()
+        
+        if not file_path:
+            logger.warning(f"Code block found without file path: {language}")
+            continue
+            
+        logger.info(f"Found code block - Path: {file_path}, Language: {language}, Content length: {len(content)}")
+        parsed_blocks.append((file_path, content))
+    
+    return parsed_blocks
+
 def main():
     try:
         # Get environment variables
@@ -124,7 +150,7 @@ def main():
             else:
                 context += f"New file to create: {path}\n\n"
         
-        # Improved system prompt
+        # Improved system prompt with clearer formatting instructions
         system_prompt = """You are a helpful AI assistant that generates code based on GitHub issues. 
         Your task is to:
         1. Analyze the issue description and comments
@@ -132,9 +158,21 @@ def main():
         3. Include necessary imports and documentation
         4. Return complete, working code files
         
-        For each file, format your response as:
-        ```language:path/to/file
-        // complete file contents here
+        IMPORTANT: For each file, you must format your response exactly like this:
+        ```language:full/path/to/file
+        [file contents here]
+        ```
+        
+        For example:
+        ```yaml:.github/workflows/example.yml
+        name: Example Workflow
+        on: push
+        ```
+        
+        ```python:.github/scripts/example.py
+        import os
+        def main():
+            pass
         ```
         
         Do not include any explanations or markdown formatting outside the code blocks."""
@@ -162,35 +200,30 @@ def main():
         if not code_response:
             raise ValueError("Claude returned empty response")
         
-        # Parse code blocks from response
-        code_blocks = re.finditer(r'```[\w-]*:?(.*?)\n(.*?)```', code_response, re.DOTALL)
+        # Log the first part of the response for debugging
+        logger.debug(f"Response preview:\n{code_response[:500]}")
+        
+        # Parse code blocks using the new function
+        parsed_blocks = parse_code_blocks(code_response)
+        if not parsed_blocks:
+            raise ValueError("No valid code blocks found in Claude's response")
         
         # Create the output directory
         output_dir = Path('.github/generated')
         output_dir.mkdir(parents=True, exist_ok=True)
         
         generated_files = []
-        for block in code_blocks:
-            file_path = block.group(1).strip()
-            code_content = block.group(2).strip()
-            
-            if not file_path:
-                logger.warning("Code block found without file path, skipping")
-                continue
-                
+        for file_path, content in parsed_blocks:
             # Create subdirectories if needed
             full_path = output_dir / file_path
             full_path.parent.mkdir(parents=True, exist_ok=True)
             
             # Save the generated code
             with open(full_path, 'w') as f:
-                f.write(code_content)
+                f.write(content)
                 
             generated_files.append(str(full_path))
             logger.info(f"Saved generated code to {full_path}")
-        
-        if not generated_files:
-            raise ValueError("No valid code blocks found in Claude's response")
         
         # Create metadata file
         metadata = {
@@ -208,6 +241,8 @@ def main():
         
     except Exception as e:
         logger.error(f"Error generating code: {str(e)}", exc_info=True)
+        logger.error("Full response from Claude:")
+        logger.error(code_response)
         raise
 
 if __name__ == "__main__":
