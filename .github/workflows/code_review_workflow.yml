@@ -30,11 +30,13 @@ jobs:
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
           echo "Using branch: $BRANCH_NAME"
 
-      # First checkout main branch files to a separate directory
+      # First checkout main branch files
       - uses: actions/checkout@v4
         with:
           ref: main
           path: main-files
+          repository: johntrue15/NOCTURN-X-ray-repo
+          token: ${{ secrets.WORKFLOW_PAT }}
 
       # Then checkout the issue branch to the workspace root
       - uses: actions/checkout@v4
@@ -65,7 +67,7 @@ jobs:
           ls -la
           
           echo "Main files location:"
-          ls -la main-files/.github/scripts/
+          ls -la main-files/
           
           # Create necessary directories
           mkdir -p .github/generated
@@ -76,13 +78,14 @@ jobs:
             echo "Copied analyze_code.py to workspace root"
           else
             echo "Error: analyze_code.py not found in main-files"
+            echo "Contents of main-files:"
             find main-files -type f
             exit 1
           fi
           
           # Debug final structure
           echo "Final workspace structure:"
-          find . -type f
+          find . -maxdepth 3 -type f
           
           echo "Contents of .github/generated:"
           ls -la .github/generated/
