@@ -30,17 +30,7 @@ jobs:
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
           echo "Using branch: $BRANCH_NAME"
 
-      # First checkout main branch files
-      - name: Checkout main branch
-        uses: actions/checkout@v4
-        with:
-          ref: main
-          path: main-files
-          repository: ${{ github.repository }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 1
-
-      # Then checkout the issue branch to the workspace root
+      # First checkout issue branch to get repository structure
       - name: Checkout issue branch
         uses: actions/checkout@v4
         with:
@@ -49,6 +39,16 @@ jobs:
           persist-credentials: true
           token: ${{ secrets.WORKFLOW_PAT }}
           repository: johntrue15/NOCTURN-X-ray-repo
+
+      # Then checkout main branch files to a subdirectory
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main-files
+          repository: johntrue15/NOCTURN-X-ray-repo
+          token: ${{ secrets.WORKFLOW_PAT }}
+          fetch-depth: 1
 
       # Set up Python
       - name: Set up Python
@@ -76,10 +76,10 @@ jobs:
           mkdir -p .github/generated
           
           # Verify main files checkout
-          if [ ! -d "main-files" ]; then
-            echo "Error: main-files directory not found"
-            echo "Current directory contents:"
-            ls -la
+          if [ ! -d "main-files/.github/scripts" ]; then
+            echo "Error: main-files scripts directory not found"
+            echo "Contents of main-files:"
+            find main-files -type f
             exit 1
           fi
           
@@ -89,8 +89,8 @@ jobs:
             echo "Copied analyze_code.py to workspace root"
           else
             echo "Error: analyze_code.py not found in main-files"
-            echo "Contents of main-files:"
-            find main-files -type f
+            echo "Contents of main-files/.github/scripts:"
+            ls -la main-files/.github/scripts/
             exit 1
           fi
           
