@@ -8,9 +8,8 @@ on:
         required: true
         type: string
   workflow_run:
-    workflows: ["Claude Issue Automation"]
-    types:
-      - completed
+    workflows: ["Auto Code Generation with Claude on Issue"]
+    types: [completed]
 
 permissions: write-all
 
