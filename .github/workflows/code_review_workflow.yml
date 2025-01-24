@@ -1,100 +1,70 @@
-name: "Code Review and Next Steps with Claude"
+name: "Code Review and Analysis"
 
 on:
-  workflow_run:
-    workflows: ["Auto Code Generation with Claude on Issue"]
-    types:
-      - completed
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - 'claude-pr/issue-*'
+      - 'testing/issue-*'
 
 permissions:
   contents: write
   pull-requests: write
-  issues: write
 
 jobs:
-  review:
+  analyze:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-
+    if: startsWith(github.head_ref, 'claude-pr/issue-') || startsWith(github.head_ref, 'testing/issue-')
+    
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
-          ref: main
-
-      - name: Install GitHub CLI
-        run: |
-          type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
-          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
-          && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
-          && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-          && sudo apt update \
-          && sudo apt install gh -y
+          fetch-depth: 0  # Full history for file comparisons
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-          
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install anthropic requests
+          pip install PyGithub
 
-      - name: Download workflow artifact
-        uses: dawidd6/action-download-artifact@v2
+      - name: Download workflow artifacts
+        uses: actions/download-artifact@v3
         with:
-          workflow: ${{ github.event.workflow_run.workflow_id }}
-          run_id: ${{ github.event.workflow_run.id }}
-          name: workflow-data
+          name: claude-conversation
+          path: artifacts
 
-      - name: Get PR and Generated Code
-        id: get_context
+      - name: Analyze and combine code
+        id: analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Get the issue number from the previous workflow
-          ISSUE_NUMBER=$(cat issue_number.txt)
-          echo "Looking for PR related to issue #$ISSUE_NUMBER"
+          # Get the issue number from branch name
+          BRANCH_NAME="${{ github.head_ref }}"
+          ISSUE_NUMBER=$(echo $BRANCH_NAME | grep -oE '[0-9]+$')
           
-          # Look for PR with branch name containing the issue number
-          PR_DATA=$(gh pr list --search "claude-pr/issue-$ISSUE_NUMBER" --json number,headRefName)
-          if [ -z "$PR_DATA" ]; then
-            echo "No PRs found for issue #$ISSUE_NUMBER. Exiting."
-            exit 1
-          fi
-          
-          PR_NUMBER=$(echo "$PR_DATA" | jq -r '.[0].number')
-          BRANCH_NAME=$(echo "$PR_DATA" | jq -r '.[0].headRefName')
-          
-          echo "Found PR #$PR_NUMBER on branch $BRANCH_NAME"
-          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_OUTPUT
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
-          
-          # Checkout the PR branch
-          git fetch origin $BRANCH_NAME
-          git checkout $BRANCH_NAME
+          # Run analysis
+          python .github/scripts/analyze_code.py \
+            --issue $ISSUE_NUMBER \
+            --branch "$BRANCH_NAME" \
+            --repo "${{ github.repository }}" \
+            --artifacts-dir "artifacts"
 
-      - name: Analyze Code with Claude
-        if: success()
-        id: analyze_code
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ steps.get_context.outputs.PR_NUMBER }}
-        run: python .github/scripts/analyze_code.py
+      - name: Upload combined code
+        uses: actions/upload-artifact@v3
+        with:
+          name: combined-code
+          path: .github/generated/complete
+          if-no-files-found: error
 
-      - name: Update PR with Analysis
-        if: success()
+      - name: Add review comment
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ steps.get_context.outputs.PR_NUMBER }}
         run: |
-          if [ -f .github/generated/analysis.md ]; then
-            ANALYSIS=$(cat .github/generated/analysis.md)
-            gh pr comment $PR_NUMBER --body "$ANALYSIS"
-          else
-            echo "Analysis file not found"
-            exit 1
+          if [ -f ".github/generated/review_comment.md" ]; then
+            gh pr comment "${{ github.event.pull_request.number }}" --body-file ".github/generated/review_comment.md"
           fi
