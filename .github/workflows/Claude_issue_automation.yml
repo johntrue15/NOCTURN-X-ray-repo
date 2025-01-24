@@ -89,6 +89,13 @@ jobs:
               echo "$code_blocks" | sed -n '/```python:.github\/scripts\/url_screenshot_check.py/,/```/p' | sed '1d;$d' > .github/generated/scripts/url_screenshot_check.py
               echo "Saved Python file"
             fi
+            
+            # Update metadata.json with correct paths
+            jq '.generated_files = [
+              "workflows/combined_ct_images_to_text.yml",
+              "scripts/url_screenshot_check.py"
+            ]' .github/generated/metadata.json > .github/generated/metadata.json.tmp && mv .github/generated/metadata.json.tmp .github/generated/metadata.json
+            
           else
             echo "Error: Claude conversation file not found"
             exit 1
