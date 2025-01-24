@@ -50,14 +50,6 @@ jobs:
           token: ${{ secrets.WORKFLOW_PAT }}
           fetch-depth: 1
 
-      # Download artifacts from previous workflow if this is a workflow_run trigger
-      - name: Download workflow artifacts
-        if: github.event_name == 'workflow_run'
-        uses: actions/download-artifact@v3
-        with:
-          name: workflow-data
-          path: .github/generated
-
       # Set up Python and dependencies
       - name: Set up Python
         uses: actions/setup-python@v4
