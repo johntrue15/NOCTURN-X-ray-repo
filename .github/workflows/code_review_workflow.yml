@@ -43,6 +43,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install anthropic tenacity PyGithub
           
+      - name: Download Claude conversation
+        if: github.event_name == 'workflow_run'
+        uses: actions/download-artifact@v4
+        with:
+          name: claude-conversation
+          path: .github/generated
+          
+      - name: Generate Claude conversation
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python generate_code.py \
+            --issue ${{ github.event.inputs.issue_number }} \
+            --repo ${{ github.repository }}
+          
       - name: Process branch
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
@@ -51,12 +68,6 @@ jobs:
             echo "Processing workflow run from Claude automation"
           fi
 
-      - name: Download Claude conversation
-        uses: actions/download-artifact@v4
-        with:
-          name: claude-conversation
-          path: .github/generated
-          
       - name: Analyze code
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
