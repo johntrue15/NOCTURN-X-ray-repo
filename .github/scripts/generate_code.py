@@ -166,6 +166,7 @@ def main():
         
         # Initialize Claude client
         client = anthropic.Anthropic(api_key=api_key)
+        CLAUDE_MODEL = "claude-3-5-sonnet-20241022"
         
         # Get issue details including comments
         issue_content = get_issue_details(issue_number, repo, github_token)
@@ -219,13 +220,16 @@ def main():
         
         logger.info("Sending request to Claude...")
         
-        # Create message for Claude
+        # Create message for Claude with updated model and token settings
         message = client.messages.create(
-            model="claude-3-sonnet-20240229",
-            max_tokens=4096,
+            model=CLAUDE_MODEL,
+            max_tokens=8192,
             temperature=0.7,
             system=system_prompt,
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role": "user", "content": prompt}],
+            extra_headers={
+                "anthropic-beta": "max-tokens-3-5-sonnet-2024-07-15"
+            }
         )
         
         # Extract the response
@@ -245,39 +249,20 @@ def main():
         conv_file = save_claude_conversation(output_dir, conversation)
         
         # Parse code blocks using the new function
-        parsed_blocks = extract_code_blocks(code_response)
-        if not parsed_blocks:
-            # Log the first part of the response for debugging
+        code_blocks = extract_code_blocks(code_response)
+        if not code_blocks:
             logger.error("Response preview:")
             logger.error(code_response[:1000])
             raise ValueError("No valid code blocks found in Claude's response")
         
-        generated_files = []
-        for file_path, content in parsed_blocks:
-            try:
-                # Create subdirectories if needed
-                full_path = output_dir / file_path
-                full_path.parent.mkdir(parents=True, exist_ok=True)
-                
-                # Save the generated code
-                with open(full_path, 'w') as f:
-                    f.write(content)
-                    
-                generated_files.append(str(full_path))
-                logger.info(f"Saved generated code to {full_path}")
-                
-            except Exception as e:
-                logger.error(f"Error saving file {file_path}: {str(e)}")
-                continue
+        # Save the code blocks to files
+        save_generated_files(code_blocks, required_files)
         
-        if not generated_files:
-            raise ValueError("Failed to save any generated files")
-            
-        # Update metadata to include conversation file
+        # Update metadata
         metadata = {
             "issue_number": issue_number,
             "repo": repo,
-            "generated_files": generated_files,
+            "generated_files": required_files,
             "generation_timestamp": datetime.datetime.now().isoformat(),
             "claude_conversation": str(conv_file)
         }
