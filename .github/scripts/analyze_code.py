@@ -47,15 +47,18 @@ def extract_code(response, file_path):
     """Extract code from Claude's response"""
     # Try different code block patterns
     patterns = [
-        r'```(?:\w+)?\n(.*?)```',  # Standard code block
-        r'```(.*?)```',            # Simple code block
-        r'^(.*?)$'                 # Entire response if no code blocks
+        r'```(?:yaml|python)?\n(.*?)```',  # Standard code block with language
+        r'```(.*?)```',                    # Simple code block
+        r'^(.*?)$'                         # Entire response if no code blocks
     ]
     
     for pattern in patterns:
         match = re.search(pattern, response, re.DOTALL)
         if match:
             code = match.group(1).strip()
+            # Remove any ```yaml or ```python prefix if it got included
+            code = re.sub(r'^```(?:yaml|python)\n', '', code)
+            code = re.sub(r'\n```$', '', code)
             logger.info(f"Successfully extracted code for {file_path} using pattern: {pattern}")
             return code
             
