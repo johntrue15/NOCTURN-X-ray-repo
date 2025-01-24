@@ -6,6 +6,8 @@ from pathlib import Path
 from github import Github
 import logging
 import shutil
+import anthropic
+from tenacity import retry, stop_after_attempt, wait_exponential
 
 # Set up logging
 logging.basicConfig(
@@ -13,6 +15,36 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# Initialize Claude client
+claude = anthropic.Client(os.environ.get('ANTHROPIC_API_KEY'))
+CLAUDE_MODEL = "claude-3-sonnet-20240229"
+
+@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
+def call_claude(prompt):
+    """Call Claude API to get response with retries"""
+    try:
+        # Create message with system prompt
+        system_prompt = """You are an expert programmer helping to combine code files. 
+        You will receive an original file and updates to be integrated. 
+        Provide only the combined code without any explanation."""
+        
+        response = claude.messages.create(
+            model=CLAUDE_MODEL,
+            max_tokens=4096,
+            temperature=0,
+            system=system_prompt,
+            messages=[{
+                "role": "user",
+                "content": prompt
+            }]
+        )
+        
+        return response.content[0].text
+
+    except Exception as e:
+        logger.error(f"Error calling Claude API: {e}")
+        raise
 
 def load_claude_conversation(artifacts_dir):
     """Load the Claude conversation from artifacts"""
@@ -181,8 +213,29 @@ def parse_code_blocks(response):
     
     return parsed_blocks
 
+def get_claude_prompt(original_file, generated_file):
+    """Create prompt for Claude to combine files"""
+    prompt = f"""Please combine these two code files into a single updated version. 
+The first file is the original, and the second contains updates to be integrated.
+
+Original file:
+```python
+{original_file}
+```
+
+Generated updates:
+```python
+{generated_file}
+```
+
+Please provide the complete combined code incorporating the updates while preserving the original structure.
+Return only the code without any explanation.
+The code should be wrapped in triple backticks."""
+
+    return prompt
+
 def combine_code_files(original_path, generated_path, output_path):
-    """Combine original file with generated updates"""
+    """Combine original file with generated updates using Claude"""
     if not os.path.exists(original_path):
         # If original doesn't exist, just copy generated file
         shutil.copy2(generated_path, output_path)
@@ -192,57 +245,31 @@ def combine_code_files(original_path, generated_path, output_path):
         original = f.read()
     with open(generated_path, 'r') as f:
         generated = f.read()
-        
-    # Parse the generated code to identify sections to merge
-    output_lines = []
-    gen_lines = generated.split('\n')
-    orig_lines = original.split('\n')
+
+    # Create prompt for Claude
+    prompt = get_claude_prompt(original, generated)
     
-    i = 0
-    while i < len(gen_lines):
-        line = gen_lines[i].strip()
+    # Get Claude's response
+    try:
+        response = call_claude(prompt)
         
-        # Check for placeholder comments
-        if re.match(r'#\s*\.\.\.\s*\((existing.*?)\)\s*\.\.\.\s*', line):
-            # Extract the section name from comment
-            section_name = re.search(r'\((existing.*?)\)', line).group(1)
-            
-            # Find matching section in original file
-            if section_name == 'existing imports':
-                # Add imports from original file
-                for orig_line in orig_lines:
-                    if orig_line.startswith(('import ', 'from ')):
-                        output_lines.append(orig_line)
-            elif section_name == 'existing functions':
-                # Add all functions from original file
-                in_function = False
-                for orig_line in orig_lines:
-                    if orig_line.startswith('def '):
-                        in_function = True
-                    if in_function:
-                        output_lines.append(orig_line)
-                    if in_function and not orig_line.strip():
-                        in_function = False
-            else:
-                # For other sections, keep original code between similar comments
-                in_section = False
-                for orig_line in orig_lines:
-                    if re.search(section_name, orig_line, re.IGNORECASE):
-                        in_section = True
-                    if in_section:
-                        output_lines.append(orig_line)
-                    if in_section and not orig_line.strip():
-                        in_section = False
+        # Extract code from response
+        code_pattern = r'```(?:python)?\n(.*?)```'
+        match = re.search(code_pattern, response, re.DOTALL)
+        if match:
+            combined_code = match.group(1).strip()
         else:
-            # Keep the generated line
-            output_lines.append(gen_lines[i])
-        
-        i += 1
+            logger.error("Could not extract code from Claude's response")
+            combined_code = generated  # Fallback to generated version
+            
+    except Exception as e:
+        logger.error(f"Error getting Claude response: {e}")
+        combined_code = generated  # Fallback to generated version
     
     # Write combined output
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, 'w') as f:
-        f.write('\n'.join(output_lines))
+        f.write(combined_code)
 
 def process_code_blocks(repo_path, generated_dir):
     """Process code blocks and combine with original files"""
