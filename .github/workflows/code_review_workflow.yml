@@ -8,8 +8,9 @@ on:
         required: true
         type: string
   workflow_run:
-    workflows: ["Auto Code Generation with Claude on Issue"]
-    types: [completed]
+    workflows: ["Claude Issue Automation"]
+    types:
+      - completed
 
 permissions: write-all
 
@@ -45,13 +46,19 @@ jobs:
       # Set up the directory structure
       - name: Setup directories
         run: |
+          # Create necessary directories
+          mkdir -p .github/{main,generated,scripts}
+          
           # Copy relevant files from main to .github/main
-          mkdir -p .github/main
           cp -r main-files/.github/scripts .github/main/ || true
           cp -r main-files/.github/workflows .github/main/ || true
           
           # Copy analyze_code.py from main to workspace
           cp main-files/.github/scripts/analyze_code.py .github/scripts/ || true
+          
+          # Copy files to be combined to .github/generated
+          cp -r .github/workflows .github/generated/ || true
+          cp -r .github/scripts .github/generated/ || true
           
           rm -rf main-files
           
@@ -65,8 +72,8 @@ jobs:
           echo "==== Contents of .github/main ===="
           ls -la .github/main/ || echo "main dir not found"
           
-          echo "==== Contents of .github/main/scripts ===="
-          ls -la .github/main/scripts/ || echo "main/scripts dir not found"
+          echo "==== Contents of .github/generated ===="
+          ls -la .github/generated/ || echo "generated dir not found"
 
       - name: Set up Python
         uses: actions/setup-python@v4
