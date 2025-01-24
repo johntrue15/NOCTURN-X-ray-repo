@@ -65,7 +65,7 @@ jobs:
         run: |
           python .github/scripts/generate_code.py
           
-          # Verify generated files exist
+          # Verify generated files exist and have content
           if [ ! -d ".github/generated" ]; then
             echo "Error: Generated code directory not found"
             exit 1
@@ -75,6 +75,20 @@ jobs:
             echo "Error: No code was generated"
             exit 1
           fi
+          
+          # Check if generated file has content
+          if [ ! -s ".github/generated/generated_code.py" ]; then
+            echo "Error: Generated code file is empty"
+            exit 1
+          fi
+          
+          # Display generated file info
+          echo "Generated files:"
+          ls -l .github/generated/
+          
+          # Show first few lines of generated code
+          echo "Preview of generated code:"
+          head -n 5 .github/generated/generated_code.py
 
       # After generating code but before creating PR
       - name: Save workflow data
