@@ -100,24 +100,8 @@ jobs:
             exit 1
           fi
           
-          # Use correct path to analyze_code.py
-          python .github/scripts/analyze_code.py \
-            --issue ${{ github.event.inputs.issue_number }} \
-            --branch ${{ steps.set-branch.outputs.branch_name }} \
-            --repo ${{ github.repository }} \
-            --artifacts-dir .github/generated
-            
-          # Verify files were generated
-          echo "Generated files:"
-          find .github/generated/complete -type f -print
-          
-          # Create staging directory
-          mkdir -p staging
-          cp .github/generated/complete/* staging/
-          
-          echo "Found $(ls staging | wc -l) generated files"
-          echo "Staging directory contents:"
-          ls -R staging/
+          # Run analyze_code.py
+          python .github/scripts/analyze_code.py
 
       - name: Upload combined code
         uses: actions/upload-artifact@v4
