@@ -23,51 +23,89 @@ def setup_directories():
 
 def get_files_from_metadata():
     """Get list of files to process from metadata.json"""
-    metadata_path = Path('.github/generated/metadata.json')
-    if not metadata_path.exists():
-        logger.error("metadata.json not found")
-        raise FileNotFoundError("metadata.json not found")
+    # Try multiple possible locations for metadata.json
+    possible_paths = [
+        Path('.github/generated/metadata.json'),
+        Path('.github/generated/.github/metadata.json'),
+        Path('.github/metadata.json')
+    ]
+    
+    for metadata_path in possible_paths:
+        logger.info(f"Looking for metadata.json at: {metadata_path}")
+        if metadata_path.exists():
+            logger.info(f"Found metadata.json at: {metadata_path}")
+            with open(metadata_path) as f:
+                metadata = json.load(f)
+            files = metadata.get('generated_files', [])
+            files = [f.replace('.github/', '') for f in files]
+            logger.info(f"Found {len(files)} files in metadata: {files}")
+            return files
+            
+    # If metadata.json not found, try to find files directly
+    logger.warning("metadata.json not found, searching for files directly")
+    files = []
+    
+    # Look for workflow files
+    workflow_files = list(Path('.github/generated').rglob('combined_ct_images_to_text.yml'))
+    if workflow_files:
+        files.append('workflows/combined_ct_images_to_text.yml')
         
-    with open(metadata_path) as f:
-        metadata = json.load(f)
+    # Look for script files
+    script_files = list(Path('.github/generated').rglob('url_screenshot_check.py'))
+    if script_files:
+        files.append('scripts/url_screenshot_check.py')
         
-    files = metadata.get('generated_files', [])
-    files = [f.replace('.github/', '') for f in files]
-    logger.info(f"Found {len(files)} files in metadata: {files}")
-    return files
+    if files:
+        logger.info(f"Found {len(files)} files by direct search: {files}")
+        return files
+        
+    raise FileNotFoundError("No files found to process")
 
-def find_file(file_name, directory):
+def find_file(file_name, directory, file_type=None):
     """Find a file in the specified directory"""
     base_dir = Path(directory)
     logger.info(f"Searching for {file_name} in {base_dir}")
     
-    # List of possible subdirectories to check
-    subdirs = [
-        '',  # Root directory
-        'workflows',
-        'scripts',
-        '.github/workflows',
-        '.github/scripts',
-        'generated/workflows',
-        'generated/scripts'
-    ]
+    # Define search paths based on file type
+    if file_type == 'original':
+        # For original files in main branch
+        search_paths = [
+            base_dir / 'workflows' / file_name,
+            base_dir / 'scripts' / file_name,
+            base_dir / '.github/workflows' / file_name,
+            base_dir / '.github/scripts' / file_name
+        ]
+    else:
+        # For generated files, check both locations
+        search_paths = [
+            base_dir / 'workflows' / file_name,
+            base_dir / 'scripts' / file_name,
+            base_dir / '.github/workflows' / file_name,
+            base_dir / '.github/scripts' / file_name,
+            base_dir / 'generated/workflows' / file_name,
+            base_dir / 'generated/scripts' / file_name
+        ]
     
     # Try each possible location
-    for subdir in subdirs:
-        search_path = base_dir / subdir / file_name
-        logger.info(f"Checking path: {search_path}")
-        if search_path.exists():
-            logger.info(f"Found file at: {search_path}")
-            return search_path
+    for path in search_paths:
+        logger.info(f"Checking path: {path}")
+        if path.exists():
+            logger.info(f"Found file at: {path}")
+            return path
             
-    # If not found, do a full recursive search
+    # If not found, do a recursive search
     logger.info("File not found in expected locations, doing recursive search...")
-    all_files = list(base_dir.rglob('*'))
-    matches = [f for f in all_files if f.is_file() and f.name == Path(file_name).name]
+    all_files = list(base_dir.rglob(file_name))
     
-    if matches:
-        logger.info(f"Found matching file at: {matches[0]}")
-        return matches[0]
+    if all_files:
+        # If multiple files found, prefer the one in .github/workflows or .github/scripts
+        for file in all_files:
+            if '.github/workflows' in str(file) or '.github/scripts' in str(file):
+                logger.info(f"Using preferred path: {file}")
+                return file
+        # Otherwise use the first one found
+        logger.info(f"Using found path: {all_files[0]}")
+        return all_files[0]
         
     logger.warning(f"File not found: {file_name}")
     logger.info("Directory contents:")
@@ -153,7 +191,7 @@ def process_files():
                 logger.info(f"Processing file: {file_name}")
                 
                 # Find original and generated files
-                original_path = find_file(file_name, 'main-files/.github')
+                original_path = find_file(file_name, 'main-files/.github', file_type='original')
                 generated_path = find_file(file_name, '.github/generated')
                 
                 if not original_path or not generated_path:
