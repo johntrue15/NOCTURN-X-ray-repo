@@ -46,31 +46,41 @@ jobs:
       # Download files from issue branch
       - name: Download issue branch files
         run: |
-          # Create generated directory
+          # Debug current state
+          echo "Current branch:"
+          git branch
+          echo "Current directory contents:"
+          ls -la
+          
+          # Create generated directory if it doesn't exist
           mkdir -p .github/generated
           
-          # Get the files from the issue branch
-          git fetch origin ${{ steps.set-branch.outputs.branch_name }}
-          
-          # Extract files from issue branch to generated directory
-          git show origin/${{ steps.set-branch.outputs.branch_name }}:.github/generated/metadata.json > .github/generated/metadata.json
-          
-          # Read and process metadata
+          # Copy files from current branch to generated directory
           if [ -f ".github/generated/metadata.json" ]; then
             echo "==== Contents of metadata.json ===="
             cat .github/generated/metadata.json
             
-            # Extract file paths and download each file
+            # Extract file paths and copy each file
             while IFS= read -r file; do
-              echo "Downloading $file"
-              mkdir -p ".github/generated/$(dirname "$file")"
-              git show origin/${{ steps.set-branch.outputs.branch_name }}:.github/generated/$file > ".github/generated/$file"
+              echo "Processing $file"
+              src_file="$file"
+              dst_dir=".github/generated/$(dirname "$file")"
+              
+              mkdir -p "$dst_dir"
+              if [ -f "$src_file" ]; then
+                cp "$src_file" ".github/generated/$file"
+                echo "Copied $src_file to .github/generated/$file"
+              else
+                echo "Warning: Source file not found: $src_file"
+              fi
             done < <(jq -r '.generated_files[]' .github/generated/metadata.json)
             
-            echo "==== Downloaded files ===="
+            echo "==== Generated directory contents ===="
             ls -R .github/generated/
           else
-            echo "Error: Failed to download metadata.json"
+            echo "Error: metadata.json not found in current branch"
+            echo "Current directory structure:"
+            find . -type f
             exit 1
           fi
 
