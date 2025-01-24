@@ -56,35 +56,47 @@ jobs:
 
       # 6. Generate code using Claude via Python script
       - name: Generate code with Claude
-        id: generate_code
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ISSUE_NUMBER: ${{ inputs.issue_number }}
-          REPO: ${{ github.repository }}
-          PYTHONUNBUFFERED: 1
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          # Enable debug logging
-          export PYTHONPATH="${PYTHONPATH}:${GITHUB_WORKSPACE}"
-          export PYTHONIOENCODING=utf-8
-          python -u .github/scripts/generate_code.py
+          # Create output directories
+          mkdir -p .github/generated/{workflows,scripts}
           
-          # Check for generated files
-          if [ ! -d ".github/generated" ]; then
-            echo "Error: Generated code directory not found"
+          # Run generate_code.py to get Claude's response
+          python .github/scripts/generate_code.py
+          
+          # Extract and save code blocks from Claude's response
+          if [ -f ".github/generated/claude_conversation.json" ]; then
+            # Get code blocks from conversation
+            code_blocks=$(jq -r '.claude_response' .github/generated/claude_conversation.json)
+            
+            # Save workflow file
+            if echo "$code_blocks" | grep -q "yaml:.github/workflows/combined_ct_images_to_text.yml"; then
+              echo "$code_blocks" | sed -n '/```yaml:.github\/workflows\/combined_ct_images_to_text.yml/,/```/p' | sed '1d;$d' > .github/generated/workflows/combined_ct_images_to_text.yml
+              echo "Saved workflow file"
+            fi
+            
+            # Save Python file
+            if echo "$code_blocks" | grep -q "python:.github/scripts/url_screenshot_check.py"; then
+              echo "$code_blocks" | sed -n '/```python:.github\/scripts\/url_screenshot_check.py/,/```/p' | sed '1d;$d' > .github/generated/scripts/url_screenshot_check.py
+              echo "Saved Python file"
+            fi
+          else
+            echo "Error: Claude conversation file not found"
             exit 1
           fi
           
-          # List all generated files
+          # Debug generated files
           echo "Generated files:"
-          find .github/generated -type f -exec ls -l {} \;
+          ls -R .github/generated/
           
-          # Show preview of each generated file
-          for file in $(find .github/generated -type f -name "*.py" -o -name "*.yml"); do
-            echo "Preview of ${file}:"
-            head -n 5 "${file}"
-            echo "---"
-          done
+          # Commit the changes
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .github/generated/
+          git commit -m "Generated code files for issue #${{ github.event.inputs.issue_number }}"
+          git push origin HEAD:${{ steps.create_branch.outputs.BRANCH_NAME }}
 
       # After generating code but before creating PR
       - name: Save workflow data
@@ -100,14 +112,6 @@ jobs:
         with:
           name: workflow-data
           path: workflow-data.json
-
-      # 7. Commit & push the generated file
-      - name: Commit changes
-        run: |
-          BRANCH_NAME=${{ steps.create_branch.outputs.BRANCH_NAME }}
-          git add .
-          git commit -m "Auto-generated code for issue #${{ inputs.issue_number }}"
-          git push origin "$BRANCH_NAME"
 
       # Save artifacts
       - name: Save Claude conversation
