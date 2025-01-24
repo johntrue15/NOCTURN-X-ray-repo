@@ -5,7 +5,7 @@ on:
 
 permissions:
   contents: write
-  actions: write
+  workflows: write
 
 jobs:
   test:
@@ -14,11 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.WORKFLOW_PAT }}
+          persist-credentials: true  # Use default GITHUB_TOKEN
 
       - name: Create and commit workflow
         env:
-          GITHUB_TOKEN: ${{ secrets.WORKFLOW_PAT }}
+          WORKFLOW_PAT: ${{ secrets.WORKFLOW_PAT }}  # Only use PAT for workflow commit
         run: |
           # Create test workflow file
           mkdir -p .github/workflows
@@ -33,10 +33,10 @@ jobs:
                   run: echo "Hello, World!"
           EOL
           
-          # Configure git with token
+          # Configure git with PAT only for workflow push
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+          git remote set-url origin https://x-access-token:${WORKFLOW_PAT}@github.com/${{ github.repository }}.git
           
           # Add and commit the changes
           git add .github/workflows/hello_world.yml
