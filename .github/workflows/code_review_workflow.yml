@@ -128,57 +128,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          # Get the list of files from metadata
-          if [ -f ".github/generated/metadata.json" ]; then
-            # Extract required files from metadata
-            required_files=$(jq -r '.generated_files[]' .github/generated/metadata.json)
-            echo "Files to analyze from metadata:"
-            echo "$required_files"
-          else
-            echo "Error: metadata.json not found"
-            echo "Contents of .github:"
-            ls -R .github/
-            exit 1
-          fi
-          
-          # Create staging directory with complete file structure
-          mkdir -p staging/.github/{workflows,scripts}
-          
-          # Copy files from generated directory using metadata
-          while IFS= read -r file; do
-            src_file=".github/generated/$file"
-            dst_dir="staging/.github/$(dirname $file)"
-            
-            echo "Copying $file:"
-            echo "  From: $src_file"
-            echo "  To: $dst_dir/"
-            
-            if [ -f "$src_file" ]; then
-              mkdir -p "$dst_dir"
-              cp "$src_file" "$dst_dir/"
-              echo "Successfully copied file"
-            else
-              echo "Warning: Generated file not found: $src_file"
-              echo "Contents of .github/generated:"
-              ls -R .github/generated/
-            fi
-          done <<< "$required_files"
-          
           # Run analyze_code.py to process the files
           echo "Running code analysis..."
           python .github/scripts/analyze_code.py
           
-          # Verify staging contents
+          # Debug staging contents
           echo "Staging directory contents:"
           find staging -type f
-          
-          # Verify required files exist in staging
-          while IFS= read -r file; do
-            if [ ! -f "staging/.github/$file" ]; then
-              echo "Error: Required file not found in staging: $file"
-              exit 1
-            fi
-          done <<< "$required_files"
 
       - name: Commit combined files
         env:
