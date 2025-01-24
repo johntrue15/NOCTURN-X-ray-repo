@@ -41,6 +41,7 @@ def process_files():
         
         # Get files from metadata
         files = get_files_from_metadata()
+        logger.info("Processing files from metadata...")
         
         # Process each file
         success_count = 0
@@ -51,6 +52,8 @@ def process_files():
                     Path('.github/generated') / file,  # Direct path
                     Path('.github/generated/scripts') / Path(file).name,  # In scripts subdir
                     Path('.github/generated/workflows') / Path(file).name,  # In workflows subdir
+                    Path('.github/generated/.github/scripts') / Path(file).name,  # Nested scripts
+                    Path('.github/generated/.github/workflows') / Path(file).name,  # Nested workflows
                 ]
                 
                 file_found = False
@@ -58,6 +61,7 @@ def process_files():
                     logger.info(f"Looking for file at: {original_path}")
                     if original_path.exists():
                         file_found = True
+                        logger.info(f"Found file at: {original_path}")
                         # Read the file
                         with open(original_path) as f:
                             file_content = f.read()
@@ -78,14 +82,14 @@ def process_files():
                         logger.info(f"  {p}")
                     
             except Exception as e:
-                logger.error(f"Error processing {file}: {e}")
+                logger.error(f"Error processing {file}: {e}", exc_info=True)
                 continue
                 
         if success_count == 0:
             raise Exception("No files were successfully processed")
             
     except Exception as e:
-        logger.error(f"Error in analysis: {str(e)}")
+        logger.error(f"Error in analysis: {str(e)}", exc_info=True)
         raise
 
 if __name__ == '__main__':
