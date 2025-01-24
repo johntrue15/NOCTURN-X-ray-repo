@@ -28,21 +28,39 @@ jobs:
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
           echo "Using branch: $BRANCH_NAME"
 
-      - uses: actions/checkout@v4
-        with:
-          ref: main
-          path: main-branch
-          
+      # First checkout the issue branch
       - uses: actions/checkout@v4
         with:
           ref: ${{ steps.set-branch.outputs.branch_name }}
-          
-      # Copy main branch files to .github/main in issue branch
-      - name: Copy main files
+          path: issue-branch
+
+      # Then checkout main branch
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main-files
+
+      # Set up the directory structure
+      - name: Setup directories
         run: |
+          # Move issue branch contents to workspace root
+          mv issue-branch/* ./
+          mv issue-branch/.github ./ || true
+          rm -rf issue-branch
+
+          # Copy relevant files from main to .github/main
           mkdir -p .github/main
-          cp -r main-branch/* .github/main/
-          rm -rf main-branch
+          cp -r main-files/.github/scripts .github/main/ || true
+          cp -r main-files/.github/workflows .github/main/ || true
+          rm -rf main-files
+          
+          # List directory structure for debugging
+          echo "Directory structure:"
+          ls -la
+          echo ".github directory:"
+          ls -la .github/
+          echo ".github/main directory:"
+          ls -la .github/main/
 
       - name: Set up Python
         uses: actions/setup-python@v4
