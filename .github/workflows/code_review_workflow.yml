@@ -15,7 +15,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  workflows: write
+  actions: write    # This covers workflow permissions
 
 jobs:
   analyze:
