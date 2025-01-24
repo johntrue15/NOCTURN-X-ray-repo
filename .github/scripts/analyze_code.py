@@ -23,7 +23,7 @@ def call_claude(prompt):
     try:
         system_prompt = """You are an expert programmer helping to combine code files. 
         You will receive an original file from main and updates to be integrated. 
-        Provide only the combined code without any explanation."""
+        Your response must be the combined code wrapped in triple backticks."""
         
         response = anthropic.messages.create(
             model=CLAUDE_MODEL,
@@ -36,11 +36,32 @@ def call_claude(prompt):
             }]
         )
         
+        logger.info(f"Got response from Claude: {response.content[0].text[:100]}...")
         return response.content[0].text
 
     except Exception as e:
         logger.error(f"Error calling Claude API: {e}")
         raise
+
+def extract_code(response, file_path):
+    """Extract code from Claude's response"""
+    # Try different code block patterns
+    patterns = [
+        r'```(?:\w+)?\n(.*?)```',  # Standard code block
+        r'```(.*?)```',            # Simple code block
+        r'^(.*?)$'                 # Entire response if no code blocks
+    ]
+    
+    for pattern in patterns:
+        match = re.search(pattern, response, re.DOTALL)
+        if match:
+            code = match.group(1).strip()
+            logger.info(f"Successfully extracted code for {file_path} using pattern: {pattern}")
+            return code
+            
+    logger.error(f"Could not extract code from response for {file_path}")
+    logger.error(f"Response was: {response[:200]}...")
+    return None
 
 def get_claude_prompt(original_file, generated_file, file_path):
     """Create prompt for Claude to combine files"""
@@ -81,12 +102,17 @@ def process_files():
             generated_files[rel_path] = path
 
     logger.info(f"Found {len(generated_files)} generated files to process")
+    success_count = 0
     
     # Process each file
     for rel_path, generated_path in generated_files.items():
         try:
+            # Skip metadata files
+            if str(rel_path).endswith(('metadata.json', 'claude_conversation.json')):
+                logger.info(f"Skipping metadata file: {rel_path}")
+                continue
+                
             # Get original file from main branch files
-            # Remove .github prefix if present
             search_path = str(rel_path)
             if search_path.startswith('.github/'):
                 search_path = Path(search_path).relative_to('.github')
@@ -106,26 +132,22 @@ def process_files():
             prompt = get_claude_prompt(original_content, generated_content, str(rel_path))
             response = call_claude(prompt)
             
-            # Extract code from response
-            code_pattern = r'```(?:\w+)?\n(.*?)```'
-            match = re.search(code_pattern, response, re.DOTALL)
-            if not match:
-                logger.error(f"Could not extract code from Claude's response for {rel_path}")
-                continue
-                
-            combined_code = match.group(1).strip()
-            
-            # Save combined file to complete directory in issue branch
-            output_path = Path(output_dir) / rel_path
-            os.makedirs(output_path.parent, exist_ok=True)
-            with open(output_path, 'w') as f:
-                f.write(combined_code)
-                
-            logger.info(f"Saved combined file: {output_path}")
+            # Extract and save code
+            combined_code = extract_code(response, rel_path)
+            if combined_code:
+                output_path = Path(output_dir) / rel_path
+                os.makedirs(output_path.parent, exist_ok=True)
+                with open(output_path, 'w') as f:
+                    f.write(combined_code)
+                logger.info(f"Saved combined file: {output_path}")
+                success_count += 1
             
         except Exception as e:
             logger.error(f"Error processing {rel_path}: {e}")
             continue
+            
+    if success_count == 0:
+        raise Exception("No files were successfully processed")
 
 if __name__ == '__main__':
     try:
