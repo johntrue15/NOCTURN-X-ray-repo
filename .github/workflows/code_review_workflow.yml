@@ -33,17 +33,21 @@ jobs:
 
       # Download artifacts from the triggering workflow
       - name: Download workflow artifacts
+        id: download_artifacts
+        continue-on-error: true
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: ${{ github.event.workflow_run.workflow_id }}
           run_id: ${{ github.event.workflow_run.id }}
           name: claude-conversation
           path: artifacts
-          search_artifacts: true  # Search in case name is different
+          search_artifacts: true
           if_no_artifact_found: warn
 
       # Also download workflow-data to get issue number
       - name: Download workflow data
+        id: download_data
+        continue-on-error: true
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: ${{ github.event.workflow_run.workflow_id }}
@@ -51,34 +55,44 @@ jobs:
           name: workflow-data
           path: workflow-data
           search_artifacts: true
-          if_no_artifact_found: error
+          if_no_artifact_found: warn
 
-      - name: List artifacts
+      # Verify artifacts and extract issue number
+      - name: Process artifacts
+        id: process
         run: |
-          echo "Contents of artifacts directory:"
-          ls -R artifacts/
-          echo "Contents of workflow-data directory:"
-          ls -R workflow-data/
+          # Check for claude conversation
+          if [ ! -d "artifacts" ] || [ -z "$(ls -A artifacts)" ]; then
+            echo "::error::Claude conversation artifact not found"
+            exit 1
+          fi
+          
+          # Try different methods to get issue number
+          if [ -f "workflow-data/workflow-data.json" ]; then
+            # From workflow data
+            ISSUE_NUMBER=$(cat workflow-data/workflow-data.json | jq -r .issue_number)
+          elif [ -f "artifacts/claude_conversation.json" ]; then
+            # From conversation data
+            ISSUE_NUMBER=$(cat artifacts/claude_conversation.json | jq -r .issue_number)
+          else
+            # From workflow run
+            ISSUE_NUMBER=$(echo "${{ github.event.workflow_run.head_branch }}" | grep -oE '[0-9]+$')
+          fi
+          
+          if [ -z "$ISSUE_NUMBER" ] || [ "$ISSUE_NUMBER" = "null" ]; then
+            echo "::error::Could not determine issue number"
+            exit 1
+          fi
+          
+          echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+          echo "Processing issue #$ISSUE_NUMBER"
 
       - name: Get PR and analyze code
         id: analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ steps.process.outputs.issue_number }}
         run: |
-          # Get the issue number from workflow data
-          if [ ! -f "workflow-data/workflow-data.json" ]; then
-            echo "Error: workflow-data.json not found"
-            exit 1
-          fi
-          
-          ISSUE_NUMBER=$(cat workflow-data/workflow-data.json | jq -r .issue_number)
-          if [ -z "$ISSUE_NUMBER" ] || [ "$ISSUE_NUMBER" = "null" ]; then
-            echo "Error: Could not get issue number from workflow data"
-            exit 1
-          fi
-          
-          echo "Processing issue #$ISSUE_NUMBER"
-          
           # Find the PR branch
           BRANCH_NAME="claude-pr/issue-${ISSUE_NUMBER}"
           
