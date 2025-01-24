@@ -96,7 +96,7 @@ jobs:
           fi
 
       - name: Upload workflow data
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: workflow-data
           path: workflow-data.json
@@ -109,20 +109,13 @@ jobs:
           git commit -m "Auto-generated code for issue #${{ inputs.issue_number }}"
           git push origin "$BRANCH_NAME"
 
-      # Save Claude conversation artifact
+      # Save artifacts
       - name: Save Claude conversation
         if: always()
-        run: |
-          if [ -f ".github/generated/claude_conversation.json" ]; then
-            cp .github/generated/claude_conversation.json ./claude-conversation.json
-          fi
-
-      - name: Upload Claude conversation
-        if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: claude-conversation
           path: |
-            claude-conversation.json
             .github/generated/claude_conversation.json
-          if-no-files-found: ignore
+            .github/generated/claude_conversation_error.json
+          if-no-files-found: warn
