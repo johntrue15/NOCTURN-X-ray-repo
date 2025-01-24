@@ -59,12 +59,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          REPO: ${{ github.repository }}
+          PYTHONUNBUFFERED: 1
         run: |
           # Create output directories
           mkdir -p .github/generated/{workflows,scripts}
           
+          # Set up Python environment
+          export PYTHONPATH="${PYTHONPATH}:${GITHUB_WORKSPACE}"
+          export PYTHONIOENCODING=utf-8
+          
           # Run generate_code.py to get Claude's response
-          python .github/scripts/generate_code.py
+          python -u .github/scripts/generate_code.py
           
           # Extract and save code blocks from Claude's response
           if [ -f ".github/generated/claude_conversation.json" ]; then
