@@ -165,11 +165,21 @@ def process_files():
         for file in files:
             try:
                 # Get original file from main
-                original_path = Path('.github/main') / file
+                if file.startswith('workflows/'):
+                    original_path = Path('.github/main/workflows') / Path(file).name
+                elif file.startswith('scripts/'):
+                    original_path = Path('.github/main/scripts') / Path(file).name
+                else:
+                    original_path = Path('.github/main') / file
+                
                 generated_path = staging_dir / file
                 
+                logger.info(f"Looking for original file at: {original_path}")
                 if not original_path.exists():
                     logger.warning(f"Original file not found: {original_path}")
+                    logger.info("Contents of .github/main:")
+                    for p in Path('.github/main').rglob('*'):
+                        logger.info(f"  {p}")
                     continue
                     
                 # Read both files
