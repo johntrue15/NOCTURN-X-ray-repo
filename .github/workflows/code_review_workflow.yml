@@ -102,6 +102,14 @@ jobs:
           
           # Run analyze_code.py
           python .github/scripts/analyze_code.py
+          
+          # Create staging directory with combined files
+          mkdir -p staging
+          cp .github/generated/complete/* staging/ || true
+          
+          # Verify staging contents
+          echo "Staging directory contents:"
+          ls -R staging/
 
       - name: Upload combined code
         uses: actions/upload-artifact@v4
