@@ -73,12 +73,8 @@ jobs:
           # Copy files from repository root
           cp -r /home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/.github/generated/* .github/generated/ || true
           
-          # Copy relevant files from main to .github/main
-          cp -r main-files/.github/scripts .github/main/ || true
-          cp -r main-files/.github/workflows .github/main/ || true
-          
           # Copy analyze_code.py from main to workspace
-          cp main-files/.github/scripts/analyze_code.py .github/scripts/ || true
+          cp main-files/.github/scripts/analyze_code.py analyze_code.py
           
           rm -rf main-files
           
@@ -86,56 +82,24 @@ jobs:
           echo "==== Full directory structure ===="
           find . -type f
           
-          echo "==== Contents of .github/scripts ===="
-          ls -la .github/scripts/ || echo "scripts dir not found"
-          
-          echo "==== Contents of .github/main ===="
-          ls -la .github/main/ || echo "main dir not found"
-          
           echo "==== Contents of .github/generated ===="
           ls -la .github/generated/ || echo "generated dir not found"
-          
-          # Check for metadata.json
-          if [ -f ".github/generated/metadata.json" ]; then
-            echo "==== Contents of metadata.json ===="
-            cat .github/generated/metadata.json
-          else
-            echo "metadata.json not found in: $(pwd)/.github/generated/"
-            echo "Listing .github contents:"
-            ls -R .github/
-          fi
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-          
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install anthropic tenacity PyGithub
-          
-      - name: Process branch
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "Processing issue #${{ github.event.inputs.issue_number }}"
-          else
-            echo "Processing workflow run from Claude automation"
-          fi
-
+      # Run the analysis using analyze_code from main
       - name: Analyze code
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          # Run analyze_code.py to process the files
+          # Run analyze_code.py from main
           echo "Running code analysis..."
-          python .github/scripts/analyze_code.py
+          python analyze_code.py
           
           # Debug staging contents
           echo "Staging directory contents:"
           find staging -type f
 
+      # Commit the changes
       - name: Commit combined files
         env:
           WORKFLOW_PAT: ${{ secrets.WORKFLOW_PAT }}
@@ -164,13 +128,13 @@ jobs:
           git config user.email "actions@github.com"
           git remote set-url origin https://x-access-token:${WORKFLOW_PAT}@github.com/${{ github.repository }}.git
           
-          # Get files from metadata
+          # Get files from metadata and add with full paths
           files=$(jq -r '.generated_files[]' .github/generated/metadata.json)
           
-          # Add and commit each file
+          # Add and commit each file with full path
           while IFS= read -r file; do
             echo "Adding file: $file"
-            git add "$file"
+            git add ".github/$file"
           done <<< "$files"
           
           # Commit and push
