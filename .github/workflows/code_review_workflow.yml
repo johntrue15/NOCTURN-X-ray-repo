@@ -43,6 +43,37 @@ jobs:
           ref: main
           path: main-files
 
+      # Download files from issue branch
+      - name: Download issue branch files
+        run: |
+          # Create generated directory
+          mkdir -p .github/generated
+          
+          # Get the files from the issue branch
+          git fetch origin ${{ steps.set-branch.outputs.branch_name }}
+          
+          # Extract files from issue branch to generated directory
+          git show origin/${{ steps.set-branch.outputs.branch_name }}:.github/generated/metadata.json > .github/generated/metadata.json
+          
+          # Read and process metadata
+          if [ -f ".github/generated/metadata.json" ]; then
+            echo "==== Contents of metadata.json ===="
+            cat .github/generated/metadata.json
+            
+            # Extract file paths and download each file
+            while IFS= read -r file; do
+              echo "Downloading $file"
+              mkdir -p ".github/generated/$(dirname "$file")"
+              git show origin/${{ steps.set-branch.outputs.branch_name }}:.github/generated/$file > ".github/generated/$file"
+            done < <(jq -r '.generated_files[]' .github/generated/metadata.json)
+            
+            echo "==== Downloaded files ===="
+            ls -R .github/generated/
+          else
+            echo "Error: Failed to download metadata.json"
+            exit 1
+          fi
+
       # Set up the directory structure
       - name: Setup directories
         run: |
