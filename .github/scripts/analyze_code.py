@@ -85,8 +85,13 @@ def process_files():
     # Process each file
     for rel_path, generated_path in generated_files.items():
         try:
-            # Get original file from main branch files in .github/main directory
-            original_path = Path('.github/main') / rel_path
+            # Get original file from main branch files
+            # Remove .github prefix if present
+            search_path = str(rel_path)
+            if search_path.startswith('.github/'):
+                search_path = Path(search_path).relative_to('.github')
+            original_path = Path('.github/main') / search_path
+            
             if not original_path.exists():
                 logger.warning(f"Original file not found: {original_path}")
                 continue
