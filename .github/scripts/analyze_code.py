@@ -62,8 +62,11 @@ Return only the code without any explanation, wrapped in triple backticks."""
 
     return prompt
 
-def process_files(generated_dir, output_dir):
+def process_files():
     """Process original and generated files"""
+    generated_dir = '.github/generated'
+    output_dir = os.path.join(generated_dir, 'complete')
+    
     # Create output directory
     os.makedirs(output_dir, exist_ok=True)
     
@@ -119,24 +122,9 @@ def process_files(generated_dir, output_dir):
             logger.error(f"Error processing {rel_path}: {e}")
             continue
 
-def main():
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--repo', required=True)
-    parser.add_argument('--branch', required=True)
-    parser.add_argument('--artifacts-dir', required=True)
-    args = parser.parse_args()
-    
+if __name__ == '__main__':
     try:
-        # Process files using paths in the issue branch
-        process_files(
-            generated_dir=args.artifacts_dir,
-            output_dir=os.path.join(args.artifacts_dir, 'complete')
-        )
-        
+        process_files()
     except Exception as e:
         logger.error(f"Error in analysis: {str(e)}", exc_info=True)
         raise
-
-if __name__ == '__main__':
-    main()
