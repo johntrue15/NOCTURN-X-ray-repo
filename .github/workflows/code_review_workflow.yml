@@ -146,15 +146,23 @@ jobs:
           
           # Copy files directly from the issue branch
           while IFS= read -r file; do
-            src_file=".github/generated/$file"
-            dst_dir="staging/.github/$(dirname ${file#.github/})"
+            # Remove .github prefix if present
+            file_without_prefix=${file#.github/}
+            src_file=".github/generated/$file_without_prefix"
+            dst_dir="staging/.github/$(dirname $file_without_prefix)"
+            
+            echo "Copying $file:"
+            echo "  From: $src_file"
+            echo "  To: $dst_dir/"
             
             if [ -f "$src_file" ]; then
               mkdir -p "$dst_dir"
               cp "$src_file" "$dst_dir/"
-              echo "Copied $src_file to staging"
+              echo "Successfully copied file"
             else
               echo "Warning: Generated file not found: $src_file"
+              echo "Contents of .github/generated:"
+              ls -R .github/generated/
             fi
           done <<< "$required_files"
           
