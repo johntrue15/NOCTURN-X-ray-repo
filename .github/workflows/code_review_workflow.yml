@@ -108,28 +108,25 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          # Run analyze_code.py first
-          python .github/scripts/analyze_code.py
-          
-          # Now get the list of files from metadata
+          # Get the list of files from metadata
           if [ -f ".github/generated/metadata.json" ]; then
             # Extract required files from metadata
             required_files=$(jq -r '.generated_files[]' .github/generated/metadata.json)
             echo "Files to analyze from metadata:"
             echo "$required_files"
           else
-            echo "Error: metadata.json not found after running analyze_code.py"
-            echo "Contents of .github/generated:"
-            ls -R .github/generated/
+            echo "Error: metadata.json not found"
+            echo "Contents of .github:"
+            ls -R .github/
             exit 1
           fi
           
           # Create staging directory with complete file structure
           mkdir -p staging/.github/{workflows,scripts}
           
-          # Copy only the required files from generated/complete
+          # Copy files directly from the issue branch
           while IFS= read -r file; do
-            src_file=".github/generated/complete/$file"
+            src_file=".github/generated/$file"
             dst_dir="staging/.github/$(dirname ${file#.github/})"
             
             if [ -f "$src_file" ]; then
