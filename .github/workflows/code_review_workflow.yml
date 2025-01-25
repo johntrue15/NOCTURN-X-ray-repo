@@ -209,20 +209,21 @@ jobs:
           # Create log directory
           mkdir -p logs
           
-          # Run analyze_code.py and capture output
-          echo "Running code analysis..."
-          python analyze_code.py 2>&1 | tee logs/analyze.log
+          # Run analyze_code.py and only log to file, not console
+          python analyze_code.py > logs/analyze.log 2>&1
           
           # Check if analysis was successful
           if [ -f "logs/analyze.log" ]; then
-            echo "Analysis log:"
-            cat logs/analyze.log
+            # Only show important log entries (not duplicates)
+            echo "Analysis log highlights:"
+            grep -v "HTTP Request" logs/analyze.log | grep -v "Got response from Claude" | grep "INFO\|ERROR\|WARNING"
             
             # Check for Claude responses in log
-            if grep -q "Got response from Claude" logs/analyze.log; then
+            if grep -q "Saved combined file" logs/analyze.log; then
               echo "Claude analysis complete"
             else
-              echo "Warning: No Claude responses found in log"
+              echo "Warning: No files were combined"
+              exit 1
             fi
           fi
           
