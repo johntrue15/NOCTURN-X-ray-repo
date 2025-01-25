@@ -73,32 +73,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_WORKSPACE: ${{ github.workspace }}
-          GITHUB_SHA: ${{ github.sha }}
-          GITHUB_REF: ${{ github.ref }}
-          GITHUB_EVENT_NAME: ${{ github.event_name }}
-          GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_RUN_ID: ${{ github.run_id }}
-          GITHUB_RUN_NUMBER: ${{ github.run_number }}
-          GITHUB_API_URL: ${{ github.api_url }}
-          GITHUB_SERVER_URL: ${{ github.server_url }}
         run: |
-          # Debug environment variables
-          echo "Checking environment variables:"
-          echo "GITHUB_TOKEN: ${GITHUB_TOKEN:+set}"
-          echo "ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:+set}"
-          echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
-          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
-          echo "GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME"
+          # Get issue body based on trigger type
+          if [ "${{ github.event_name }}" = "issues" ]; then
+            # For issue assignment, use the issue body directly
+            ISSUE_BODY="${{ github.event.issue.body }}"
+          else
+            # For workflow_dispatch, fetch the issue body
+            ISSUE_BODY=$(gh issue view ${{ steps.set-issue.outputs.issue_number }} --json body -q .body)
+          fi
           
-          # Get issue body
-          ISSUE_BODY=$(gh issue view ${{ steps.set-issue.outputs.issue_number }} --json body -q .body)
-          echo "Issue body retrieved"
-          
-          # Run code generation with debug
-          echo "Running generate_code.py..."
-          python -u .github/scripts/generate_code.py "$ISSUE_BODY" ${{ steps.set-issue.outputs.issue_number }}
+          # Run code generation
+          python .github/scripts/generate_code.py "$ISSUE_BODY" ${{ steps.set-issue.outputs.issue_number }}
 
       - name: Create metadata
         run: |
@@ -125,8 +111,6 @@ jobs:
           done
           
           echo ']' >> .github/generated/metadata.json
-          
-          cat .github/generated/metadata.json
 
       - name: Commit and push
         run: |
@@ -138,14 +122,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.WORKFLOW_PAT }}
         run: |
-          # Create PR
           gh pr create \
             --base main \
             --head ${{ steps.set-branch.outputs.branch_name }} \
             --title "Code updates for issue #${{ steps.set-issue.outputs.issue_number }}" \
             --body "Generated code updates for issue #${{ steps.set-issue.outputs.issue_number }}"
 
-      # After generating code but before creating PR
       - name: Save workflow data
         run: |
           if [ -f ".github/generated/metadata.json" ]; then
@@ -155,15 +137,14 @@ jobs:
           fi
 
       - name: Upload workflow data
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: workflow-data
           path: workflow-data.json
 
-      # Save artifacts
       - name: Save Claude conversation
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: claude-conversation
           path: |
