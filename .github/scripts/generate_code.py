@@ -147,22 +147,36 @@ def save_generated_files(code_blocks, needed_files):
     """Save code blocks to appropriate files"""
     os.makedirs('.github/generated', exist_ok=True)
     
-    # Map file paths to code blocks
+    # Extract file paths from code block headers
     file_map = {}
     for code in code_blocks:
-        for file_path in needed_files:
-            if file_path.endswith('.yml') and 'name: MorphoSource Analysis Workflow' in code:
-                file_map[file_path] = code
-            elif file_path.endswith('.py') and 'from selenium import webdriver' in code:
-                file_map[file_path] = code
+        # Look for file path in code block header
+        header_match = re.search(r'```(?:yaml|python)?:([^\n]+)', code)
+        if header_match:
+            file_path = header_match.group(1).strip()
+            # Clean up the code by removing the header
+            clean_code = re.sub(r'```(?:yaml|python)?:[^\n]+\n', '', code)
+            clean_code = clean_code.strip('`')
+            file_map[file_path] = clean_code.strip()
+            logger.info(f"Mapped code block to file: {file_path}")
     
-    # Save files
-    for file_path, code in file_map.items():
-        output_path = os.path.join('.github/generated', file_path)
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)
-        with open(output_path, 'w') as f:
-            f.write(code)
-        logger.info(f"Saved generated file: {output_path}")
+    # Save each file
+    for file_path in needed_files:
+        if file_path in file_map:
+            output_path = os.path.join('.github/generated', file_path)
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            
+            with open(output_path, 'w') as f:
+                f.write(file_map[file_path])
+            logger.info(f"Saved generated file: {output_path}")
+        else:
+            logger.warning(f"No matching code block found for {file_path}")
+    
+    # Log any unmapped code blocks
+    mapped_paths = set(file_map.keys())
+    needed_paths = set(needed_files)
+    if mapped_paths - needed_paths:
+        logger.warning(f"Extra code blocks found for: {mapped_paths - needed_paths}")
 
 def main():
     try:
