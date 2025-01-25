@@ -5,7 +5,7 @@ on:
   workflow_dispatch:  # Allows manual trigger
 
 jobs:
-  check-new-records:
+  check-and-collect:
     runs-on: ubuntu-latest
     
     steps:
@@ -28,26 +28,43 @@ jobs:
       run: mkdir -p data
         
     - name: Run daily check
+      id: daily-check
       run: |
         python .github/scripts/daily.py
-      id: daily-check
-      continue-on-error: true  # Allow the workflow to continue even if new records are found
+      continue-on-error: true
 
-    - name: Process check results
+    - name: Collect new records
+      id: collect
+      if: steps.daily-check.outcome == 'failure'  # Only run if new records found
       run: |
-        if [ "${{ steps.daily-check.outcome }}" == "success" ]; then
-          echo "No new records found"
-        elif [ "${{ steps.daily-check.outcome }}" == "failure" ]; then
-          echo "New records found - triggering full collection workflow"
-          # Here you can add a call to your full collection workflow if needed
-        else
-          echo "Error in daily check"
-          exit 1
-        fi
+        python .github/scripts/collect.py
+        
+    - name: Create Release
+      if: always()  # Create release whether there are new records or not
+      uses: softprops/action-gh-release@v1
+      with:
+        name: "Daily MorphoSource Check ${{ github.run_number }}"
+        tag_name: "check-${{ github.run_number }}"
+        body_path: ${{ steps.daily-check.outcome == 'failure' && 'data/release_notes.txt' || format('Results of check {0}: No new records found', github.run_number) }}
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Upload check logs
-      if: always()  # Upload logs even if the check fails
+    - name: Commit and push if changes
+      if: steps.daily-check.outcome == 'failure'  # Only if new records were found
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add data/morphosource_data_complete.json
+        git commit -m "Update MorphoSource data [skip ci]" || exit 0
+        git push
+
+    - name: Upload logs
+      if: always()
       uses: actions/upload-artifact@v3
       with:
-        name: daily-check-logs
-        path: data/daily_extractor.log
+        name: execution-logs
+        path: |
+          data/daily_extractor.log
+          data/collector.log
