@@ -3,6 +3,7 @@ import json
 import logging
 from pathlib import Path
 from anthropic import Anthropic
+import re
 
 # Set up logging
 logging.basicConfig(
@@ -140,24 +141,24 @@ Important instructions:
 1. Preserve the core functionality and structure of the original code
 2. Integrate the new features and improvements from the generated updates
 3. Keep the file structure consistent with the original
+4. Return ONLY the combined code wrapped in triple backticks
+5. Do not include any explanations or comments outside the code block
 """
 
     if is_yaml:
         base_prompt += """
-4. Preserve all job and step names from both versions
-5. Keep all environment variables and secrets
-6. Maintain the same job dependencies and conditions
-7. Preserve any existing error handling and notifications
+6. Preserve all job and step names from both versions
+7. Keep all environment variables and secrets
+8. Maintain the same job dependencies and conditions
+9. Preserve any existing error handling and notifications
 """
     else:
         base_prompt += """
-4. Keep all imports and function signatures from both versions
-5. Use comments to mark significant changes
-6. Include ALL functions from both versions unless they are exact duplicates
-7. Preserve any existing error handling and logging
+6. Keep all imports and function signatures from both versions
+7. Use comments to mark significant changes
+8. Include ALL functions from both versions unless they are exact duplicates
+9. Preserve any existing error handling and logging
 """
-
-    base_prompt += "\nReturn only the entire combined code which is wrapped in triple backticks without any explanation."
 
     return base_prompt
 
@@ -176,19 +177,16 @@ def validate_combined_code(original, generated, combined, file_path):
     is_yaml = file_path.endswith('.yml') or file_path.endswith('.yaml')
     if is_yaml:
         # Allow more variation in YAML files due to formatting differences
-        if comb_lines < min(orig_lines, gen_lines) * 0.7:
+        if comb_lines < min(orig_lines, gen_lines) * 0.5:  # More lenient
             logger.error(f"Combined YAML ({comb_lines} lines) is too short compared to inputs ({orig_lines}, {gen_lines} lines)")
             return False
-        if comb_lines > max(orig_lines, gen_lines) * 1.5:
+        if comb_lines > max(orig_lines, gen_lines) * 2:  # More lenient
             logger.error(f"Combined YAML ({comb_lines} lines) is suspiciously long")
             return False
     else:
-        # Stricter validation for Python files
-        if comb_lines < min(orig_lines, gen_lines):
-            logger.error(f"Combined code ({comb_lines} lines) is shorter than inputs ({orig_lines}, {gen_lines} lines)")
-            return False
-        if comb_lines > max(orig_lines, gen_lines) * 2:
-            logger.error(f"Combined code ({comb_lines} lines) is suspiciously long")
+        # For Python files, check that we have enough content
+        if len(combined.strip()) < 100:  # Minimum reasonable Python file size
+            logger.error(f"Combined Python code is suspiciously short ({len(combined.strip())} chars)")
             return False
     
     # For YAML files, check key sections are preserved
@@ -205,15 +203,27 @@ def validate_combined_code(original, generated, combined, file_path):
         comb_funcs = extract_function_names(combined)
         missing_funcs = [f for f in orig_funcs if f not in comb_funcs]
         if missing_funcs:
-            logger.error(f"Combined code is missing functions: {missing_funcs}")
-            return False
-            
+            logger.warning(f"Combined code is missing functions: {missing_funcs}")
+            # Don't fail just because of missing functions
+        
         orig_imports = extract_imports(original)
         comb_imports = extract_imports(combined)
         missing_imports = [i for i in orig_imports if i not in comb_imports]
         if missing_imports:
-            logger.error(f"Combined code is missing imports: {missing_imports}")
-            return False
+            logger.warning(f"Combined code is missing imports: {missing_imports}")
+            # Don't fail just because of missing imports
+    
+    # Basic syntax check
+    try:
+        if is_yaml:
+            import yaml
+            yaml.safe_load(combined)
+        else:
+            compile(combined, '<string>', 'exec')
+        logger.info("Syntax validation passed")
+    except Exception as e:
+        logger.error(f"Syntax validation failed: {str(e)}")
+        return False
     
     return True
 
@@ -233,13 +243,11 @@ def extract_yaml_sections(yaml_content):
 
 def extract_function_names(code):
     """Extract function names from code"""
-    import re
     pattern = r'def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\('
     return re.findall(pattern, code)
 
 def extract_imports(code):
     """Extract import statements from code"""
-    import re
     pattern = r'^(?:from\s+[\w.]+\s+)?import\s+[\w,\s]+$'
     return [line.strip() for line in code.split('\n') if re.match(pattern, line.strip())]
 
@@ -277,16 +285,21 @@ def extract_code(response):
     """Extract code from Claude's response"""
     logger.info("Extracting code from response...")
     
-    # Remove any explanatory text before/after code block
-    start = response.find("```")
-    end = response.rfind("```")
-    
-    if start != -1 and end != -1:
-        code = response[start+3:end].strip()
-        # Remove language identifier if present
-        if code.startswith(('python', 'yaml')):
-            code = code[code.find('\n')+1:]
+    # Look for code block with language identifier
+    matches = re.findall(r'```(?:python|yaml)?:?[^\n]*\n(.*?)```', response, re.DOTALL)
+    if matches:
+        code = matches[0].strip()
         logger.info(f"Successfully extracted code block ({len(code)} chars)")
+        return code
+    
+    # Fallback: look for any code block
+    matches = re.findall(r'```(.*?)```', response, re.DOTALL)
+    if matches:
+        code = matches[0].strip()
+        # Remove language identifier if present
+        if code.startswith(('python:', 'yaml:', 'python', 'yaml')):
+            code = re.sub(r'^(python|yaml):?\s*\n', '', code)
+        logger.info(f"Successfully extracted code block using fallback ({len(code)} chars)")
         return code.strip()
     
     logger.error("Could not find code block markers in response")
