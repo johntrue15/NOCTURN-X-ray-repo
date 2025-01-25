@@ -100,6 +100,19 @@ jobs:
             }
           }
 
+    - name: Prepare Release Body
+      id: release_body
+      run: |
+        NOTES=$(cat data/release_notes.txt)
+        # Create multiline string with release notes and attestation info
+        echo "BODY<<EOF" >> $GITHUB_OUTPUT
+        echo "$NOTES" >> $GITHUB_OUTPUT
+        echo "" >> $GITHUB_OUTPUT
+        echo "## Attestations" >> $GITHUB_OUTPUT
+        echo "Complete Dataset: ${{ steps.attest-complete.outputs.attestation-url }}" >> $GITHUB_OUTPUT
+        echo "New Records: ${{ steps.attest-new.outputs.attestation-url }}" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
     - name: Create Release
       if: always()
       uses: softprops/action-gh-release@v1
@@ -108,12 +121,7 @@ jobs:
       with:
         name: "MorphoSource Check #${{ steps.timestamp.outputs.value }}"
         tag_name: "morphosource-check-${{ steps.timestamp.outputs.value }}"
-        body: |
-          ${{ cat data/release_notes.txt }}
-          
-          ## Attestations
-          Complete Dataset: ${{ steps.attest-complete.outputs.attestation-url }}
-          New Records: ${{ steps.attest-new.outputs.attestation-url }}
+        body: ${{ steps.release_body.outputs.BODY }}
         files: |
           data/morphosource_data_complete.json
           data/new_records_details.json
