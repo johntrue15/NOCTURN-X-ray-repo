@@ -71,7 +71,7 @@ def get_issue_details(issue_number, repo, token):
         # Get issue details
         issue_url = f'https://api.github.com/repos/{repo}/issues/{issue_number}'
         issue_response = requests.get(issue_url, headers=headers)
-        issue_response.raise_for_status()  # Raise exception for bad status codes
+        issue_response.raise_for_status()
         issue_data = issue_response.json()
         
         # Get issue comments
@@ -80,16 +80,20 @@ def get_issue_details(issue_number, repo, token):
         comments_response.raise_for_status()
         comments_data = comments_response.json()
         
-        # Combine issue body and comments, ensuring no carriage returns
-        full_conversation = [
-            f"Issue Title: {issue_data['title']}\n\n",
-            f"Issue Description:\n{issue_data['body'].replace('\r', '')}\n\n"
-        ]
+        # Combine issue body and comments, handling carriage returns safely
+        full_conversation = []
         
+        # Add title
+        full_conversation.append(f"Issue Title: {issue_data['title']}\n\n")
+        
+        # Add description - handle carriage returns before f-string
+        body = issue_data['body'].replace('\r', '')
+        full_conversation.append(f"Issue Description:\n{body}\n\n")
+        
+        # Add comments
         for comment in comments_data:
-            full_conversation.append(
-                f"Comment by {comment['user']['login']}:\n{comment['body'].replace('\r', '')}\n\n"
-            )
+            body = comment['body'].replace('\r', '')
+            full_conversation.append(f"Comment by {comment['user']['login']}:\n{body}\n\n")
         
         return "".join(full_conversation)
         
