@@ -33,6 +33,11 @@ jobs:
         python .github/scripts/daily.py
       continue-on-error: true
 
+    - name: Generate timestamp
+      id: timestamp
+      run: |
+        echo "value=$(date +'%Y-%m-%d_%H-%M-%S')" >> "$GITHUB_OUTPUT"
+
     - name: Collect new records
       id: collect
       if: steps.daily-check.outcome == 'failure'  # Only run if new records found
@@ -45,8 +50,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: "Daily MorphoSource Check ${{ github.run_number }}"
-        tag_name: "check-${{ github.run_number }}"
+        name: "MorphoSource Check #${{ steps.timestamp.outputs.value }}"
+        tag_name: "morphosource-check-${{ steps.timestamp.outputs.value }}"
         body: ${{ steps.daily-check.outcome == 'failure' && steps.collect.outputs.summary || 'No new records found' }}
         draft: false
         prerelease: false
@@ -62,7 +67,7 @@ jobs:
 
     - name: Upload logs
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: execution-logs
         path: |
