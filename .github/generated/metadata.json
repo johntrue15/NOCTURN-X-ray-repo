@@ -1,0 +1,5 @@
+{
+  "generated_files": [
+    ".github/workflows/combined_ct_images_to_text.yml",
+    ".github/scripts/ct_slices_to_text.py"  ]
+}

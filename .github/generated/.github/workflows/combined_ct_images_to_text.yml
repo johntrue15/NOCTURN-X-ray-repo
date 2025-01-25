@@ -1,0 +1,93 @@
+# Add required permissions for attestations
+permissions:
+  contents: write
+  id-token: write
+  actions: read
+  attestations: write
+
+# [Previous content remains the same until process_3d and process_2d jobs]
+
+# In process_3d job, add after creating release:
+      - name: Generate 3D Analysis Attestation
+        if: success()
+        id: attest_3d
+        uses: actions/attest@v2.1.0
+        with:
+          subject-path: ./screenshots/Default_Yplus_Up.png
+          predicate-type: 'https://in-toto.io/attestation/release/v0.1'
+          predicate: |
+            {
+              "purl": "pkg:github/${{ github.repository }}",
+              "version": "${{ github.sha }}",
+              "metadata": {
+                "buildInvocationId": "${{ github.run_id }}",
+                "completeness": {
+                  "parameters": true,
+                  "environment": true,
+                  "materials": true
+                },
+                "analysisType": "3D CT Image Analysis",
+                "morphosourceRelease": "${{ needs.check_and_analyze.outputs.release_tag }}"
+              }
+            }
+
+      - name: Update 3D Release
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          RELEASE_BODY="Analysis for MorphoSource release: ${{ needs.check_and_analyze.outputs.release_tag }}
+          
+          ${{ steps.process_images.outputs.description }}
+          
+          ### Orientation Views
+          The following orientation views were captured:
+          - Default (Y+ Up)
+          - Upside Down (Y- Up)
+          - Forward 90° (Z- Up)
+          - Back 90° (Z+ Up)
+          
+          See attached images for details.
+          
+          ### Attestation
+          Attestation URL: ${{ steps.attest_3d.outputs.attestation-url }}"
+          
+          gh release edit "ct_image_analysis-${{ steps.gen_ts.outputs.timestamp }}" --notes "$RELEASE_BODY"
+
+# In process_2d job, add after creating release:
+      - name: Generate 2D Analysis Attestation
+        if: success()
+        id: attest_2d
+        uses: actions/attest@v2.1.0
+        with:
+          subject-path: ./screenshots
+          predicate-type: 'https://in-toto.io/attestation/release/v0.1'
+          predicate: |
+            {
+              "purl": "pkg:github/${{ github.repository }}",
+              "version": "${{ github.sha }}",
+              "metadata": {
+                "buildInvocationId": "${{ github.run_id }}",
+                "completeness": {
+                  "parameters": true,
+                  "environment": true,
+                  "materials": true
+                },
+                "analysisType": "2D CT Slice Analysis", 
+                "morphosourceRelease": "${{ needs.check_and_analyze.outputs.release_tag }}"
+              }
+            }
+
+      - name: Update 2D Release
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          RELEASE_BODY="Analysis for MorphoSource release: ${{ needs.check_and_analyze.outputs.release_tag }}
+          
+          ${{ steps.process_slices.outputs.description }}
+          
+          ### Attestation
+          Attestation URL: ${{ steps.attest_2d.outputs.attestation-url }}"
+          
+          gh release edit "ct_slice_analysis-${{ steps.gen_ts.outputs.timestamp }}" --notes "$RELEASE_BODY"

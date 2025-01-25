@@ -1,0 +1,1 @@
+# [Previous content remains exactly the same - no changes needed for attestation support]
