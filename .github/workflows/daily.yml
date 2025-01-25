@@ -64,6 +64,7 @@ jobs:
       with:
         subject-path: data/morphosource_data_complete.json
         predicate-type: 'https://in-toto.io/attestation/release/v0.1'
+        output-path: complete_dataset_attestation.json
         predicate: |
           {
             "purl": "pkg:github/${{ github.repository }}",
@@ -86,6 +87,7 @@ jobs:
       with:
         subject-path: data/new_records_details.json
         predicate-type: 'https://in-toto.io/attestation/release/v0.1'
+        output-path: new_records_attestation.json
         predicate: |
           {
             "purl": "pkg:github/${{ github.repository }}",
