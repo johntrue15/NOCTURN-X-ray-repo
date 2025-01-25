@@ -88,8 +88,8 @@ jobs:
           
           # Get issue body and save to file
           if [ "${{ github.event_name }}" = "issues" ]; then
-            # For issue assignment trigger
-            jq -r '.issue.body' <<< '${{ toJSON(github.event.issue.body) }}' > "$ISSUE_FILE"
+            # For issue assignment trigger, escape special characters
+            echo '${{ github.event.issue.body }}' | sed 's/"/\\"/g' > "$ISSUE_FILE"
           else
             # For workflow dispatch trigger
             gh issue view ${{ steps.set-issue.outputs.issue_number }} --json body -q .body > "$ISSUE_FILE"
@@ -100,6 +100,10 @@ jobs:
             # Remove carriage returns and clean whitespace
             tr -d '\r' < "$ISSUE_FILE" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' > "$TEMP_DIR/cleaned_body.txt"
             mv "$TEMP_DIR/cleaned_body.txt" "$ISSUE_FILE"
+            
+            # Debug file contents
+            echo "Issue file contents:"
+            cat "$ISSUE_FILE"
             
             # Check for error patterns
             if grep -q "^Error occurred during analysis" "$ISSUE_FILE"; then
