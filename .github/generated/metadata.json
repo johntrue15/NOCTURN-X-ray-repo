@@ -1,0 +1,5 @@
+{
+  "generated_files": [
+    ".github/workflows/ct_to_text.yml",
+    ".github/scripts/ct_to_text.py"  ]
+}
