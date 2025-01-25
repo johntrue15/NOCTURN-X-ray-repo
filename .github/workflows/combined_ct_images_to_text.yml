@@ -80,7 +80,7 @@ jobs:
               echo "release_tag=${{ inputs.morphosource_tag }}" >> "$GITHUB_OUTPUT"
               echo "morphosource_created_at=$(cat release.json | jq -r .created_at)" >> "$GITHUB_OUTPUT"
             fi
-            return
+            exit 0
           fi
           
           echo "Fetching releases to find latest morphosource-updates..."
