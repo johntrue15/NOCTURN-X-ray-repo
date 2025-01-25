@@ -77,10 +77,21 @@ jobs:
           # Get issue body based on trigger type
           if [ "${{ github.event_name }}" = "issues" ]; then
             # For issue assignment, use the issue body directly
-            ISSUE_BODY="${{ github.event.issue.body }}"
+            ISSUE_BODY=$(echo "${{ github.event.issue.body }}" | sed 's/\r//g' | tr -d '\r')
           else
-            # For workflow_dispatch, fetch the issue body
-            ISSUE_BODY=$(gh issue view ${{ steps.set-issue.outputs.issue_number }} --json body -q .body)
+            # For workflow_dispatch, fetch the issue body and clean it
+            ISSUE_BODY=$(gh issue view ${{ steps.set-issue.outputs.issue_number }} --json body -q .body | sed 's/\r//g' | tr -d '\r')
+          fi
+          
+          # Check if issue body is empty or contains only error messages
+          if [[ -z "$ISSUE_BODY" ]]; then
+            echo "Error: Empty issue body"
+            exit 1
+          fi
+          
+          # Check for error patterns
+          if echo "$ISSUE_BODY" | grep -q "^Error occurred during analysis"; then
+            echo "Warning: Issue contains error message, but continuing..."
           fi
           
           # Run code generation
@@ -137,14 +148,14 @@ jobs:
           fi
 
       - name: Upload workflow data
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: workflow-data
           path: workflow-data.json
 
       - name: Save Claude conversation
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: claude-conversation
           path: |
