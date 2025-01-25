@@ -32,7 +32,7 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y xvfb libopengl0 mesa-utils chromium-browser libnss3 libgbm1 libasound2
+        sudo apt-get install -y xvfb libopengl0 mesa-utils chromium-browser libnss3 libgbm1 libasound2t64
     
     - name: Install Python dependencies
       run: |
@@ -58,7 +58,7 @@ jobs:
         ls -la error_*.txt || true
     
     - name: Upload screenshots
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: morphosource_screenshots
@@ -97,7 +97,7 @@ jobs:
         python .github/scripts/generate_text_with_images.py analysis_input
     
     - name: Upload analysis results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: analysis_results
