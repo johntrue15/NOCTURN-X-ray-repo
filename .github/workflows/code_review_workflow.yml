@@ -209,37 +209,39 @@ jobs:
           # Create log directory
           mkdir -p logs
           
-          # Run analyze_code.py and only log to file, not console
+          # Run analyze_code.py and capture all output
           python analyze_code.py > logs/analyze.log 2>&1
           
           # Check if analysis was successful
           if [ -f "logs/analyze.log" ]; then
-            # Only show important log entries (not duplicates)
             echo "Analysis log highlights:"
-            grep -v "HTTP Request" logs/analyze.log | grep -v "Got response from Claude" | grep "INFO\|ERROR\|WARNING"
+            grep -v "HTTP Request" logs/analyze.log | grep "INFO\|ERROR\|WARNING"
             
-            # Check for Claude responses in log
-            if grep -q "Saved combined file" logs/analyze.log; then
-              echo "Claude analysis complete"
+            # Check combination results
+            if [ -f "logs/combination_results.json" ]; then
+              success_count=$(jq '.successful_combinations' logs/combination_results.json)
+              if [ "$success_count" -gt "0" ]; then
+                echo "Successfully combined $success_count files"
+              else
+                echo "Warning: No files were successfully combined"
+                exit 1
+              fi
             else
-              echo "Warning: No files were combined"
+              echo "Warning: No combination results found"
               exit 1
             fi
           fi
-          
-          # Verify staging contents
-          echo "Staging directory contents:"
-          find staging -type f
-          
-          # Save log as artifact
-          echo "logs_path=logs/analyze.log" >> $GITHUB_OUTPUT
 
-      # Upload analysis logs
-      - name: Upload analysis logs
+      # Upload all analysis artifacts
+      - name: Upload analysis artifacts
+        if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: analysis-logs
-          path: logs/analyze.log
+          name: code-analysis-artifacts
+          path: |
+            logs/
+            staging/
+          retention-days: 5
 
       # Commit the changes
       - name: Commit combined files
