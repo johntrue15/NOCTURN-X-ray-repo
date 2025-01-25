@@ -7,6 +7,11 @@ on:
         description: 'MorphoSource update tag to analyze (e.g. morphosource-updates-2025-01-23_14-39-38)'
         required: false
         type: string
+      force_rerun:
+        description: 'Force rerun even if analysis exists'
+        required: false
+        type: boolean
+        default: false
   workflow_run:
     workflows: ["Parse MorphoSource Data"]
     types: [completed]
@@ -123,6 +128,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
+          if [ "${{ inputs.force_rerun }}" = "true" ]; then
+            echo "Force rerun requested, skipping existing analysis check"
+            echo "has_analysis=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          
           releases=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
           
