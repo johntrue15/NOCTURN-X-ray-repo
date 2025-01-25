@@ -240,6 +240,8 @@ def extract_imports(code):
 def call_claude(prompt):
     """Call Claude API to get combined code"""
     try:
+        logger.info("Calling Claude API...")
+        
         system_prompt = """You are an expert programmer helping to combine code files.
         You will receive an original file and updates to be integrated.
         Your response must be the combined code wrapped in triple backticks."""
@@ -258,7 +260,7 @@ def call_claude(prompt):
             }
         )
         
-        logger.info(f"Got response from Claude: {response.content[0].text[:100]}...")
+        logger.info("Received response from Claude")
         return response.content[0].text
 
     except Exception as e:
@@ -267,6 +269,8 @@ def call_claude(prompt):
 
 def extract_code(response):
     """Extract code from Claude's response"""
+    logger.info("Extracting code from response...")
+    
     # Remove any explanatory text before/after code block
     start = response.find("```")
     end = response.rfind("```")
@@ -276,9 +280,11 @@ def extract_code(response):
         # Remove language identifier if present
         if code.startswith(('python', 'yaml')):
             code = code[code.find('\n')+1:]
+        logger.info(f"Successfully extracted code block ({len(code)} chars)")
         return code.strip()
     
-    logger.error("Could not extract code from Claude response")
+    logger.error("Could not find code block markers in response")
+    logger.error(f"Response starts with: {response[:200]}")
     return None
 
 def process_files():
@@ -300,6 +306,8 @@ def process_files():
                 
                 if not original_path or not generated_path:
                     logger.warning(f"Could not find both versions of {file}")
+                    logger.warning(f"Original path: {original_path}")
+                    logger.warning(f"Generated path: {generated_path}")
                     continue
                 
                 # Read both files
@@ -308,21 +316,40 @@ def process_files():
                 with open(generated_path) as f:
                     generated_content = f.read()
                 
+                # Debug file contents
+                logger.info(f"\n{'='*80}\nProcessing combination for {file}")
+                logger.info(f"Original file ({original_path}):\n{'-'*40}\n{original_content[:500]}...\n")
+                logger.info(f"Generated file ({generated_path}):\n{'-'*40}\n{generated_content[:500]}...\n")
+                
                 # Get Claude's combined version
                 prompt = get_claude_prompt(original_content, generated_content, file)
+                logger.info(f"Sending prompt to Claude:\n{'-'*40}\n{prompt[:500]}...\n")
+                
                 response = call_claude(prompt)
+                logger.info(f"Claude's full response:\n{'-'*40}\n{response}\n{'='*80}\n")
                 
                 # Extract and validate code
                 combined_code = extract_code(response)
-                if combined_code and validate_combined_code(original_content, generated_content, combined_code, file):
+                if not combined_code:
+                    logger.error("Failed to extract code from Claude's response")
+                    logger.error(f"Response was:\n{response[:1000]}...")
+                    continue
+                
+                logger.info(f"Extracted combined code:\n{'-'*40}\n{combined_code[:500]}...\n")
+                
+                if validate_combined_code(original_content, generated_content, combined_code, file):
                     output_path = staging_dir / file
                     os.makedirs(output_path.parent, exist_ok=True)
                     with open(output_path, 'w') as f:
                         f.write(combined_code)
-                    logger.info(f"Saved combined file: {output_path}")
+                    logger.info(f"Successfully saved combined file: {output_path}")
                     success_count += 1
                 else:
-                    logger.error(f"Failed to validate combined code for {file}")
+                    logger.error(f"Validation failed for combined code")
+                    logger.error("Original line count: " + str(len(original_content.split('\n'))))
+                    logger.error("Generated line count: " + str(len(generated_content.split('\n'))))
+                    logger.error("Combined line count: " + str(len(combined_code.split('\n'))))
+                    
                     # Fall back to generated version if validation fails
                     output_path = staging_dir / file
                     os.makedirs(output_path.parent, exist_ok=True)
