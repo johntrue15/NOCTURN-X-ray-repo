@@ -98,8 +98,38 @@ class RecordCollector:
         with open(self.release_notes_path, 'w') as f:
             if self.new_records:
                 f.write(f"Added {len(self.new_records)} new record(s):\n\n")
+                
+                # Write summary table header
+                f.write("| Title | ID | Link | Taxonomy | Element | Modality | Data Manager | Date |\n")
+                f.write("|-------|----|----|----------|----------|-----------|--------------|------|\n")
+                
+                # Add each record to the table
                 for record in self.new_records:
-                    f.write(f"- {record['title']} (ID: {record['id']})\n")
+                    metadata = record['metadata']
+                    title = record['title']
+                    record_id = record['id']
+                    url = record['url']
+                    
+                    # Extract metadata fields (with fallbacks to 'N/A')
+                    taxonomy = metadata.get('Taxonomy', 'N/A')
+                    element = metadata.get('Element or Part', 'N/A')
+                    modality = metadata.get('Modality', 'N/A')
+                    data_manager = metadata.get('Data Manager', 'N/A')
+                    date = metadata.get('Date Uploaded', 'N/A')
+                    
+                    # Write table row
+                    f.write(f"| {title} | {record_id} | [View]({url}) | {taxonomy} | {element} | {modality} | {data_manager} | {date} |\n")
+                
+                # Add detailed record information
+                for record in self.new_records:
+                    metadata = record['metadata']
+                    f.write(f"\n### Details for Record {record['id']}\n\n")
+                    f.write(f"**Title:** {record['title']}\n")
+                    
+                    # Write all available metadata fields
+                    for key, value in metadata.items():
+                        if value:  # Only write non-empty fields
+                            f.write(f"**{key}:** {value}\n")
             else:
                 f.write("No new records found")
 
