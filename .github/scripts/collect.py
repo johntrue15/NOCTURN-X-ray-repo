@@ -102,14 +102,15 @@ class RecordCollector:
                 f.write(f"Added {len(self.new_records)} new record(s):\n\n")
                 
                 # Write summary table
-                f.write("| Title | Object ID | Taxonomy | Element | Status | Link |\n")
-                f.write("|-------|-----------|----------|----------|---------|------|\n")
+                f.write("| Title | Object ID | Taxonomy | Element | Data Manager | Status | Link |\n")
+                f.write("|-------|-----------|----------|----------|--------------|--------|------|\n")
                 
                 for record in self.new_records:
                     metadata = record['metadata']
                     f.write(
                         f"| {record['title']} | {metadata.get('Object', 'N/A')} | "
                         f"{metadata.get('Taxonomy', 'N/A')} | {metadata.get('Element or Part', 'N/A')} | "
+                        f"{metadata.get('Data Manager', 'N/A')} | "
                         f"{metadata.get('Publication Status', 'N/A')} | "
                         f"[View]({record['url']}) |\n"
                     )
