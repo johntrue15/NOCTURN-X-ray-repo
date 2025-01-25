@@ -301,19 +301,21 @@ def process_files():
         logger.info("Processing files from metadata...")
         
         success_count = 0
+        results = []  # Track results for logging
+        
         for file in files:
             try:
                 file_name = Path(file).name
-                logger.info(f"Processing file: {file_name}")
+                logger.info(f"\n{'='*80}\nProcessing file: {file_name}")
                 
                 # Find original and generated files
                 original_path = find_file(file_name, 'main-files', file_type='original')
                 generated_path = find_file(file_name, '.github/generated')
                 
                 if not original_path or not generated_path:
-                    logger.warning(f"Could not find both versions of {file}")
-                    logger.warning(f"Original path: {original_path}")
-                    logger.warning(f"Generated path: {generated_path}")
+                    msg = f"Could not find both versions of {file}"
+                    logger.warning(msg)
+                    results.append({"file": file, "status": "error", "message": msg})
                     continue
                 
                 # Read both files
@@ -323,13 +325,12 @@ def process_files():
                     with open(generated_path) as f:
                         generated_content = f.read()
                 except Exception as e:
-                    logger.error(f"Error reading files: {e}")
-                    logger.error(f"Original path exists: {original_path.exists()}")
-                    logger.error(f"Generated path exists: {generated_path.exists()}")
+                    msg = f"Error reading files: {e}"
+                    logger.error(msg)
+                    results.append({"file": file, "status": "error", "message": msg})
                     continue
                 
                 # Debug file contents
-                logger.info(f"\n{'='*80}\nProcessing combination for {file}")
                 logger.info(f"Original file ({original_path}):\n{'-'*40}\n{original_content[:500]}...\n")
                 logger.info(f"Generated file ({generated_path}):\n{'-'*40}\n{generated_content[:500]}...\n")
                 
@@ -338,42 +339,69 @@ def process_files():
                 logger.info(f"Sending prompt to Claude:\n{'-'*40}\n{prompt[:500]}...\n")
                 
                 response = call_claude(prompt)
-                logger.info(f"Claude's full response:\n{'-'*40}\n{response}\n{'='*80}\n")
+                
+                # Save Claude's response for debugging
+                response_file = Path("logs") / f"claude_response_{file_name}.txt"
+                os.makedirs(response_file.parent, exist_ok=True)
+                with open(response_file, 'w') as f:
+                    f.write(f"Original File: {original_path}\n")
+                    f.write(f"Generated File: {generated_path}\n")
+                    f.write(f"\nPrompt:\n{prompt}\n")
+                    f.write(f"\nResponse:\n{response}")
                 
                 # Extract and validate code
                 combined_code = extract_code(response)
                 if not combined_code:
-                    logger.error("Failed to extract code from Claude's response")
-                    logger.error(f"Response was:\n{response[:1000]}...")
+                    msg = "Failed to extract code from Claude's response"
+                    logger.error(msg)
+                    results.append({"file": file, "status": "error", "message": msg})
                     continue
                 
                 logger.info(f"Extracted combined code:\n{'-'*40}\n{combined_code[:500]}...\n")
                 
                 if validate_combined_code(original_content, generated_content, combined_code, file):
-                    # Create the full path in staging directory
+                    # Fix the staging directory path structure
                     if file.startswith('workflows/'):
-                        output_path = staging_dir / '.github/workflows' / Path(file).name
+                        rel_path = 'workflows'
                     elif file.startswith('scripts/'):
-                        output_path = staging_dir / '.github/scripts' / Path(file).name
+                        rel_path = 'scripts'
                     else:
-                        output_path = staging_dir / '.github' / file
-                        
+                        rel_path = ''
+                    
+                    output_path = staging_dir / '.github' / rel_path / file_name
                     os.makedirs(output_path.parent, exist_ok=True)
+                    
                     with open(output_path, 'w') as f:
                         f.write(combined_code)
-                    logger.info(f"Successfully saved combined file: {output_path}")
+                    
+                    msg = f"Successfully combined and saved: {output_path}"
+                    logger.info(msg)
+                    results.append({"file": file, "status": "success", "message": msg})
                     success_count += 1
                 else:
-                    logger.error(f"Validation failed for combined code")
-                    logger.error("Original line count: " + str(len(original_content.split('\n'))))
-                    logger.error("Generated line count: " + str(len(generated_content.split('\n'))))
-                    logger.error("Combined line count: " + str(len(combined_code.split('\n'))))
+                    msg = f"Validation failed for combined code"
+                    logger.error(msg)
+                    logger.error(f"Line counts - Original: {len(original_content.split('\n'))}, " +
+                               f"Generated: {len(generated_content.split('\n'))}, " +
+                               f"Combined: {len(combined_code.split('\n'))}")
+                    results.append({"file": file, "status": "error", "message": msg})
                     continue
                 
             except Exception as e:
-                logger.error(f"Error processing {file}: {e}", exc_info=True)
+                msg = f"Error processing {file}: {str(e)}"
+                logger.error(msg, exc_info=True)
+                results.append({"file": file, "status": "error", "message": msg})
                 continue
-                
+        
+        # Save results summary
+        summary_file = Path("logs") / "combination_results.json"
+        with open(summary_file, 'w') as f:
+            json.dump({
+                "total_files": len(files),
+                "successful_combinations": success_count,
+                "results": results
+            }, f, indent=2)
+        
         if success_count == 0:
             raise Exception("No files were successfully processed")
             
