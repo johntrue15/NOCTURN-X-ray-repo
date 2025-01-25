@@ -10,20 +10,19 @@ on:
   workflow_run:
     workflows: ["Auto Code Generation with Claude on Issue"]
     types: [completed]
-    branches:
-      - 'claude-pr/issue-*'  # Only trigger on Claude PR branches
+    branches-ignore: []  # Remove branch filter to catch all completions
 
 
 permissions: write-all
 
 jobs:
   analyze:
-    # Only run if the triggering workflow succeeded and it's a Claude commit
+    # Only run if the triggering workflow succeeded and it's from the Claude workflow
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'workflow_run' && 
        github.event.workflow_run.conclusion == 'success' &&
-       startsWith(github.event.workflow_run.head_branch, 'claude-pr/issue-'))
+       github.event.workflow_run.name == 'Auto Code Generation with Claude on Issue')
     runs-on: ubuntu-latest
     
     steps:
@@ -35,6 +34,7 @@ jobs:
           echo "Workflow run head sha: ${{ github.event.workflow_run.head_sha }}"
           echo "Workflow run head repo: ${{ github.event.workflow_run.head_repository.full_name }}"
           echo "Workflow run id: ${{ github.event.workflow_run.id }}"
+          echo "Workflow run conclusion: ${{ github.event.workflow_run.conclusion }}"
 
       - name: Get workflow run info
         if: github.event_name == 'workflow_run'
