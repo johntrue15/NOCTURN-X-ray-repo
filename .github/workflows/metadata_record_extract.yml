@@ -22,21 +22,18 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install requests beautifulsoup4 pandas
-
-    - name: List directory contents
-      run: |
-        pwd
-        ls -la .github/scripts
+        
+    - name: Create data directory
+      run: mkdir -p data
         
     - name: Run scraper
       run: |
         python .github/scripts/metadata_record_extract.py
-      working-directory: ${{ github.workspace }}
       
     - name: Commit and push if changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add data.json
-        git commit -m "Update morphosource data" || exit 0
+        git add data/morphosource_data_complete.json data/morphosource_checkpoint.json
+        git commit -m "Update morphosource data [skip ci]" || exit 0
         git push
