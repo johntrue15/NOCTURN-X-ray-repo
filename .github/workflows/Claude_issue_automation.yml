@@ -73,29 +73,40 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WORKFLOW_PAT: ${{ secrets.WORKFLOW_PAT }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
         run: |
           # Get issue body based on trigger type
           if [ "${{ github.event_name }}" = "issues" ]; then
-            # For issue assignment, use the issue body directly
-            ISSUE_BODY=$(echo "${{ github.event.issue.body }}" | sed 's/\r//g' | tr -d '\r')
+            # For issue assignment, use the issue body directly and escape it
+            ISSUE_BODY=$(echo "${{ github.event.issue.body }}" | sed 's/\r//g' | sed 's/[[:space:]]*$//' | sed 's/^[[:space:]]*//')
           else
-            # For workflow_dispatch, fetch the issue body and clean it
-            ISSUE_BODY=$(gh issue view ${{ steps.set-issue.outputs.issue_number }} --json body -q .body | sed 's/\r//g' | tr -d '\r')
+            # For workflow_dispatch, fetch and clean the issue body
+            ISSUE_BODY=$(gh issue view ${{ steps.set-issue.outputs.issue_number }} --json body -q .body | \
+              sed 's/\r//g' | \
+              sed 's/[[:space:]]*$//' | \
+              sed 's/^[[:space:]]*//')
           fi
           
-          # Check if issue body is empty or contains only error messages
+          # Check if issue body is empty
           if [[ -z "$ISSUE_BODY" ]]; then
             echo "Error: Empty issue body"
             exit 1
           fi
           
-          # Check for error patterns
-          if echo "$ISSUE_BODY" | grep -q "^Error occurred during analysis"; then
-            echo "Warning: Issue contains error message, but continuing..."
+          # Check for error patterns and skip if found
+          if echo "$ISSUE_BODY" | grep -qi "^Error occurred during analysis"; then
+            echo "Error: Issue contains error message, skipping code generation"
+            exit 0
           fi
           
-          # Run code generation
-          python .github/scripts/generate_code.py "$ISSUE_BODY" ${{ steps.set-issue.outputs.issue_number }}
+          # Escape the issue body for passing to Python
+          ISSUE_BODY_ESCAPED=$(echo "$ISSUE_BODY" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))')
+          
+          # Run code generation with escaped input
+          python .github/scripts/generate_code.py "$ISSUE_BODY_ESCAPED" ${{ steps.set-issue.outputs.issue_number }}
 
       - name: Create metadata
         run: |
