@@ -38,21 +38,21 @@ jobs:
       if: steps.daily-check.outcome == 'failure'  # Only run if new records found
       run: |
         python .github/scripts/collect.py
-        
+
     - name: Create Release
-      if: always()  # Create release whether there are new records or not
+      if: always()
       uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         name: "Daily MorphoSource Check ${{ github.run_number }}"
         tag_name: "check-${{ github.run_number }}"
-        body_path: ${{ steps.daily-check.outcome == 'failure' && 'data/release_notes.txt' || format('Results of check {0}: No new records found', github.run_number) }}
+        body: ${{ steps.daily-check.outcome == 'failure' && steps.collect.outputs.summary || 'No new records found' }}
         draft: false
         prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Commit and push if changes
-      if: steps.daily-check.outcome == 'failure'  # Only if new records were found
+      if: steps.daily-check.outcome == 'failure'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
