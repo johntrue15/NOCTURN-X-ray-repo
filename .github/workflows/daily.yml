@@ -62,6 +62,9 @@ jobs:
         body_path: data/release_notes.txt
         draft: false
         prerelease: false
+        files: |
+          data/morphosource_data_complete.json
+          data/new_records_details.json
 
     - name: Commit and push if changes
       if: steps.daily-check.outcome == 'failure'
