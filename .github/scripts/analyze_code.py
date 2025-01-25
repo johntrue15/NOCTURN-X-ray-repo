@@ -70,20 +70,18 @@ def find_file(file_name, directory, file_type=None):
     if file_type == 'original':
         # For original files in main branch
         search_paths = [
-            base_dir / 'workflows' / file_name,
-            base_dir / 'scripts' / file_name,
             base_dir / '.github/workflows' / file_name,
             base_dir / '.github/scripts' / file_name
         ]
     else:
-        # For generated files, check both locations
+        # For generated files, look in .github/generated first
         search_paths = [
-            base_dir / 'workflows' / file_name,
-            base_dir / 'scripts' / file_name,
             base_dir / '.github/workflows' / file_name,
             base_dir / '.github/scripts' / file_name,
-            base_dir / 'generated/workflows' / file_name,
-            base_dir / 'generated/scripts' / file_name
+            base_dir / '.github/generated/workflows' / file_name,
+            base_dir / '.github/generated/scripts' / file_name,
+            base_dir / '.github/generated/.github/workflows' / file_name,
+            base_dir / '.github/generated/.github/scripts' / file_name
         ]
     
     # Try each possible location
@@ -92,20 +90,28 @@ def find_file(file_name, directory, file_type=None):
         if path.exists():
             logger.info(f"Found file at: {path}")
             return path
-            
-    # If not found, do a recursive search
+    
+    # If not found in expected locations, do a recursive search
     logger.info("File not found in expected locations, doing recursive search...")
-    all_files = list(base_dir.rglob(file_name))
+    
+    # For original files, only search in .github directory
+    if file_type == 'original':
+        search_dir = base_dir / '.github'
+    else:
+        search_dir = base_dir
+        
+    all_files = list(search_dir.rglob(file_name))
     
     if all_files:
-        # If multiple files found, prefer the one in .github/workflows or .github/scripts
-        for file in all_files:
-            if '.github/workflows' in str(file) or '.github/scripts' in str(file):
-                logger.info(f"Using preferred path: {file}")
-                return file
-        # Otherwise use the first one found
-        logger.info(f"Using found path: {all_files[0]}")
-        return all_files[0]
+        # Sort files to prefer .github/workflows and .github/scripts paths
+        all_files.sort(key=lambda p: (
+            '.github/workflows' not in str(p),
+            '.github/scripts' not in str(p),
+            str(p)
+        ))
+        chosen_file = all_files[0]
+        logger.info(f"Using file: {chosen_file}")
+        return chosen_file
         
     logger.warning(f"File not found: {file_name}")
     logger.info("Directory contents:")
@@ -301,7 +307,7 @@ def process_files():
                 logger.info(f"Processing file: {file_name}")
                 
                 # Find original and generated files
-                original_path = find_file(file_name, 'main-files/.github', file_type='original')
+                original_path = find_file(file_name, 'main-files', file_type='original')
                 generated_path = find_file(file_name, '.github/generated')
                 
                 if not original_path or not generated_path:
@@ -311,10 +317,16 @@ def process_files():
                     continue
                 
                 # Read both files
-                with open(original_path) as f:
-                    original_content = f.read()
-                with open(generated_path) as f:
-                    generated_content = f.read()
+                try:
+                    with open(original_path) as f:
+                        original_content = f.read()
+                    with open(generated_path) as f:
+                        generated_content = f.read()
+                except Exception as e:
+                    logger.error(f"Error reading files: {e}")
+                    logger.error(f"Original path exists: {original_path.exists()}")
+                    logger.error(f"Generated path exists: {generated_path.exists()}")
+                    continue
                 
                 # Debug file contents
                 logger.info(f"\n{'='*80}\nProcessing combination for {file}")
@@ -338,7 +350,14 @@ def process_files():
                 logger.info(f"Extracted combined code:\n{'-'*40}\n{combined_code[:500]}...\n")
                 
                 if validate_combined_code(original_content, generated_content, combined_code, file):
-                    output_path = staging_dir / file
+                    # Create the full path in staging directory
+                    if file.startswith('workflows/'):
+                        output_path = staging_dir / '.github/workflows' / Path(file).name
+                    elif file.startswith('scripts/'):
+                        output_path = staging_dir / '.github/scripts' / Path(file).name
+                    else:
+                        output_path = staging_dir / '.github' / file
+                        
                     os.makedirs(output_path.parent, exist_ok=True)
                     with open(output_path, 'w') as f:
                         f.write(combined_code)
@@ -349,14 +368,7 @@ def process_files():
                     logger.error("Original line count: " + str(len(original_content.split('\n'))))
                     logger.error("Generated line count: " + str(len(generated_content.split('\n'))))
                     logger.error("Combined line count: " + str(len(combined_code.split('\n'))))
-                    
-                    # Fall back to generated version if validation fails
-                    output_path = staging_dir / file
-                    os.makedirs(output_path.parent, exist_ok=True)
-                    with open(output_path, 'w') as f:
-                        f.write(generated_content)
-                    logger.warning(f"Used generated version for {file} due to validation failure")
-                    success_count += 1
+                    continue
                 
             except Exception as e:
                 logger.error(f"Error processing {file}: {e}", exc_info=True)
