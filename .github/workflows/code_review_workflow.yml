@@ -23,15 +23,26 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Debug workflow trigger
+        run: |
+          echo "Event name: ${{ github.event_name }}"
+          echo "Workflow run head branch: ${{ github.event.workflow_run.head_branch }}"
+          echo "Workflow run head sha: ${{ github.event.workflow_run.head_sha }}"
+
       - name: Set branch name
         id: set-branch
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             ISSUE_NUM="${{ github.event.inputs.issue_number }}"
           else
-            # Extract issue number from branch name
+            # Extract issue number from the triggering workflow's branch name
             BRANCH_NAME="${{ github.event.workflow_run.head_branch }}"
-            ISSUE_NUM=$(echo $BRANCH_NAME | sed 's/claude-pr\/issue-//')
+            if [[ "$BRANCH_NAME" =~ claude-pr/issue-([0-9]+) ]]; then
+              ISSUE_NUM="${BASH_REMATCH[1]}"
+            else
+              echo "Error: Could not extract issue number from branch name: $BRANCH_NAME"
+              exit 1
+            fi
           fi
           
           BRANCH_NAME="claude-pr/issue-${ISSUE_NUM}"
