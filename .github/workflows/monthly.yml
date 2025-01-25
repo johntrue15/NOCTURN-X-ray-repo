@@ -18,7 +18,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0  # Fetch complete history
+        fetch-depth: 0
     
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -26,24 +26,60 @@ jobs:
         python-version: '3.10'
         
     - name: Install dependencies
+      id: install
       run: |
+        echo "::group::Installing Python packages"
         python -m pip install --upgrade pip
         pip install requests beautifulsoup4
+        pip freeze > requirements.txt
+        echo "::endgroup::"
+        echo "python_version=$(python --version)" >> $GITHUB_OUTPUT
+        echo "requirements_hash=$(md5sum requirements.txt | cut -d' ' -f1)" >> $GITHUB_OUTPUT
+
+    - name: Verify Environment
+      id: verify
+      run: |
+        echo "::group::System Information"
+        uname -a
+        echo "::endgroup::"
         
+        echo "::group::Python Environment"
+        echo "Python: ${{ steps.install.outputs.python_version }}"
+        echo "Requirements Hash: ${{ steps.install.outputs.requirements_hash }}"
+        echo "::endgroup::"
+        
+        echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
+        echo "run_id=${GITHUB_RUN_ID}" >> $GITHUB_OUTPUT
+
     - name: Create data directory
       run: mkdir -p data
-
-    - name: Generate timestamp
-      id: timestamp
-      run: |
-        echo "value=$(date +'%Y-%m-%d_%H-%M-%S')" >> "$GITHUB_OUTPUT"
 
     - name: Run monthly collection
       id: collect
       run: |
+        echo "::group::Starting Collection"
+        echo "Run ID: ${{ steps.verify.outputs.run_id }}"
+        echo "Timestamp: ${{ steps.verify.outputs.timestamp }}"
+        echo "::endgroup::"
+        
         python .github/scripts/monthly.py
+        
+        # Get collection stats
+        if [ -f "data/monthly_stats.json" ]; then
+          echo "total_records=$(jq '.total_records' data/monthly_stats.json)" >> $GITHUB_OUTPUT
+          echo "modified_records=$(jq '.modified_records' data/monthly_stats.json)" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Generate Collection Summary
+      if: always()
+      run: |
+        echo "::group::Collection Summary"
+        echo "Total Records: ${{ steps.collect.outputs.total_records || 'N/A' }}"
+        echo "Modified Records: ${{ steps.collect.outputs.modified_records || 'N/A' }}"
+        echo "::endgroup::"
 
     - name: Generate Attestation
+      if: success()
       uses: actions/attest@v2.1.0
       id: attest
       with:
@@ -60,34 +96,63 @@ jobs:
                 "parameters": true,
                 "environment": true,
                 "materials": true
+              },
+              "runtime": {
+                "python_version": "${{ steps.install.outputs.python_version }}",
+                "requirements_hash": "${{ steps.install.outputs.requirements_hash }}"
+              },
+              "stats": {
+                "total_records": "${{ steps.collect.outputs.total_records }}",
+                "modified_records": "${{ steps.collect.outputs.modified_records }}"
               }
             }
           }
 
+    - name: Create Status Files
+      if: always()
+      run: |
+        # Create run status file
+        jq -n \
+          --arg status "${{ job.status }}" \
+          --arg timestamp "${{ steps.verify.outputs.timestamp }}" \
+          --arg run_id "${{ steps.verify.outputs.run_id }}" \
+          --arg python "${{ steps.install.outputs.python_version }}" \
+          --arg reqs "${{ steps.install.outputs.requirements_hash }}" \
+          '{status: $status, timestamp: $timestamp, run_id: $run_id, python_version: $python, requirements_hash: $reqs}' \
+          > data/run_status.json
+
     - name: Create Release
+      if: success()
       uses: softprops/action-gh-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: "Monthly MorphoSource Collection #${{ steps.timestamp.outputs.value }}"
-        tag_name: "monthly-collection-${{ steps.timestamp.outputs.value }}"
+        name: "Monthly MorphoSource Collection #${{ steps.verify.outputs.timestamp }}"
+        tag_name: "monthly-collection-${{ steps.verify.outputs.timestamp }}"
         body_path: data/monthly_release_notes.txt
         files: |
           data/morphosource_data_complete.json
+          data/monthly_stats.json
+          data/run_status.json
           monthly_collection_attestation.json
 
-    - name: Commit and push
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add data/morphosource_data_complete.json
-        git commit -m "Monthly MorphoSource data update [skip ci]" || exit 0
-        git push
-
-    - name: Upload logs
+    - name: Upload detailed logs
       if: always()
       uses: actions/upload-artifact@v3
       with:
-        name: monthly-execution-logs
+        name: monthly-execution-logs-${{ steps.verify.outputs.timestamp }}
         path: |
           data/monthly_collector.log
+          data/monthly_stats.json
+          data/run_status.json
+          requirements.txt
+
+    - name: Report Status
+      if: always()
+      run: |
+        echo "::group::Final Status"
+        echo "Job Status: ${{ job.status }}"
+        echo "Collection Complete: ${{ steps.collect.outputs.total_records != '' }}"
+        echo "Attestation Generated: ${{ steps.attest.outcome == 'success' }}"
+        cat data/run_status.json
+        echo "::endgroup::"
