@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
     
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -22,8 +23,15 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests beautifulsoup4 pandas
 
+    - name: List directory contents
+      run: |
+        pwd
+        ls -la .github/scripts
+        
     - name: Run scraper
-      run: python metadata_record_extract.py
+      run: |
+        python .github/scripts/metadata_record_extract.py
+      working-directory: ${{ github.workspace }}
       
     - name: Commit and push if changes
       run: |
