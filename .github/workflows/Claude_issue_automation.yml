@@ -81,12 +81,24 @@ jobs:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_RUN_ID: ${{ github.run_id }}
           GITHUB_RUN_NUMBER: ${{ github.run_number }}
+          GITHUB_API_URL: ${{ github.api_url }}
+          GITHUB_SERVER_URL: ${{ github.server_url }}
         run: |
+          # Debug environment variables
+          echo "Checking environment variables:"
+          echo "GITHUB_TOKEN: ${GITHUB_TOKEN:+set}"
+          echo "ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:+set}"
+          echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
+          echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+          echo "GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME"
+          
           # Get issue body
           ISSUE_BODY=$(gh issue view ${{ steps.set-issue.outputs.issue_number }} --json body -q .body)
+          echo "Issue body retrieved"
           
-          # Run code generation
-          python .github/scripts/generate_code.py "$ISSUE_BODY" ${{ steps.set-issue.outputs.issue_number }}
+          # Run code generation with debug
+          echo "Running generate_code.py..."
+          python -u .github/scripts/generate_code.py "$ISSUE_BODY" ${{ steps.set-issue.outputs.issue_number }}
 
       - name: Create metadata
         run: |
