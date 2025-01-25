@@ -7,92 +7,157 @@ on:
         description: 'Issue number to process'
         required: true
         type: string
+  issues:
+    types: [assigned]
 
 # Add permissions block
 permissions:
   contents: write
   pull-requests: write
   issues: read
+  repository-projects: write
 
 jobs:
-  codegen:
+  generate:
+    # Only run if workflow dispatch or if assigned to yourself
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issues' && github.event.assignee.login == 'johntrue15')
     runs-on: ubuntu-latest
-
+    
     steps:
-      # 1. Check out the repo
-      - name: Check out repository
-        uses: actions/checkout@v3
-
-      # 2. Configure Git identity
-      - name: Set up Git
+      - name: Set issue number
+        id: set-issue
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "issue_number=${{ github.event.inputs.issue_number }}" >> $GITHUB_OUTPUT
+          else
+            echo "issue_number=${{ github.event.issue.number }}" >> $GITHUB_OUTPUT
+          fi
 
-      # 3. Set up Python
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+          token: ${{ secrets.WORKFLOW_PAT }}
+
+      - name: Set up branch
+        id: set-branch
+        run: |
+          BRANCH_NAME="claude-pr/issue-${{ steps.set-issue.outputs.issue_number }}"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          
+          # Create and checkout new branch
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git checkout -b $BRANCH_NAME
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-          
-      # 4. Install Python dependencies
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install anthropic requests
+          pip install anthropic PyGithub
 
-      # 5. Create a new branch named "claude-pr/issue-<number>" from origin/main
-      - name: Create Issue Branch
-        id: create_branch
+      - name: Create directories
         run: |
-          ISSUE_NUMBER=${{ inputs.issue_number }}
-          BRANCH_NAME="claude-pr/issue-${ISSUE_NUMBER}"
-          
-          # Create new branch from origin/main without checking it out
-          git fetch origin main
-          git branch "$BRANCH_NAME" origin/main
-          git checkout "$BRANCH_NAME"
-          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          mkdir -p .github/generated/workflows
+          mkdir -p .github/generated/scripts
+          mkdir -p .github/generated/.github/workflows
+          mkdir -p .github/generated/.github/scripts
 
-      # 6. Generate code using Claude via Python script
-      - name: Generate code with Claude
-        id: generate_code
+      - name: Generate code
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ISSUE_NUMBER: ${{ inputs.issue_number }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WORKFLOW_PAT: ${{ secrets.WORKFLOW_PAT }}
           REPO: ${{ github.repository }}
-          PYTHONUNBUFFERED: 1
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+          ISSUE_NUMBER: ${{ steps.set-issue.outputs.issue_number }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_REF: ${{ github.ref }}
+          GITHUB_SHA: ${{ github.sha }}
         run: |
-          # Enable debug logging
-          export PYTHONPATH="${PYTHONPATH}:${GITHUB_WORKSPACE}"
-          export PYTHONIOENCODING=utf-8
-          python -u .github/scripts/generate_code.py
+          # Create a temporary directory for working files
+          TEMP_DIR=$(mktemp -d)
+          ISSUE_FILE="$TEMP_DIR/issue_body.txt"
           
-          # Check for generated files
-          if [ ! -d ".github/generated" ]; then
-            echo "Error: Generated code directory not found"
+          # Get issue body and save to file
+          if [ "${{ github.event_name }}" = "issues" ]; then
+            # For direct issue events, use jq to safely handle the body
+            echo '${{ toJSON(github.event.issue.body) }}' | jq -r . > "$ISSUE_FILE"
+          else
+            # For workflow dispatch, use gh cli with json output
+            gh issue view ${{ steps.set-issue.outputs.issue_number }} --json body -q '.body' > "$ISSUE_FILE"
+          fi
+          
+          # Clean up any remaining carriage returns
+          if [ -f "$ISSUE_FILE" ]; then
+            tr -d '\r' < "$ISSUE_FILE" > "$TEMP_DIR/cleaned_body.txt"
+            mv "$TEMP_DIR/cleaned_body.txt" "$ISSUE_FILE"
+            
+            # Run code generation if file exists and is not empty
+            if [ -s "$ISSUE_FILE" ]; then
+              echo "Running code generation..."
+              python .github/scripts/generate_code.py "@$ISSUE_FILE" "$ISSUE_NUMBER"
+            else
+              echo "Error: Issue body file is empty"
+              rm -rf "$TEMP_DIR"
+              exit 1
+            fi
+          else
+            echo "Error: Could not create issue body file"
+            rm -rf "$TEMP_DIR"
             exit 1
           fi
           
-          # List all generated files
-          echo "Generated files:"
-          find .github/generated -type f -exec ls -l {} \;
-          
-          # Show preview of each generated file
-          for file in $(find .github/generated -type f -name "*.py" -o -name "*.yml"); do
-            echo "Preview of ${file}:"
-            head -n 5 "${file}"
-            echo "---"
-          done
+          # Clean up
+          rm -rf "$TEMP_DIR"
 
-      # After generating code but before creating PR
+      - name: Create metadata
+        run: |
+          # Create metadata.json with generated files
+          echo '{"generated_files": [' > .github/generated/metadata.json
+          first=true
+          
+          # Add workflow files
+          for f in .github/generated/workflows/*.yml; do
+            if [ -f "$f" ]; then
+              if [ "$first" = false ]; then echo "," >> .github/generated/metadata.json; fi
+              echo "\"workflows/$(basename $f)\"" >> .github/generated/metadata.json
+              first=false
+            fi
+          done
+          
+          # Add script files
+          for f in .github/generated/scripts/*.py; do
+            if [ -f "$f" ]; then
+              if [ "$first" = false ]; then echo "," >> .github/generated/metadata.json; fi
+              echo "\"scripts/$(basename $f)\"" >> .github/generated/metadata.json
+              first=false
+            fi
+          done
+          
+          echo ']' >> .github/generated/metadata.json
+
+      - name: Commit and push
+        run: |
+          git add .github/generated
+          git commit -m "Generated code files for issue #${{ steps.set-issue.outputs.issue_number }}"
+          git push origin ${{ steps.set-branch.outputs.branch_name }}
+
       - name: Save workflow data
         run: |
           if [ -f ".github/generated/metadata.json" ]; then
             cp .github/generated/metadata.json ./workflow-data.json
           else
-            echo "{\"issue_number\": \"${{ inputs.issue_number }}\"}" > workflow-data.json
+            echo "{\"issue_number\": \"${{ steps.set-issue.outputs.issue_number }}\"}" > workflow-data.json
           fi
 
       - name: Upload workflow data
@@ -101,15 +166,6 @@ jobs:
           name: workflow-data
           path: workflow-data.json
 
-      # 7. Commit & push the generated file
-      - name: Commit changes
-        run: |
-          BRANCH_NAME=${{ steps.create_branch.outputs.BRANCH_NAME }}
-          git add .
-          git commit -m "Auto-generated code for issue #${{ inputs.issue_number }}"
-          git push origin "$BRANCH_NAME"
-
-      # Save artifacts
       - name: Save Claude conversation
         if: always()
         uses: actions/upload-artifact@v3
