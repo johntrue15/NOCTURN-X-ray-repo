@@ -15,6 +15,7 @@ permissions:
   contents: write
   pull-requests: write
   issues: read
+  repository-projects: write
 
 jobs:
   generate:
@@ -150,16 +151,6 @@ jobs:
           git add .github/generated
           git commit -m "Generated code files for issue #${{ steps.set-issue.outputs.issue_number }}"
           git push origin ${{ steps.set-branch.outputs.branch_name }}
-
-      - name: Create pull request
-        env:
-          GITHUB_TOKEN: ${{ secrets.WORKFLOW_PAT }}
-        run: |
-          gh pr create \
-            --base main \
-            --head ${{ steps.set-branch.outputs.branch_name }} \
-            --title "Code updates for issue #${{ steps.set-issue.outputs.issue_number }}" \
-            --body "Generated code updates for issue #${{ steps.set-issue.outputs.issue_number }}"
 
       - name: Save workflow data
         run: |
