@@ -122,11 +122,14 @@ jobs:
 
       - name: Create metadata
         run: |
-          # Get list of all generated files
-          echo '{"generated_files": [' > .github/generated/metadata.json
-          first=true
+          # Create metadata with proper JSON structure
+          cat > .github/generated/metadata.json << EOL
+          {
+            "generated_files": [
+          EOL
           
           # Find all generated files recursively
+          first=true
           find .github/generated -type f -not -name "metadata.json" -not -name "claude_conversation*.json" | while read -r file; do
             # Get relative path from .github/generated
             rel_path=$(echo "$file" | sed 's|.github/generated/||')
@@ -137,11 +140,15 @@ jobs:
               echo "," >> .github/generated/metadata.json
             fi
             
-            # Add the file to metadata
-            echo "\"$rel_path\"" >> .github/generated/metadata.json
+            # Add the file to metadata with proper JSON escaping
+            echo -n "    \"$rel_path\"" >> .github/generated/metadata.json
           done
           
-          echo ']' >> .github/generated/metadata.json
+          # Close the JSON structure
+          cat >> .github/generated/metadata.json << EOL
+            ]
+          }
+          EOL
 
       - name: Commit and push
         run: |
