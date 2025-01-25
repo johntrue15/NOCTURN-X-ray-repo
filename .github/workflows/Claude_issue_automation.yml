@@ -88,29 +88,15 @@ jobs:
           
           # Get issue body and save to file
           if [ "${{ github.event_name }}" = "issues" ]; then
-            # For issue assignment trigger, escape special characters
-            echo '${{ github.event.issue.body }}' | sed 's/"/\\"/g' > "$ISSUE_FILE"
+            printf '%s' "${{ github.event.issue.body }}" > "$ISSUE_FILE"
           else
-            # For workflow dispatch trigger
             gh issue view ${{ steps.set-issue.outputs.issue_number }} --json body -q .body > "$ISSUE_FILE"
           fi
           
-          # Clean up the file content
+          # Clean up the file content (just remove carriage returns)
           if [ -f "$ISSUE_FILE" ]; then
-            # Remove carriage returns and clean whitespace
-            tr -d '\r' < "$ISSUE_FILE" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' > "$TEMP_DIR/cleaned_body.txt"
+            tr -d '\r' < "$ISSUE_FILE" > "$TEMP_DIR/cleaned_body.txt"
             mv "$TEMP_DIR/cleaned_body.txt" "$ISSUE_FILE"
-            
-            # Debug file contents
-            echo "Issue file contents:"
-            cat "$ISSUE_FILE"
-            
-            # Check for error patterns
-            if grep -q "^Error occurred during analysis" "$ISSUE_FILE"; then
-              echo "Found error message in issue, skipping code generation"
-              rm -rf "$TEMP_DIR"
-              exit 0
-            fi
             
             # Run code generation
             echo "Running code generation..."
