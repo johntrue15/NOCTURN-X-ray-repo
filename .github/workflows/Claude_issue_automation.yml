@@ -122,26 +122,23 @@ jobs:
 
       - name: Create metadata
         run: |
-          # Create metadata.json with generated files
+          # Get list of all generated files
           echo '{"generated_files": [' > .github/generated/metadata.json
           first=true
           
-          # Add workflow files
-          for f in .github/generated/workflows/*.yml; do
-            if [ -f "$f" ]; then
-              if [ "$first" = false ]; then echo "," >> .github/generated/metadata.json; fi
-              echo "\"workflows/$(basename $f)\"" >> .github/generated/metadata.json
+          # Find all generated files recursively
+          find .github/generated -type f -not -name "metadata.json" -not -name "claude_conversation*.json" | while read -r file; do
+            # Get relative path from .github/generated
+            rel_path=$(echo "$file" | sed 's|.github/generated/||')
+            
+            if [ "$first" = true ]; then
               first=false
+            else
+              echo "," >> .github/generated/metadata.json
             fi
-          done
-          
-          # Add script files
-          for f in .github/generated/scripts/*.py; do
-            if [ -f "$f" ]; then
-              if [ "$first" = false ]; then echo "," >> .github/generated/metadata.json; fi
-              echo "\"scripts/$(basename $f)\"" >> .github/generated/metadata.json
-              first=false
-            fi
+            
+            # Add the file to metadata
+            echo "\"$rel_path\"" >> .github/generated/metadata.json
           done
           
           echo ']' >> .github/generated/metadata.json
