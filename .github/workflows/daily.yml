@@ -4,6 +4,12 @@ on:
     - cron: '0 0 * * *'  # Runs daily at midnight UTC
   workflow_dispatch:  # Allows manual trigger
 
+permissions:
+  contents: write
+  id-token: write
+  actions: read
+  attestations: write
+
 jobs:
   check-and-collect:
     runs-on: ubuntu-latest
@@ -51,6 +57,49 @@ jobs:
           echo "No new records found" > data/release_notes.txt
         fi
 
+    - name: Generate Attestation for Complete Dataset
+      if: steps.daily-check.outcome == 'failure'
+      uses: actions/attest@v2.1.0
+      id: attest-complete
+      with:
+        subject-path: data/morphosource_data_complete.json
+        predicate-type: 'https://in-toto.io/attestation/release/v0.1'
+        predicate: |
+          {
+            "purl": "pkg:github/${{ github.repository }}",
+            "version": "${{ github.sha }}",
+            "metadata": {
+              "buildInvocationId": "${{ github.run_id }}",
+              "completeness": {
+                "parameters": true,
+                "environment": true,
+                "materials": true
+              },
+              "recordCount": "${{ steps.collect.outputs.count }}"
+            }
+          }
+
+    - name: Generate Attestation for New Records
+      if: steps.daily-check.outcome == 'failure'
+      uses: actions/attest@v2.1.0
+      id: attest-new
+      with:
+        subject-path: data/new_records_details.json
+        predicate-type: 'https://in-toto.io/attestation/release/v0.1'
+        predicate: |
+          {
+            "purl": "pkg:github/${{ github.repository }}",
+            "version": "${{ github.sha }}",
+            "metadata": {
+              "buildInvocationId": "${{ github.run_id }}",
+              "completeness": {
+                "parameters": true,
+                "environment": true,
+                "materials": true
+              }
+            }
+          }
+
     - name: Create Release
       if: always()
       uses: softprops/action-gh-release@v1
@@ -59,12 +108,17 @@ jobs:
       with:
         name: "MorphoSource Check #${{ steps.timestamp.outputs.value }}"
         tag_name: "morphosource-check-${{ steps.timestamp.outputs.value }}"
-        body_path: data/release_notes.txt
-        draft: false
-        prerelease: false
+        body: |
+          ${{ cat data/release_notes.txt }}
+          
+          ## Attestations
+          Complete Dataset: ${{ steps.attest-complete.outputs.attestation-url }}
+          New Records: ${{ steps.attest-new.outputs.attestation-url }}
         files: |
           data/morphosource_data_complete.json
           data/new_records_details.json
+          ${{ steps.attest-complete.outputs.bundle-path }}
+          ${{ steps.attest-new.outputs.bundle-path }}
 
     - name: Commit and push if changes
       if: steps.daily-check.outcome == 'failure'
@@ -83,4 +137,3 @@ jobs:
         path: |
           data/daily_extractor.log
           data/collector.log
-          data/release_notes.txt
