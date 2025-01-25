@@ -13,7 +13,8 @@ class DailyMorphoSourceExtractor:
         self.data_dir = data_dir
         self.setup_logging()
         self.setup_directories()
-        self.complete_data_path = os.path.join(data_dir, 'morphosource_complete.json')
+        # Updated filename to match your repository
+        self.complete_data_path = os.path.join(data_dir, 'morphosource_data_complete.json')
 
     def setup_logging(self):
         logging.basicConfig(
@@ -50,6 +51,13 @@ class DailyMorphoSourceExtractor:
         try:
             abs_path = os.path.abspath(self.complete_data_path)
             self.logger.info(f"Looking for data file at: {abs_path}")
+            
+            # List directory contents for debugging
+            dir_path = os.path.dirname(abs_path)
+            self.logger.info(f"Contents of {dir_path}:")
+            if os.path.exists(dir_path):
+                for f in os.listdir(dir_path):
+                    self.logger.info(f"  - {f}")
             
             if not os.path.exists(self.complete_data_path):
                 self.logger.info("No existing data file found")
