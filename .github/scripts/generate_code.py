@@ -103,25 +103,20 @@ def get_issue_details(issue_number, repo, token):
 
 def extract_code_blocks(response):
     """Extract code blocks from Claude's response"""
-    # Updated patterns to handle file paths in code block headers
-    patterns = [
-        r'```(?:yaml|python)?:?(?:[^\n]*?)\n(.*?)```',  # Code block with optional language and file path
-        r'```(.*?)```',                                  # Simple code block
-        r'^(.*?)$'                                       # Entire response if no code blocks
-    ]
+    # Pattern to match code blocks with file paths
+    pattern = r'```(?:yaml|python)?:([^\n]+)\n(.*?)```'
     
     code_blocks = []
-    for pattern in patterns:
-        matches = re.finditer(pattern, response, re.DOTALL)
-        for match in matches:
-            code = match.group(1).strip()
-            # Remove any language or file path markers
-            code = re.sub(r'^```(?:yaml|python)?:?[^\n]*\n', '', code)
-            code = re.sub(r'\n```$', '', code)
-            if code:
-                code_blocks.append(code)
-                logger.info(f"Found code block using pattern: {pattern}")
-                logger.info(f"Code preview: {code[:100]}...")
+    matches = re.finditer(pattern, response, re.DOTALL)
+    for match in matches:
+        file_path = match.group(1).strip()
+        code = match.group(2).strip()
+        if code:
+            # Keep the full code block with header
+            full_block = f"```:{file_path}\n{code}\n```"
+            code_blocks.append(full_block)
+            logger.info(f"Found code block for file: {file_path}")
+            logger.info(f"Code preview: {code[:100]}...")
     
     if not code_blocks:
         logger.error("No code blocks found in response")
@@ -154,13 +149,14 @@ def save_generated_files(code_blocks, needed_files):
         header_match = re.search(r'```(?:yaml|python)?:([^\n]+)', code)
         if header_match:
             file_path = header_match.group(1).strip()
-            # Clean up the code by removing the header
+            # Clean up the code by removing the header and footer
             clean_code = re.sub(r'```(?:yaml|python)?:[^\n]+\n', '', code)
-            clean_code = clean_code.strip('`')
+            clean_code = re.sub(r'\n```$', '', clean_code)
             file_map[file_path] = clean_code.strip()
-            logger.info(f"Mapped code block to file: {file_path}")
+            logger.info(f"Processing code block for file: {file_path}")
     
     # Save each file
+    saved_files = []
     for file_path in needed_files:
         if file_path in file_map:
             output_path = os.path.join('.github/generated', file_path)
@@ -169,14 +165,22 @@ def save_generated_files(code_blocks, needed_files):
             with open(output_path, 'w') as f:
                 f.write(file_map[file_path])
             logger.info(f"Saved generated file: {output_path}")
+            saved_files.append(file_path)
         else:
             logger.warning(f"No matching code block found for {file_path}")
     
-    # Log any unmapped code blocks
-    mapped_paths = set(file_map.keys())
-    needed_paths = set(needed_files)
-    if mapped_paths - needed_paths:
-        logger.warning(f"Extra code blocks found for: {mapped_paths - needed_paths}")
+    # Also save any extra generated files that weren't in needed_files
+    for file_path, code in file_map.items():
+        if file_path not in needed_files:
+            output_path = os.path.join('.github/generated', file_path)
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            
+            with open(output_path, 'w') as f:
+                f.write(code)
+            logger.info(f"Saved additional generated file: {output_path}")
+            saved_files.append(file_path)
+    
+    return saved_files
 
 def main():
     try:
@@ -292,13 +296,13 @@ def main():
             raise ValueError("No valid code blocks found in Claude's response")
         
         # Save the code blocks to files
-        save_generated_files(code_blocks, required_files)
+        saved_files = save_generated_files(code_blocks, required_files)
         
         # Update metadata
         metadata = {
             "issue_number": issue_number,
             "repo": repo,
-            "generated_files": required_files,
+            "generated_files": saved_files,
             "generation_timestamp": datetime.datetime.now().isoformat(),
             "claude_conversation": str(conv_file)
         }
