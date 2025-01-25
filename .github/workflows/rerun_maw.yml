@@ -1,0 +1,108 @@
+name: Rerun MorphoSource Analysis
+
+on:
+  workflow_run:
+    workflows: ["Parse MorphoSource Data"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      check_only:
+        description: 'Only check for missed records without reprocessing'
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  find-missed-records:
+    runs-on: ubuntu-22.04
+    outputs:
+      missed_records: ${{ steps.check_errors.outputs.missed_records }}
+    steps:
+      - name: Check Error Releases
+        id: check_errors
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          # Get all releases
+          releases=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
+          
+          # Create a Python script to process releases
+          cat > process_releases.py << 'EOL'
+          import json
+          import sys
+          from datetime import datetime
+          
+          def parse_morphosource_tag(body):
+              for line in body.split('\n'):
+                  if 'morphosource-updates-' in line:
+                      return line.strip().split()[-1]
+              return None
+          
+          def main():
+              releases = json.load(sys.stdin)
+              
+              # Group releases by morphosource tag
+              error_releases = {}
+              processed_releases = set()
+              
+              for release in releases:
+                  tag = release['tag_name']
+                  body = release['body']
+                  created_at = release['created_at']
+                  
+                  if tag.startswith('ct_analysis_error-'):
+                      ms_tag = parse_morphosource_tag(body)
+                      if ms_tag:
+                          error_releases[ms_tag] = {
+                              'error_tag': tag,
+                              'created_at': created_at
+                          }
+                  elif tag.startswith(('ct_image_analysis-', 'ct_slice_analysis-')):
+                      ms_tag = parse_morphosource_tag(body)
+                      if ms_tag:
+                          processed_releases.add(ms_tag)
+              
+              # Find missed records
+              missed_records = []
+              for ms_tag, error_info in error_releases.items():
+                  if ms_tag not in processed_releases:
+                      missed_records.append({
+                          'morphosource_tag': ms_tag,
+                          'error_tag': error_info['error_tag'],
+                          'error_created_at': error_info['created_at']
+                      })
+              
+              # Sort by creation date
+              missed_records.sort(key=lambda x: x['error_created_at'])
+              
+              print(json.dumps(missed_records))
+          
+          if __name__ == '__main__':
+              main()
+          EOL
+          
+          # Run the Python script
+          echo "$releases" | python3 process_releases.py > missed_records.json
+          
+          # Format output for GitHub Actions
+          echo "missed_records<<EOF" >> $GITHUB_OUTPUT
+          cat missed_records.json >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          # Display results
+          echo "Found missed records:"
+          cat missed_records.json | jq -r '.[] | "- \(.morphosource_tag) (Error: \(.error_tag))"'
+
+      - name: Create Summary Release
+        if: success()
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          tag_name: "missed-records-${{ github.run_id }}"
+          release_name: "Missed Records Analysis #${{ github.run_id }}"
+          body: |
+            Analysis of missed records from error releases.
+            
+            The following MorphoSource releases have errors but no successful processing:
