@@ -235,30 +235,29 @@ jobs:
               # Remove quotes and whitespace
               file=$(echo "$file" | tr -d '"' | tr -d ' ')
               if [ ! -z "$file" ]; then
-                # Get the base filename and directory
-                filename=$(basename "$file")
-                dirname=$(dirname "$file")
+                # Remove .github prefix if present for target path
+                target_path=$(echo "$file" | sed 's|^\.github/||')
                 
                 # Check for files in the generated/.github directory
                 if [ -f ".github/generated/.github/$file" ]; then
-                  echo "Moving file from generated/.github: $file"
+                  echo "Moving file from generated/.github: $file to .github/$target_path"
                   # Create target directory if it doesn't exist
-                  mkdir -p ".github/$dirname"
+                  mkdir -p ".github/$(dirname "$target_path")"
                   # Copy file to its final location
-                  cp ".github/generated/.github/$file" ".github/$file"
+                  cp ".github/generated/.github/$file" ".github/$target_path"
                   # Add to git
-                  git add ".github/$file"
-                  echo "Moved and added: .github/$file"
+                  git add ".github/$target_path"
+                  echo "Moved and added: .github/$target_path"
                 # Check for files directly in generated
                 elif [ -f ".github/generated/$file" ]; then
-                  echo "Moving file from generated: $file"
+                  echo "Moving file from generated: $file to .github/$target_path"
                   # Create target directory if it doesn't exist
-                  mkdir -p ".github/$dirname"
+                  mkdir -p ".github/$(dirname "$target_path")"
                   # Copy file to its final location
-                  cp ".github/generated/$file" ".github/$file"
+                  cp ".github/generated/$file" ".github/$target_path"
                   # Add to git
-                  git add ".github/$file"
-                  echo "Moved and added: .github/$file"
+                  git add ".github/$target_path"
+                  echo "Moved and added: .github/$target_path"
                 else
                   echo "Warning: Could not find file: $file"
                 fi
