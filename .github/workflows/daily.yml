@@ -44,6 +44,13 @@ jobs:
       run: |
         python .github/scripts/collect.py
 
+    - name: Create Release Notes
+      if: always()
+      run: |
+        if [ "${{ steps.daily-check.outcome }}" == "success" ]; then
+          echo "No new records found" > data/release_notes.txt
+        fi
+
     - name: Create Release
       if: always()
       uses: softprops/action-gh-release@v1
@@ -52,7 +59,7 @@ jobs:
       with:
         name: "MorphoSource Check #${{ steps.timestamp.outputs.value }}"
         tag_name: "morphosource-check-${{ steps.timestamp.outputs.value }}"
-        body: ${{ steps.daily-check.outcome == 'failure' && steps.collect.outputs.summary || 'No new records found' }}
+        body_path: data/release_notes.txt
         draft: false
         prerelease: false
 
@@ -67,9 +74,10 @@ jobs:
 
     - name: Upload logs
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
         name: execution-logs
         path: |
           data/daily_extractor.log
           data/collector.log
+          data/release_notes.txt
