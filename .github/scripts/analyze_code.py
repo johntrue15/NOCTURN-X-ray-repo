@@ -138,7 +138,7 @@ Important instructions:
 7. Preserve any existing error handling and logging
 8. Keep the file structure consistent with the original
 
-Return only the combined code without any explanation."""
+Return only the entire combined code which is wrapped in triple backticks without any explanation."""
 
     return prompt
 
