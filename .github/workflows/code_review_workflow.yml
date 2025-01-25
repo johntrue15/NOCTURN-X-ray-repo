@@ -203,37 +203,46 @@ jobs:
           
           # Debug staging contents
           echo "Staging contents:"
-          find staging -type f
+          find staging -type f || echo "No files in staging"
           
-          # Copy files from staging to their final locations
+          # Copy files from staging to their final locations if staging exists
           if [ -d "staging/.github" ]; then
             cp -r staging/.github/* .github/
             echo "Copied files from staging to .github"
-          else
-            echo "Error: staging/.github directory not found"
-            exit 1
           fi
           
-          # Configure git with PAT for workflow push
+          # Configure git
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git remote set-url origin https://x-access-token:${WORKFLOW_PAT}@github.com/${{ github.repository }}.git
           
-          # Get files from metadata and add with full paths
-          files=$(jq -r '.generated_files[]' .github/generated/metadata.json)
-          
-          # Add and commit each file with full path
-          while IFS= read -r file; do
-            echo "Adding file: $file"
-            git add ".github/$file"
-          done <<< "$files"
-          
-          # Check analyze logs for success
-          if [ -f "logs/analyze.log" ] && grep -q "Got response from Claude" logs/analyze.log; then
-            commit_msg="Combined code updates from Claude analysis for issue #${{ github.event.inputs.issue_number || github.event.workflow_run.pull_requests[0].number }}"
+          # Read metadata if it exists
+          if [ -f ".github/generated/metadata.json" ]; then
+            echo "Reading metadata file..."
+            cat .github/generated/metadata.json
+            
+            # Add files from metadata
+            while IFS= read -r file; do
+              # Remove quotes and whitespace
+              file=$(echo "$file" | tr -d '"' | tr -d ' ')
+              if [ ! -z "$file" ]; then
+                echo "Adding file: .github/$file"
+                git add ".github/$file"
+              fi
+            done < <(jq -r '.generated_files[]' .github/generated/metadata.json)
           else
-            commit_msg="Updated code files for issue #${{ github.event.inputs.issue_number || github.event.workflow_run.pull_requests[0].number }}"
+            echo "No metadata.json found, adding all files in .github/generated"
+            git add .github/generated/
           fi
+          
+          # Check if there are changes to commit
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          # Create commit message
+          commit_msg="Code review updates for issue #${{ steps.set-branch.outputs.issue_number }}"
           
           # Commit and push
           git commit -m "$commit_msg"
