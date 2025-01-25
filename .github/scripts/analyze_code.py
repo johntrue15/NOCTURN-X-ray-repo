@@ -115,8 +115,8 @@ def find_file(file_name, directory, file_type=None):
 
 def get_claude_prompt(original_content, generated_content, file_path):
     """Create prompt for Claude to analyze and combine code"""
-    prompt = f"""Please analyze and combine these two code files into a single improved version.
-The first is the original code, and the second contains updates to be integrated.
+    prompt = f"""You are an expert code reviewer. Please analyze and combine these two versions of code into a single improved version.
+The first is the original code, and the second contains generated updates that need to be integrated.
 
 Original file ({file_path}):
 ```
@@ -128,10 +128,71 @@ Generated updates ({file_path}):
 {generated_content}
 ```
 
-Please provide the complete combined code incorporating the updates while preserving the original structure.
-Return only the code without any explanation, wrapped in triple backticks."""
+Important instructions:
+1. Preserve the core functionality and structure of the original code
+2. Integrate the new features and improvements from the generated updates
+3. Keep all imports and function signatures from both versions
+4. Use comments to mark significant changes
+5. Return ONLY the complete combined code wrapped in triple backticks
+6. Include ALL functions from both versions unless they are exact duplicates
+7. Preserve any existing error handling and logging
+8. Keep the file structure consistent with the original
+
+Return only the combined code without any explanation."""
 
     return prompt
+
+def validate_combined_code(original, generated, combined, file_path):
+    """Validate that the combined code is reasonable"""
+    if not combined or len(combined.strip()) < 10:
+        logger.error(f"Combined code for {file_path} is too short")
+        return False
+        
+    # Check line counts
+    orig_lines = len(original.split('\n'))
+    gen_lines = len(generated.split('\n'))
+    comb_lines = len(combined.split('\n'))
+    
+    # Combined code should not be shorter than either input
+    if comb_lines < min(orig_lines, gen_lines):
+        logger.error(f"Combined code ({comb_lines} lines) is shorter than inputs ({orig_lines}, {gen_lines} lines)")
+        return False
+        
+    # Combined code should not be more than 2x the larger input
+    max_expected = max(orig_lines, gen_lines) * 2
+    if comb_lines > max_expected:
+        logger.error(f"Combined code ({comb_lines} lines) is suspiciously long")
+        return False
+        
+    # Check that key functions from original are preserved
+    orig_funcs = extract_function_names(original)
+    comb_funcs = extract_function_names(combined)
+    missing_funcs = [f for f in orig_funcs if f not in comb_funcs]
+    if missing_funcs:
+        logger.error(f"Combined code is missing functions: {missing_funcs}")
+        return False
+        
+    # Check that imports are preserved
+    orig_imports = extract_imports(original)
+    comb_imports = extract_imports(combined)
+    missing_imports = [i for i in orig_imports if i not in comb_imports]
+    if missing_imports:
+        logger.error(f"Combined code is missing imports: {missing_imports}")
+        return False
+        
+    return True
+
+def extract_function_names(code):
+    """Extract function names from code"""
+    import re
+    pattern = r'def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\('
+    return re.findall(pattern, code)
+
+def extract_imports(code):
+    """Extract import statements from code"""
+    import re
+    pattern = r'^(?:from\s+[\w.]+\s+)?import\s+[\w,\s]+$'
+    return [line.strip() for line in code.split('\n') if re.match(pattern, line.strip())]
 
 def call_claude(prompt):
     """Call Claude API to get combined code"""
@@ -196,8 +257,6 @@ def process_files():
                 
                 if not original_path or not generated_path:
                     logger.warning(f"Could not find both versions of {file}")
-                    logger.info(f"Original path: {original_path}")
-                    logger.info(f"Generated path: {generated_path}")
                     continue
                 
                 # Read both files
@@ -210,14 +269,23 @@ def process_files():
                 prompt = get_claude_prompt(original_content, generated_content, file)
                 response = call_claude(prompt)
                 
-                # Extract and save code
+                # Extract and validate code
                 combined_code = extract_code(response)
-                if combined_code:
+                if combined_code and validate_combined_code(original_content, generated_content, combined_code, file):
                     output_path = staging_dir / file
                     os.makedirs(output_path.parent, exist_ok=True)
                     with open(output_path, 'w') as f:
                         f.write(combined_code)
                     logger.info(f"Saved combined file: {output_path}")
+                    success_count += 1
+                else:
+                    logger.error(f"Failed to validate combined code for {file}")
+                    # Fall back to generated version if validation fails
+                    output_path = staging_dir / file
+                    os.makedirs(output_path.parent, exist_ok=True)
+                    with open(output_path, 'w') as f:
+                        f.write(generated_content)
+                    logger.warning(f"Used generated version for {file} due to validation failure")
                     success_count += 1
                 
             except Exception as e:
