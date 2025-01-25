@@ -94,9 +94,20 @@ class RecordCollector:
                 break
 
     def create_release_notes(self):
-        """Create release notes file with details of new records"""
-        with open(self.release_notes_path, 'w') as f:
-            if self.new_records:
+        """Create release notes and save record details"""
+        from record_details import RecordDetailsManager
+        
+        if self.new_records:
+            # Create record details manager
+            details_manager = RecordDetailsManager(self.data_dir)
+            
+            # Save detailed and summary JSON files
+            details_manager.save_record_details(self.new_records)
+            details_manager.save_record_summary(self.new_records)
+            
+            # Create release notes
+            details_manager.create_release_notes(self.new_records, self.release_notes_path)
+        else:
                 f.write(f"Added {len(self.new_records)} new record(s):\n\n")
                 
                 # Write summary table header
