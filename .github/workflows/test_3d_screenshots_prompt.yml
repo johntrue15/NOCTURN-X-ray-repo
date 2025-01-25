@@ -9,12 +9,13 @@ on:
         type: string
 
 jobs:
-  capture-screenshots:
+  process-screenshots:
     runs-on: ubuntu-latest
     
     env:
       PYTHONUNBUFFERED: 1
       DISPLAY: :99
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     
     steps:
     - uses: actions/checkout@v3
@@ -46,62 +47,30 @@ jobs:
       run: |
         echo "${{ github.event.inputs.url }}" > url.txt
     
-    - name: Capture screenshots
+    - name: Process screenshots and analyze
       run: |
-        python .github/scripts/ct_image_to_text.py url.txt test_screenshots
+        # Verify OpenAI API key is set
+        if [ -z "$OPENAI_API_KEY" ]; then
+          echo "Error: OPENAI_API_KEY is not set"
+          exit 1
+        fi
+        
+        # Run the script
+        python .github/scripts/ct_image_to_text.py url.txt test_screenshots | tee analysis_output.txt
       
     - name: List generated files
       if: always()
       run: |
         echo "Generated files:"
         ls -la test_screenshots/*.png || true
-        ls -la error_*.txt || true
+        ls -la analysis_output.txt || true
     
-    - name: Upload screenshots
-      uses: actions/upload-artifact@v4
+    - name: Upload results
+      uses: actions/upload-artifact@v3
       if: always()
       with:
-        name: morphosource_screenshots
+        name: morphosource_results
         path: |
           test_screenshots/*.png
-          error_*.txt
-        retention-days: 7
-
-  analyze-screenshots:
-    needs: capture-screenshots
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-    
-    - name: Install Python dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install openai Pillow
-    
-    - name: Download screenshots
-      uses: actions/download-artifact@v3
-      with:
-        name: morphosource_screenshots
-        path: analysis_input
-    
-    - name: Run OpenAI analysis
-      env:
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      run: |
-        python .github/scripts/generate_text_with_images.py analysis_input
-    
-    - name: Upload analysis results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: analysis_results
-        path: |
           analysis_output.txt
-          error_*.txt
         retention-days: 7
