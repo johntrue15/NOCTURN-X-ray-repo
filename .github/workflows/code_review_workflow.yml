@@ -16,6 +16,10 @@ permissions: write-all
 
 jobs:
   analyze:
+    # Only run if the triggering workflow succeeded
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     
     steps:
@@ -23,22 +27,26 @@ jobs:
         id: set-branch
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            BRANCH_NAME="claude-pr/issue-${{ github.event.inputs.issue_number }}"
+            ISSUE_NUM="${{ github.event.inputs.issue_number }}"
           else
+            # Extract issue number from branch name
             BRANCH_NAME="${{ github.event.workflow_run.head_branch }}"
+            ISSUE_NUM=$(echo $BRANCH_NAME | sed 's/claude-pr\/issue-//')
           fi
+          
+          BRANCH_NAME="claude-pr/issue-${ISSUE_NUM}"
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
-          echo "Using branch: $BRANCH_NAME"
+          echo "issue_number=$ISSUE_NUM" >> $GITHUB_OUTPUT
+          echo "Using branch: $BRANCH_NAME for issue #$ISSUE_NUM"
 
       # First checkout issue branch to get repository structure
       - name: Checkout issue branch
         uses: actions/checkout@v4
         with:
           ref: ${{ steps.set-branch.outputs.branch_name }}
-          fetch-depth: 0  # Get full history
+          fetch-depth: 0
           persist-credentials: true
           token: ${{ secrets.WORKFLOW_PAT }}
-          repository: johntrue15/NOCTURN-X-ray-repo
 
       # Then checkout main branch files to a subdirectory
       - name: Checkout main branch
@@ -46,9 +54,20 @@ jobs:
         with:
           ref: main
           path: main-files
-          repository: johntrue15/NOCTURN-X-ray-repo
           token: ${{ secrets.WORKFLOW_PAT }}
           fetch-depth: 1
+
+      # Create required directories if they don't exist
+      - name: Create directories
+        run: |
+          mkdir -p .github/generated/workflows
+          mkdir -p .github/generated/scripts
+          mkdir -p staging/.github/workflows
+          mkdir -p staging/.github/scripts
+          
+          echo "Directory structure:"
+          ls -R .github/
+          ls -R staging/
 
       # Verify branch and files
       - name: Verify setup
