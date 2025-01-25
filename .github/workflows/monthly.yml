@@ -121,6 +121,20 @@ jobs:
           '{status: $status, timestamp: $timestamp, run_id: $run_id, python_version: $python, requirements_hash: $reqs}' \
           > data/run_status.json
 
+    - name: Create timestamped backup
+      if: success()
+      run: |
+        TIMESTAMP=$(date +'%Y-%m-%d_%H-%M-%S')
+        BACKUP_DIR="data/backups/${TIMESTAMP}"
+        mkdir -p "$BACKUP_DIR"
+        cp data/morphosource_data_complete.json "$BACKUP_DIR/"
+        cp data/monthly_stats.json "$BACKUP_DIR/"
+        cp data/run_status.json "$BACKUP_DIR/"
+        
+        # Add to git
+        git add "$BACKUP_DIR"
+        git commit -m "Backup MorphoSource data [${TIMESTAMP}]" || exit 0
+
     - name: Create Release
       if: success()
       uses: softprops/action-gh-release@v1
@@ -135,10 +149,11 @@ jobs:
           data/monthly_stats.json
           data/run_status.json
           monthly_collection_attestation.json
+          data/backups/${{ steps.verify.outputs.timestamp }}/morphosource_data_complete.json
 
     - name: Upload detailed logs
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: monthly-execution-logs-${{ steps.verify.outputs.timestamp }}
         path: |
