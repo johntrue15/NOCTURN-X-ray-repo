@@ -1,0 +1,142 @@
+name: MorphoSource Analysis Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      morphosource_tag:
+        description: 'MorphoSource update tag to analyze (e.g. morphosource-updates-2025-01-23_14-39-38)'
+        required: false
+        type: string
+      force_rerun:
+        description: 'Force rerun even if analysis exists'
+        required: false
+        type: boolean
+        default: false
+  workflow_run:
+    workflows: ["Parse MorphoSource Data"]
+    types: [completed]
+
+permissions:
+  contents: write
+  id-token: write
+  actions: read
+  attestations: write
+
+# [Previous jobs remain the same until the create release steps]
+
+      - name: Generate Attestation for 3D Analysis
+        if: success() && needs.url_check.outputs.has_mesh == 'true'
+        id: attest_3d
+        uses: actions/attest@v2.1.0
+        with:
+          subject-path: ./screenshots/*.png
+          predicate-type: 'https://in-toto.io/attestation/release/v0.1'
+          predicate: |
+            {
+              "purl": "pkg:github/${{ github.repository }}",
+              "version": "${{ github.sha }}",
+              "metadata": {
+                "buildInvocationId": "${{ github.run_id }}",
+                "completeness": {
+                  "parameters": true,
+                  "environment": true,
+                  "materials": true
+                },
+                "analysisType": "3D",
+                "morphosourceTag": "${{ needs.check_and_analyze.outputs.release_tag }}"
+              }
+            }
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          tag_name: "ct_image_analysis-${{ steps.gen_ts.outputs.timestamp }}"
+          release_name: "CT Image Analysis #${{ steps.gen_ts.outputs.timestamp }}"
+          body: |
+            Analysis for MorphoSource release: ${{ needs.check_and_analyze.outputs.release_tag }}
+            
+            Attestation: ${{ steps.attest_3d.outputs.attestation-url }}
+            
+            ${{ steps.process_images.outputs.description }}
+            
+            ### Orientation Views
+            The following orientation views were captured:
+            - Default (Y+ Up)
+            - Upside Down (Y- Up)
+            - Forward 90° (Z- Up)
+            - Back 90° (Z+ Up)
+            
+            See attached images for details.
+          draft: false
+          prerelease: false
+
+      # [Previous upload steps remain the same]
+
+      - name: Upload Attestation Bundle
+        if: success() && needs.url_check.outputs.has_mesh == 'true'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.attest_3d.outputs.bundle-path }}
+          asset_name: attestation.bundle
+          asset_content_type: application/json
+
+      # [2D processing job modifications]
+
+      - name: Generate Attestation for 2D Analysis
+        if: success() && needs.url_check.outputs.has_volumetric_images == 'true'
+        id: attest_2d
+        uses: actions/attest@v2.1.0
+        with:
+          subject-path: ./screenshots/*.png
+          predicate-type: 'https://in-toto.io/attestation/release/v0.1'
+          predicate: |
+            {
+              "purl": "pkg:github/${{ github.repository }}",
+              "version": "${{ github.sha }}",
+              "metadata": {
+                "buildInvocationId": "${{ github.run_id }}",
+                "completeness": {
+                  "parameters": true,
+                  "environment": true,
+                  "materials": true
+                },
+                "analysisType": "2D",
+                "morphosourceTag": "${{ needs.check_and_analyze.outputs.release_tag }}"
+              }
+            }
+
+      - name: Create Slice Analysis Release
+        if: success()
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          tag_name: "ct_slice_analysis-${{ steps.gen_ts.outputs.timestamp }}"
+          release_name: "CT Slice Analysis #${{ steps.gen_ts.outputs.timestamp }}"
+          body: |
+            Analysis for MorphoSource release: ${{ needs.check_and_analyze.outputs.release_tag }}
+            
+            Attestation: ${{ steps.attest_2d.outputs.attestation-url }}
+            
+            ${{ steps.process_slices.outputs.description }}
+          draft: false
+          prerelease: false
+
+      - name: Upload 2D Attestation Bundle
+        if: success() && needs.url_check.outputs.has_volumetric_images == 'true'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.attest_2d.outputs.bundle-path }}
+          asset_name: attestation.bundle
+          asset_content_type: application/json
+
+# [Rest of the workflow remains the same]
