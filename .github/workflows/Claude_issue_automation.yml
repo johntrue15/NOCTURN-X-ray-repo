@@ -148,9 +148,31 @@ jobs:
 
       - name: Commit and push
         run: |
-          git add .github/generated
-          git commit -m "Generated code files for issue #${{ steps.set-issue.outputs.issue_number }}"
-          git push origin ${{ steps.set-branch.outputs.branch_name }}
+          # Check if there are any changes or new files
+          if [ -d ".github/generated" ]; then
+            # Add all files in generated directory
+            git add .github/generated/
+            
+            # Check if there are changes to commit
+            if git diff --cached --quiet; then
+              echo "No changes to commit"
+              exit 0
+            fi
+            
+            # Get list of files for commit message
+            CHANGED_FILES=$(git diff --cached --name-only)
+            
+            # Create commit message with file list
+            COMMIT_MSG="Generated code files for issue #${{ steps.set-issue.outputs.issue_number }}"
+            COMMIT_MSG="$COMMIT_MSG\n\nFiles changed:\n$CHANGED_FILES"
+            
+            # Commit and push
+            git -c core.commentChar='|' commit -m "$COMMIT_MSG"
+            git push origin ${{ steps.set-branch.outputs.branch_name }}
+          else
+            echo "No .github/generated directory found"
+            exit 1
+          fi
 
       - name: Save workflow data
         run: |
