@@ -67,26 +67,35 @@ def get_issue_details(issue_number, repo, token):
         'Accept': 'application/vnd.github.v3+json'
     }
     
-    # Get issue details
-    issue_url = f'https://api.github.com/repos/{repo}/issues/{issue_number}'
-    issue_response = requests.get(issue_url, headers=headers)
-    issue_data = issue_response.json()
-    
-    # Get issue comments
-    comments_url = f'{issue_url}/comments'
-    comments_response = requests.get(comments_url, headers=headers)
-    comments_data = comments_response.json()
-    
-    # Combine issue body and comments
-    full_conversation = [
-        f"Issue Title: {issue_data['title']}\n\n",
-        f"Issue Description:\n{issue_data['body']}\n\n"
-    ]
-    
-    for comment in comments_data:
-        full_conversation.append(f"Comment by {comment['user']['login']}:\n{comment['body']}\n\n")
-    
-    return "".join(full_conversation)
+    try:
+        # Get issue details
+        issue_url = f'https://api.github.com/repos/{repo}/issues/{issue_number}'
+        issue_response = requests.get(issue_url, headers=headers)
+        issue_response.raise_for_status()  # Raise exception for bad status codes
+        issue_data = issue_response.json()
+        
+        # Get issue comments
+        comments_url = f'{issue_url}/comments'
+        comments_response = requests.get(comments_url, headers=headers)
+        comments_response.raise_for_status()
+        comments_data = comments_response.json()
+        
+        # Combine issue body and comments, ensuring no carriage returns
+        full_conversation = [
+            f"Issue Title: {issue_data['title']}\n\n",
+            f"Issue Description:\n{issue_data['body'].replace('\r', '')}\n\n"
+        ]
+        
+        for comment in comments_data:
+            full_conversation.append(
+                f"Comment by {comment['user']['login']}:\n{comment['body'].replace('\r', '')}\n\n"
+            )
+        
+        return "".join(full_conversation)
+        
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Error fetching issue details: {str(e)}")
+        raise
 
 def extract_code_blocks(response):
     """Extract code blocks from Claude's response"""
@@ -153,14 +162,23 @@ def save_generated_files(code_blocks, needed_files):
 
 def main():
     try:
-        # Get environment variables
-        api_key = os.getenv('ANTHROPIC_API_KEY')
-        github_token = os.getenv('GITHUB_TOKEN')
-        issue_number = os.getenv('ISSUE_NUMBER')
-        repo = os.getenv('REPO')
+        # Get environment variables with better error handling
+        required_vars = {
+            'ANTHROPIC_API_KEY': os.getenv('ANTHROPIC_API_KEY'),
+            'GITHUB_TOKEN': os.getenv('GITHUB_TOKEN'),
+            'ISSUE_NUMBER': os.getenv('ISSUE_NUMBER'),
+            'REPO': os.getenv('REPO')
+        }
         
-        if not all([api_key, github_token, issue_number, repo]):
-            raise ValueError("Missing required environment variables")
+        # Check for missing variables
+        missing_vars = [k for k, v in required_vars.items() if not v]
+        if missing_vars:
+            raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
+            
+        api_key = required_vars['ANTHROPIC_API_KEY']
+        github_token = required_vars['GITHUB_TOKEN']
+        issue_number = required_vars['ISSUE_NUMBER']
+        repo = required_vars['REPO']
         
         logger.info(f"Processing issue #{issue_number} from {repo}")
         
