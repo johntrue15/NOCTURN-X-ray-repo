@@ -14,6 +14,7 @@ class RecordCollector:
         self.setup_logging()
         self.complete_data_path = os.path.join(data_dir, 'morphosource_data_complete.json')
         self.release_notes_path = os.path.join(data_dir, 'release_notes.txt')
+        self.new_records_path = os.path.join(data_dir, 'new_records_details.json')
         self.new_records = []
 
     def setup_logging(self):
@@ -95,54 +96,34 @@ class RecordCollector:
 
     def create_release_notes(self):
         """Create release notes and save record details"""
-        from record_details import RecordDetailsManager
-        
         if self.new_records:
-            # Create record details manager
-            details_manager = RecordDetailsManager(self.data_dir)
-            
-            # Save detailed and summary JSON files
-            details_manager.save_record_details(self.new_records)
-            details_manager.save_record_summary(self.new_records)
-            
-            # Create release notes
-            details_manager.create_release_notes(self.new_records, self.release_notes_path)
-        else:
+            # Create release notes with table
+            with open(self.release_notes_path, 'w') as f:
                 f.write(f"Added {len(self.new_records)} new record(s):\n\n")
                 
-                # Write summary table header
-                f.write("| Title | ID | Link | Taxonomy | Element | Modality | Data Manager | Date |\n")
-                f.write("|-------|----|----|----------|----------|-----------|--------------|------|\n")
+                # Write summary table
+                f.write("| Title | Object ID | Taxonomy | Element | Status | Link |\n")
+                f.write("|-------|-----------|----------|----------|---------|------|\n")
                 
-                # Add each record to the table
                 for record in self.new_records:
                     metadata = record['metadata']
-                    title = record['title']
-                    record_id = record['id']
-                    url = record['url']
-                    
-                    # Extract metadata fields (with fallbacks to 'N/A')
-                    taxonomy = metadata.get('Taxonomy', 'N/A')
-                    element = metadata.get('Element or Part', 'N/A')
-                    modality = metadata.get('Modality', 'N/A')
-                    data_manager = metadata.get('Data Manager', 'N/A')
-                    date = metadata.get('Date Uploaded', 'N/A')
-                    
-                    # Write table row
-                    f.write(f"| {title} | {record_id} | [View]({url}) | {taxonomy} | {element} | {modality} | {data_manager} | {date} |\n")
-                
-                # Add detailed record information
-                for record in self.new_records:
-                    metadata = record['metadata']
-                    f.write(f"\n### Details for Record {record['id']}\n\n")
-                    f.write(f"**Title:** {record['title']}\n")
-                    
-                    # Write all available metadata fields
-                    for key, value in metadata.items():
-                        if value:  # Only write non-empty fields
-                            f.write(f"**{key}:** {value}\n")
-            else:
+                    f.write(
+                        f"| {record['title']} | {metadata.get('Object', 'N/A')} | "
+                        f"{metadata.get('Taxonomy', 'N/A')} | {metadata.get('Element or Part', 'N/A')} | "
+                        f"{metadata.get('Publication Status', 'N/A')} | "
+                        f"[View]({record['url']}) |\n"
+                    )
+            
+            # Create JSON file with just the new records
+            with open(self.new_records_path, 'w') as f:
+                json.dump(self.new_records, f, indent=2)
+        else:
+            # Create empty release notes if no new records
+            with open(self.release_notes_path, 'w') as f:
                 f.write("No new records found")
+            # Create empty JSON for new records
+            with open(self.new_records_path, 'w') as f:
+                json.dump([], f, indent=2)
 
     def save_records(self):
         if not self.new_records:
