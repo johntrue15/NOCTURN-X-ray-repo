@@ -10,22 +10,27 @@ on:
   workflow_run:
     workflows: ["Auto Code Generation with Claude on Issue"]
     types: [completed]
+    branches:
+      - 'claude-pr/issue-*'  # Only trigger on Claude PR branches
 
 
 permissions: write-all
 
 jobs:
   analyze:
-    # Only run if the triggering workflow succeeded
+    # Only run if the triggering workflow succeeded and it's a Claude commit
     if: >-
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+      (github.event_name == 'workflow_run' && 
+       github.event.workflow_run.conclusion == 'success' &&
+       startsWith(github.event.workflow_run.head_branch, 'claude-pr/issue-'))
     runs-on: ubuntu-latest
     
     steps:
       - name: Debug workflow trigger
         run: |
           echo "Event name: ${{ github.event_name }}"
+          echo "Workflow name: ${{ github.event.workflow_run.name }}"
           echo "Workflow run head branch: ${{ github.event.workflow_run.head_branch }}"
           echo "Workflow run head sha: ${{ github.event.workflow_run.head_sha }}"
           echo "Workflow run head repo: ${{ github.event.workflow_run.head_repository.full_name }}"
@@ -37,39 +42,17 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const run = await github.rest.actions.getWorkflowRun({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: context.payload.workflow_run.id
-            });
+            // Extract issue number directly from branch name
+            const branchName = context.payload.workflow_run.head_branch;
+            const match = branchName.match(/claude-pr\/issue-(\d+)/);
             
-            // Get the head commit from the workflow run
-            const commits = await github.rest.repos.listCommits({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              sha: run.data.head_sha,
-              per_page: 1
-            });
-            
-            if (commits.data.length > 0) {
-              const commitMessage = commits.data[0].commit.message;
-              core.info(`Commit message: ${commitMessage}`);
-              
-              // Extract issue number from commit message
-              const match = commitMessage.match(/Generated code files for issue #(\d+)/);
-              if (match) {
-                const issueNumber = match[1];
-                core.info(`Found issue number: ${issueNumber}`);
-                core.setOutput('issue_number', issueNumber);
-                
-                // Set branch name based on issue number
-                const branchName = `claude-pr/issue-${issueNumber}`;
-                core.setOutput('head_branch', branchName);
-              } else {
-                core.setFailed(`Could not find issue number in commit message: ${commitMessage}`);
-              }
+            if (match) {
+              const issueNumber = match[1];
+              core.info(`Found issue number ${issueNumber} from branch ${branchName}`);
+              core.setOutput('issue_number', issueNumber);
+              core.setOutput('head_branch', branchName);
             } else {
-              core.setFailed('No commits found for workflow run');
+              core.setFailed(`Could not extract issue number from branch: ${branchName}`);
             }
 
       - name: Set branch name
