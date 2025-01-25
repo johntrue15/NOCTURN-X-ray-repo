@@ -2,6 +2,11 @@ name: MorphoSource Analysis Workflow
 
 on:
   workflow_dispatch:
+    inputs:
+      morphosource_tag:
+        description: 'MorphoSource update tag to analyze (e.g. morphosource-updates-2025-01-23_14-39-38)'
+        required: false
+        type: string
   workflow_run:
     workflows: ["Parse MorphoSource Data"]
     types: [completed]
@@ -55,29 +60,50 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
-          echo "Fetching releases to find latest morphosource-updates..."
-          curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=10" > releases.json
-          
-          # Use Python to find the latest morphosource-updates release
-          python3 -c 'import json; f=open("releases.json", "r"); releases=json.load(f); f.close(); morpho_releases=[r for r in releases if r["tag_name"].startswith("morphosource-updates-")]; result={"found": True, "tag_name": morpho_releases[0]["tag_name"], "body": morpho_releases[0]["body"], "created_at": morpho_releases[0]["created_at"]} if morpho_releases else {"found": False}; f=open("release_info.json", "w"); json.dump(result, f, indent=2); f.close()'
-          
-          if [ "$(cat release_info.json | jq -r .found)" = "true" ]; then
-              tag_name=$(cat release_info.json | jq -r .tag_name)
-              echo "Found morphosource release: $tag_name"
-              
-              echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
-              cat release_info.json | jq -r .body >> "$GITHUB_OUTPUT"
-              echo "EOF" >> "$GITHUB_OUTPUT"
-              
-              echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
-              echo "morphosource_created_at=$(cat release_info.json | jq -r .created_at)" >> "$GITHUB_OUTPUT"
-          else
-              echo "No morphosource-updates release found"
+          if [ ! -z "${{ inputs.morphosource_tag }}" ]; then
+            echo "Using provided morphosource tag: ${{ inputs.morphosource_tag }}"
+            # Fetch specific release
+            curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+              "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ inputs.morphosource_tag }}" > release.json
+            
+            # Check if release exists and format output
+            if [ "$(cat release.json | jq -r '.message')" = "Not Found" ]; then
+              echo "Specified release tag not found"
               echo "release_tag=" >> "$GITHUB_OUTPUT"
               echo "release_body=" >> "$GITHUB_OUTPUT"
               echo "morphosource_created_at=" >> "$GITHUB_OUTPUT"
-          fi
+            else
+              echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
+              cat release.json | jq -r .body >> "$GITHUB_OUTPUT"
+              echo "EOF" >> "$GITHUB_OUTPUT"
+              
+              echo "release_tag=${{ inputs.morphosource_tag }}" >> "$GITHUB_OUTPUT"
+              echo "morphosource_created_at=$(cat release.json | jq -r .created_at)" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "Fetching releases to find latest morphosource-updates..."
+            curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+              "https://api.github.com/repos/${{ github.repository }}/releases?per_page=10" > releases.json
+            
+            # Use Python to find the latest morphosource-updates release
+            python3 -c 'import json; f=open("releases.json", "r"); releases=json.load(f); f.close(); morpho_releases=[r for r in releases if r["tag_name"].startswith("morphosource-updates-")]; result={"found": True, "tag_name": morpho_releases[0]["tag_name"], "body": morpho_releases[0]["body"], "created_at": morpho_releases[0]["created_at"]} if morpho_releases else {"found": False}; f=open("release_info.json", "w"); json.dump(result, f, indent=2); f.close()'
+            
+            if [ "$(cat release_info.json | jq -r .found)" = "true" ]; then
+                tag_name=$(cat release_info.json | jq -r .tag_name)
+                echo "Found morphosource release: $tag_name"
+                
+                echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
+                cat release_info.json | jq -r .body >> "$GITHUB_OUTPUT"
+                echo "EOF" >> "$GITHUB_OUTPUT"
+                
+                echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
+                echo "morphosource_created_at=$(cat release_info.json | jq -r .created_at)" >> "$GITHUB_OUTPUT"
+            else
+                echo "No morphosource-updates release found"
+                echo "release_tag=" >> "$GITHUB_OUTPUT"
+                echo "release_body=" >> "$GITHUB_OUTPUT"
+                echo "morphosource_created_at=" >> "$GITHUB_OUTPUT"
+            fi
 
       - name: Check if morphosource-updates
         id: check_morpho
