@@ -115,7 +115,9 @@ def find_file(file_name, directory, file_type=None):
 
 def get_claude_prompt(original_content, generated_content, file_path):
     """Create prompt for Claude to analyze and combine code"""
-    prompt = f"""You are an expert code reviewer. Please analyze and combine these two versions of code into a single improved version.
+    is_yaml = file_path.endswith('.yml') or file_path.endswith('.yaml')
+    
+    base_prompt = f"""You are an expert code reviewer. Please analyze and combine these two versions of code into a single improved version.
 The first is the original code, and the second contains generated updates that need to be integrated.
 
 Original file ({file_path}):
@@ -131,16 +133,27 @@ Generated updates ({file_path}):
 Important instructions:
 1. Preserve the core functionality and structure of the original code
 2. Integrate the new features and improvements from the generated updates
-3. Keep all imports and function signatures from both versions
-4. Use comments to mark significant changes
-5. Return ONLY the complete combined code wrapped in triple backticks
+3. Keep the file structure consistent with the original
+"""
+
+    if is_yaml:
+        base_prompt += """
+4. Preserve all job and step names from both versions
+5. Keep all environment variables and secrets
+6. Maintain the same job dependencies and conditions
+7. Preserve any existing error handling and notifications
+"""
+    else:
+        base_prompt += """
+4. Keep all imports and function signatures from both versions
+5. Use comments to mark significant changes
 6. Include ALL functions from both versions unless they are exact duplicates
 7. Preserve any existing error handling and logging
-8. Keep the file structure consistent with the original
+"""
 
-Return only the entire combined code which is wrapped in triple backticks without any explanation."""
+    base_prompt += "\nReturn only the entire combined code which is wrapped in triple backticks without any explanation."
 
-    return prompt
+    return base_prompt
 
 def validate_combined_code(original, generated, combined, file_path):
     """Validate that the combined code is reasonable"""
@@ -153,34 +166,64 @@ def validate_combined_code(original, generated, combined, file_path):
     gen_lines = len(generated.split('\n'))
     comb_lines = len(combined.split('\n'))
     
-    # Combined code should not be shorter than either input
-    if comb_lines < min(orig_lines, gen_lines):
-        logger.error(f"Combined code ({comb_lines} lines) is shorter than inputs ({orig_lines}, {gen_lines} lines)")
-        return False
-        
-    # Combined code should not be more than 2x the larger input
-    max_expected = max(orig_lines, gen_lines) * 2
-    if comb_lines > max_expected:
-        logger.error(f"Combined code ({comb_lines} lines) is suspiciously long")
-        return False
-        
-    # Check that key functions from original are preserved
-    orig_funcs = extract_function_names(original)
-    comb_funcs = extract_function_names(combined)
-    missing_funcs = [f for f in orig_funcs if f not in comb_funcs]
-    if missing_funcs:
-        logger.error(f"Combined code is missing functions: {missing_funcs}")
-        return False
-        
-    # Check that imports are preserved
-    orig_imports = extract_imports(original)
-    comb_imports = extract_imports(combined)
-    missing_imports = [i for i in orig_imports if i not in comb_imports]
-    if missing_imports:
-        logger.error(f"Combined code is missing imports: {missing_imports}")
-        return False
-        
+    # For YAML files, be more lenient with line count differences
+    is_yaml = file_path.endswith('.yml') or file_path.endswith('.yaml')
+    if is_yaml:
+        # Allow more variation in YAML files due to formatting differences
+        if comb_lines < min(orig_lines, gen_lines) * 0.7:
+            logger.error(f"Combined YAML ({comb_lines} lines) is too short compared to inputs ({orig_lines}, {gen_lines} lines)")
+            return False
+        if comb_lines > max(orig_lines, gen_lines) * 1.5:
+            logger.error(f"Combined YAML ({comb_lines} lines) is suspiciously long")
+            return False
+    else:
+        # Stricter validation for Python files
+        if comb_lines < min(orig_lines, gen_lines):
+            logger.error(f"Combined code ({comb_lines} lines) is shorter than inputs ({orig_lines}, {gen_lines} lines)")
+            return False
+        if comb_lines > max(orig_lines, gen_lines) * 2:
+            logger.error(f"Combined code ({comb_lines} lines) is suspiciously long")
+            return False
+    
+    # For YAML files, check key sections are preserved
+    if is_yaml:
+        orig_sections = extract_yaml_sections(original)
+        comb_sections = extract_yaml_sections(combined)
+        missing_sections = [s for s in orig_sections if s not in comb_sections]
+        if missing_sections:
+            logger.error(f"Combined YAML is missing sections: {missing_sections}")
+            return False
+    else:
+        # For Python files, check functions and imports
+        orig_funcs = extract_function_names(original)
+        comb_funcs = extract_function_names(combined)
+        missing_funcs = [f for f in orig_funcs if f not in comb_funcs]
+        if missing_funcs:
+            logger.error(f"Combined code is missing functions: {missing_funcs}")
+            return False
+            
+        orig_imports = extract_imports(original)
+        comb_imports = extract_imports(combined)
+        missing_imports = [i for i in orig_imports if i not in comb_imports]
+        if missing_imports:
+            logger.error(f"Combined code is missing imports: {missing_imports}")
+            return False
+    
     return True
+
+def extract_yaml_sections(yaml_content):
+    """Extract top-level sections from YAML content"""
+    sections = []
+    current_section = None
+    
+    for line in yaml_content.split('\n'):
+        stripped = line.strip()
+        if stripped and not stripped.startswith('#') and not stripped.startswith('-'):
+            if not line.startswith(' '):  # Top-level key
+                current_section = stripped.split(':')[0]
+                sections.append(current_section)
+                
+    return sections
 
 def extract_function_names(code):
     """Extract function names from code"""
