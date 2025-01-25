@@ -78,35 +78,40 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_WORKSPACE: ${{ github.workspace }}
         run: |
-          # Get issue body based on trigger type
+          # Create a temporary file for the issue body
+          TEMP_FILE=$(mktemp)
+          
+          # Get and save issue body based on trigger type
           if [ "${{ github.event_name }}" = "issues" ]; then
-            # For issue assignment, use the issue body directly and escape it
-            ISSUE_BODY=$(echo "${{ github.event.issue.body }}" | sed 's/\r//g' | sed 's/[[:space:]]*$//' | sed 's/^[[:space:]]*//')
+            echo "${{ github.event.issue.body }}" > "$TEMP_FILE"
           else
-            # For workflow_dispatch, fetch and clean the issue body
-            ISSUE_BODY=$(gh issue view ${{ steps.set-issue.outputs.issue_number }} --json body -q .body | \
-              sed 's/\r//g' | \
-              sed 's/[[:space:]]*$//' | \
-              sed 's/^[[:space:]]*//')
+            gh issue view ${{ steps.set-issue.outputs.issue_number }} --json body -q .body > "$TEMP_FILE"
           fi
           
-          # Check if issue body is empty
-          if [[ -z "$ISSUE_BODY" ]]; then
+          # Clean up the file content
+          sed -i 's/\r//g' "$TEMP_FILE"
+          sed -i 's/[[:space:]]*$//' "$TEMP_FILE"
+          sed -i 's/^[[:space:]]*//' "$TEMP_FILE"
+          
+          # Check if file is empty
+          if [ ! -s "$TEMP_FILE" ]; then
             echo "Error: Empty issue body"
+            rm "$TEMP_FILE"
             exit 1
           fi
           
           # Check for error patterns and skip if found
-          if echo "$ISSUE_BODY" | grep -qi "^Error occurred during analysis"; then
+          if grep -qi "^Error occurred during analysis" "$TEMP_FILE"; then
             echo "Error: Issue contains error message, skipping code generation"
+            rm "$TEMP_FILE"
             exit 0
           fi
           
-          # Escape the issue body for passing to Python
-          ISSUE_BODY_ESCAPED=$(echo "$ISSUE_BODY" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))')
+          # Run code generation with file input
+          python .github/scripts/generate_code.py "@$TEMP_FILE" ${{ steps.set-issue.outputs.issue_number }}
           
-          # Run code generation with escaped input
-          python .github/scripts/generate_code.py "$ISSUE_BODY_ESCAPED" ${{ steps.set-issue.outputs.issue_number }}
+          # Clean up
+          rm "$TEMP_FILE"
 
       - name: Create metadata
         run: |
