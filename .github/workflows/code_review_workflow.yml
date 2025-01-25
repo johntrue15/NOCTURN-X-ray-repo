@@ -42,17 +42,41 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            // Extract issue number directly from branch name
-            const branchName = context.payload.workflow_run.head_branch;
-            const match = branchName.match(/claude-pr\/issue-(\d+)/);
+            const run = await github.rest.actions.getWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.payload.workflow_run.id
+            });
             
+            // Get all workflow runs in this workflow run's suite
+            const runsInSuite = await github.rest.actions.listWorkflowRunsForWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.payload.workflow_run.id
+            });
+            
+            // Find the Claude workflow run that triggered this one
+            const claudeRun = runsInSuite.data.workflow_runs.find(r => 
+              r.name === 'Auto Code Generation with Claude on Issue' && 
+              r.conclusion === 'success'
+            );
+            
+            if (!claudeRun) {
+              core.setFailed('Could not find successful Claude workflow run');
+              return;
+            }
+            
+            core.info(`Found Claude workflow run on branch: ${claudeRun.head_branch}`);
+            
+            // Extract issue number from branch name
+            const match = claudeRun.head_branch.match(/claude-pr\/issue-(\d+)/);
             if (match) {
               const issueNumber = match[1];
-              core.info(`Found issue number ${issueNumber} from branch ${branchName}`);
+              core.info(`Found issue number ${issueNumber} from branch ${claudeRun.head_branch}`);
               core.setOutput('issue_number', issueNumber);
-              core.setOutput('head_branch', branchName);
+              core.setOutput('head_branch', claudeRun.head_branch);
             } else {
-              core.setFailed(`Could not extract issue number from branch: ${branchName}`);
+              core.setFailed(`Could not extract issue number from branch: ${claudeRun.head_branch}`);
             }
 
       - name: Set branch name
