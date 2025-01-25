@@ -77,41 +77,48 @@ jobs:
           WORKFLOW_PAT: ${{ secrets.WORKFLOW_PAT }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_WORKSPACE: ${{ github.workspace }}
+          ISSUE_NUMBER: ${{ steps.set-issue.outputs.issue_number }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_REF: ${{ github.ref }}
+          GITHUB_SHA: ${{ github.sha }}
         run: |
-          # Create a temporary file for the issue body
-          TEMP_FILE=$(mktemp)
+          # Create a temporary directory for working files
+          TEMP_DIR=$(mktemp -d)
+          ISSUE_FILE="$TEMP_DIR/issue_body.txt"
           
-          # Get and save issue body based on trigger type
+          # Get issue body and save to file
           if [ "${{ github.event_name }}" = "issues" ]; then
-            echo "${{ github.event.issue.body }}" > "$TEMP_FILE"
+            # For issue assignment trigger
+            jq -r '.issue.body' <<< '${{ toJSON(github.event.issue.body) }}' > "$ISSUE_FILE"
           else
-            gh issue view ${{ steps.set-issue.outputs.issue_number }} --json body -q .body > "$TEMP_FILE"
+            # For workflow dispatch trigger
+            gh issue view ${{ steps.set-issue.outputs.issue_number }} --json body -q .body > "$ISSUE_FILE"
           fi
           
           # Clean up the file content
-          sed -i 's/\r//g' "$TEMP_FILE"
-          sed -i 's/[[:space:]]*$//' "$TEMP_FILE"
-          sed -i 's/^[[:space:]]*//' "$TEMP_FILE"
-          
-          # Check if file is empty
-          if [ ! -s "$TEMP_FILE" ]; then
-            echo "Error: Empty issue body"
-            rm "$TEMP_FILE"
+          if [ -f "$ISSUE_FILE" ]; then
+            # Remove carriage returns and clean whitespace
+            tr -d '\r' < "$ISSUE_FILE" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' > "$TEMP_DIR/cleaned_body.txt"
+            mv "$TEMP_DIR/cleaned_body.txt" "$ISSUE_FILE"
+            
+            # Check for error patterns
+            if grep -q "^Error occurred during analysis" "$ISSUE_FILE"; then
+              echo "Found error message in issue, skipping code generation"
+              rm -rf "$TEMP_DIR"
+              exit 0
+            fi
+            
+            # Run code generation
+            echo "Running code generation..."
+            python .github/scripts/generate_code.py "@$ISSUE_FILE" "$ISSUE_NUMBER"
+          else
+            echo "Error: Could not create issue body file"
+            rm -rf "$TEMP_DIR"
             exit 1
           fi
           
-          # Check for error patterns and skip if found
-          if grep -qi "^Error occurred during analysis" "$TEMP_FILE"; then
-            echo "Error: Issue contains error message, skipping code generation"
-            rm "$TEMP_FILE"
-            exit 0
-          fi
-          
-          # Run code generation with file input
-          python .github/scripts/generate_code.py "@$TEMP_FILE" ${{ steps.set-issue.outputs.issue_number }}
-          
           # Clean up
-          rm "$TEMP_FILE"
+          rm -rf "$TEMP_DIR"
 
       - name: Create metadata
         run: |
