@@ -262,10 +262,17 @@ jobs:
               # Remove quotes and whitespace
               file=$(echo "$file" | tr -d '"' | tr -d ' ')
               if [ ! -z "$file" ]; then
-                # Remove leading .github/ if present
-                file_path=$(echo "$file" | sed 's|^\.github/||')
-                echo "Adding file: .github/generated/$file_path"
-                git add ".github/generated/$file_path"
+                # Check if file exists in generated directory
+                if [ -f ".github/generated/$file" ]; then
+                  echo "Adding file from generated: .github/generated/$file"
+                  git add ".github/generated/$file"
+                # Check if file exists in generated/.github directory
+                elif [ -f ".github/generated/.github/$file" ]; then
+                  echo "Adding file from generated/.github: .github/generated/.github/$file"
+                  git add ".github/generated/.github/$file"
+                else
+                  echo "Warning: Could not find file: $file"
+                fi
               fi
             done < <(jq -r '.generated_files[]' .github/generated/metadata.json)
           else
@@ -278,6 +285,10 @@ jobs:
             echo "No changes to commit"
             exit 0
           fi
+          
+          # List files that will be committed
+          echo "Files to be committed:"
+          git diff --cached --name-only
           
           # Create commit message
           commit_msg="Code review updates for issue #${{ steps.set-branch.outputs.issue_number }}"
