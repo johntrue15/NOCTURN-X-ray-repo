@@ -13,6 +13,7 @@ class RecordCollector:
         self.data_dir = data_dir
         self.setup_logging()
         self.complete_data_path = os.path.join(data_dir, 'morphosource_data_complete.json')
+        self.release_notes_path = os.path.join(data_dir, 'release_notes.txt')
         self.new_records = []
 
     def setup_logging(self):
@@ -92,9 +93,20 @@ class RecordCollector:
                 self.logger.error(f"Error on page {page}: {e}")
                 break
 
+    def create_release_notes(self):
+        """Create release notes file with details of new records"""
+        with open(self.release_notes_path, 'w') as f:
+            if self.new_records:
+                f.write(f"Added {len(self.new_records)} new record(s):\n\n")
+                for record in self.new_records:
+                    f.write(f"- {record['title']} (ID: {record['id']})\n")
+            else:
+                f.write("No new records found")
+
     def save_records(self):
         if not self.new_records:
-            return False
+            self.create_release_notes()
+            return 0
             
         existing_data = self.load_existing_data()
         updated_data = self.new_records + existing_data
@@ -102,22 +114,15 @@ class RecordCollector:
         with open(self.complete_data_path, 'w') as f:
             json.dump(updated_data, f, indent=2)
             
-        # Create release notes
-        notes_path = os.path.join(self.data_dir, 'release_notes.txt')
-        with open(notes_path, 'w') as f:
-            f.write(f"Added {len(self.new_records)} new records:\n\n")
-            for record in self.new_records:
-                f.write(f"- {record['title']} (ID: {record['id']})\n")
-        
-        return True
+        self.create_release_notes()
+        return len(self.new_records)
 
     def run(self):
         try:
             self.collect_new_records()
-            if self.save_records():
-                self.logger.info(f"Added {len(self.new_records)} new records")
-                return len(self.new_records)
-            return 0
+            new_count = self.save_records()
+            self.logger.info(f"Added {new_count} new records")
+            return new_count
         except Exception as e:
             self.logger.error(f"Error in collection: {e}")
             raise
