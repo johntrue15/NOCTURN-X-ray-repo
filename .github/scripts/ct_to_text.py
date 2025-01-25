@@ -108,39 +108,81 @@ def generate_text_for_records(records):
     if not records:
         return "No new records to summarize."
 
-    # Build a user prompt that includes each record's metadata
-    user_content = ["Below are new CT records from a MorphoSource release:\n"]
+    # Filter out records with insufficient data
+    valid_records = []
+    invalid_records = []
+    
     for rec in records:
-        record_num = rec.get("record_number", "N/A")
-        user_content.append(f"Record #{record_num}:")
-        user_content.append(f" - Title: {rec.get('title','N/A')}")
-        user_content.append(f" - URL: {rec.get('detail_url','N/A')}")
+        # Check if record has required fields
+        if rec.get('title') != 'N/A' and rec.get('Taxonomy') and rec.get('Object'):
+            valid_records.append(rec)
+        else:
+            invalid_records.append(rec)
 
-        for field in [
-            "Object",
-            "Taxonomy",
-            "Element or Part",
-            "Data Manager",
-            "Date Uploaded",
-            "Publication Status",
-            "Rights Statement",
-            "CC License",
-        ]:
-            if field in rec:
-                user_content.append(f" - {field}: {rec[field]}")
-        user_content.append("")  # Blank line separator
+    # Build a user prompt that includes each record's metadata
+    user_content = []
+    
+    # Handle valid records
+    if valid_records:
+        user_content.append("Below are new CT records from a MorphoSource release:\n")
+        for rec in valid_records:
+            record_num = rec.get("record_number", "N/A")
+            user_content.append(f"Record #{record_num}:")
+            user_content.append(f" - Title: {rec.get('title','N/A')}")
+            user_content.append(f" - URL: {rec.get('detail_url','N/A')}")
 
-    # Add instructions for a ~200-word multi-paragraph summary
-    user_content.append(
-        "You are a scientific writer with expertise in analyzing morphological data. "
-        "You have received metadata from X-ray computed tomography scans of various biological specimens. "
-        "Please compose a multi-paragraph, one for each record/species, ~200-word plain-English description that "
-        "emphasizes each specimen’s species (taxonomy) and object details. Focus on identifying notable anatomical "
-        "or morphological features that may be revealed by the CT scanning process. Avoid discussions of copyright "
-        "or publication status. Make the final description readable for a broad audience, yet scientifically informed. "
-        "Highlight the significance of the scans for understanding the organism’s structure and potential insights "
-        "into its biology or evolution."
-    )
+            for field in [
+                "Object",
+                "Taxonomy",
+                "Element or Part",
+                "Data Manager", 
+                "Date Uploaded",
+                "Publication Status",
+                "Rights Statement",
+                "CC License",
+            ]:
+                if field in rec:
+                    user_content.append(f" - {field}: {rec[field]}")
+            user_content.append("")  # Blank line separator
+
+        # Add appropriate instructions based on number of records
+        if len(valid_records) == 1:
+            user_content.append(
+                "You are a scientific writer with expertise in analyzing morphological data. "
+                "You have received metadata from an X-ray computed tomography scan of a biological specimen. "
+                "Please compose a ~200-word plain-English description that emphasizes the specimen's species (taxonomy) "
+                "and object details. Focus on identifying notable anatomical or morphological features that may be "
+                "revealed by the CT scanning process. Avoid discussions of copyright or publication status. Make the "
+                "description readable for a broad audience, yet scientifically informed. Highlight the significance "
+                "of the scan for understanding the organism's structure and potential insights into its biology or evolution."
+            )
+        else:
+            user_content.append(
+                "You are a scientific writer with expertise in analyzing morphological data. "
+                "You have received metadata from X-ray computed tomography scans of various biological specimens. "
+                "Please compose a multi-paragraph description, one for each record/species, ~200 words per specimen, "
+                "that emphasizes each specimen's species (taxonomy) and object details. Focus on identifying notable "
+                "anatomical or morphological features that may be revealed by the CT scanning process. Avoid discussions "
+                "of copyright or publication status. Make the final description readable for a broad audience, yet "
+                "scientifically informed. Highlight the significance of the scans for understanding each organism's "
+                "structure and potential insights into its biology or evolution."
+            )
+
+    # Handle invalid records
+    if invalid_records:
+        if user_content:
+            user_content.append("\n---\n")
+        user_content.append(
+            "The following records have incomplete information:\n"
+            "Please generate a brief note explaining that these records lack sufficient "
+            "data for detailed analysis and what information would be needed for a proper description."
+        )
+        for rec in invalid_records:
+            record_num = rec.get("record_number", "N/A")
+            user_content.append(f"Record #{record_num}:")
+            for field in ["title", "detail_url", "Object", "Taxonomy"]:
+                user_content.append(f" - {field}: {rec.get(field,'N/A')}")
+            user_content.append("")
 
     try:
         resp = client.chat.completions.create(
