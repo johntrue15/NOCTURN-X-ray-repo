@@ -75,6 +75,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WORKFLOW_PAT: ${{ secrets.WORKFLOW_PAT }}
+          REPO: ${{ github.repository }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_WORKSPACE: ${{ github.workspace }}
           ISSUE_NUMBER: ${{ steps.set-issue.outputs.issue_number }}
@@ -88,19 +89,27 @@ jobs:
           
           # Get issue body and save to file
           if [ "${{ github.event_name }}" = "issues" ]; then
-            printf '%s' "${{ github.event.issue.body }}" > "$ISSUE_FILE"
+            # For direct issue events, use jq to safely handle the body
+            echo '${{ toJSON(github.event.issue.body) }}' | jq -r . > "$ISSUE_FILE"
           else
-            gh issue view ${{ steps.set-issue.outputs.issue_number }} --json body -q .body > "$ISSUE_FILE"
+            # For workflow dispatch, use gh cli with json output
+            gh issue view ${{ steps.set-issue.outputs.issue_number }} --json body -q '.body' > "$ISSUE_FILE"
           fi
           
-          # Clean up the file content (just remove carriage returns)
+          # Clean up any remaining carriage returns
           if [ -f "$ISSUE_FILE" ]; then
             tr -d '\r' < "$ISSUE_FILE" > "$TEMP_DIR/cleaned_body.txt"
             mv "$TEMP_DIR/cleaned_body.txt" "$ISSUE_FILE"
             
-            # Run code generation
-            echo "Running code generation..."
-            python .github/scripts/generate_code.py "@$ISSUE_FILE" "$ISSUE_NUMBER"
+            # Run code generation if file exists and is not empty
+            if [ -s "$ISSUE_FILE" ]; then
+              echo "Running code generation..."
+              python .github/scripts/generate_code.py "@$ISSUE_FILE" "$ISSUE_NUMBER"
+            else
+              echo "Error: Issue body file is empty"
+              rm -rf "$TEMP_DIR"
+              exit 1
+            fi
           else
             echo "Error: Could not create issue body file"
             rm -rf "$TEMP_DIR"
