@@ -220,47 +220,53 @@ jobs:
           echo "Remote URL:"
           git remote -v
           
-          # Debug staging contents
-          echo "Staging contents:"
-          find staging -type f || echo "No files in staging"
-          
-          # Copy files from staging to their final locations if staging exists
-          if [ -d "staging/.github" ]; then
-            cp -r staging/.github/* .github/
-            echo "Copied files from staging to .github"
-          fi
-          
           # Configure git
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git remote set-url origin https://x-access-token:${WORKFLOW_PAT}@github.com/${{ github.repository }}.git
           
-          # Read metadata if it exists
+          # Read metadata and move files
           if [ -f ".github/generated/metadata.json" ]; then
             echo "Reading metadata file..."
             cat .github/generated/metadata.json
             
-            # Add files from metadata
+            # Process each file from metadata
             while IFS= read -r file; do
               # Remove quotes and whitespace
               file=$(echo "$file" | tr -d '"' | tr -d ' ')
               if [ ! -z "$file" ]; then
-                # Check if file exists in generated directory
-                if [ -f ".github/generated/$file" ]; then
-                  echo "Adding file from generated: .github/generated/$file"
-                  git add ".github/generated/$file"
-                # Check if file exists in generated/.github directory
-                elif [ -f ".github/generated/.github/$file" ]; then
-                  echo "Adding file from generated/.github: .github/generated/.github/$file"
-                  git add ".github/generated/.github/$file"
+                # Get the base filename and directory
+                filename=$(basename "$file")
+                dirname=$(dirname "$file")
+                
+                # Check for files in the generated/.github directory
+                if [ -f ".github/generated/.github/$file" ]; then
+                  echo "Moving file from generated/.github: $file"
+                  # Create target directory if it doesn't exist
+                  mkdir -p ".github/$dirname"
+                  # Copy file to its final location
+                  cp ".github/generated/.github/$file" ".github/$file"
+                  # Add to git
+                  git add ".github/$file"
+                  echo "Moved and added: .github/$file"
+                # Check for files directly in generated
+                elif [ -f ".github/generated/$file" ]; then
+                  echo "Moving file from generated: $file"
+                  # Create target directory if it doesn't exist
+                  mkdir -p ".github/$dirname"
+                  # Copy file to its final location
+                  cp ".github/generated/$file" ".github/$file"
+                  # Add to git
+                  git add ".github/$file"
+                  echo "Moved and added: .github/$file"
                 else
                   echo "Warning: Could not find file: $file"
                 fi
               fi
             done < <(jq -r '.generated_files[]' .github/generated/metadata.json)
           else
-            echo "No metadata.json found, adding all files in .github/generated"
-            git add .github/generated/
+            echo "No metadata.json found"
+            exit 1
           fi
           
           # Check if there are changes to commit
