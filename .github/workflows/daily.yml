@@ -1,0 +1,53 @@
+name: Daily MorphoSource Check
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs daily at midnight UTC
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  check-new-records:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch complete history
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests beautifulsoup4
+        
+    - name: Create data directory
+      run: mkdir -p data
+        
+    - name: Run daily check
+      run: |
+        python .github/scripts/daily.py
+      id: daily-check
+      continue-on-error: true  # Allow the workflow to continue even if new records are found
+
+    - name: Process check results
+      run: |
+        if [ "${{ steps.daily-check.outcome }}" == "success" ]; then
+          echo "No new records found"
+        elif [ "${{ steps.daily-check.outcome }}" == "failure" ]; then
+          echo "New records found - triggering full collection workflow"
+          # Here you can add a call to your full collection workflow if needed
+        else
+          echo "Error in daily check"
+          exit 1
+        fi
+
+    - name: Upload check logs
+      if: always()  # Upload logs even if the check fails
+      uses: actions/upload-artifact@v3
+      with:
+        name: daily-check-logs
+        path: data/daily_extractor.log
