@@ -1,0 +1,148 @@
+name: Check Error Releases
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Only check for missed records without processing'
+        type: boolean
+        default: true
+  workflow_run:
+    workflows: ["Parse MorphoSource Data"]
+    types: [completed]
+
+jobs:
+  analyze_errors:
+    runs-on: ubuntu-22.04
+    outputs:
+      missed_records: ${{ steps.find_missed.outputs.missed_records }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Find Missed Records
+        id: find_missed
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          # Get all releases
+          releases=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
+          
+          # Create a temporary file to store missed records
+          echo "[]" > missed_records.json
+          
+          # Use Python to analyze releases and find missed records
+          python3 - <<EOF
+          import json
+          import re
+          from datetime import datetime
+          
+          def parse_morphosource_tag(body):
+              match = re.search(r'morphosource-updates-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}', body)
+              return match.group(0) if match else None
+          
+          with open('missed_records.json', 'r') as f:
+              missed_records = json.load(f)
+          
+          releases = json.loads('''$releases''')
+          
+          error_releases = [r for r in releases if r['tag_name'].startswith('ct_analysis_error-')]
+          success_releases = [r for r in releases if r['tag_name'].startswith(('ct_image_analysis-', 'ct_slice_analysis-'))]
+          
+          for error in error_releases:
+              morpho_tag = parse_morphosource_tag(error['body'])
+              if not morpho_tag:
+                  continue
+                  
+              # Check if there's a successful analysis for this morphosource tag
+              has_success = any(
+                  parse_morphosource_tag(s['body']) == morpho_tag 
+                  for s in success_releases
+              )
+              
+              if not has_success:
+                  error_time = datetime.strptime(error['created_at'], '%Y-%m-%dT%H:%M:%SZ')
+                  record = {
+                      'morphosource_tag': morpho_tag,
+                      'error_release_tag': error['tag_name'],
+                      'error_created_at': error['created_at'],
+                      'days_since_error': (datetime.utcnow() - error_time).days
+                  }
+                  missed_records.append(record)
+          
+          # Sort by creation date
+          missed_records.sort(key=lambda x: x['error_created_at'])
+          
+          with open('missed_records.json', 'w') as f:
+              json.dump(missed_records, f, indent=2)
+          
+          # Create summary for output
+          summary = [f"{r['morphosource_tag']} (Error: {r['error_release_tag']})" for r in missed_records]
+          print(f"Found {len(missed_records)} missed records:")
+          for s in summary:
+              print(f"- {s}")
+          EOF
+          
+          # Set output for later jobs
+          echo "missed_records<<EOF" >> $GITHUB_OUTPUT
+          cat missed_records.json >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+          # Display results
+          echo "Detailed missed records:"
+          cat missed_records.json
+
+      - name: Upload Missed Records Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: missed-records-report
+          path: missed_records.json
+          retention-days: 30
+
+  process_missed:
+    needs: analyze_errors
+    if: |
+      needs.analyze_errors.outputs.missed_records != '[]' &&
+      inputs.dry_run != true
+    strategy:
+      matrix:
+        record: ${{ fromJson(needs.analyze_errors.outputs.missed_records) }}
+      max-parallel: 1
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Process Record
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: MorphoSource Analysis Workflow
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
+          inputs: |
+            {
+              "morphosource_tag": "${{ matrix.record.morphosource_tag }}",
+              "force_rerun": true
+            }
+
+      - name: Wait for Completion
+        run: sleep 30
+
+  cleanup_errors:
+    needs: [analyze_errors, process_missed]
+    if: always()
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check Results
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          MISSED_RECORDS: ${{ needs.analyze_errors.outputs.missed_records }}
+        run: |
+          if [ "${{ inputs.dry_run }}" == "true" ]; then
+            echo "Dry run completed. Found $(echo '$MISSED_RECORDS' | jq length) missed records."
+            exit 0
+          fi
+          
+          if [ "${{ needs.process_missed.result }}" == "success" ]; then
+            echo "Successfully processed missed records"
+          else
+            echo "Failed to process some missed records"
+            exit 1
+          fi
