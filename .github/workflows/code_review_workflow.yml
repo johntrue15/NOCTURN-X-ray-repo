@@ -28,6 +28,33 @@ jobs:
           echo "Event name: ${{ github.event_name }}"
           echo "Workflow run head branch: ${{ github.event.workflow_run.head_branch }}"
           echo "Workflow run head sha: ${{ github.event.workflow_run.head_sha }}"
+          echo "Workflow run head repo: ${{ github.event.workflow_run.head_repository.full_name }}"
+          echo "Workflow run id: ${{ github.event.workflow_run.id }}"
+
+      - name: Get workflow run info
+        if: github.event_name == 'workflow_run'
+        id: workflow-info
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const run = await github.rest.actions.getWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.payload.workflow_run.id
+            });
+            
+            // Get the head branch from the triggering workflow
+            const headBranch = run.data.head_branch;
+            core.info(`Head branch: ${headBranch}`);
+            core.setOutput('head_branch', headBranch);
+            
+            // Extract issue number from branch name
+            const match = headBranch.match(/claude-pr\/issue-(\d+)/);
+            if (match) {
+              core.setOutput('issue_number', match[1]);
+            } else {
+              core.setFailed(`Could not extract issue number from branch: ${headBranch}`);
+            }
 
       - name: Set branch name
         id: set-branch
@@ -35,14 +62,7 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             ISSUE_NUM="${{ github.event.inputs.issue_number }}"
           else
-            # Extract issue number from the triggering workflow's branch name
-            BRANCH_NAME="${{ github.event.workflow_run.head_branch }}"
-            if [[ "$BRANCH_NAME" =~ claude-pr/issue-([0-9]+) ]]; then
-              ISSUE_NUM="${BASH_REMATCH[1]}"
-            else
-              echo "Error: Could not extract issue number from branch name: $BRANCH_NAME"
-              exit 1
-            fi
+            ISSUE_NUM="${{ steps.workflow-info.outputs.issue_number }}"
           fi
           
           BRANCH_NAME="claude-pr/issue-${ISSUE_NUM}"
