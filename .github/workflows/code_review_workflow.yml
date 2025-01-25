@@ -246,8 +246,10 @@ jobs:
               # Remove quotes and whitespace
               file=$(echo "$file" | tr -d '"' | tr -d ' ')
               if [ ! -z "$file" ]; then
-                echo "Adding file: .github/$file"
-                git add ".github/$file"
+                # Remove leading .github/ if present
+                file_path=$(echo "$file" | sed 's|^\.github/||')
+                echo "Adding file: .github/generated/$file_path"
+                git add ".github/generated/$file_path"
               fi
             done < <(jq -r '.generated_files[]' .github/generated/metadata.json)
           else
