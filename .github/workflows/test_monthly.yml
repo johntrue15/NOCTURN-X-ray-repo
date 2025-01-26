@@ -126,12 +126,11 @@ jobs:
           exit 1
         fi
         
-        # Save the full attestation with proper JSON handling
-        echo '${{ toJSON(steps.attest.outputs.attestation) }}' | jq '.' > "data/${{ env.timestamp }}/attestation.json"
-        
-        # Debug: Show what we're saving
-        echo "Saving attestation content:"
-        cat "data/${{ env.timestamp }}/attestation.json"
+        # Update the attestation file with the subject digest
+        jq --arg digest "${{ steps.attest.outputs.subject-digest }}" \
+           '.subject[0].digest.sha256 = $digest' \
+           "data/${{ env.timestamp }}/attestation.json" > temp.json && \
+        mv temp.json "data/${{ env.timestamp }}/attestation.json"
         
         # Create attestation URLs
         COMPLETE_URL="https://github.com/${{ github.repository }}/attestations/${ATT_ID}"

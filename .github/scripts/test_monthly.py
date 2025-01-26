@@ -28,7 +28,7 @@ def create_attestation_template(record_count, total_records, modified_records, s
         }],
         "predicateType": "https://in-toto.io/attestation/release/v0.1",
         "predicate": {
-            "purl": os.environ.get('GITHUB_REPOSITORY', ''),
+            "purl": f"pkg:github/{os.environ.get('GITHUB_REPOSITORY', '')}",
             "version": os.environ.get('GITHUB_SHA', ''),
             "metadata": {
                 "buildInvocationId": os.environ.get('GITHUB_RUN_ID', ''),
@@ -76,7 +76,6 @@ def create_test_data(output_dir, record_count):
     data_file = os.path.join(output_dir, 'morphosource_data_complete.json')
     stats_file = os.path.join(output_dir, 'monthly_stats.json')
     notes_file = os.path.join(output_dir, 'monthly_release_notes.txt')
-    attestation_file = os.path.join(output_dir, 'attestation.json')
     
     logger.info(f"Writing data files to {output_dir}")
     
@@ -103,6 +102,7 @@ def create_test_data(output_dir, record_count):
     )
     
     # Save attestation template
+    attestation_file = os.path.join(output_dir, 'attestation.json')
     with open(attestation_file, 'w') as f:
         json.dump(attestation, f, indent=2)
     
