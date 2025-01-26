@@ -2,6 +2,28 @@ import os
 import yaml
 import re
 from pathlib import Path
+from datetime import datetime
+
+def parse_schedule(schedule):
+    """Parse cron schedule to human readable format"""
+    if not schedule:
+        return None
+    
+    # Basic cron interpretation - can be expanded
+    cron_parts = schedule[0].split()
+    if len(cron_parts) != 5:
+        return schedule[0]
+        
+    frequency = []
+    if cron_parts[0] == '0' and cron_parts[1] == '0':  # Daily at midnight
+        if cron_parts[2] == '*':
+            frequency.append("Daily")
+    elif cron_parts[2] == '1':  # First day of month
+        frequency.append("Monthly")
+    
+    if frequency:
+        return f"{', '.join(frequency)} at {cron_parts[1]}:{cron_parts[0]}"
+    return schedule[0]
 
 def find_python_scripts(workflow_content):
     """Extract Python script references from workflow content"""
@@ -26,53 +48,133 @@ def find_python_scripts(workflow_content):
             
     return sorted(list(scripts))
 
+def analyze_workflow_triggers(workflow_content):
+    """Analyze workflow triggers and dependencies"""
+    triggers = {
+        'schedule': None,
+        'workflow_dependencies': [],
+        'manual': False
+    }
+    
+    if not isinstance(workflow_content, dict) or 'on' not in workflow_content:
+        return triggers
+        
+    on = workflow_content['on']
+    
+    # Check schedule
+    if isinstance(on, dict) and 'schedule' in on:
+        triggers['schedule'] = parse_schedule(on['schedule'])
+    
+    # Check workflow dependencies
+    if isinstance(on, dict) and 'workflow_run' in on:
+        workflow_run = on['workflow_run']
+        if isinstance(workflow_run, dict):
+            workflows = workflow_run.get('workflows', [])
+            if isinstance(workflows, str):
+                triggers['workflow_dependencies'].append(workflows)
+            elif isinstance(workflows, list):
+                triggers['workflow_dependencies'].extend(workflows)
+    
+    # Check manual trigger
+    if isinstance(on, dict) and 'workflow_dispatch' in on:
+        triggers['manual'] = True
+    elif isinstance(on, list) and 'workflow_dispatch' in on:
+        triggers['manual'] = True
+        
+    return triggers
+
 def analyze_workflows():
     """Analyze all workflows and their script dependencies"""
     workflows_dir = Path('.github/workflows')
-    scripts_dir = Path('.github/scripts')
     
-    dependencies = {}
+    workflow_info = {}
     
     # Analyze each workflow file
     for workflow_file in workflows_dir.glob('*.yml'):
         with open(workflow_file, 'r') as f:
             try:
                 workflow_content = yaml.safe_load(f)
+                name = workflow_content.get('name', workflow_file.name)
                 scripts = find_python_scripts(workflow_content)
+                triggers = analyze_workflow_triggers(workflow_content)
                 
-                if scripts:  # Only include workflows that use Python scripts
-                    dependencies[workflow_file.name] = scripts
+                workflow_info[workflow_file.name] = {
+                    'name': name,
+                    'scripts': scripts,
+                    'schedule': triggers['schedule'],
+                    'workflow_dependencies': triggers['workflow_dependencies'],
+                    'manual': triggers['manual']
+                }
+                
             except yaml.YAMLError as e:
                 print(f"Error parsing {workflow_file}: {e}")
                 
-    return dependencies
+    return workflow_info
 
-def generate_markdown(dependencies):
+def generate_markdown(workflow_info):
     """Generate markdown documentation of dependencies"""
     lines = [
         "# Workflow Dependencies",
         "",
         "This document shows the relationships between GitHub Actions workflows and their associated Python scripts.",
         "",
-        "## Workflows and Their Scripts",
+        "## Scheduled Workflows",
         ""
     ]
     
-    for workflow, scripts in dependencies.items():
-        lines.append(f"### {workflow}")
-        lines.append("**Required Scripts:**")
-        for script in scripts:
-            lines.append(f"- `.github/scripts/{script}`")
-        lines.append("")
+    # First list scheduled workflows
+    scheduled_workflows = {name: info for name, info in workflow_info.items() if info['schedule']}
+    sorted_scheduled = sorted(scheduled_workflows.items(), 
+                            key=lambda x: (x[1]['schedule'] or "", x[0]))
+    
+    for workflow_name, info in sorted_scheduled:
+        lines.append(f"### {info['name']} (`{workflow_name}`)")
+        lines.append(f"**Schedule:** {info['schedule']}")
+        if info['scripts']:
+            lines.append("**Required Scripts:**")
+            for script in info['scripts']:
+                lines.append(f"- `.github/scripts/{script}`")
         
-    # Add reverse lookup - scripts to workflows
+        # Add dependent workflows
+        dependent_workflows = [name for name, w_info in workflow_info.items() 
+                             if workflow_name in w_info['workflow_dependencies']]
+        if dependent_workflows:
+            lines.append("**Triggers Workflows:**")
+            for dep in sorted(dependent_workflows):
+                lines.append(f"- `{dep}`")
+        lines.append("")
+    
+    # Then list other workflows
+    lines.extend([
+        "## Other Workflows",
+        ""
+    ])
+    
+    other_workflows = {name: info for name, info in workflow_info.items() 
+                      if not info['schedule']}
+    
+    for workflow_name, info in sorted(other_workflows.items()):
+        lines.append(f"### {info['name']} (`{workflow_name}`)")
+        if info['workflow_dependencies']:
+            lines.append("**Triggered by:**")
+            for dep in sorted(info['workflow_dependencies']):
+                lines.append(f"- `{dep}`")
+        if info['manual']:
+            lines.append("**Manual trigger available**")
+        if info['scripts']:
+            lines.append("**Required Scripts:**")
+            for script in info['scripts']:
+                lines.append(f"- `.github/scripts/{script}`")
+        lines.append("")
+    
+    # Add script to workflow mapping
     script_to_workflows = {}
-    for workflow, scripts in dependencies.items():
-        for script in scripts:
+    for workflow_name, info in workflow_info.items():
+        for script in info['scripts']:
             if script not in script_to_workflows:
                 script_to_workflows[script] = []
-            script_to_workflows[script].append(workflow)
-            
+            script_to_workflows[script].append(workflow_name)
+    
     lines.extend([
         "## Scripts and Their Workflows",
         "",
@@ -94,10 +196,10 @@ def main():
     os.makedirs('docs', exist_ok=True)
     
     # Analyze workflows
-    dependencies = analyze_workflows()
+    workflow_info = analyze_workflows()
     
     # Generate and save markdown
-    markdown = generate_markdown(dependencies)
+    markdown = generate_markdown(workflow_info)
     with open('docs/dependencies.md', 'w') as f:
         f.write(markdown)
         
