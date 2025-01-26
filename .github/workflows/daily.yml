@@ -53,19 +53,34 @@ jobs:
         echo "Found latest data directory: $LATEST_DIR"
         echo "dir=$LATEST_DIR" >> $GITHUB_OUTPUT
 
+    - name: Create Timestamp Directory
+      run: |
+        mkdir -p "data/${{ env.timestamp }}"
+
     - name: Run Daily Check
       id: daily-check
       env:
         LATEST_DATA_DIR: ${{ steps.find-latest.outputs.dir }}
+        CURRENT_DIR: data/${{ env.timestamp }}
       run: |
-        python .github/scripts/daily.py --data-dir "$LATEST_DATA_DIR"
+        python .github/scripts/daily.py \
+          --data-dir "$LATEST_DATA_DIR" \
+          --output-dir "$CURRENT_DIR"
       continue-on-error: true
 
     - name: Create Release Notes
       if: always()
       run: |
         if [ "${{ steps.daily-check.outcome }}" == "success" ]; then
-          echo "No new records found" > "data/${{ env.timestamp }}/release_notes.txt"
+          cat << EOF > "data/${{ env.timestamp }}/release_notes.txt"
+# Daily Check Report
+Check Date: $(date +'%Y-%m-%d %H:%M:%S')
+
+No new records found since last check.
+
+## Previous Data
+Last check: ${{ steps.find-latest.outputs.dir }}
+EOF
         fi
 
     - name: Generate Attestation

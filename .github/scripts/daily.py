@@ -14,8 +14,8 @@ class DailyMorphoSourceExtractor:
         self.data_dir = data_dir
         self.setup_logging()
         self.setup_directories()
-        # Use the complete data file from the provided directory
         self.complete_data_path = os.path.join(data_dir, 'morphosource_data_complete.json')
+        self.latest_webpage_record = None  # Store for info file
         self.logger.info(f"Using data file: {self.complete_data_path}")
 
     def setup_logging(self):
@@ -46,7 +46,8 @@ class DailyMorphoSourceExtractor:
             if not first_record:
                 raise Exception("Could not find any records on page")
             
-            return self.parse_record(first_record)
+            self.latest_webpage_record = self.parse_record(first_record)  # Store for info file
+            return self.latest_webpage_record
             
         except Exception as e:
             self.logger.error(f"Error getting latest webpage record: {e}")
@@ -173,6 +174,8 @@ def main():
     parser = argparse.ArgumentParser(description='Daily MorphoSource Check')
     parser.add_argument('--data-dir', type=str, required=True,
                       help='Directory containing latest data files')
+    parser.add_argument('--output-dir', type=str, required=True,
+                      help='Directory to store output files')
     args = parser.parse_args()
     
     base_url = "https://www.morphosource.org/catalog/media?locale=en&per_page=100&q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc"
@@ -180,6 +183,19 @@ def main():
     try:
         extractor = DailyMorphoSourceExtractor(base_url, data_dir=args.data_dir)
         has_new_records = extractor.run()
+        
+        # Create daily info regardless of result
+        daily_info = {
+            'check_date': datetime.now().isoformat(),
+            'source_dir': args.data_dir,
+            'has_new_records': has_new_records,
+            'latest_record_id': extractor.latest_webpage_record['id'] if hasattr(extractor, 'latest_webpage_record') else None
+        }
+        
+        # Save daily info
+        os.makedirs(args.output_dir, exist_ok=True)
+        with open(os.path.join(args.output_dir, 'daily_info.json'), 'w') as f:
+            json.dump(daily_info, f, indent=2)
         
         if has_new_records:
             print("New records found - ready for collection")
