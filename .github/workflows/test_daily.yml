@@ -69,8 +69,22 @@ jobs:
         if [ "${{ steps.daily-check.outcome }}" == "success" ]; then
           echo "No new records found" > "data/${{ env.timestamp }}/release_notes.txt"
         else
-          echo "Test: Records were modified/removed" > "data/${{ env.timestamp }}/release_notes.txt"
-          cat "data/${{ env.timestamp }}/test_info.json" >> "data/${{ env.timestamp }}/release_notes.txt"
+          {
+            echo "# Test Daily Check Report"
+            echo "Test Date: $(date +'%Y-%m-%d %H:%M:%S')"
+            echo
+            echo "## Summary"
+            echo "Removed $(jq '.records_removed' "data/${{ env.timestamp }}/test_info.json") record(s) for testing"
+            echo
+            echo "## Modified Records"
+            echo "| Title | Object ID | Taxonomy | Element | Data Manager | Status | Link |"
+            echo "|-------|-----------|----------|---------|--------------|--------|------|"
+            jq -r '.removed_records[] | "| \(.title) | \(.object_id) | \(.taxonomy) | \(.element) | \(.data_manager) | \(.status) | [View](\(.url)) |"' \
+              "data/${{ env.timestamp }}/test_info.json"
+            echo
+            echo "## Attestations"
+            echo "<!-- ATTESTATION_URLS -->"
+          } > "data/${{ env.timestamp }}/release_notes.txt"
         fi
 
     - name: Generate Attestation for Test Dataset

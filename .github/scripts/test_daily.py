@@ -45,6 +45,7 @@ def create_test_data(source_dir, output_dir, logger):
         
         # Modify records
         modified_data = modify_records(source_data)
+        removed_records = source_data[:5]  # The records we removed
         logger.info(f"Modified {len(source_data) - len(modified_data)} records")
         
         # Save modified data
@@ -54,12 +55,21 @@ def create_test_data(source_dir, output_dir, logger):
         
         logger.info(f"Saved modified data to: {output_file}")
         
-        # Create test info file
+        # Create test info file with detailed record information
         info = {
             'original_count': len(source_data),
             'modified_count': len(modified_data),
             'records_removed': len(source_data) - len(modified_data),
-            'test_date': datetime.now().isoformat()
+            'test_date': datetime.now().isoformat(),
+            'removed_records': [{
+                'title': record['title'],
+                'object_id': record['metadata'].get('Object', 'N/A'),
+                'taxonomy': record['metadata'].get('Taxonomy', 'N/A'),
+                'element': record['metadata'].get('Element', 'N/A'),
+                'data_manager': record['metadata'].get('Data Manager', 'N/A'),
+                'status': record['metadata'].get('Publication Status', 'N/A'),
+                'url': record['url']
+            } for record in removed_records]
         }
         
         with open(os.path.join(output_dir, 'test_info.json'), 'w') as f:
