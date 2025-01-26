@@ -1,0 +1,16 @@
+2025-01-26 20:39:58,859 - Data directory: data/2025-01-26_20-39-25
+2025-01-26 20:39:58,860 - Output directory: data/2025-01-26_20-39-58
+2025-01-26 20:39:58,860 - Using data file: data/2025-01-26_20-39-25/morphosource_data_complete.json
+2025-01-26 20:40:01,683 - Latest webpage record ID: 000704255
+2025-01-26 20:40:01,683 - Looking for data file at: /home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/data/2025-01-26_20-39-25/morphosource_data_complete.json
+2025-01-26 20:40:01,683 - Contents of /home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/data/2025-01-26_20-39-25:
+2025-01-26 20:40:01,683 -   - morphosource_data_complete.json
+2025-01-26 20:40:01,683 -   - daily_extractor.log
+2025-01-26 20:40:01,683 -   - release_notes.txt
+2025-01-26 20:40:01,683 -   - daily_info.json
+2025-01-26 20:40:02,150 - Latest stored record ID: 000704255
+2025-01-26 20:40:02,150 - No new records found - latest records match
+2025-01-26 20:40:02,357 - Data directory: data/2025-01-26_20-39-25
+2025-01-26 20:40:02,357 - Output directory: data/2025-01-26_20-39-58
+2025-01-26 20:40:02,357 - Creating no-changes release notes
+2025-01-26 20:40:02,357 - Created 'no changes' release notes at: data/2025-01-26_20-39-58/release_notes.txt
