@@ -126,9 +126,11 @@ jobs:
           exit 1
         fi
         
-        # Save attestation to file
-        mkdir -p "data/${{ env.timestamp }}"
-        echo "${{ steps.attest.outputs.attestation }}" > "data/${{ env.timestamp }}/attestation.json"
+        # Update the attestation file with the subject digest
+        jq --arg digest "${{ steps.attest.outputs.subject-digest }}" \
+           '.subject[0].digest.sha256 = $digest' \
+           "data/${{ env.timestamp }}/attestation.json" > temp.json && \
+        mv temp.json "data/${{ env.timestamp }}/attestation.json"
         
         # Create attestation URLs
         COMPLETE_URL="https://github.com/${{ github.repository }}/attestations/${ATT_ID}"
@@ -137,10 +139,6 @@ jobs:
         
         # Create attestation section content
         ATTESTATION_CONTENT="Complete Dataset: ${COMPLETE_URL}\nNew Records: ${NEW_RECORDS_URL}"
-        
-        # Debug output
-        echo "Complete URL: ${COMPLETE_URL}"
-        echo "New Records URL: ${NEW_RECORDS_URL}"
         
         # Replace placeholder in release notes
         sed -i "s|<!-- ATTESTATION_URLS -->|${ATTESTATION_CONTENT}|" "data/${{ env.timestamp }}/monthly_release_notes.txt"

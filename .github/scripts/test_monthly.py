@@ -16,6 +16,38 @@ def setup_logging(log_dir):
         ]
     )
 
+def create_attestation_template(record_count, total_records, modified_records, subject_name, subject_digest=None):
+    """Create attestation JSON template"""
+    return {
+        "_type": "https://in-toto.io/Statement/v0.1",
+        "subject": [{
+            "name": subject_name,
+            "digest": {
+                "sha256": subject_digest or ""
+            }
+        }],
+        "predicateType": "https://in-toto.io/attestation/release/v0.1",
+        "predicate": {
+            "purl": os.environ.get('GITHUB_REPOSITORY', ''),
+            "version": os.environ.get('GITHUB_SHA', ''),
+            "metadata": {
+                "buildInvocationId": os.environ.get('GITHUB_RUN_ID', ''),
+                "completeness": {
+                    "parameters": True,
+                    "environment": True,
+                    "materials": True
+                },
+                "test_parameters": {
+                    "record_count": str(record_count)
+                },
+                "stats": {
+                    "total_records": str(total_records),
+                    "modified_records": str(modified_records)
+                }
+            }
+        }
+    }
+
 def create_test_data(output_dir, record_count):
     setup_logging(output_dir)
     logger = logging.getLogger(__name__)
@@ -44,6 +76,7 @@ def create_test_data(output_dir, record_count):
     data_file = os.path.join(output_dir, 'morphosource_data_complete.json')
     stats_file = os.path.join(output_dir, 'monthly_stats.json')
     notes_file = os.path.join(output_dir, 'monthly_release_notes.txt')
+    attestation_file = os.path.join(output_dir, 'attestation.json')
     
     logger.info(f"Writing data files to {output_dir}")
     
@@ -60,6 +93,18 @@ def create_test_data(output_dir, record_count):
     }
     with open(stats_file, 'w') as f:
         json.dump(stats, f, indent=2)
+    
+    # Create attestation template
+    attestation = create_attestation_template(
+        record_count=record_count,
+        total_records=len(records),
+        modified_records=0,
+        subject_name='morphosource_data_complete.json'
+    )
+    
+    # Save attestation template
+    with open(attestation_file, 'w') as f:
+        json.dump(attestation, f, indent=2)
     
     # Create release notes
     release_notes = [
