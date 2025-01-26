@@ -114,6 +114,9 @@ jobs:
         # Debug step execution
         echo "Starting Save Attestation step..."
         
+        # Debug attestation outputs
+        echo "Subject digest from attest action: ${{ steps.attest.outputs.subject-digest }}"
+        
         # Get attestation ID from URL in output
         ATT_URL=$(grep "https://github.com/${{ github.repository }}/attestations/" <<< "${{ steps.attest.outputs.attestation-url }}" || true)
         ATT_ID=$(echo "$ATT_URL" | grep -o '[0-9]*$' || true)
@@ -126,11 +129,20 @@ jobs:
           exit 1
         fi
         
+        # Show original attestation content
+        echo "Original attestation content:"
+        cat "data/${{ env.timestamp }}/attestation.json"
+        
         # Update the attestation file with the subject digest
+        echo "Updating with digest: ${{ steps.attest.outputs.subject-digest }}"
         jq --arg digest "${{ steps.attest.outputs.subject-digest }}" \
            '.subject[0].digest.sha256 = $digest' \
            "data/${{ env.timestamp }}/attestation.json" > temp.json && \
         mv temp.json "data/${{ env.timestamp }}/attestation.json"
+        
+        # Show updated attestation content
+        echo "Updated attestation content:"
+        cat "data/${{ env.timestamp }}/attestation.json"
         
         # Create attestation URLs
         COMPLETE_URL="https://github.com/${{ github.repository }}/attestations/${ATT_ID}"
