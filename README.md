@@ -1,6 +1,6 @@
 # NSF NOCTURN Metadata
 
-Welcome to the **NOCTURN Metadata** project! This repository is dedicated to streamlining non-clinical tomographic imaging workflows across various facilities, while keeping each facility’s code and configurations separated into their own Git branches.
+Welcome to the **NOCTURN Metadata** project! This repository is dedicated to streamlining non-clinical tomographic imaging workflows across various facilities, while keeping each facility's code and configurations separated into their own Git branches.
 
 ## Table of Contents
 
@@ -41,9 +41,6 @@ my-nocturn-xray-repo/
 └─ facility-n-branch           # Branch in GitHub (not a folder)
 ```
 
-
-
-
 ## Installation
 
 This section describes how to install and configure **NOCTURN Metadata Parser** on a Raspberry Pi using an `.iso` file. This method provides a quick, standardized setup with minimal manual steps.
@@ -59,7 +56,7 @@ This section describes how to install and configure **NOCTURN Metadata Parser** 
 
 ### Step 1: Download the Raspberry Pi ISO
 
-1. Go to this repository’s **[Releases](../../releases)** page (or wherever the `.iso` is hosted).  
+1. Go to this repository's **[Releases](../../releases)** page (or wherever the `.iso` is hosted).  
 2. Download the latest `.iso` file (for example, `nocturn-xray-raspi.iso`).
 
 ---
@@ -146,7 +143,7 @@ After **Installation**, you can perform a quick test to ensure your Raspberry Pi
 
 3. **Check** your facility branch in GitHub.  
    - The Pi should publish metadata (or logs) related to the `.pca` file to your designated branch.  
-   - The exact commit message or metadata structure may depend on your facility’s configuration.
+   - The exact commit message or metadata structure may depend on your facility's configuration.
 
 4. **Verify** everything ran smoothly:  
    - Look for any resulting metadata in your GitHub repository (e.g., a JSON file, CSV, or updated logs).
@@ -196,4 +193,41 @@ This project is licensed under the [MIT License](LICENSE). By contributing, you 
 <p align="center">
   <i>Thank you for installing and using NOCTURN Metadata Parser! We hope this streamlined Raspberry Pi setup accelerates your imaging workflows.</i>
 </p>
+
+# NOCTURN X-ray Repository
+
+This repository contains automated workflows for collecting and validating X-ray CT data from MorphoSource.
+
+## Workflows and Scripts
+
+### Daily Check (`daily.yml`)
+Runs daily to check for new records on MorphoSource.
+
+**Associated Scripts:**
+- `.github/scripts/daily.py` - Checks for new records
+- `.github/scripts/collect.py` - Collects new records when found
+
+### Monthly Collection (`monthly.yml`)
+Runs monthly to collect all X-ray CT records and generate statistics.
+
+**Associated Scripts:**
+- `.github/scripts/monthly.py` - Collects and processes monthly data
+- `.github/scripts/release_analyzer.py` - Analyzes collected data for release
+
+### Test Workflows
+
+#### Daily Test (`test_daily.yml`)
+Tests the daily check and collection process.
+
+**Associated Scripts:**
+- `.github/scripts/test_daily.py` - Simulates daily check process
+- `.github/scripts/daily.py` - Used for testing daily checks
+
+#### Dimension Test (`dimension_test.yml`)
+Tests data dimensions and integrity.
+
+**Associated Scripts:**
+- `.github/scripts/dimension_test.py` - Validates data dimensions
+
+## Directory Structure
 
