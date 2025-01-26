@@ -149,7 +149,9 @@ def create_no_changes_release_notes(output_dir: str, source_dir: str, logger):
             'check_date': datetime.now().isoformat(),
             'source_dir': source_dir,
             'has_new_records': False,
-            'latest_record_id': None
+            'latest_record_id': None,
+            'current_data_file': os.path.join(output_dir, 'morphosource_data_complete.json'),
+            'previous_data_file': os.path.join(source_dir, 'morphosource_data_complete.json')
         }
         
         # Save daily info
@@ -162,8 +164,9 @@ def create_no_changes_release_notes(output_dir: str, source_dir: str, logger):
             f.write("# Daily Check Report\n")
             f.write(f"Check Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
             f.write("No new records found since last check.\n\n")
-            f.write("## Previous Data\n")
-            f.write(f"Last check: {source_dir}\n")
+            f.write("## Data Files\n")
+            f.write(f"Current data: {daily_info['current_data_file']}\n")
+            f.write(f"Previous data: {daily_info['previous_data_file']}\n")
             
         logger.info(f"Created 'no changes' release notes at: {release_notes_path}")
         

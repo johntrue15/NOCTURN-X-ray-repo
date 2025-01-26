@@ -83,7 +83,7 @@ jobs:
         fi
 
     - name: Copy Latest Data
-      if: steps.daily-check.outcome == 'failure'
+      if: always()  # Always copy the data, not just on failure
       run: |
         cp "${{ steps.find-latest.outputs.dir }}/morphosource_data_complete.json" \
            "data/${{ env.timestamp }}/morphosource_data_complete.json"
