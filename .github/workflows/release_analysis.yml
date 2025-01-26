@@ -91,9 +91,8 @@ jobs:
         if: success()
         run: |
           python .github/scripts/release_analyzer.py \
-            --token "${{ secrets.GITHUB_TOKEN }}" \
-            --repository "$GITHUB_REPOSITORY" \
-            --wiki-dir "wiki" \
+            --openai-key "${{ secrets.OPENAI_API_KEY }}" \
+            --anthropic-key "${{ secrets.ANTHROPIC_API_KEY }}" \
             --debug
 
       - name: Generate Enhanced Index
