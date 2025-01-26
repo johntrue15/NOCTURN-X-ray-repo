@@ -4,8 +4,9 @@ import os
 import sys
 import argparse
 import logging
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List, Dict
 from datetime import datetime
+import re
 
 try:
     from openai import OpenAI
@@ -23,42 +24,115 @@ logger = logging.getLogger(__name__)
 class ReleaseAnalyzer:
     def __init__(self, api_key: str):
         self.client = OpenAI(api_key=api_key)
+        # Regex to detect record entries
+        self.record_pattern = re.compile(r'### ([^\n]+)')
 
-    def generate_prompt(self, content: str) -> str:
-        """Generate the prompt for OpenAI analysis."""
-        return f"""As a scientific writer and data analyst, please analyze the following release data and create a comprehensive summary in the style of an academic blog post. Focus on:
+    def parse_release_data(self, content: str) -> List[Dict[str, str]]:
+        """Parse the release content into structured records."""
+        records = []
+        sections = content.split('### ')
+        
+        for section in sections[1:]:  # Skip first empty section
+            try:
+                lines = section.strip().split('\n')
+                if not lines:
+                    continue
+                    
+                record = {'title': lines[0].strip()}
+                current_key = None
+                
+                for line in lines[1:]:
+                    line = line.strip()
+                    if not line:
+                        continue
+                        
+                    if ':' in line:
+                        key, value = line.split(':', 1)
+                        key = key.strip('- ').strip()
+                        value = value.strip()
+                        record[key] = value
+                
+                records.append(record)
+                
+            except Exception as e:
+                logger.warning(f"Error parsing section: {str(e)}")
+                continue
+                
+        return records
 
-1. Key findings and patterns in the release
-2. Notable technical achievements or milestones
-3. Implications for scientific research and data collection
-4. Quality and completeness of the documented information
-5. Suggestions for future improvements or areas of focus
+    def generate_prompt(self, records: List[Dict[str, str]]) -> str:
+        """Generate the analysis prompt with focus on FAIR principles and NSF initiatives."""
+        user_content = [
+            "This week's MorphoSource data release showcases the following X-ray CT scans:\n"
+        ]
+        
+        for i, rec in enumerate(records, 1):
+            user_content.append(f"Record #{i}:")
+            user_content.append(f" - Title: {rec.get('title', 'N/A')}")
+            
+            # Include all available fields
+            for key, value in rec.items():
+                if key != 'title':  # Skip title as it's already added
+                    user_content.append(f" - {key}: {value}")
+            
+            user_content.append("")  # Blank line separator
 
-Format the response as a well-structured academic blog post with clear sections and insights.
-
-Here is the release content to analyze:
-
-{content}
-"""
+        # Add the specialized instruction prompt
+        user_content.append(
+            "As a science communicator specializing in open science and digital repositories, please create an "
+            "engaging weekly blog post about these MorphoSource releases. Your analysis should:\n\n"
+            
+            "1. Opening Context:\n"
+            "- Highlight how this week's releases contribute to open science and FAIR data principles\n"
+            "- Emphasize MorphoSource's role in making X-ray CT data Findable, Accessible, Interoperable, and Reusable\n\n"
+            
+            "2. Scientific Summary:\n"
+            "- Provide a clear overview of the specimens scanned this week\n"
+            "- Explain the significance of each specimen for comparative anatomy and evolutionary studies\n"
+            "- Describe any notable anatomical features captured in the scans\n\n"
+            
+            "3. Technical Achievements:\n"
+            "- Discuss the variety of specimen types and scanning approaches\n"
+            "- Highlight any particularly challenging or innovative scanning techniques\n"
+            "- Note the quality and completeness of the digital data\n\n"
+            
+            "4. Broader Impact:\n"
+            "- Explain how these scans support NSF's vision for open science infrastructure\n"
+            "- Describe potential research, educational, and collaborative opportunities enabled by this data\n"
+            "- Emphasize how this data contributes to biodiversity research and documentation\n\n"
+            
+            "Format the response as an engaging blog post that would interest both researchers and the general public. "
+            "Highlight specific examples from this week's releases while connecting them to broader themes of "
+            "open science, digital preservation, and collaborative research."
+        )
+        
+        return "\n".join(user_content)
 
     def analyze_release(self, content: str) -> Optional[Tuple[str, dict]]:
-        """
-        Analyze the release content using OpenAI API.
-        Returns tuple of (analysis_text, usage_stats) or None if error occurs.
-        """
+        """Analyze the release content using the o1-mini model."""
         try:
-            prompt = self.generate_prompt(content)
+            # Parse records from the content
+            records = self.parse_release_data(content)
+            
+            if not records:
+                logger.warning("No records found to analyze")
+                return None
+                
+            prompt = self.generate_prompt(records)
             
             response = self.client.chat.completions.create(
-                model="o1-mini",  # Using latest GPT-4 model
+                model="o1-mini",
                 messages=[
                     {
                         "role": "user",
-                        "content": prompt
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": prompt
+                            }
+                        ]
                     }
-                ],
-                temperature=0.7,  # Balanced between creativity and consistency
-                max_tokens=2000   # Allowing for detailed analysis
+                ]
             )
             
             # Extract token usage
@@ -78,27 +152,27 @@ Here is the release content to analyze:
         """Format the analysis as a wiki page."""
         current_time = datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')
         
-        # Calculate approximate cost (based on current GPT-4 Turbo pricing)
-        input_cost = (usage_stats['prompt_tokens'] / 1000) * 0.01  # $0.01 per 1K input tokens
-        output_cost = (usage_stats['completion_tokens'] / 1000) * 0.03  # $0.03 per 1K output tokens
+        # Calculate approximate cost (based on current o1-mini pricing)
+        input_cost = (usage_stats['prompt_tokens'] / 1000) * 0.01  # $0.01 per 1K tokens
+        output_cost = (usage_stats['completion_tokens'] / 1000) * 0.03  # $0.03 per 1K tokens
         total_cost = input_cost + output_cost
         
-        wiki_content = f"""# OpenAI Analysis: {release_title}
+        wiki_content = f"""# OpenAI Weekly Analysis: {release_title}
 
 Generated on: {current_time}
 
-## Analysis Summary
+## MorphoSource Weekly Digest: Open Science and X-ray Imaging
 
 {analysis}
 
 ---
-*This analysis was automatically generated using OpenAI's GPT-4 model.*
+*This analysis was automatically generated using OpenAI's o1-mini model to support NSF's FAIROS initiatives.*
 
-**Token Usage Statistics:**
+**Analysis Statistics:**
 - Prompt Tokens: {usage_stats['prompt_tokens']:,}
 - Completion Tokens: {usage_stats['completion_tokens']:,}
 - Total Tokens: {usage_stats['total_tokens']:,}
-- Estimated Cost: ${total_cost:.4f}
+- Processing Cost: ${total_cost:.4f}
 """
         return wiki_content
 
