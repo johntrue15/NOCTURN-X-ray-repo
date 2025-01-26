@@ -56,7 +56,7 @@ def analyze_workflow_triggers(workflow_content):
         'schedule': None,
         'workflow_dependencies': [],
         'manual': False,
-        'workflow_run_triggers': []  # Add this to track what workflows this one triggers
+        'workflow_run_triggers': []
     }
     
     if not isinstance(workflow_content, dict) or 'on' not in workflow_content:
@@ -64,26 +64,34 @@ def analyze_workflow_triggers(workflow_content):
         
     on = workflow_content['on']
     
-    # Check schedule - handle both commented and uncommented
+    # Check schedule - handle different formats
     if isinstance(on, dict):
         if 'schedule' in on:
             schedule_data = on['schedule']
+            # Handle list of schedules
             if isinstance(schedule_data, list):
                 for item in schedule_data:
+                    # Handle direct cron string
                     if isinstance(item, dict) and 'cron' in item:
-                        cron = item['cron']
-                        if not cron.strip().startswith('#'):  # Check if not commented
+                        cron = item['cron'].strip('"\'')  # Remove quotes
+                        if not cron.startswith('#'):  # Not commented
                             triggers['schedule'] = parse_schedule([cron])
-        
-        # Check workflow_run triggers
-        if 'workflow_run' in on:
-            workflow_run = on['workflow_run']
-            if isinstance(workflow_run, dict):
-                workflows = workflow_run.get('workflows', [])
-                if isinstance(workflows, str):
-                    triggers['workflow_dependencies'].append(workflows)
-                elif isinstance(workflows, list):
-                    triggers['workflow_dependencies'].extend(workflows)
+                            break
+            # Handle single schedule
+            elif isinstance(schedule_data, dict) and 'cron' in schedule_data:
+                cron = schedule_data['cron'].strip('"\'')
+                if not cron.startswith('#'):
+                    triggers['schedule'] = parse_schedule([cron])
+    
+    # Check workflow_run triggers
+    if isinstance(on, dict) and 'workflow_run' in on:
+        workflow_run = on['workflow_run']
+        if isinstance(workflow_run, dict):
+            workflows = workflow_run.get('workflows', [])
+            if isinstance(workflows, str):
+                triggers['workflow_dependencies'].append(workflows)
+            elif isinstance(workflows, list):
+                triggers['workflow_dependencies'].extend(workflows)
     
     # Check manual trigger
     if isinstance(on, dict) and 'workflow_dispatch' in on:
