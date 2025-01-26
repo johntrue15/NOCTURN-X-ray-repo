@@ -124,14 +124,26 @@ def analyze_workflow_triggers(workflow_content):
 def analyze_workflows():
     """Analyze all workflows and their script dependencies"""
     workflows_dir = Path('.github/workflows')
+    print(f"\nLooking for workflows in: {workflows_dir.absolute()}")
     
     workflow_info = {}
     
     # Analyze each workflow file
     for workflow_file in workflows_dir.glob('*.yml'):
-        with open(workflow_file, 'r') as f:
-            try:
-                workflow_content = yaml.safe_load(f)
+        print(f"\nAnalyzing workflow file: {workflow_file}")
+        try:
+            with open(workflow_file, 'r') as f:
+                content = f.read()
+                print(f"File contents:\n{content[:200]}...")  # Show first 200 chars
+                
+                workflow_content = yaml.safe_load(content)
+                if workflow_content is None:
+                    print(f"Warning: Empty workflow file: {workflow_file}")
+                    continue
+                    
+                print(f"Parsed YAML type: {type(workflow_content)}")
+                print(f"Parsed YAML keys: {workflow_content.keys() if isinstance(workflow_content, dict) else 'Not a dict'}")
+                
                 name = workflow_content.get('name', workflow_file.name)
                 scripts = find_python_scripts(workflow_content)
                 triggers = analyze_workflow_triggers(workflow_content)
@@ -144,8 +156,8 @@ def analyze_workflows():
                     'manual': triggers['manual']
                 }
                 
-            except yaml.YAMLError as e:
-                print(f"Error parsing {workflow_file}: {e}")
+        except Exception as e:
+            print(f"Error processing {workflow_file}: {e}")
                 
     return workflow_info
 
