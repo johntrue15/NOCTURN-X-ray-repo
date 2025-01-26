@@ -50,7 +50,7 @@ Here is the release content to analyze:
             prompt = self.generate_prompt(content)
             
             response = self.client.chat.completions.create(
-                model="gpt-4-turbo-preview",  # Using latest GPT-4 model
+                model="o1-mini",  # Using latest GPT-4 model
                 messages=[
                     {
                         "role": "user",
