@@ -139,32 +139,18 @@ class DailyMorphoSourceExtractor:
             self.logger.error(f"Error in daily check: {e}")
             raise
 
-def create_release_notes(output_dir, daily_info, logger):
-    """Create formatted release notes"""
+def create_no_changes_release_notes(output_dir: str, source_dir: str, logger):
+    """Create release notes for when no changes are found"""
     release_notes_path = os.path.join(output_dir, 'release_notes.txt')
     try:
         with open(release_notes_path, 'w') as f:
             f.write("# Daily Check Report\n")
             f.write(f"Check Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+            f.write("No new records found since last check.\n\n")
+            f.write("## Previous Data\n")
+            f.write(f"Last check: {source_dir}\n")
             
-            f.write("## Summary\n")
-            f.write(f"Found {daily_info['new_records']} new record(s)\n\n")
-            
-            f.write("## New Records\n")
-            f.write("| Title | Object ID | Taxonomy | Element | Data Manager | Status | Link |\n")
-            f.write("|-------|-----------|----------|---------|--------------|--------|------|\n")
-            
-            for record in daily_info['new_records']:
-                f.write(
-                    f"| {record['title']} | {record['object_id']} | {record['taxonomy']} | "
-                    f"{record['element']} | {record['data_manager']} | {record['status']} | "
-                    f"[View]({record['url']}) |\n"
-                )
-            
-            f.write("\n## Attestations\n")
-            f.write("<!-- ATTESTATION_URLS -->\n")
-            
-        logger.info(f"Created release notes at: {release_notes_path}")
+        logger.info(f"Created 'no changes' release notes at: {release_notes_path}")
         
     except Exception as e:
         logger.error(f"Error creating release notes: {e}")
@@ -176,11 +162,18 @@ def main():
                       help='Directory containing latest data files')
     parser.add_argument('--output-dir', type=str, required=True,
                       help='Directory to store output files')
+    parser.add_argument('--create-notes', action='store_true',
+                      help='Create release notes for no changes case')
     args = parser.parse_args()
     
-    base_url = "https://www.morphosource.org/catalog/media?locale=en&per_page=100&q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc"
-    
     try:
+        if args.create_notes:
+            # Setup logging for release notes creation
+            logger = setup_logging(args.output_dir)
+            create_no_changes_release_notes(args.output_dir, args.data_dir, logger)
+            return 0
+            
+        # Normal daily check flow
         extractor = DailyMorphoSourceExtractor(base_url, data_dir=args.data_dir)
         has_new_records = extractor.run()
         
