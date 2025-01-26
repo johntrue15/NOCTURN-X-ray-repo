@@ -4,6 +4,7 @@ import sys
 from datetime import datetime
 import argparse
 import logging
+import re
 
 def setup_logging(log_dir):
     """Configure logging to file and console"""
@@ -47,6 +48,11 @@ def create_attestation_template(record_count, total_records, modified_records, s
             }
         }
     }
+
+def extract_sha256_from_log(log_message):
+    """Extract SHA256 from attestation log message"""
+    match = re.search(r'@sha256:([a-f0-9]+)', log_message)
+    return match.group(1) if match else None
 
 def create_test_data(output_dir, record_count):
     setup_logging(output_dir)
@@ -100,6 +106,13 @@ def create_test_data(output_dir, record_count):
         modified_records=0,
         subject_name='morphosource_data_complete.json'
     )
+    
+    # If we have a log message with SHA256, update the template
+    log_message = os.environ.get('ATTEST_LOG_MESSAGE', '')
+    if log_message:
+        sha256 = extract_sha256_from_log(log_message)
+        if sha256:
+            attestation['subject'][0]['digest']['sha256'] = sha256
     
     # Save attestation template
     attestation_file = os.path.join(output_dir, 'attestation.json')

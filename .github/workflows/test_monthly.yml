@@ -118,16 +118,25 @@ jobs:
         ATT_URL="${{ steps.attest.outputs.attestation-url }}"
         ATT_ID=$(echo "$ATT_URL" | grep -o '[0-9]*$' || true)
         
+        # Extract SHA256 from the log message
+        DIGEST=$(echo "${{ steps.attest.outputs._logs }}" | grep "Attestation created for" | grep -o '@sha256:[a-f0-9]\+' | head -1 | cut -d':' -f2)
+        
         echo "Attestation URL: $ATT_URL"
         echo "Attestation ID: $ATT_ID"
+        echo "SHA256 Digest: $DIGEST"
         
         if [ -z "$ATT_ID" ]; then
           echo "Error: Could not extract attestation ID"
           exit 1
         fi
         
-        # Update the attestation file with the subject digest
-        jq --arg digest "${{ steps.attest.outputs.subject-digest }}" \
+        if [ -z "$DIGEST" ]; then
+          echo "Error: Could not extract SHA256 digest"
+          exit 1
+        fi
+        
+        # Update the attestation file with the extracted digest
+        jq --arg digest "$DIGEST" \
            '.subject[0].digest.sha256 = $digest' \
            "data/${{ env.timestamp }}/attestation.json" > temp.json && \
         mv temp.json "data/${{ env.timestamp }}/attestation.json"
