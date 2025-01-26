@@ -90,10 +90,25 @@ jobs:
       - name: Run AI Analysis
         if: success()
         run: |
+          # Create output directory for artifacts
+          mkdir -p analysis_outputs
+          # Run analyzer and redirect logs
           python .github/scripts/release_analyzer.py \
             --openai-key "${{ secrets.OPENAI_API_KEY }}" \
             --anthropic-key "${{ secrets.ANTHROPIC_API_KEY }}" \
-            --debug
+            --debug 2>&1 | tee analysis_outputs/analysis.log
+          # Copy all relevant files to output directory
+          cp release_summary.txt analysis_outputs/
+          cp claude_prompt.txt analysis_outputs/
+          cp openai_prompt.txt analysis_outputs/
+
+      - name: Upload Analysis Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-analysis-artifacts
+          path: |
+            analysis_outputs/
+          retention-days: 90
 
       - name: Generate Enhanced Index
         if: success()
