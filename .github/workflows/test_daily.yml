@@ -28,17 +28,19 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests beautifulsoup4
 
-    - name: Set timestamp
-      id: timestamp
+    - name: Set timestamps
+      id: timestamps
       run: |
-        TIMESTAMP=$(date +'%Y-%m-%d_%H-%M-%S')
-        echo "timestamp=$TIMESTAMP" >> $GITHUB_ENV
-        echo "Timestamp set to: $TIMESTAMP"
+        TEST_TIMESTAMP=$(date +'%Y-%m-%d_%H-%M-%S')
+        DAILY_TIMESTAMP=$(date -d '+1 minute' +'%Y-%m-%d_%H-%M-%S')  # Simulate next minute for daily
+        echo "test_timestamp=$TEST_TIMESTAMP" >> $GITHUB_ENV
+        echo "daily_timestamp=$DAILY_TIMESTAMP" >> $GITHUB_ENV
+        echo "Test timestamp: $TEST_TIMESTAMP"
+        echo "Daily timestamp: $DAILY_TIMESTAMP"
 
     - name: Find Latest Data Directory
       id: find-latest
       run: |
-        # Find the latest timestamped directory in data/
         LATEST_DIR=$(find data -maxdepth 1 -type d -name "20*" | sort -r | head -n1 || echo "")
         if [ -z "$LATEST_DIR" ]; then
           echo "No timestamped data directories found"
@@ -49,42 +51,50 @@ jobs:
 
     - name: Create Test Data
       run: |
-        mkdir -p "data/${{ env.timestamp }}"
+        mkdir -p "data/${{ env.test_timestamp }}"
         python .github/scripts/test_daily.py \
           --source-dir "${{ steps.find-latest.outputs.dir }}" \
-          --output-dir "data/${{ env.timestamp }}"
+          --output-dir "data/${{ env.test_timestamp }}"
 
     - name: Run Daily Check
       id: daily-check
       env:
         LATEST_DATA_DIR: ${{ steps.find-latest.outputs.dir }}
-        TEST_DATA_DIR: data/${{ env.timestamp }}
+        TEST_DATA_DIR: data/${{ env.test_timestamp }}
       run: |
         python .github/scripts/daily.py --data-dir "$TEST_DATA_DIR"
       continue-on-error: true
+
+    - name: Simulate Daily Collection
+      if: steps.daily-check.outcome == 'failure'
+      run: |
+        mkdir -p "data/${{ env.daily_timestamp }}"
+        # Copy the original data to simulate collection
+        cp "${{ steps.find-latest.outputs.dir }}/morphosource_data_complete.json" \
+           "data/${{ env.daily_timestamp }}/morphosource_data_complete.json"
 
     - name: Create Release Notes
       if: always()
       run: |
         if [ "${{ steps.daily-check.outcome }}" == "success" ]; then
-          echo "No new records found" > "data/${{ env.timestamp }}/release_notes.txt"
+          echo "No new records found" > "data/${{ env.test_timestamp }}/release_notes.txt"
         else
           {
             echo "# Test Daily Check Report"
             echo "Test Date: $(date +'%Y-%m-%d %H:%M:%S')"
             echo
             echo "## Summary"
-            echo "Removed $(jq '.records_removed' "data/${{ env.timestamp }}/test_info.json") record(s) for testing"
+            echo "Removed $(jq '.records_removed' "data/${{ env.test_timestamp }}/test_info.json") record(s) for testing"
             echo
             echo "## Modified Records"
             echo "| Title | Object ID | Taxonomy | Element | Data Manager | Status | Link |"
             echo "|-------|-----------|----------|---------|--------------|--------|------|"
             jq -r '.removed_records[] | "| \(.title) | \(.object_id) | \(.taxonomy) | \(.element) | \(.data_manager) | \(.status) | [View](\(.url)) |"' \
-              "data/${{ env.timestamp }}/test_info.json"
+              "data/${{ env.test_timestamp }}/test_info.json"
             echo
             echo "## Attestations"
             echo "<!-- ATTESTATION_URLS -->"
-          } > "data/${{ env.timestamp }}/release_notes.txt"
+          } > "data/${{ env.test_timestamp }}/release_notes.txt"
         fi
 
     - name: Generate Attestation for Test Dataset
@@ -92,7 +102,7 @@ jobs:
       uses: actions/attest@v2.1.0
       id: attest-test
       with:
-        subject-path: data/${{ env.timestamp }}/morphosource_data_complete.json
+        subject-path: data/${{ env.test_timestamp }}/morphosource_data_complete.json
         predicate-type: 'https://in-toto.io/attestation/release/v0.1'
         show-summary: true
         predicate: |
@@ -108,7 +118,7 @@ jobs:
               },
               "test_info": {
                 "type": "daily_test",
-                "timestamp": "${{ env.timestamp }}"
+                "timestamp": "${{ env.test_timestamp }}"
               }
             }
           }
@@ -139,7 +149,7 @@ jobs:
         fi
         
         # Update the release notes with attestation info
-        echo -e "\n## Attestation\nTest Dataset: $ATT_URL" >> "data/${{ env.timestamp }}/release_notes.txt"
+        echo -e "\n## Attestation\nTest Dataset: $ATT_URL" >> "data/${{ env.test_timestamp }}/release_notes.txt"
 
     - name: Create Release
       if: always()
@@ -147,17 +157,34 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: "Test Daily Check #${{ env.timestamp }}"
-        tag_name: "test-daily-${{ env.timestamp }}"
-        body_path: data/${{ env.timestamp }}/release_notes.txt
+        name: "Test Daily Check #${{ env.test_timestamp }}"
+        tag_name: "test-daily-${{ env.test_timestamp }}"
+        body_path: data/${{ env.test_timestamp }}/release_notes.txt
         files: |
-          data/${{ env.timestamp }}/morphosource_data_complete.json
-          data/${{ env.timestamp }}/test_info.json
+          data/${{ env.test_timestamp }}/morphosource_data_complete.json
+          data/${{ env.test_timestamp }}/test_info.json
+          data/${{ env.daily_timestamp }}/morphosource_data_complete.json
+
+    - name: Commit data files
+      if: always()
+      run: |
+        echo "::group::Files to be committed"
+        git add -f "data/${{ env.test_timestamp }}/"
+        git add -f "data/${{ env.daily_timestamp }}/"
+        git status
+        echo "::endgroup::"
+        
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Test: Daily check data [${{ env.test_timestamp }}]"
+          git push origin HEAD:main
+        fi
 
     - name: Upload Test Artifacts
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: test-daily-logs-${{ env.timestamp }}
+        name: test-daily-logs-${{ env.test_timestamp }}
         path: |
-          data/${{ env.timestamp }}/* 
+          data/${{ env.test_timestamp }}/* 
