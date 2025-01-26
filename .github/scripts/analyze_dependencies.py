@@ -200,23 +200,34 @@ def generate_markdown(workflow_info):
     for workflow_name, info in sorted_scheduled:
         lines.append(f"### {info['name']} (`{workflow_name}`)")
         lines.append(f"**Schedule:** {info['schedule']}")
+        
+        # Add direct scripts
         if info['scripts']:
             lines.append("**Required Scripts:**")
             for script in info['scripts']:
                 lines.append(f"- `.github/scripts/{script}`")
         
-        # Add dependent workflows as a tree
+        # Add child workflows and their scripts
         dependent_workflows = [name for name, w_info in workflow_info.items() 
                              if workflow_name in w_info['workflow_dependencies']]
         if dependent_workflows:
-            lines.append("**Triggers Workflows:**")
+            lines.append("**Child Workflows:**")
             for dep in sorted(dependent_workflows):
+                dep_info = workflow_info[dep]
                 lines.append(f"- `{dep}`")
+                if dep_info['scripts']:
+                    for script in dep_info['scripts']:
+                        lines.append(f"  - `.github/scripts/{script}`")
                 # Add second-level dependencies
                 second_level = [name for name, w_info in workflow_info.items() 
                               if dep in w_info['workflow_dependencies']]
-                for sub_dep in sorted(second_level):
-                    lines.append(f"  - `{sub_dep}`")
+                if second_level:
+                    for sub_dep in sorted(second_level):
+                        sub_info = workflow_info[sub_dep]
+                        lines.append(f"  - `{sub_dep}`")
+                        if sub_info['scripts']:
+                            for script in sub_info['scripts']:
+                                lines.append(f"    - `.github/scripts/{script}`")
         lines.append("")
     
     # Then list other workflows
