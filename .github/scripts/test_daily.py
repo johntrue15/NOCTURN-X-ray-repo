@@ -33,6 +33,37 @@ def modify_records(records, num_to_modify=5):
     
     return modified_records
 
+def create_release_notes(output_dir, test_info, logger):
+    """Create formatted release notes"""
+    release_notes_path = os.path.join(output_dir, 'release_notes.txt')
+    try:
+        with open(release_notes_path, 'w') as f:
+            f.write("# Test Daily Check Report\n")
+            f.write(f"Test Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+            
+            f.write("## Summary\n")
+            f.write(f"Removed {test_info['records_removed']} record(s) for testing\n\n")
+            
+            f.write("## Modified Records\n")
+            f.write("| Title | Object ID | Taxonomy | Element | Data Manager | Status | Link |\n")
+            f.write("|-------|-----------|----------|---------|--------------|--------|------|\n")
+            
+            for record in test_info['removed_records']:
+                f.write(
+                    f"| {record['title']} | {record['object_id']} | {record['taxonomy']} | "
+                    f"{record['element']} | {record['data_manager']} | {record['status']} | "
+                    f"[View]({record['url']}) |\n"
+                )
+            
+            f.write("\n## Attestations\n")
+            f.write("<!-- ATTESTATION_URLS -->\n")
+            
+        logger.info(f"Created release notes at: {release_notes_path}")
+        
+    except Exception as e:
+        logger.error(f"Error creating release notes: {e}")
+        raise
+
 def create_test_data(source_dir, output_dir, logger):
     """Create test data by modifying the source data"""
     try:
@@ -55,7 +86,7 @@ def create_test_data(source_dir, output_dir, logger):
         
         logger.info(f"Saved modified data to: {output_file}")
         
-        # Create test info file with detailed record information
+        # Create test info with detailed record information
         info = {
             'original_count': len(source_data),
             'modified_count': len(modified_data),
@@ -72,8 +103,12 @@ def create_test_data(source_dir, output_dir, logger):
             } for record in removed_records]
         }
         
+        # Save test info
         with open(os.path.join(output_dir, 'test_info.json'), 'w') as f:
             json.dump(info, f, indent=2)
+            
+        # Create release notes
+        create_release_notes(output_dir, info, logger)
         
         return len(modified_data)
         

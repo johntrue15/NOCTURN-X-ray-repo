@@ -18,6 +18,11 @@ jobs:
       with:
         fetch-depth: 0
 
+    - name: Configure Git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -78,23 +83,7 @@ jobs:
       run: |
         if [ "${{ steps.daily-check.outcome }}" == "success" ]; then
           echo "No new records found" > "data/${{ env.test_timestamp }}/release_notes.txt"
-        else
-          {
-            echo "# Test Daily Check Report"
-            echo "Test Date: $(date +'%Y-%m-%d %H:%M:%S')"
-            echo
-            echo "## Summary"
-            echo "Removed $(jq '.records_removed' "data/${{ env.test_timestamp }}/test_info.json") record(s) for testing"
-            echo
-            echo "## Modified Records"
-            echo "| Title | Object ID | Taxonomy | Element | Data Manager | Status | Link |"
-            echo "|-------|-----------|----------|---------|--------------|--------|------|"
-            jq -r '.removed_records[] | "| \(.title) | \(.object_id) | \(.taxonomy) | \(.element) | \(.data_manager) | \(.status) | [View](\(.url)) |"' \
-              "data/${{ env.test_timestamp }}/test_info.json"
-            echo
-            echo "## Attestations"
-            echo "<!-- ATTESTATION_URLS -->"
-          } > "data/${{ env.test_timestamp }}/release_notes.txt"
+        fi
 
     - name: Generate Attestation for Test Dataset
       if: steps.daily-check.outcome == 'failure'
@@ -167,6 +156,9 @@ jobs:
     - name: Commit data files
       if: always()
       run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
         echo "::group::Files to be committed"
         git add -f "data/${{ env.test_timestamp }}/"
         git add -f "data/${{ env.daily_timestamp }}/"
@@ -186,4 +178,5 @@ jobs:
       with:
         name: test-daily-logs-${{ env.test_timestamp }}
         path: |
-          data/${{ env.test_timestamp }}/* 
+          data/${{ env.test_timestamp }}/*
+          data/${{ env.daily_timestamp }}/* 
