@@ -126,8 +126,12 @@ jobs:
           exit 1
         fi
         
-        # Get the full attestation from the action output
-        echo '${{ steps.attest.outputs.attestation }}' > "data/${{ env.timestamp }}/attestation.json"
+        # Save the full attestation with proper JSON handling
+        echo '${{ toJSON(steps.attest.outputs.attestation) }}' | jq '.' > "data/${{ env.timestamp }}/attestation.json"
+        
+        # Debug: Show what we're saving
+        echo "Saving attestation content:"
+        cat "data/${{ env.timestamp }}/attestation.json"
         
         # Create attestation URLs
         COMPLETE_URL="https://github.com/${{ github.repository }}/attestations/${ATT_ID}"
