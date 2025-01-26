@@ -153,8 +153,8 @@ class ReleaseAnalyzer:
         current_time = datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')
         
         # Calculate approximate cost (based on current o1-mini pricing)
-        input_cost = (usage_stats['prompt_tokens'] / 1000) * 0.01  # $0.01 per 1K tokens
-        output_cost = (usage_stats['completion_tokens'] / 1000) * 0.03  # $0.03 per 1K tokens
+        input_cost = (usage_stats['prompt_tokens'] / 1_000_000) * 3.00  # $3.00 per 1M input tokens
+        output_cost = (usage_stats['completion_tokens'] / 1_000_000) * 12.00  # $12.00 per 1M output tokens
         total_cost = input_cost + output_cost
         
         wiki_content = f"""# OpenAI Weekly Analysis: {release_title}
