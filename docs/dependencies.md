@@ -24,6 +24,14 @@ This document shows the relationships between GitHub Actions workflows and their
 **Schedule:** Every 5 minutes
 **Required Scripts:**
 - `.github/scripts/scrape_morphosource.py`
+**Triggers Workflows:**
+- `combined_ct_images_to_text.yml`
+  - `.github/scripts/2D3D_check.py`
+  - `.github/scripts/ct_image_to_text.py`
+  - `.github/scripts/ct_slices_to_text.py`
+  - `.github/scripts/url_screenshot_check.py`
+- `ct_to_text.yml`
+  - `.github/scripts/ct_to_text.py`
 
 ## Other Workflows
 
