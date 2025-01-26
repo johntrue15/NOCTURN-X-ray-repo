@@ -65,11 +65,23 @@ jobs:
       - name: Prepare Release Data for Analysis
         if: success()
         run: |
-          # Get latest release summary file
-          LATEST_RELEASE=$(ls -t wiki/Releases-*.md | head -1)
+          # Get latest release summary file using proper date sorting
+          LATEST_RELEASE=$(find wiki -name "Releases-*.md" | sort -r | head -1)
           if [ -f "$LATEST_RELEASE" ]; then
-            cp "$LATEST_RELEASE" release_summary.txt
-            echo "Copied $LATEST_RELEASE to release_summary.txt"
+            echo "Found latest release file: $LATEST_RELEASE"
+            # Get the week's date from filename
+            WEEK_DATE=$(echo "$LATEST_RELEASE" | grep -o '[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}')
+            echo "Processing week of $WEEK_DATE"
+            # Create release summary with relevant content
+            {
+              echo "# Release Summary for $WEEK_DATE"
+              echo "Content extracted from wiki page:"
+              echo "----------------------------------------"
+              cat "$LATEST_RELEASE"
+            } > release_summary.txt
+            echo "Created release_summary.txt with content from $LATEST_RELEASE"
+            echo "File contents:"
+            head -n 20 release_summary.txt
           else
             echo "No release summary files found"
             exit 1
