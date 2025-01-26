@@ -5,33 +5,57 @@ This document shows the relationships between GitHub Actions workflows and their
 ## Scheduled Workflows
 
 ### Monthly MorphoSource Collection (`monthly.yml`)
+
 **Schedule:** Cron: 0 0 1 * *
+
 **Required Scripts:**
 - `.github/scripts/monthly.py`
 
+
+---
+
 ### Daily MorphoSource Check (`daily.yml`)
+
 **Schedule:** Daily at midnight
+
 **Required Scripts:**
 - `.github/scripts/collect.py`
 - `.github/scripts/daily.py`
 
+
+---
+
 ### Wiki Generation (`wiki-generation.yml`)
+
 **Schedule:** Daily at midnight
+
 **Required Scripts:**
 - `.github/scripts/release_analysis.py`
 
+
+---
+
 ### Parse MorphoSource Data (`parse_morphosource.yml`)
+
 **Schedule:** Every 5 minutes
+
 **Required Scripts:**
 - `.github/scripts/scrape_morphosource.py`
+
 **Triggers Workflows:**
+
 - `combined_ct_images_to_text.yml`
+  Scripts:
   - `.github/scripts/2D3D_check.py`
   - `.github/scripts/ct_image_to_text.py`
   - `.github/scripts/ct_slices_to_text.py`
   - `.github/scripts/url_screenshot_check.py`
+
 - `ct_to_text.yml`
+  Scripts:
   - `.github/scripts/ct_to_text.py`
+
+---
 
 ## Other Workflows
 
