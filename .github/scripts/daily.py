@@ -8,6 +8,19 @@ import sys
 import logging
 import argparse
 
+def setup_logging(log_dir):
+    """Configure logging for release notes creation"""
+    os.makedirs(log_dir, exist_ok=True)
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(message)s',
+        handlers=[
+            logging.FileHandler(os.path.join(log_dir, 'daily_extractor.log')),
+            logging.StreamHandler()
+        ]
+    )
+    return logging.getLogger(__name__)
+
 class DailyMorphoSourceExtractor:
     def __init__(self, base_url: str, data_dir: str = 'data'):
         self.base_url = base_url
@@ -19,18 +32,7 @@ class DailyMorphoSourceExtractor:
         self.logger.info(f"Using data file: {self.complete_data_path}")
 
     def setup_logging(self):
-        # Create logs in current data directory
-        log_dir = os.path.dirname(self.data_dir)
-        os.makedirs(log_dir, exist_ok=True)
-        logging.basicConfig(
-            level=logging.INFO,
-            format='%(asctime)s - %(levelname)s - %(message)s',
-            handlers=[
-                logging.FileHandler(os.path.join(log_dir, 'daily_extractor.log')),
-                logging.StreamHandler()
-            ]
-        )
-        self.logger = logging.getLogger(__name__)
+        self.logger = setup_logging(self.data_dir)
 
     def setup_directories(self):
         os.makedirs(self.data_dir, exist_ok=True)
@@ -187,9 +189,11 @@ def main():
     args = parser.parse_args()
     
     try:
+        # Create output directory
+        os.makedirs(args.output_dir, exist_ok=True)
+        logger = setup_logging(args.output_dir)
+        
         if args.create_notes:
-            # Setup logging for release notes creation
-            logger = setup_logging(args.output_dir)
             create_no_changes_release_notes(args.output_dir, args.data_dir, logger)
             return 0
             
@@ -207,12 +211,11 @@ def main():
         }
         
         # Save daily info and create appropriate release notes
-        os.makedirs(args.output_dir, exist_ok=True)
         with open(os.path.join(args.output_dir, 'daily_info.json'), 'w') as f:
             json.dump(daily_info, f, indent=2)
             
         if has_new_records:
-            create_new_records_release_notes(args.output_dir, daily_info, extractor.logger)
+            create_new_records_release_notes(args.output_dir, daily_info, logger)
             print("New records found - ready for collection")
             sys.exit(1)  # Signal that new records are available
         else:
