@@ -58,7 +58,7 @@ jobs:
           }
 
       - name: Create Scripts Directory
-        run: mkdir -p .github/scripts
+        run: mkdir -p scripts
 
       - name: Create Wiki Generator Script
         run: |
@@ -155,7 +155,7 @@ jobs:
 
       - name: Run Release Analyzer
         if: success()
-        run: python release_analyzer.py
+        run: python scripts/release_analyzer.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
