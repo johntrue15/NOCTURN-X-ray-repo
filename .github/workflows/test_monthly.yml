@@ -45,6 +45,10 @@ jobs:
         echo "timestamp=$TIMESTAMP" >> $GITHUB_ENV
         echo "Timestamp set to: $TIMESTAMP"
 
+    - name: Create data directories
+      run: |
+        mkdir -p "data/${{ env.timestamp }}"
+
     - name: Create test script
       run: |
         cat > test_collection.py << 'EOL'
@@ -117,7 +121,10 @@ jobs:
                 f.write(f"Collection Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
                 f.write(f"## Summary\n")
                 f.write(f"- Total Records: {len(records)}\n")
-                f.write(f"- Generated Records: {record_count}\n")
+                f.write(f"- Generated Records: {record_count}\n\n")
+                f.write(f"## Attestations\n")
+                f.write(f"Complete Dataset: https://github.com/{os.environ.get('GITHUB_REPOSITORY', '')}/attestations/{os.environ.get('GITHUB_RUN_ID', '')}\n")
+                f.write(f"New Records: https://github.com/{os.environ.get('GITHUB_REPOSITORY', '')}/attestations/{str(int(os.environ.get('GITHUB_RUN_ID', 0)) + 1)}\n")
             
             # Log completion
             logger.info(f"Successfully created {len(records)} test records")
@@ -134,12 +141,11 @@ jobs:
             total_records = create_test_data(args.output_dir, args.record_count)
         EOL
 
-    - name: Create data directories
-      run: |
-        mkdir -p "data/${{ env.timestamp }}"
-
     - name: Run test collection
       id: collect
+      env:
+        GITHUB_RUN_ID: ${{ github.run_id }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
       run: |
         echo "::group::Starting Test Collection"
         echo "Run ID: ${{ github.run_id }}"
@@ -147,18 +153,11 @@ jobs:
         echo "Records to generate: ${{ github.event.inputs.record_count }}"
         echo "::endgroup::"
         
-        # Run test collection script
         python test_collection.py \
           --output-dir "data/${{ env.timestamp }}" \
           --record-count "${{ github.event.inputs.record_count }}" \
           2>&1 | tee collection_log.txt
         
-        # Show directory contents
-        echo "::group::Directory Contents"
-        ls -R data/
-        echo "::endgroup::"
-        
-        # Get collection stats
         if [ -f "data/${{ env.timestamp }}/monthly_stats.json" ]; then
           echo "total_records=$(jq '.total_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
           echo "modified_records=$(jq '.modified_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
@@ -182,6 +181,7 @@ jobs:
       with:
         subject-path: data/${{ env.timestamp }}/morphosource_data_complete.json
         predicate-type: 'https://in-toto.io/attestation/release/v0.1'
+        output-path: data/${{ env.timestamp }}/attestation.json
         predicate: |
           {
             "purl": "pkg:github/${{ github.repository }}",
@@ -207,7 +207,6 @@ jobs:
       if: always()
       run: |
         echo "::group::Creating Status Files"
-        # Create run status file
         jq -n \
           --arg status "${{ job.status }}" \
           --arg timestamp "${{ env.timestamp }}" \
@@ -220,20 +219,11 @@ jobs:
     - name: Commit data files
       if: always()
       run: |
-        # Show directory contents
-        echo "::group::Files in data directory"
-        ls -R data/
-        echo "::endgroup::"
-        
-        # Add everything in the timestamped directory
+        echo "::group::Files to be committed"
         git add -f "data/${{ env.timestamp }}/"
-        
-        # Show what will be committed
-        echo "::group::Git Status"
         git status
         echo "::endgroup::"
         
-        # Commit and push if there are changes
         if git diff --staged --quiet; then
           echo "No changes to commit"
         else
@@ -256,7 +246,7 @@ jobs:
           data/${{ env.timestamp }}/run_status.json
           data/${{ env.timestamp }}/attestation.json
 
-    - name: Upload detailed logs
+    - name: Upload logs
       if: always()
       uses: actions/upload-artifact@v4
       with:
