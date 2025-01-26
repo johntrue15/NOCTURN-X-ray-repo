@@ -86,6 +86,7 @@ jobs:
       with:
         subject-path: data/${{ env.timestamp }}/morphosource_data_complete.json
         predicate-type: 'https://in-toto.io/attestation/release/v0.1'
+        show-summary: true
         predicate: |
           {
             "purl": "pkg:github/${{ github.repository }}",
@@ -108,13 +109,28 @@ jobs:
           }
 
     - name: Save Attestation and Update Release Notes
-      if: success() && steps.attest.outputs.id != ''
+      if: success()
       run: |
+        # Debug step execution
+        echo "Starting Save Attestation step..."
+        
+        # Get attestation ID from URL in output
+        ATT_URL=$(grep "https://github.com/${{ github.repository }}/attestations/" <<< "${{ steps.attest.outputs.attestation-url }}" || true)
+        ATT_ID=$(echo "$ATT_URL" | grep -o '[0-9]*$' || true)
+        
+        echo "Attestation URL: $ATT_URL"
+        echo "Attestation ID: $ATT_ID"
+        
+        if [ -z "$ATT_ID" ]; then
+          echo "Error: Could not extract attestation ID"
+          exit 1
+        fi
+        
         # Save attestation to file
+        mkdir -p "data/${{ env.timestamp }}"
         echo "${{ steps.attest.outputs.attestation }}" > "data/${{ env.timestamp }}/attestation.json"
         
         # Create attestation URLs
-        ATT_ID="${{ steps.attest.outputs.id }}"
         COMPLETE_URL="https://github.com/${{ github.repository }}/attestations/${ATT_ID}"
         NEXT_ID=$((ATT_ID + 1))
         NEW_RECORDS_URL="https://github.com/${{ github.repository }}/attestations/${NEXT_ID}"
@@ -123,7 +139,6 @@ jobs:
         ATTESTATION_CONTENT="Complete Dataset: ${COMPLETE_URL}\nNew Records: ${NEW_RECORDS_URL}"
         
         # Debug output
-        echo "Attestation ID: ${ATT_ID}"
         echo "Complete URL: ${COMPLETE_URL}"
         echo "New Records URL: ${NEW_RECORDS_URL}"
         
@@ -133,8 +148,9 @@ jobs:
         echo "Updated release notes with attestation URLs:"
         cat "data/${{ env.timestamp }}/monthly_release_notes.txt"
         
-        # Verify attestation file exists
-        ls -l "data/${{ env.timestamp }}/attestation.json" || echo "Attestation file not created!"
+        # Verify attestation file exists and show contents
+        echo "Attestation file contents:"
+        cat "data/${{ env.timestamp }}/attestation.json" || echo "Attestation file not created!"
 
     - name: Create Status Files
       if: always()
