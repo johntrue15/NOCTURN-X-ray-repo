@@ -4,7 +4,7 @@ import os
 import sys
 import argparse
 import logging
-from typing import Optional
+from typing import Optional, Tuple
 from datetime import datetime
 
 try:
@@ -41,10 +41,10 @@ Here is the release content to analyze:
 {content}
 """
 
-    def analyze_release(self, content: str) -> Optional[str]:
+    def analyze_release(self, content: str) -> Optional[Tuple[str, dict]]:
         """
         Analyze the release content using OpenAI API.
-        Returns formatted analysis or None if error occurs.
+        Returns tuple of (analysis_text, usage_stats) or None if error occurs.
         """
         try:
             prompt = self.generate_prompt(content)
@@ -61,15 +61,27 @@ Here is the release content to analyze:
                 max_tokens=2000   # Allowing for detailed analysis
             )
             
-            return response.choices[0].message.content.strip()
+            # Extract token usage
+            usage_stats = {
+                'prompt_tokens': response.usage.prompt_tokens,
+                'completion_tokens': response.usage.completion_tokens,
+                'total_tokens': response.usage.total_tokens
+            }
+            
+            return response.choices[0].message.content.strip(), usage_stats
             
         except Exception as e:
             logger.error(f"Error in OpenAI API call: {str(e)}")
             return None
 
-    def format_wiki_page(self, analysis: str, release_title: str) -> str:
+    def format_wiki_page(self, analysis: str, release_title: str, usage_stats: dict) -> str:
         """Format the analysis as a wiki page."""
         current_time = datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')
+        
+        # Calculate approximate cost (based on current GPT-4 Turbo pricing)
+        input_cost = (usage_stats['prompt_tokens'] / 1000) * 0.01  # $0.01 per 1K input tokens
+        output_cost = (usage_stats['completion_tokens'] / 1000) * 0.03  # $0.03 per 1K output tokens
+        total_cost = input_cost + output_cost
         
         wiki_content = f"""# OpenAI Analysis: {release_title}
 
@@ -81,6 +93,12 @@ Generated on: {current_time}
 
 ---
 *This analysis was automatically generated using OpenAI's GPT-4 model.*
+
+**Token Usage Statistics:**
+- Prompt Tokens: {usage_stats['prompt_tokens']:,}
+- Completion Tokens: {usage_stats['completion_tokens']:,}
+- Total Tokens: {usage_stats['total_tokens']:,}
+- Estimated Cost: ${total_cost:.4f}
 """
         return wiki_content
 
@@ -109,19 +127,23 @@ def main():
         
         # Initialize analyzer and process content
         analyzer = ReleaseAnalyzer(api_key)
-        analysis = analyzer.analyze_release(content)
+        result = analyzer.analyze_release(content)
         
-        if not analysis:
+        if not result:
             logger.error("Failed to generate analysis")
             sys.exit(1)
+            
+        analysis, usage_stats = result
         
         # Format and save wiki page
-        wiki_content = analyzer.format_wiki_page(analysis, args.release_title)
+        wiki_content = analyzer.format_wiki_page(analysis, args.release_title, usage_stats)
         
         with open(args.output_file, 'w', encoding='utf-8') as f:
             f.write(wiki_content)
         
         logger.info(f"Successfully wrote analysis to {args.output_file}")
+        logger.info(f"Token usage - Total: {usage_stats['total_tokens']}, "
+                   f"Cost: ${(usage_stats['prompt_tokens'] / 1000 * 0.01 + usage_stats['completion_tokens'] / 1000 * 0.03):.4f}")
         
     except Exception as e:
         logger.error(f"Error in main execution: {str(e)}")
