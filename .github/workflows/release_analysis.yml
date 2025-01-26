@@ -1,0 +1,133 @@
+name: Release Analysis and Wiki Generation
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Runs weekly on Sunday at midnight
+  workflow_dispatch:      # Allows manual trigger
+
+jobs:
+  analyze-releases:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all tags and branches
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install PyGithub semver
+
+      - name: Analyze releases and generate wiki content
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python - <<EOF
+          import os
+          import datetime
+          from github import Github
+          import semver
+          
+          # Initialize GitHub client
+          g = Github(os.environ['GITHUB_TOKEN'])
+          repo = g.get_repo(os.environ['GITHUB_REPOSITORY'])
+          
+          # Get all releases
+          releases = list(repo.get_releases())
+          releases.sort(key=lambda x: x.created_at, reverse=True)
+          
+          # Group releases by week
+          weekly_releases = {}
+          for release in releases:
+              week_start = release.created_at.date() - datetime.timedelta(days=release.created_at.weekday())
+              if week_start not in weekly_releases:
+                  weekly_releases[week_start] = []
+              weekly_releases[week_start].append(release)
+          
+          # Generate wiki content for each week
+          wiki_repo = g.get_repo(f"{os.environ['GITHUB_REPOSITORY']}.wiki")
+          
+          for week_start, week_releases in weekly_releases.items():
+              week_end = week_start + datetime.timedelta(days=6)
+              page_title = f"Releases-{week_start.strftime('%Y-%m-%d')}"
+              
+              content = f"# Release Summary for Week of {week_start.strftime('%B %d, %Y')}\n\n"
+              
+              # Add overview statistics
+              content += "## Overview\n"
+              content += f"- Total releases this week: {len(week_releases)}\n"
+              content += f"- Period: {week_start.strftime('%B %d')} - {week_end.strftime('%B %d, %Y')}\n\n"
+              
+              # Detailed release information
+              content += "## Release Details\n\n"
+              for release in week_releases:
+                  content += f"### {release.title}\n"
+                  content += f"- Tag: `{release.tag_name}`\n"
+                  content += f"- Released: {release.created_at.strftime('%B %d, %Y %H:%M UTC')}\n"
+                  content += f"- Author: @{release.author.login}\n"
+                  
+                  # Add release notes if available
+                  if release.body:
+                      content += "\n#### Release Notes\n"
+                      content += f"{release.body}\n"
+                  
+                  content += "\n"
+              
+              try:
+                  # Create or update wiki page
+                  wiki_repo.create_file(
+                      path=f"{page_title}.md",
+                      message=f"Update release summary for week of {week_start}",
+                      content=content,
+                      branch="master"
+                  )
+              except Exception as e:
+                  print(f"Error creating wiki page for {week_start}: {str(e)}")
+          EOF
+
+      - name: Create index page
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python - <<EOF
+          import os
+          from github import Github
+          
+          g = Github(os.environ['GITHUB_TOKEN'])
+          wiki_repo = g.get_repo(f"{os.environ['GITHUB_REPOSITORY']}.wiki")
+          
+          # Get all wiki pages
+          pages = list(wiki_repo.get_pages())
+          release_pages = [p for p in pages if p.title.startswith('Releases-')]
+          release_pages.sort(reverse=True)
+          
+          # Generate index content
+          content = "# Release Summaries Index\n\n"
+          content += "This page contains links to all weekly release summaries.\n\n"
+          
+          for page in release_pages:
+              week_date = page.title.split('-')[1]
+              content += f"- [{week_date}]({page.title})\n"
+          
+          # Create or update index page
+          try:
+              wiki_repo.create_file(
+                  path="Release-Summaries.md",
+                  message="Update release summaries index",
+                  content=content,
+                  branch="master"
+              )
+          except Exception as e:
+              print(f"Error creating index page: {str(e)}")
+          EOF
