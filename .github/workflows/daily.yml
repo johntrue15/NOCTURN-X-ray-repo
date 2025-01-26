@@ -33,10 +33,24 @@ jobs:
     - name: Create data directory
       run: mkdir -p data
         
-    - name: Run daily check #need to build in grabbing of latest timestamped folder in data, and then use that .json for comparison
-      id: daily-check
+    - name: Find Latest Data Directory
+      id: find-latest
       run: |
-        python .github/scripts/daily.py
+        # Find the latest timestamped directory in data/
+        LATEST_DIR=$(find data -maxdepth 1 -type d -name "20*" | sort -r | head -n1 || echo "")
+        if [ -z "$LATEST_DIR" ]; then
+          echo "No timestamped data directories found"
+          exit 1
+        fi
+        echo "Found latest data directory: $LATEST_DIR"
+        echo "dir=$LATEST_DIR" >> $GITHUB_OUTPUT
+
+    - name: Run daily check
+      id: daily-check
+      env:
+        LATEST_DATA_DIR: ${{ steps.find-latest.outputs.dir }}
+      run: |
+        python .github/scripts/daily.py --data-dir "$LATEST_DATA_DIR"
       continue-on-error: true
 
     - name: Generate timestamp

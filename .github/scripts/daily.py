@@ -6,6 +6,7 @@ import time
 import os
 import sys
 import logging
+import argparse
 
 class DailyMorphoSourceExtractor:
     def __init__(self, base_url: str, data_dir: str = 'data'):
@@ -13,15 +14,19 @@ class DailyMorphoSourceExtractor:
         self.data_dir = data_dir
         self.setup_logging()
         self.setup_directories()
-        # Updated filename to match your repository
+        # Use the complete data file from the provided directory
         self.complete_data_path = os.path.join(data_dir, 'morphosource_data_complete.json')
+        self.logger.info(f"Using data file: {self.complete_data_path}")
 
     def setup_logging(self):
+        # Create logs in current data directory
+        log_dir = os.path.dirname(self.data_dir)
+        os.makedirs(log_dir, exist_ok=True)
         logging.basicConfig(
             level=logging.INFO,
             format='%(asctime)s - %(levelname)s - %(message)s',
             handlers=[
-                logging.FileHandler(os.path.join('data', 'daily_extractor.log')),
+                logging.FileHandler(os.path.join(log_dir, 'daily_extractor.log')),
                 logging.StreamHandler()
             ]
         )
@@ -134,10 +139,15 @@ class DailyMorphoSourceExtractor:
             raise
 
 def main():
+    parser = argparse.ArgumentParser(description='Daily MorphoSource Check')
+    parser.add_argument('--data-dir', type=str, required=True,
+                      help='Directory containing latest data files')
+    args = parser.parse_args()
+    
     base_url = "https://www.morphosource.org/catalog/media?locale=en&per_page=100&q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc"
     
     try:
-        extractor = DailyMorphoSourceExtractor(base_url)
+        extractor = DailyMorphoSourceExtractor(base_url, data_dir=args.data_dir)
         has_new_records = extractor.run()
         
         if has_new_records:
