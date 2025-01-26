@@ -65,11 +65,18 @@ def analyze_workflow_triggers(workflow_content):
         'workflow_run_triggers': []
     }
     
-    if not isinstance(workflow_content, dict) or 'on' not in workflow_content:
+    # Find the 'on' key, accounting for YAML parsing quirk
+    on_key = None
+    for key in workflow_content.keys():
+        if str(key).lower() == 'on':
+            on_key = key
+            break
+            
+    if not on_key:
         print(f"No 'on' field found in workflow")
         return triggers
         
-    on = workflow_content['on']
+    on = workflow_content[on_key]
     print(f"\nAnalyzing triggers for: {workflow_content.get('name', 'unnamed')}")
     print(f"'on' content type: {type(on)}")
     print(f"'on' content: {on}")
@@ -136,13 +143,14 @@ def analyze_workflows():
                 content = f.read()
                 print(f"File contents:\n{content[:200]}...")  # Show first 200 chars
                 
+                # Use safe_load with explicit handling of 'on' key
                 workflow_content = yaml.safe_load(content)
                 if workflow_content is None:
                     print(f"Warning: Empty workflow file: {workflow_file}")
                     continue
                     
                 print(f"Parsed YAML type: {type(workflow_content)}")
-                print(f"Parsed YAML keys: {workflow_content.keys() if isinstance(workflow_content, dict) else 'Not a dict'}")
+                print(f"Parsed YAML keys: {sorted(str(k) for k in workflow_content.keys())}")
                 
                 name = workflow_content.get('name', workflow_file.name)
                 scripts = find_python_scripts(workflow_content)
