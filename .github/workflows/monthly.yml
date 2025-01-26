@@ -66,7 +66,7 @@ jobs:
         echo "Timestamp: ${{ env.timestamp }}"
         echo "::endgroup::"
         
-        # Run collection script
+        # Run collection script with verbose output
         python -v .github/scripts/monthly.py --output-dir "data/${{ env.timestamp }}" 2>&1 | tee collection_log.txt
         
         # Show directory contents
@@ -80,6 +80,7 @@ jobs:
           echo "modified_records=$(jq '.modified_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
         else
           echo "Warning: monthly_stats.json not found"
+          find data -type f -name "monthly_stats.json"
         fi
 
     - name: Generate Collection Summary
@@ -118,6 +119,21 @@ jobs:
               }
             }
           }
+
+    - name: Create Status Files
+      if: always()
+      run: |
+        echo "::group::Creating Status Files"
+        # Create run status file
+        jq -n \
+          --arg status "${{ job.status }}" \
+          --arg timestamp "${{ env.timestamp }}" \
+          --arg run_id "${{ github.run_id }}" \
+          --arg python "${{ steps.install.outputs.python_version }}" \
+          --arg reqs "${{ steps.install.outputs.requirements_hash }}" \
+          '{status: $status, timestamp: $timestamp, run_id: $run_id, python_version: $python, requirements_hash: $reqs}' \
+          > "data/${{ env.timestamp }}/run_status.json"
+        echo "::endgroup::"
 
     - name: Commit data files
       if: always()
