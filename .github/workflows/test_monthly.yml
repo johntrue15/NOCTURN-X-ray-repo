@@ -142,13 +142,11 @@ jobs:
            "data/${{ env.timestamp }}/attestation.json" > temp.json && \
         mv temp.json "data/${{ env.timestamp }}/attestation.json"
         
-        # Create attestation URLs
+        # Create attestation URL
         COMPLETE_URL="https://github.com/${{ github.repository }}/attestations/${ATT_ID}"
-        NEXT_ID=$((ATT_ID + 1))
-        NEW_RECORDS_URL="https://github.com/${{ github.repository }}/attestations/${NEXT_ID}"
         
         # Create attestation section content
-        ATTESTATION_CONTENT="Complete Dataset: ${COMPLETE_URL}\nNew Records: ${NEW_RECORDS_URL}"
+        ATTESTATION_CONTENT="Dataset Attestation: ${COMPLETE_URL}"
         
         # Replace placeholder in release notes
         sed -i "s|<!-- ATTESTATION_URLS -->|${ATTESTATION_CONTENT}|" "data/${{ env.timestamp }}/monthly_release_notes.txt"
