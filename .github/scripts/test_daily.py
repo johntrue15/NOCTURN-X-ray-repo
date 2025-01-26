@@ -1,0 +1,98 @@
+import json
+import os
+import sys
+import argparse
+import logging
+from datetime import datetime
+import random
+
+def setup_logging(log_dir):
+    """Configure logging to file and console"""
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(message)s',
+        handlers=[
+            logging.FileHandler(os.path.join(log_dir, 'test_daily.log')),
+            logging.StreamHandler()
+        ]
+    )
+    return logging.getLogger(__name__)
+
+def modify_records(records, num_to_modify=5):
+    """Modify the first N records to simulate changes"""
+    modified_records = records.copy()
+    
+    for i in range(min(num_to_modify, len(modified_records))):
+        # Add a test modification to the title
+        modified_records[i]['title'] = f"TEST MODIFIED - {modified_records[i]['title']}"
+        modified_records[i]['metadata']['Test Status'] = 'Modified'
+        modified_records[i]['scraped_date'] = datetime.now().isoformat()
+    
+    # Remove the modified records to simulate them being gone
+    modified_records = modified_records[num_to_modify:]
+    
+    return modified_records
+
+def create_test_data(source_dir, output_dir, logger):
+    """Create test data by modifying the source data"""
+    try:
+        # Load source data
+        source_file = os.path.join(source_dir, 'morphosource_data_complete.json')
+        logger.info(f"Loading source data from: {source_file}")
+        
+        with open(source_file, 'r') as f:
+            source_data = json.load(f)
+        
+        # Modify records
+        modified_data = modify_records(source_data)
+        logger.info(f"Modified {len(source_data) - len(modified_data)} records")
+        
+        # Save modified data
+        output_file = os.path.join(output_dir, 'morphosource_data_complete.json')
+        with open(output_file, 'w') as f:
+            json.dump(modified_data, f, indent=2)
+        
+        logger.info(f"Saved modified data to: {output_file}")
+        
+        # Create test info file
+        info = {
+            'original_count': len(source_data),
+            'modified_count': len(modified_data),
+            'records_removed': len(source_data) - len(modified_data),
+            'test_date': datetime.now().isoformat()
+        }
+        
+        with open(os.path.join(output_dir, 'test_info.json'), 'w') as f:
+            json.dump(info, f, indent=2)
+        
+        return len(modified_data)
+        
+    except Exception as e:
+        logger.error(f"Error creating test data: {e}")
+        raise
+
+def main():
+    parser = argparse.ArgumentParser(description='Create Test Data for Daily Check')
+    parser.add_argument('--source-dir', type=str, required=True,
+                      help='Directory containing source data files')
+    parser.add_argument('--output-dir', type=str, required=True,
+                      help='Directory to store test files')
+    args = parser.parse_args()
+    
+    # Create output directory
+    os.makedirs(args.output_dir, exist_ok=True)
+    
+    # Setup logging
+    logger = setup_logging(args.output_dir)
+    
+    try:
+        total_records = create_test_data(args.source_dir, args.output_dir, logger)
+        logger.info(f"Test data creation complete. Total records: {total_records}")
+        return 0
+        
+    except Exception as e:
+        logger.error(f"Error in test data creation: {e}")
+        return 1
+
+if __name__ == "__main__":
+    sys.exit(main()) 
