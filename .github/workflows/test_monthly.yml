@@ -114,17 +114,27 @@ jobs:
         echo "${{ steps.attest.outputs.attestation }}" > "data/${{ env.timestamp }}/attestation.json"
         
         # Create attestation URLs
-        COMPLETE_URL="https://github.com/${{ github.repository }}/attestations/${{ steps.attest.outputs.id }}"
-        NEW_RECORDS_URL="https://github.com/${{ github.repository }}/attestations/$(({{ steps.attest.outputs.id }} + 1))"
+        ATT_ID="${{ steps.attest.outputs.id }}"
+        COMPLETE_URL="https://github.com/${{ github.repository }}/attestations/${ATT_ID}"
+        NEXT_ID=$((ATT_ID + 1))
+        NEW_RECORDS_URL="https://github.com/${{ github.repository }}/attestations/${NEXT_ID}"
         
         # Create attestation section content
         ATTESTATION_CONTENT="Complete Dataset: ${COMPLETE_URL}\nNew Records: ${NEW_RECORDS_URL}"
+        
+        # Debug output
+        echo "Attestation ID: ${ATT_ID}"
+        echo "Complete URL: ${COMPLETE_URL}"
+        echo "New Records URL: ${NEW_RECORDS_URL}"
         
         # Replace placeholder in release notes
         sed -i "s|<!-- ATTESTATION_URLS -->|${ATTESTATION_CONTENT}|" "data/${{ env.timestamp }}/monthly_release_notes.txt"
         
         echo "Updated release notes with attestation URLs:"
         cat "data/${{ env.timestamp }}/monthly_release_notes.txt"
+        
+        # Verify attestation file exists
+        ls -l "data/${{ env.timestamp }}/attestation.json" || echo "Attestation file not created!"
 
     - name: Create Status Files
       if: always()
@@ -168,6 +178,7 @@ jobs:
           data/${{ env.timestamp }}/monthly_stats.json
           data/${{ env.timestamp }}/run_status.json
           data/${{ env.timestamp }}/attestation.json
+          data/${{ env.timestamp }}/test_collection.log
 
     - name: Upload logs
       if: always()
