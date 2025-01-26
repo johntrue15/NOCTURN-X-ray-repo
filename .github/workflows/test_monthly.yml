@@ -1,4 +1,42 @@
-name: Test Monthly Collection
+- name: Run test collection
+      id: collect
+      run: |
+        echo "::group::Starting Test Collection"
+        echo "Run ID: ${{ github.run_id }}"
+        echo "Timestamp: ${{ env.timestamp }}"
+        echo "Records to generate: ${{ github.event.inputs.record_count }}"
+        echo "::endgroup::"
+        
+        # Run with verbose output
+        python -u test_collection.py \
+          --output-dir "data/${{ env.timestamp }}" \
+          --record-count "${{ github.event.inputs.record_count }}" \
+          2>&1 | tee collection_log.txt
+        
+        # Show directory contents
+        echo "::group::Directory Contents"
+        ls -R data/
+        echo "::endgroup::"
+        
+        # Get collection stats
+        if [ -f "data/${{ env.timestamp }}/monthly_stats.json" ]; then
+          echo "total_records=$(jq '.total_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
+          echo "modified_records=$(jq '.modified_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
+        else
+          echo "Warning: monthly_stats.json not found"
+          find data -type f -name "monthly_stats.json"
+        fi
+
+    - name: Generate Collection Summary
+      if: always()
+      run: |
+        echo "::group::Collection Summary"
+        echo "Total Records: ${{ steps.collect.outputs.total_records || 'N/A' }}"
+        echo "Modified Records: ${{ steps.collect.outputs.modified_records || 'N/A' }}"
+        echo "::endgroup::"
+
+    - name: Generate Attestation
+      if: success() && hashFiles('data/${{ env.timestamp }}/morphosource_data_complete.json') != ''name: Test Monthly Collection
 on:
   workflow_dispatch:
     inputs:
@@ -151,4 +189,102 @@ jobs:
         # Get collection stats
         if [ -f "data/${{ env.timestamp }}/monthly_stats.json" ]; then
           echo "total_records=$(jq '.total_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
-          ec
+          echo "modified_records=$(jq '.modified_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
+        else
+          echo "Warning: monthly_stats.json not found"
+        fi
+
+    - name: Generate Collection Summary
+      if: always()
+      run: |
+        echo "::group::Collection Summary"
+        echo "Total Records: ${{ steps.collect.outputs.total_records || 'N/A' }}"
+        echo "Modified Records: ${{ steps.collect.outputs.modified_records || 'N/A' }}"
+        echo "::endgroup::"
+
+    - name: Generate Attestation
+      if: success() && hashFiles('data/${{ env.timestamp }}/morphosource_data_complete.json') != ''
+      uses: actions/attest@v2.1.0
+      id: attest
+      with:
+        subject-path: data/${{ env.timestamp }}/morphosource_data_complete.json
+        predicate-type: 'https://in-toto.io/attestation/release/v0.1'
+        predicate: |
+          {
+            "purl": "pkg:github/${{ github.repository }}",
+            "version": "${{ github.sha }}",
+            "metadata": {
+              "buildInvocationId": "${{ github.run_id }}",
+              "completeness": {
+                "parameters": true,
+                "environment": true,
+                "materials": true
+              },
+              "test_parameters": {
+                "record_count": "${{ github.event.inputs.record_count }}"
+              },
+              "stats": {
+                "total_records": "${{ steps.collect.outputs.total_records }}",
+                "modified_records": "${{ steps.collect.outputs.modified_records }}"
+              }
+            }
+          }
+
+    - name: Create Status Files
+      if: always()
+      run: |
+        # Create run status file
+        jq -n \
+          --arg status "${{ job.status }}" \
+          --arg timestamp "${{ env.timestamp }}" \
+          --arg run_id "${{ github.run_id }}" \
+          --arg record_count "${{ github.event.inputs.record_count }}" \
+          '{status: $status, timestamp: $timestamp, run_id: $run_id, test_records: $record_count}' \
+          > "data/${{ env.timestamp }}/run_status.json"
+
+    - name: Commit data files
+      if: always()
+      run: |
+        # Show directory contents
+        echo "::group::Files in data directory"
+        ls -R data/
+        echo "::endgroup::"
+        
+        # Add everything in the timestamped directory
+        git add -f "data/${{ env.timestamp }}/"
+        
+        # Show what will be committed
+        echo "::group::Git Status"
+        git status
+        echo "::endgroup::"
+        
+        # Commit and push if there are changes
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Test: MorphoSource data [${{ env.timestamp }}]"
+          git push origin HEAD:main
+        fi
+
+    - name: Create Release
+      if: success() && hashFiles('data/${{ env.timestamp }}/morphosource_data_complete.json') != ''
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        name: "Test Monthly Collection #${{ env.timestamp }}"
+        tag_name: "test-monthly-${{ env.timestamp }}"
+        body_path: data/${{ env.timestamp }}/monthly_release_notes.txt
+        files: |
+          data/${{ env.timestamp }}/morphosource_data_complete.json
+          data/${{ env.timestamp }}/monthly_stats.json
+          data/${{ env.timestamp }}/run_status.json
+
+    - name: Upload detailed logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-monthly-logs-${{ env.timestamp }}
+        path: |
+          data/${{ env.timestamp }}/*
+          collection_log.txt
