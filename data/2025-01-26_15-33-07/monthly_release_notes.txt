@@ -1,7 +1,0 @@
-# Test Collection Report
-
-Collection Date: 2025-01-26 15:33:07
-
-## Summary
-- Total Records: 5
-- Generated Records: 5
