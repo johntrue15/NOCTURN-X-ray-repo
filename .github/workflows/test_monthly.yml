@@ -126,7 +126,7 @@ jobs:
           exit 1
         fi
         
-        # Update the attestation file with the subject digest
+        # Update the attestation file with the subject digest from the attest action
         jq --arg digest "${{ steps.attest.outputs.subject-digest }}" \
            '.subject[0].digest.sha256 = $digest' \
            "data/${{ env.timestamp }}/attestation.json" > temp.json && \
