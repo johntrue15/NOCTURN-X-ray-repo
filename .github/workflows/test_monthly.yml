@@ -107,18 +107,24 @@ jobs:
             }
           }
 
-    - name: Save Attestation
+    - name: Save Attestation and Update Release Notes
       if: success() && steps.attest.outputs.id != ''
       run: |
         # Save attestation to file
         echo "${{ steps.attest.outputs.attestation }}" > "data/${{ env.timestamp }}/attestation.json"
         
-        # Update release notes with attestation URL
-        ATT_URL="https://github.com/${{ github.repository }}/attestations/${{ steps.attest.outputs.id }}"
-        echo "Attestation URL: $ATT_URL"
+        # Create attestation URLs
+        COMPLETE_URL="https://github.com/${{ github.repository }}/attestations/${{ steps.attest.outputs.id }}"
+        NEW_RECORDS_URL="https://github.com/${{ github.repository }}/attestations/$(({{ steps.attest.outputs.id }} + 1))"
+        
+        # Create attestation section content
+        ATTESTATION_CONTENT="Complete Dataset: ${COMPLETE_URL}\nNew Records: ${NEW_RECORDS_URL}"
         
         # Replace placeholder in release notes
-        sed -i "s|<!-- ATTESTATION_URLS -->|Attestation: $ATT_URL|" "data/${{ env.timestamp }}/monthly_release_notes.txt"
+        sed -i "s|<!-- ATTESTATION_URLS -->|${ATTESTATION_CONTENT}|" "data/${{ env.timestamp }}/monthly_release_notes.txt"
+        
+        echo "Updated release notes with attestation URLs:"
+        cat "data/${{ env.timestamp }}/monthly_release_notes.txt"
 
     - name: Create Status Files
       if: always()
