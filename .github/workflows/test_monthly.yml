@@ -108,14 +108,15 @@ jobs:
             }
           }
 
+    - name: Save Attest Output
+      run: |
+        echo "${{ steps.attest.outputs.attestation-url }}" > attest_output.txt
+
     - name: Capture Attestation Output
       id: capture
       run: |
-        DIGEST=$(echo '${{ steps.attest.outputs.attestation }}' | grep -o 'sha256:[a-f0-9]\+' || true)
-        if [ -z "$DIGEST" ]; then
-          # Try alternate format
-          DIGEST=$(echo '${{ steps.attest.outputs.attestation-url }}' | grep -o '@sha256:[a-f0-9]\+' | cut -d':' -f2 || true)
-        fi
+        DIGEST=$(grep -o '@sha256:[a-f0-9]\+' attest_output.txt | cut -d':' -f2)
+        echo "Found digest: $DIGEST"
         echo "digest=$DIGEST" >> $GITHUB_OUTPUT
 
     - name: Save Attestation and Update Release Notes
