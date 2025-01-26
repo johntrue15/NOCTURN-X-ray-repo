@@ -138,6 +138,37 @@ class DailyMorphoSourceExtractor:
             self.logger.error(f"Error in daily check: {e}")
             raise
 
+def create_release_notes(output_dir, daily_info, logger):
+    """Create formatted release notes"""
+    release_notes_path = os.path.join(output_dir, 'release_notes.txt')
+    try:
+        with open(release_notes_path, 'w') as f:
+            f.write("# Daily Check Report\n")
+            f.write(f"Check Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+            
+            f.write("## Summary\n")
+            f.write(f"Found {daily_info['new_records']} new record(s)\n\n")
+            
+            f.write("## New Records\n")
+            f.write("| Title | Object ID | Taxonomy | Element | Data Manager | Status | Link |\n")
+            f.write("|-------|-----------|----------|---------|--------------|--------|------|\n")
+            
+            for record in daily_info['new_records']:
+                f.write(
+                    f"| {record['title']} | {record['object_id']} | {record['taxonomy']} | "
+                    f"{record['element']} | {record['data_manager']} | {record['status']} | "
+                    f"[View]({record['url']}) |\n"
+                )
+            
+            f.write("\n## Attestations\n")
+            f.write("<!-- ATTESTATION_URLS -->\n")
+            
+        logger.info(f"Created release notes at: {release_notes_path}")
+        
+    except Exception as e:
+        logger.error(f"Error creating release notes: {e}")
+        raise
+
 def main():
     parser = argparse.ArgumentParser(description='Daily MorphoSource Check')
     parser.add_argument('--data-dir', type=str, required=True,
