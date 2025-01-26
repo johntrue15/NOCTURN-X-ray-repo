@@ -59,14 +59,11 @@ jobs:
     - name: Create data directories
       run: |
         mkdir -p "data/${TIMESTAMP}"
-        mkdir -p ".github/scripts"
 
-    - name: Setup script
+    - name: Verify script
       run: |
         echo "::group::Verifying script location"
-        ls -la .github/scripts || true
-        cp monthly.py .github/scripts/
-        chmod +x .github/scripts/monthly.py
+        ls -la .github/scripts/monthly.py
         echo "::endgroup::"
 
     - name: Run monthly collection
@@ -74,16 +71,15 @@ jobs:
       run: |
         echo "::group::Starting Collection"
         echo "Run ID: ${{ steps.verify.outputs.run_id }}"
-        echo "Timestamp: ${{ env.timestamp }}"
+        echo "Timestamp: ${TIMESTAMP}"
         echo "::endgroup::"
         
-        DATA_DIR="data/${TIMESTAMP}"
-        python .github/scripts/monthly.py --output-dir "$DATA_DIR"
+        python .github/scripts/monthly.py --output-dir "data/${TIMESTAMP}"
         
         # Get collection stats
-        if [ -f "$DATA_DIR/monthly_stats.json" ]; then
-          echo "total_records=$(jq '.total_records' $DATA_DIR/monthly_stats.json)" >> $GITHUB_OUTPUT
-          echo "modified_records=$(jq '.modified_records' $DATA_DIR/monthly_stats.json)" >> $GITHUB_OUTPUT
+        if [ -f "data/${TIMESTAMP}/monthly_stats.json" ]; then
+          echo "total_records=$(jq '.total_records' "data/${TIMESTAMP}/monthly_stats.json")" >> $GITHUB_OUTPUT
+          echo "modified_records=$(jq '.modified_records' "data/${TIMESTAMP}/monthly_stats.json")" >> $GITHUB_OUTPUT
         fi
 
     - name: Generate Collection Summary
