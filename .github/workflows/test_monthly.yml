@@ -108,29 +108,14 @@ jobs:
             }
           }
 
-    - name: Save Attest Output
-      run: |
-        echo "${{ steps.attest.outputs.attestation-url }}" > attest_output.txt
-
-    - name: Capture Attestation Output
-      id: capture
-      run: |
-        DIGEST=$(grep -o '@sha256:[a-f0-9]\+' attest_output.txt | cut -d':' -f2)
-        echo "Found digest: $DIGEST"
-        echo "digest=$DIGEST" >> $GITHUB_OUTPUT
-
     - name: Save Attestation and Update Release Notes
       if: success()
       run: |
         # Debug step execution
         echo "Starting Save Attestation step..."
         
-        # Get the digest from previous step
-        DIGEST="${{ steps.capture.outputs.digest }}"
-        echo "Using digest: $DIGEST"
-        
         # Get attestation ID from URL in output
-        ATT_URL=$(grep "https://github.com/${{ github.repository }}/attestations/" <<< "${{ steps.attest.outputs.attestation-url }}" || true)
+        ATT_URL="${{ steps.attest.outputs.attestation-url }}"
         ATT_ID=$(echo "$ATT_URL" | grep -o '[0-9]*$' || true)
         
         echo "Attestation URL: $ATT_URL"
@@ -141,20 +126,11 @@ jobs:
           exit 1
         fi
         
-        if [ -z "$DIGEST" ]; then
-          echo "Error: Could not extract SHA256 digest"
-          exit 1
-        fi
-        
-        # Update the attestation file with the extracted digest
-        jq --arg digest "$DIGEST" \
+        # Update the attestation file with the subject digest
+        jq --arg digest "${{ steps.attest.outputs.subject-digest }}" \
            '.subject[0].digest.sha256 = $digest' \
            "data/${{ env.timestamp }}/attestation.json" > temp.json && \
         mv temp.json "data/${{ env.timestamp }}/attestation.json"
-        
-        # Show updated attestation content
-        echo "Updated attestation content:"
-        cat "data/${{ env.timestamp }}/attestation.json"
         
         # Create attestation URLs
         COMPLETE_URL="https://github.com/${{ github.repository }}/attestations/${ATT_ID}"
