@@ -117,14 +117,17 @@ jobs:
             
             # Create release notes
             with open(notes_file, 'w') as f:
-                f.write(f"# Test Collection Report\n\n")
-                f.write(f"Collection Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
-                f.write(f"## Summary\n")
-                f.write(f"- Total Records: {len(records)}\n")
-                f.write(f"- Generated Records: {record_count}\n\n")
-                f.write(f"## Attestations\n")
-                f.write(f"Complete Dataset: https://github.com/{os.environ.get('GITHUB_REPOSITORY', '')}/attestations/{os.environ.get('GITHUB_RUN_ID', '')}\n")
-                f.write(f"New Records: https://github.com/{os.environ.get('GITHUB_REPOSITORY', '')}/attestations/{str(int(os.environ.get('GITHUB_RUN_ID', 0)) + 1)}\n")
+                f.write(f"""# Test Collection Report
+
+Collection Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+## Summary
+- Total Records: {len(records)}
+- Generated Records: {record_count}
+
+## Attestations
+<!-- ATTESTATION_URLS -->
+""")
             
             # Log completion
             logger.info(f"Successfully created {len(records)} test records")
@@ -143,9 +146,6 @@ jobs:
 
     - name: Run test collection
       id: collect
-      env:
-        GITHUB_RUN_ID: ${{ github.run_id }}
-        GITHUB_REPOSITORY: ${{ github.repository }}
       run: |
         echo "::group::Starting Test Collection"
         echo "Run ID: ${{ github.run_id }}"
@@ -202,6 +202,19 @@ jobs:
               }
             }
           }
+
+    - name: Update Release Notes with Attestation URLs
+      if: success() && hashFiles('data/${{ env.timestamp }}/attestation.json') != ''
+      run: |
+        # Get attestation ID from the output
+        ATT_ID="${{ steps.attest.outputs.id }}"
+        if [ ! -z "$ATT_ID" ]; then
+          # Replace placeholder with actual attestation URLs
+          URLS="Complete Dataset: https://github.com/${{ github.repository }}/attestations/$ATT_ID"$'\n'
+          URLS+="New Records: https://github.com/${{ github.repository }}/attestations/$((ATT_ID + 1))"
+          
+          sed -i "s|<!-- ATTESTATION_URLS -->|$URLS|" "data/${{ env.timestamp }}/monthly_release_notes.txt"
+        fi
 
     - name: Create Status Files
       if: always()
