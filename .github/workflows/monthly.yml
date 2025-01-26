@@ -1,5 +1,3 @@
-## https://claude.ai/chat/8c7b0241-0d30-4e9e-9743-801cc89f5ad3
-
 name: Monthly MorphoSource Collection
 on:
   schedule:
@@ -21,6 +19,11 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
+
+    - name: Configure Git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
     
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -50,26 +53,28 @@ jobs:
         echo "Requirements Hash: ${{ steps.install.outputs.requirements_hash }}"
         echo "::endgroup::"
         
-        echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
+        echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_ENV
         echo "run_id=${GITHUB_RUN_ID}" >> $GITHUB_OUTPUT
 
-    - name: Create data directory
-      run: mkdir -p data
+    - name: Create data directories
+      run: |
+        mkdir -p "data/${TIMESTAMP}"
 
     - name: Run monthly collection
       id: collect
       run: |
         echo "::group::Starting Collection"
         echo "Run ID: ${{ steps.verify.outputs.run_id }}"
-        echo "Timestamp: ${{ steps.verify.outputs.timestamp }}"
+        echo "Timestamp: ${{ env.timestamp }}"
         echo "::endgroup::"
         
-        python .github/scripts/monthly.py
+        DATA_DIR="data/${TIMESTAMP}"
+        PYTHONPATH=".github/scripts" python monthly.py --output-dir "$DATA_DIR"
         
         # Get collection stats
-        if [ -f "data/monthly_stats.json" ]; then
-          echo "total_records=$(jq '.total_records' data/monthly_stats.json)" >> $GITHUB_OUTPUT
-          echo "modified_records=$(jq '.modified_records' data/monthly_stats.json)" >> $GITHUB_OUTPUT
+        if [ -f "$DATA_DIR/monthly_stats.json" ]; then
+          echo "total_records=$(jq '.total_records' $DATA_DIR/monthly_stats.json)" >> $GITHUB_OUTPUT
+          echo "modified_records=$(jq '.modified_records' $DATA_DIR/monthly_stats.json)" >> $GITHUB_OUTPUT
         fi
 
     - name: Generate Collection Summary
@@ -85,9 +90,9 @@ jobs:
       uses: actions/attest@v2.1.0
       id: attest
       with:
-        subject-path: data/morphosource_data_complete.json
+        subject-path: data/${{ env.timestamp }}/morphosource_data_complete.json
         predicate-type: 'https://in-toto.io/attestation/release/v0.1'
-        output-path: monthly_collection_attestation.json
+        output-path: data/${{ env.timestamp }}/attestation.json
         predicate: |
           {
             "purl": "pkg:github/${{ github.repository }}",
@@ -116,26 +121,24 @@ jobs:
         # Create run status file
         jq -n \
           --arg status "${{ job.status }}" \
-          --arg timestamp "${{ steps.verify.outputs.timestamp }}" \
+          --arg timestamp "${{ env.timestamp }}" \
           --arg run_id "${{ steps.verify.outputs.run_id }}" \
           --arg python "${{ steps.install.outputs.python_version }}" \
           --arg reqs "${{ steps.install.outputs.requirements_hash }}" \
           '{status: $status, timestamp: $timestamp, run_id: $run_id, python_version: $python, requirements_hash: $reqs}' \
-          > data/run_status.json
+          > "data/${TIMESTAMP}/run_status.json"
 
-    - name: Create timestamped backup
+    - name: Commit data files
       if: success()
       run: |
-        TIMESTAMP=$(date +'%Y-%m-%d_%H-%M-%S')
-        BACKUP_DIR="data/backups/${TIMESTAMP}"
-        mkdir -p "$BACKUP_DIR"
-        cp data/morphosource_data_complete.json "$BACKUP_DIR/"
-        cp data/monthly_stats.json "$BACKUP_DIR/"
-        cp data/run_status.json "$BACKUP_DIR/"
+        # Add all files in the timestamped directory
+        git add "data/${TIMESTAMP}"
         
-        # Add to git
-        git add "$BACKUP_DIR"
-        git commit -m "Backup MorphoSource data [${TIMESTAMP}]" || exit 0
+        # Commit changes
+        git commit -m "Update MorphoSource data [${TIMESTAMP}]" || exit 0
+        
+        # Push changes
+        git push
 
     - name: Create Release
       if: success()
@@ -143,25 +146,24 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: "Monthly MorphoSource Collection #${{ steps.verify.outputs.timestamp }}"
-        tag_name: "monthly-collection-${{ steps.verify.outputs.timestamp }}"
-        body_path: data/monthly_release_notes.txt
+        name: "Monthly MorphoSource Collection #${{ env.timestamp }}"
+        tag_name: "monthly-collection-${{ env.timestamp }}"
+        body_path: data/${{ env.timestamp }}/monthly_release_notes.txt
         files: |
-          data/morphosource_data_complete.json
-          data/monthly_stats.json
-          data/run_status.json
-          monthly_collection_attestation.json
-          data/backups/${{ steps.verify.outputs.timestamp }}/morphosource_data_complete.json
+          data/${{ env.timestamp }}/morphosource_data_complete.json
+          data/${{ env.timestamp }}/monthly_stats.json
+          data/${{ env.timestamp }}/run_status.json
+          data/${{ env.timestamp }}/attestation.json
 
     - name: Upload detailed logs
       if: always()
       uses: actions/upload-artifact@v4
       with:
-        name: monthly-execution-logs-${{ steps.verify.outputs.timestamp }}
+        name: monthly-execution-logs-${{ env.timestamp }}
         path: |
-          data/monthly_collector.log
-          data/monthly_stats.json
-          data/run_status.json
+          data/${{ env.timestamp }}/monthly_collector.log
+          data/${{ env.timestamp }}/monthly_stats.json
+          data/${{ env.timestamp }}/run_status.json
           requirements.txt
 
     - name: Report Status
@@ -171,5 +173,5 @@ jobs:
         echo "Job Status: ${{ job.status }}"
         echo "Collection Complete: ${{ steps.collect.outputs.total_records != '' }}"
         echo "Attestation Generated: ${{ steps.attest.outcome == 'success' }}"
-        cat data/run_status.json
+        cat "data/${TIMESTAMP}/run_status.json"
         echo "::endgroup::"
