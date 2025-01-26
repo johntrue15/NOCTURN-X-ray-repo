@@ -69,9 +69,9 @@ jobs:
       if: steps.daily-check.outcome == 'failure'
       run: |
         mkdir -p "data/${{ env.daily_timestamp }}"
-        # Copy the original data to simulate collection
+        # Copy the original data to simulate collection with a different name
         cp "${{ steps.find-latest.outputs.dir }}/morphosource_data_complete.json" \
-           "data/${{ env.daily_timestamp }}/morphosource_data_complete.json"
+           "data/${{ env.daily_timestamp }}/updated_morphosource_data.json"
 
     - name: Create Release Notes
       if: always()
@@ -95,7 +95,6 @@ jobs:
             echo "## Attestations"
             echo "<!-- ATTESTATION_URLS -->"
           } > "data/${{ env.test_timestamp }}/release_notes.txt"
-        fi
 
     - name: Generate Attestation for Test Dataset
       if: steps.daily-check.outcome == 'failure'
@@ -163,7 +162,7 @@ jobs:
         files: |
           data/${{ env.test_timestamp }}/morphosource_data_complete.json
           data/${{ env.test_timestamp }}/test_info.json
-          data/${{ env.daily_timestamp }}/morphosource_data_complete.json
+          data/${{ env.daily_timestamp }}/updated_morphosource_data.json
 
     - name: Commit data files
       if: always()
