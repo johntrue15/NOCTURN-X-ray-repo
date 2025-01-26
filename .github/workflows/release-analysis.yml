@@ -1,0 +1,107 @@
+name: AI Release Analysis
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_title:
+        description: 'Release title to analyze (e.g. "Releases-2024-12-30")'
+        required: true
+        type: string
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+jobs:
+  analyze-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: read
+      pull-requests: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install anthropic openai
+
+      - name: Clone Wiki
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" wiki
+
+      - name: Prepare Release Data
+        run: |
+          RELEASE_FILE="wiki/${{ github.event.inputs.release_title }}.md"
+          if [ -f "$RELEASE_FILE" ]; then
+            echo "Found release file: $RELEASE_FILE"
+            {
+              echo "# Release Summary Analysis"
+              echo "Content from wiki page: ${{ github.event.inputs.release_title }}"
+              echo "----------------------------------------"
+              cat "$RELEASE_FILE"
+            } > release_summary.txt
+            echo "Created release_summary.txt with content from $RELEASE_FILE"
+          else
+            echo "Release file not found: $RELEASE_FILE"
+            exit 1
+          fi
+
+      - name: Run AI Analysis
+        run: |
+          mkdir -p analysis_outputs
+          python .github/scripts/release_analyzer.py \
+            --openai-key "${{ secrets.OPENAI_API_KEY }}" \
+            --anthropic-key "${{ secrets.ANTHROPIC_API_KEY }}" \
+            --debug 2>&1 | tee analysis_outputs/analysis.log
+          cp release_summary.txt analysis_outputs/
+          cp claude_prompt.txt analysis_outputs/
+          cp openai_prompt.txt analysis_outputs/
+
+      - name: Generate AI Summary Page
+        run: |
+          OUTPUT_FILE="wiki/AI-Summary-${{ github.event.inputs.release_title }}.md"
+          {
+            echo "# AI Analysis Summary for ${{ github.event.inputs.release_title }}"
+            echo "Generated on: $(date -u '+%Y-%m-%d %H:%M UTC')"
+            echo
+            echo "## Claude's Analysis"
+            if [ -f "claude_prompt.txt" ]; then
+              cat "claude_prompt.txt"
+            else
+              echo "No analysis available"
+            fi
+            echo
+            echo "## OpenAI's Analysis"
+            if [ -f "openai_prompt.txt" ]; then
+              cat "openai_prompt.txt"
+            else
+              echo "No analysis available"
+            fi
+          } > "$OUTPUT_FILE"
+
+      - name: Upload Analysis Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-analysis-artifacts
+          path: analysis_outputs/
+          retention-days: 90
+
+      - name: Commit and Push AI Summary
+        run: |
+          cd wiki
+          git add .
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Add AI analysis summary [skip ci]" && git push)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
