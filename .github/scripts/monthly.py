@@ -158,6 +158,13 @@ class MonthlyMorphoSourceCollector:
             f.write(f"- Modified Records: {len(analysis['modified_records'])}\n")
             f.write(f"- Removed Records: {len(analysis['removed_records'])}\n\n")
             
+            # Add attestation URLs
+            f.write("## Attestations\n")
+            run_id = os.environ.get('GITHUB_RUN_ID', '')
+            repo = os.environ.get('GITHUB_REPOSITORY', '')
+            f.write(f"Complete Dataset: https://github.com/{repo}/attestations/{run_id}\n")
+            f.write(f"New Records: https://github.com/{repo}/attestations/{str(int(run_id) + 1 if run_id else '')}\n\n")
+            
             # Modified Records Table
             if analysis['modified_records']:
                 f.write("## Modified Records\n\n")
