@@ -182,9 +182,12 @@ def create_new_records_release_notes(output_dir: str, daily_info: dict, logger):
             f.write("# Daily Check Report\n")
             f.write(f"Check Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
             f.write("## Summary\n")
-            f.write("New records found - collection needed\n\n")
+            f.write("New records found - collection in progress\n\n")
             f.write("## Latest Record\n")
             f.write(f"Record ID: {daily_info['latest_record_id']}\n")
+            f.write("\n## Data Files\n")
+            f.write(f"Current data: {os.path.join(output_dir, 'morphosource_data_complete.json')}\n")
+            f.write(f"Previous data: {os.path.join(daily_info['source_dir'], 'morphosource_data_complete.json')}\n")
             f.write("\n## Attestations\n")
             f.write("<!-- ATTESTATION_URLS -->\n")
             

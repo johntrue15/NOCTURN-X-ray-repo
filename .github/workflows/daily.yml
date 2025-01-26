@@ -68,6 +68,14 @@ jobs:
           --output-dir "$CURRENT_DIR"
       continue-on-error: true
 
+    - name: Collect New Records
+      if: steps.daily-check.outcome == 'failure'
+      run: |
+        echo "Collecting new records..."
+        python .github/scripts/collect.py \
+          --output-dir "data/${{ env.timestamp }}" \
+          --previous-data "${{ steps.find-latest.outputs.dir }}/morphosource_data_complete.json"
+        
     - name: Create Release Notes
       if: always()
       env:
@@ -82,8 +90,9 @@ jobs:
             --create-notes
         fi
 
+    # Only copy the old data if no new records found
     - name: Copy Latest Data
-      if: always()  # Always copy the data, not just on failure
+      if: steps.daily-check.outcome == 'success'
       run: |
         cp "${{ steps.find-latest.outputs.dir }}/morphosource_data_complete.json" \
            "data/${{ env.timestamp }}/morphosource_data_complete.json"
