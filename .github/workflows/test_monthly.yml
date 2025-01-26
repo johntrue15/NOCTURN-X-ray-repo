@@ -108,15 +108,6 @@ jobs:
             }
           }
 
-    - name: Capture Attestation Log
-      id: capture_log
-      run: |
-        # Capture the actual log line from the attest action output
-        echo "${{ steps.attest.outputs.attestation }}" | tee attest_log.txt
-        # Also show what we captured for debugging
-        echo "Captured attestation log:"
-        cat attest_log.txt
-
     - name: Save Attestation and Update Release Notes
       if: success()
       run: |
@@ -127,17 +118,17 @@ jobs:
         ATT_URL="${{ steps.attest.outputs.attestation-url }}"
         ATT_ID=$(echo "$ATT_URL" | grep -o '[0-9]*$' || true)
         
-        # Extract SHA256 from the log message
-        DIGEST=$(grep -o 'sha256:[a-f0-9]\+' attest_log.txt | cut -d':' -f2)
-        
         echo "Attestation URL: $ATT_URL"
         echo "Attestation ID: $ATT_ID"
-        echo "SHA256 Digest: $DIGEST"
         
         if [ -z "$ATT_ID" ]; then
           echo "Error: Could not extract attestation ID"
           exit 1
         fi
+        
+        # Fetch the attestation page and extract SHA256
+        DIGEST=$(curl -s "$ATT_URL" | grep -A2 "Subjects" | grep "sha256:" | awk '{print $2}')
+        echo "SHA256 Digest: $DIGEST"
         
         if [ -z "$DIGEST" ]; then
           echo "Error: Could not extract SHA256 digest"
