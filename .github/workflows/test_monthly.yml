@@ -1,0 +1,187 @@
+name: Test MorphoSource Collection
+on:
+  workflow_dispatch:
+    inputs:
+      record_count:
+        description: 'Number of test records to generate'
+        required: true
+        default: '5'
+        type: string
+
+permissions:
+  contents: write
+  id-token: write
+  actions: read
+  attestations: write
+
+jobs:
+  test-collection:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Configure Git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+
+    - name: Create test script
+      run: |
+        cat > test_collection.py << 'EOL'
+        import json
+        import os
+        import sys
+        from datetime import datetime
+        
+        def create_test_data(output_dir, record_count):
+            # Create test records
+            records = []
+            for i in range(record_count):
+                record = {
+                    'id': f'test-{i}',
+                    'title': f'Test Record {i}',
+                    'url': f'https://example.com/record/{i}',
+                    'metadata': {
+                        'Object': f'Object-{i}',
+                        'Publication Status': 'Test'
+                    },
+                    'scraped_date': datetime.now().isoformat()
+                }
+                records.append(record)
+            
+            # Create output directory
+            os.makedirs(output_dir, exist_ok=True)
+            
+            # Save data files
+            with open(os.path.join(output_dir, 'morphosource_data_complete.json'), 'w') as f:
+                json.dump(records, f, indent=2)
+            
+            # Save stats
+            stats = {
+                'total_records': len(records),
+                'modified_records': 0,
+                'new_records': len(records),
+                'collection_date': datetime.now().isoformat()
+            }
+            with open(os.path.join(output_dir, 'monthly_stats.json'), 'w') as f:
+                json.dump(stats, f, indent=2)
+            
+            # Create release notes
+            with open(os.path.join(output_dir, 'monthly_release_notes.txt'), 'w') as f:
+                f.write(f"# Test Collection Report\n\n")
+                f.write(f"Collection Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+                f.write(f"Total Records: {len(records)}\n")
+            
+            return len(records)
+
+        if __name__ == '__main__':
+            output_dir = sys.argv[1]
+            record_count = int(sys.argv[2])
+            total_records = create_test_data(output_dir, record_count)
+            print(f"Created {total_records} test records")
+        EOL
+
+    - name: Setup directories
+      run: |
+        TIMESTAMP=$(date +'%Y-%m-%d_%H-%M-%S')
+        echo "timestamp=$TIMESTAMP" >> $GITHUB_ENV
+        mkdir -p "data/${TIMESTAMP}"
+
+    - name: Run test collection
+      id: collect
+      run: |
+        echo "::group::Starting Test Collection"
+        echo "Timestamp: ${TIMESTAMP}"
+        echo "Records to generate: ${{ github.event.inputs.record_count }}"
+        echo "::endgroup::"
+        
+        python test_collection.py "data/${TIMESTAMP}" "${{ github.event.inputs.record_count }}"
+        
+        # Get collection stats
+        if [ -f "data/${TIMESTAMP}/monthly_stats.json" ]; then
+          echo "total_records=$(jq '.total_records' "data/${TIMESTAMP}/monthly_stats.json")" >> $GITHUB_OUTPUT
+          echo "modified_records=$(jq '.modified_records' "data/${TIMESTAMP}/monthly_stats.json")" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Generate Collection Summary
+      if: always()
+      run: |
+        echo "::group::Collection Summary"
+        echo "Total Records: ${{ steps.collect.outputs.total_records || 'N/A' }}"
+        echo "Modified Records: ${{ steps.collect.outputs.modified_records || 'N/A' }}"
+        echo "::endgroup::"
+
+    - name: Generate Attestation
+      if: success() && hashFiles('data/${{ env.timestamp }}/morphosource_data_complete.json') != ''
+      uses: actions/attest@v2.1.0
+      id: attest
+      with:
+        subject-path: data/${{ env.timestamp }}/morphosource_data_complete.json
+        predicate-type: 'https://in-toto.io/attestation/release/v0.1'
+        predicate: |
+          {
+            "purl": "pkg:github/${{ github.repository }}",
+            "version": "${{ github.sha }}",
+            "metadata": {
+              "buildInvocationId": "${{ github.run_id }}",
+              "completeness": {
+                "parameters": true,
+                "environment": true,
+                "materials": true
+              },
+              "stats": {
+                "total_records": "${{ steps.collect.outputs.total_records }}",
+                "modified_records": "${{ steps.collect.outputs.modified_records }}"
+              }
+            }
+          }
+
+    - name: Commit data files
+      if: always()
+      run: |
+        # Show what files exist
+        echo "::group::Files in data directory"
+        ls -R data/
+        echo "::endgroup::"
+        
+        # Add everything in the timestamped directory
+        git add -f "data/${TIMESTAMP}/"
+        
+        # Show what will be committed
+        echo "::group::Git Status"
+        git status
+        echo "::endgroup::"
+        
+        # Commit and push if there are changes
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Update Test MorphoSource data [${TIMESTAMP}]"
+          git push origin HEAD:main
+        fi
+
+    - name: Create Release
+      if: success() && hashFiles('data/${{ env.timestamp }}/morphosource_data_complete.json') != ''
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        name: "Test MorphoSource Collection #${{ env.timestamp }}"
+        tag_name: "test-collection-${{ env.timestamp }}"
+        body_path: data/${{ env.timestamp }}/monthly_release_notes.txt
+        files: |
+          data/${{ env.timestamp }}/morphosource_data_complete.json
+          data/${{ env.timestamp }}/monthly_stats.json
