@@ -53,9 +53,24 @@ jobs:
         import sys
         from datetime import datetime
         import argparse
+        import logging
+        
+        def setup_logging(log_dir):
+            """Configure logging to file and console"""
+            logging.basicConfig(
+                level=logging.INFO,
+                format='%(asctime)s - %(message)s',
+                handlers=[
+                    logging.FileHandler(os.path.join(log_dir, 'test_collection.log')),
+                    logging.StreamHandler()
+                ]
+            )
         
         def create_test_data(output_dir, record_count):
-            print(f"Creating {record_count} test records in {output_dir}")
+            setup_logging(output_dir)
+            logger = logging.getLogger(__name__)
+            
+            logger.info(f"Creating {record_count} test records in {output_dir}")
             
             # Create test records
             records = []
@@ -80,7 +95,9 @@ jobs:
             stats_file = os.path.join(output_dir, 'monthly_stats.json')
             notes_file = os.path.join(output_dir, 'monthly_release_notes.txt')
             
-            print(f"Writing data to {data_file}")
+            logger.info(f"Writing data files to {output_dir}")
+            
+            # Save complete dataset
             with open(data_file, 'w') as f:
                 json.dump(records, f, indent=2)
             
@@ -91,12 +108,10 @@ jobs:
                 'new_records': len(records),
                 'collection_date': datetime.now().isoformat()
             }
-            print(f"Writing stats to {stats_file}")
             with open(stats_file, 'w') as f:
                 json.dump(stats, f, indent=2)
             
             # Create release notes
-            print(f"Writing release notes to {notes_file}")
             with open(notes_file, 'w') as f:
                 f.write(f"# Test Collection Report\n\n")
                 f.write(f"Collection Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
@@ -104,12 +119,8 @@ jobs:
                 f.write(f"- Total Records: {len(records)}\n")
                 f.write(f"- Generated Records: {record_count}\n")
             
-            # Print directory contents for verification
-            print("\nCreated files:")
-            for root, dirs, files in os.walk(output_dir):
-                for file in files:
-                    print(os.path.join(root, file))
-            
+            # Log completion
+            logger.info(f"Successfully created {len(records)} test records")
             return len(records)
 
         if __name__ == '__main__':
@@ -121,7 +132,6 @@ jobs:
             args = parser.parse_args()
             
             total_records = create_test_data(args.output_dir, args.record_count)
-            print(f"\nCreated {total_records} test records")
         EOL
 
     - name: Create data directories
@@ -137,8 +147,8 @@ jobs:
         echo "Records to generate: ${{ github.event.inputs.record_count }}"
         echo "::endgroup::"
         
-        # Run with verbose output
-        python -u test_collection.py \
+        # Run test collection script
+        python test_collection.py \
           --output-dir "data/${{ env.timestamp }}" \
           --record-count "${{ github.event.inputs.record_count }}" \
           2>&1 | tee collection_log.txt
@@ -154,6 +164,7 @@ jobs:
           echo "modified_records=$(jq '.modified_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
         else
           echo "Warning: monthly_stats.json not found"
+          find data -type f -name "monthly_stats.json"
         fi
 
     - name: Generate Collection Summary
