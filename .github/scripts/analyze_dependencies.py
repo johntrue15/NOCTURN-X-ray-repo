@@ -189,14 +189,18 @@ def generate_markdown(workflow_info):
                             key=lambda x: (x[1]['schedule'] or "", x[0]))
     
     for workflow_name, info in sorted_scheduled:
+        # Workflow name and schedule on separate lines
         lines.append(f"### {info['name']} (`{workflow_name}`)")
+        lines.append("")
         lines.append(f"**Schedule:** {info['schedule']}")
+        lines.append("")
         
-        # Add direct scripts
+        # Add direct scripts with proper spacing
         if info['scripts']:
             lines.append("**Required Scripts:**")
             for script in info['scripts']:
                 lines.append(f"- `.github/scripts/{script}`")
+            lines.append("")
         
         # Find workflows triggered by this one
         triggered_workflows = []
@@ -207,21 +211,28 @@ def generate_markdown(workflow_info):
         if triggered_workflows:
             lines.append("**Triggers Workflows:**")
             for dep_name, dep_info in sorted(triggered_workflows):
+                lines.append("")
                 lines.append(f"- `{dep_name}`")
                 if dep_info['scripts']:
+                    lines.append("  Scripts:")
                     for script in dep_info['scripts']:
                         lines.append(f"  - `.github/scripts/{script}`")
+                
                 # Check for second-level triggers
                 second_level = []
                 for other_name, other_info in workflow_info.items():
                     if dep_info['name'] in other_info['workflow_dependencies']:
                         second_level.append((other_name, other_info))
                 if second_level:
+                    lines.append("  Triggers:")
                     for sub_name, sub_info in sorted(second_level):
                         lines.append(f"  - `{sub_name}`")
                         if sub_info['scripts']:
+                            lines.append("    Scripts:")
                             for script in sub_info['scripts']:
                                 lines.append(f"    - `.github/scripts/{script}`")
+        lines.append("")
+        lines.append("---")
         lines.append("")
     
     # Then list other workflows
