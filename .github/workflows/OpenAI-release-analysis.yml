@@ -1,0 +1,79 @@
+name: OpenAI Release Analysis
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_title:
+        description: 'Release title to analyze (e.g. "Releases-2024-12-30")'
+        required: true
+        type: string
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+jobs:
+  analyze-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: read
+      pull-requests: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openai
+
+      - name: Clone Wiki
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" wiki
+
+      - name: Process Release
+        run: |
+          RELEASE_FILE="wiki/${{ github.event.inputs.release_title }}.md"
+          if [ -f "$RELEASE_FILE" ]; then
+            echo "Found release file: $RELEASE_FILE"
+            mkdir -p analysis_outputs
+            
+            # Run OpenAI analysis
+            python .github/scripts/OpenAI-release-analysis.py \
+              --input-file "$RELEASE_FILE" \
+              --output-file "analysis_outputs/openai_analysis.md" \
+              --release-title "${{ github.event.inputs.release_title }}" \
+              --debug
+
+            # Copy to wiki with proper naming
+            cp "analysis_outputs/openai_analysis.md" "wiki/OpenAI-Analysis-${{ github.event.inputs.release_title }}.md"
+          else
+            echo "Release file not found: $RELEASE_FILE"
+            exit 1
+          fi
+
+      - name: Upload Analysis Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: openai-analysis-artifacts
+          path: analysis_outputs/
+          retention-days: 90
+
+      - name: Commit and Push Wiki Changes
+        run: |
+          cd wiki
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add .
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Add OpenAI analysis for ${{ github.event.inputs.release_title }} [skip ci]" && git push)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
