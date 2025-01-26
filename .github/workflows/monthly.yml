@@ -90,13 +90,13 @@ jobs:
         echo "::endgroup::"
 
     - name: Generate Attestation
+      id: attest
       if: success() && hashFiles('data/${{ env.timestamp }}/morphosource_data_complete.json') != ''
       uses: actions/attest@v2.1.0
-      id: attest
       with:
         subject-path: data/${{ env.timestamp }}/morphosource_data_complete.json
         predicate-type: 'https://in-toto.io/attestation/release/v0.1'
-        output-path: data/${{ env.timestamp }}/attestation.json
+        show-summary: true
         predicate: |
           {
             "purl": "pkg:github/${{ github.repository }}",
@@ -108,16 +108,62 @@ jobs:
                 "environment": true,
                 "materials": true
               },
-              "runtime": {
-                "python_version": "${{ steps.install.outputs.python_version }}",
-                "requirements_hash": "${{ steps.install.outputs.requirements_hash }}"
-              },
               "stats": {
                 "total_records": "${{ steps.collect.outputs.total_records }}",
                 "modified_records": "${{ steps.collect.outputs.modified_records }}"
               }
             }
           }
+
+    - name: Save Attestation and Update Release Notes
+      if: success()
+      run: |
+        # Debug step execution
+        echo "Starting Save Attestation step..."
+        
+        # Get attestation ID from URL in output
+        ATT_URL="${{ steps.attest.outputs.attestation-url }}"
+        ATT_ID=$(echo "$ATT_URL" | grep -o '[0-9]*$' || true)
+        
+        echo "Attestation URL: $ATT_URL"
+        echo "Attestation ID: $ATT_ID"
+        
+        if [ -z "$ATT_ID" ]; then
+          echo "Error: Could not extract attestation ID"
+          exit 1
+        fi
+        
+        # Fetch the attestation page and extract SHA256
+        DIGEST=$(curl -s "$ATT_URL" | grep -A2 "Subjects" | grep "sha256:" | sed 's/.*sha256:\([a-f0-9]\{64\}\).*/\1/')
+        echo "SHA256 Digest: $DIGEST"
+        
+        # Validate that we got a proper SHA256 (64 hex characters)
+        if ! [[ $DIGEST =~ ^[a-f0-9]{64}$ ]]; then
+          echo "Error: Invalid SHA256 digest format"
+          exit 1
+        fi
+        
+        # Update the attestation file with the extracted digest
+        jq --arg digest "$DIGEST" \
+           '.subject[0].digest.sha256 = $digest' \
+           "data/${{ env.timestamp }}/attestation.json" > temp.json && \
+        mv temp.json "data/${{ env.timestamp }}/attestation.json"
+        
+        # Create attestation URL
+        COMPLETE_URL="https://github.com/${{ github.repository }}/attestations/${ATT_ID}"
+        
+        # Create attestation section content
+        ATTESTATION_CONTENT="Dataset Attestation: ${COMPLETE_URL}"
+        
+        # Replace placeholder in release notes
+        sed -i "s|<!-- ATTESTATION_URLS -->|${ATTESTATION_CONTENT}|" "data/${{ env.timestamp }}/monthly_release_notes.txt"
+        
+        echo "Updated release notes with attestation URLs:"
+        cat "data/${{ env.timestamp }}/monthly_release_notes.txt"
+        
+        # Verify attestation file exists and show contents
+        echo "Attestation file contents:"
+        cat "data/${{ env.timestamp }}/attestation.json" || echo "Attestation file not created!"
 
     - name: Create Status Files
       if: always()
@@ -127,9 +173,7 @@ jobs:
           --arg status "${{ job.status }}" \
           --arg timestamp "${{ env.timestamp }}" \
           --arg run_id "${{ github.run_id }}" \
-          --arg python "${{ steps.install.outputs.python_version }}" \
-          --arg reqs "${{ steps.install.outputs.requirements_hash }}" \
-          '{status: $status, timestamp: $timestamp, run_id: $run_id, python_version: $python, requirements_hash: $reqs}' \
+          '{status: $status, timestamp: $timestamp, run_id: $run_id}' \
           > "data/${{ env.timestamp }}/run_status.json"
         echo "::endgroup::"
 

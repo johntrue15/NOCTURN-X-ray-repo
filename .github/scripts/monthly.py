@@ -131,6 +131,9 @@ class MonthlyMorphoSourceCollector:
             with open(self.complete_data_path, 'w') as f:
                 json.dump(self.all_records, f, indent=2)
                 
+            # Create attestation template
+            self.create_attestation_template()
+            
             self.create_release_notes(analysis)
             
             return len(self.all_records)
@@ -158,12 +161,9 @@ class MonthlyMorphoSourceCollector:
             f.write(f"- Modified Records: {len(analysis['modified_records'])}\n")
             f.write(f"- Removed Records: {len(analysis['removed_records'])}\n\n")
             
-            # Add attestation URLs
+            # Add attestation placeholder
             f.write("## Attestations\n")
-            run_id = os.environ.get('GITHUB_RUN_ID', '')
-            repo = os.environ.get('GITHUB_REPOSITORY', '')
-            f.write(f"Complete Dataset: https://github.com/{repo}/attestations/{run_id}\n")
-            f.write(f"New Records: https://github.com/{repo}/attestations/{str(int(run_id) + 1 if run_id else '')}\n\n")
+            f.write("<!-- ATTESTATION_URLS -->\n\n")
             
             # Modified Records Table
             if analysis['modified_records']:
@@ -327,6 +327,38 @@ class MonthlyMorphoSourceCollector:
         except Exception as e:
             self.logger.error(f"Error in monthly collection: {e}")
             raise
+
+    def create_attestation_template(self):
+        """Create initial attestation template"""
+        attestation_file = os.path.join(self.data_dir, 'attestation.json')
+        attestation = {
+            "_type": "https://in-toto.io/Statement/v0.1",
+            "subject": [{
+                "name": "morphosource_data_complete.json",
+                "digest": {
+                    "sha256": ""
+                }
+            }],
+            "predicateType": "https://in-toto.io/attestation/release/v0.1",
+            "predicate": {
+                "purl": f"pkg:github/{os.environ.get('GITHUB_REPOSITORY', '')}",
+                "version": os.environ.get('GITHUB_SHA', ''),
+                "metadata": {
+                    "buildInvocationId": os.environ.get('GITHUB_RUN_ID', ''),
+                    "completeness": {
+                        "parameters": True,
+                        "environment": True,
+                        "materials": True
+                    },
+                    "stats": {
+                        "total_records": str(len(self.all_records)),
+                        "modified_records": str(len(self.modifications))
+                    }
+                }
+            }
+        }
+        with open(attestation_file, 'w') as f:
+            json.dump(attestation, f, indent=2)
 
 def main():
     parser = argparse.ArgumentParser(description='Monthly MorphoSource Data Collection')
