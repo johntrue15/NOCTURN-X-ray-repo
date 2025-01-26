@@ -59,6 +59,15 @@ jobs:
     - name: Create data directories
       run: |
         mkdir -p "data/${TIMESTAMP}"
+        mkdir -p ".github/scripts"
+
+    - name: Setup script
+      run: |
+        echo "::group::Verifying script location"
+        ls -la .github/scripts || true
+        cp monthly.py .github/scripts/
+        chmod +x .github/scripts/monthly.py
+        echo "::endgroup::"
 
     - name: Run monthly collection
       id: collect
@@ -69,7 +78,7 @@ jobs:
         echo "::endgroup::"
         
         DATA_DIR="data/${TIMESTAMP}"
-        PYTHONPATH=".github/scripts" python monthly.py --output-dir "$DATA_DIR"
+        python .github/scripts/monthly.py --output-dir "$DATA_DIR"
         
         # Get collection stats
         if [ -f "$DATA_DIR/monthly_stats.json" ]; then
