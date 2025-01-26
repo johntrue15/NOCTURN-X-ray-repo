@@ -6,6 +6,7 @@ import time
 import os
 import sys
 import logging
+import argparse
 
 class MonthlyMorphoSourceCollector:
     def __init__(self, base_url: str, data_dir: str = 'data'):
@@ -23,7 +24,7 @@ class MonthlyMorphoSourceCollector:
             level=logging.INFO,
             format='%(asctime)s - %(levelname)s - %(message)s',
             handlers=[
-                logging.FileHandler(os.path.join('data', 'monthly_collector.log')),
+                logging.FileHandler(os.path.join(self.data_dir, 'monthly_collector.log')),
                 logging.StreamHandler()
             ]
         )
@@ -288,46 +289,6 @@ class MonthlyMorphoSourceCollector:
                 if self.error_count >= 5:  # Max consecutive errors
                     break
 
-    def create_release_notes(self):
-        """Create detailed release notes"""
-        with open(self.release_notes_path, 'w') as f:
-            f.write(f"# Monthly MorphoSource Collection Report\n\n")
-            f.write(f"Collection Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
-            
-            # Summary statistics
-            f.write("## Summary\n")
-            f.write(f"- Total Records: {len(self.all_records)}\n")
-            f.write(f"- Modified Records: {len(self.modifications)}\n")
-            f.write(f"- New Records: {len(self.all_records) - len(self.previous_records)}\n\n")
-            
-            # Modified Records Table
-            if self.modifications:
-                f.write("## Modified Records\n\n")
-                f.write("| ID | Title | Object ID | Status | Link |\n")
-                f.write("|----|----|----|----|----|\n")
-                for mod in self.modifications:
-                    new_record = mod['new']
-                    f.write(
-                        f"| {new_record['id']} | {new_record['title']} | "
-                        f"{new_record['metadata'].get('Object', 'N/A')} | "
-                        f"{new_record['metadata'].get('Publication Status', 'N/A')} | "
-                        f"[View]({new_record['url']}) |\n"
-                    )
-
-    def save_data(self):
-        """Save collected data"""
-        try:
-            # Save complete dataset
-            with open(self.complete_data_path, 'w') as f:
-                json.dump(self.all_records, f, indent=2)
-                
-            self.create_release_notes()
-            
-            return len(self.all_records)
-        except Exception as e:
-            self.logger.error(f"Error saving data: {e}")
-            raise
-
     def run(self):
         """Run the monthly collection process"""
         try:
@@ -344,9 +305,17 @@ class MonthlyMorphoSourceCollector:
             raise
 
 def main():
+    parser = argparse.ArgumentParser(description='Monthly MorphoSource Data Collection')
+    parser.add_argument('--output-dir', type=str, default='data',
+                      help='Directory to store output files')
+    args = parser.parse_args()
+
+    # Create output directory if it doesn't exist
+    os.makedirs(args.output_dir, exist_ok=True)
+
     base_url = "https://www.morphosource.org/catalog/media?locale=en&per_page=100&q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc"
     
-    collector = MonthlyMorphoSourceCollector(base_url)
+    collector = MonthlyMorphoSourceCollector(base_url, data_dir=args.output_dir)
     total_records = collector.run()
     
     print(f"Total records collected: {total_records}")
