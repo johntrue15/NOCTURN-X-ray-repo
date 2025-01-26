@@ -1,0 +1,9 @@
+2025-01-26 20:30:09,035 - Using data file: data/2025-01-26_20-28-41/morphosource_data_complete.json
+2025-01-26 20:30:12,328 - Latest webpage record ID: 000704255
+2025-01-26 20:30:12,328 - Looking for data file at: /home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/data/2025-01-26_20-28-41/morphosource_data_complete.json
+2025-01-26 20:30:12,328 - Contents of /home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/data/2025-01-26_20-28-41:
+2025-01-26 20:30:12,328 -   - daily_extractor.log
+2025-01-26 20:30:12,328 -   - daily_info.json
+2025-01-26 20:30:12,329 - No existing data file found
+2025-01-26 20:30:12,329 - New records available - latest records differ
+2025-01-26 20:30:12,329 - Created 'new records' release notes at: data/2025-01-26_20-30-08/release_notes.txt
