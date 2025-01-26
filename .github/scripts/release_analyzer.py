@@ -35,26 +35,43 @@ class ReleaseAnalyzer:
     def parse_release_content(self, content: str) -> List[Release]:
         """Parse raw content into Release objects."""
         releases = []
-        # First, split content into sections based on Release Details
-        sections = content.split("### ")[1:]  # Skip the header section
+        # Split on section headings but keep the heading
+        content_parts = content.split('## Release Details')
+        if len(content_parts) < 2:
+            logger.warning("Could not find Release Details section")
+            return releases
+            
+        # Get the release details section
+        release_section = content_parts[1]
         
-        for section in sections:
+        # Split by main release entries (###)
+        release_entries = re.split(r'\n(?=### (?![#]))', release_section)
+        
+        for entry in release_entries:
+            if not entry.strip():
+                continue
+                
             try:
-                # Extract release details using regex
-                title_match = re.match(r'(.*?)(?=\n|$)', section)
-                tag_match = re.search(r'Tag: `?(.*?)`?\n', section)
-                date_match = re.search(r'Released: (.*?) UTC', section)
-                author_match = re.search(r'Author: @?(.*?)(?=\n|$)', section)
-                notes_match = re.search(r'Release Notes\n(.*?)(?=(?:\n###)|$)', section, re.DOTALL)
-
+                # Extract main release details using regex
+                title_match = re.search(r'### (.*?)(?=\n|$)', entry)
+                tag_match = re.search(r'Tag: `?(.*?)`?\n', entry)
+                date_match = re.search(r'Released: (.*?) UTC', entry)
+                author_match = re.search(r'Author: @?(.*?)(?=\n|$)', entry)
+                
+                # Match everything between Release Notes and the next main heading or end
+                notes_match = re.search(r'Release Notes\n(.*?)(?=(?:\n### (?![#]))|$)', entry, re.DOTALL)
+                
                 if title_match:  # Only require title as mandatory
                     title = title_match.group(1).strip()
-                    release_type = self._determine_release_type(title)
-                    
+                    # Skip if title appears to be a subsection
+                    if title.lower() in ['release notes', 'orientation views', 'structural characteristics', 
+                                       'material composition', 'notable features', 'conclusion']:
+                        continue
+                        
                     try:
                         date = datetime.strptime(date_match.group(1), '%B %d, %Y %H:%M') if date_match else datetime.now()
                     except ValueError as e:
-                        self.logger.warning(f"Error parsing date for {title}: {e}")
+                        logger.warning(f"Error parsing date for {title}: {e}")
                         date = datetime.now()
 
                     release = Release(
@@ -63,15 +80,15 @@ class ReleaseAnalyzer:
                         date=date,
                         author=author_match.group(1).strip() if author_match else "Unknown",
                         notes=notes_match.group(1).strip() if notes_match else "",
-                        type=release_type
+                        type=self._determine_release_type(title)
                     )
                     releases.append(release)
-                    self.logger.info(f"Parsed release: {title}")
+                    logger.info(f"Parsed release: {title}")
             except Exception as e:
-                self.logger.error(f"Error parsing section: {str(e)}\nSection:\n{section[:200]}...")
+                logger.error(f"Error parsing release entry: {str(e)}\nEntry:\n{entry[:200]}...")
                 continue
-
-        self.logger.info(f"Found {len(releases)} releases")
+        
+        logger.info(f"Found {len(releases)} releases")
         return releases
 
     def _determine_release_type(self, title: str) -> str:
@@ -85,6 +102,10 @@ class ReleaseAnalyzer:
             return 'error'
         elif 'monthly' in title_lower:
             return 'monthly'
+        elif 'morphosource' in title_lower:
+            return 'morphosource'
+        elif 'test' in title_lower:
+            return 'test'
         return 'other'
 
     def generate_statistical_summary(self, releases: List[Release]) -> Dict:
@@ -123,66 +144,111 @@ class ReleaseAnalyzer:
 
     def generate_claude_prompt(self, releases: List[Release], stats: Dict) -> str:
         """Generate a prompt for Claude to analyze the releases."""
-        prompt = f"""
-        Analyze the following release data and generate a comprehensive weekly summary. 
-        Focus on key trends, significant findings, and potential areas of interest.
+        prompt = f"""Please analyze this week's releases data and provide a comprehensive summary.
 
-        Statistical Overview:
-        - Total Releases: {stats['total_releases']}
-        - Release Types: {json.dumps(stats['release_types'], indent=2)}
-        - Time Distribution: {json.dumps(stats['time_distribution'], indent=2)}
-        - Contributing Authors: {json.dumps(stats['authors'], indent=2)}
+Statistical Overview:
+- Total Releases: {stats['total_releases']}
+- Types of Releases:
+{json.dumps(stats['release_types'], indent=2)}
+- Time Distribution:
+{json.dumps(stats['time_distribution'], indent=2)}
+- Contributing Authors:
+{json.dumps(stats['authors'], indent=2)}
 
-        Key Releases to highlight:
-        """
-        
-        # Add significant releases (e.g., non-error releases with substantial notes)
-        significant_releases = [r for r in releases if r.type != 'error' and len(r.notes) > 100]
-        for release in significant_releases[:5]:  # Limit to top 5
-            prompt += f"\n{release.title} ({release.date.strftime('%Y-%m-%d %H:%M')})"
-            prompt += f"\nKey findings: {release.notes[:200]}...\n"
-        
+Key Findings:
+"""
+        # Add CT analyses
+        ct_analyses = [r for r in releases if r.type == 'ct_analysis']
+        if ct_analyses:
+            prompt += "\nCT Analysis Results:\n"
+            for analysis in ct_analyses[:3]:  # Top 3 analyses
+                prompt += f"- {analysis.title}\n"
+                if analysis.notes:
+                    prompt += f"  Summary: {analysis.notes[:200]}...\n"
+
+        # Add any errors or issues
+        errors = [r for r in releases if r.type == 'error']
+        if errors:
+            prompt += "\nIssues Encountered:\n"
+            for error in errors[:3]:  # Top 3 errors
+                prompt += f"- {error.title}\n"
+
         prompt += """
-        Please analyze this data and provide:
-        1. A high-level summary of the week's activities
-        2. Notable trends or patterns in the data
-        3. Significant findings from CT analyses and daily checks
-        4. Recommendations for areas needing attention
-        5. Suggestions for process improvements based on error patterns
-        """
-        
+Please provide:
+1. Executive Summary
+   - Weekly overview and key metrics
+   - Major achievements and milestones
+
+2. Analysis of CT Scans
+   - Notable findings and patterns
+   - Quality and completeness of data
+   - Technical insights gained
+
+3. Operational Metrics
+   - Release timing patterns
+   - Process efficiency indicators
+   - Team contribution analysis
+
+4. Issues and Recommendations
+   - Common error patterns
+   - Suggested process improvements
+   - Areas needing attention
+
+5. Forward Planning
+   - Data collection optimization
+   - Quality improvement opportunities
+   - Resource allocation suggestions
+
+Format your response in a clear, structured markdown format suitable for a scientific summary.
+"""
         return prompt
 
     def generate_openai_prompt(self, releases: List[Release], stats: Dict) -> str:
         """Generate a prompt for OpenAI's GPT models."""
-        prompt = f"""
-        You are a scientific research assistant analyzing weekly release data from a CT scanning project.
-        Please analyze the following data and provide a concise but informative summary.
+        prompt = f"""You are a scientific data analyst reviewing weekly CT scan project releases.
 
-        Weekly Statistics:
-        ```json
-        {json.dumps(stats, indent=2)}
-        ```
+Week Overview:
+```json
+{json.dumps(stats, indent=2)}
+```
 
-        Recent Notable Findings:
-        """
+This Week's Highlights:
+"""
         
-        # Include recent significant findings
+        # Add significant findings
         ct_analyses = [r for r in releases if r.type == 'ct_analysis']
-        for analysis in ct_analyses[:3]:
-            prompt += f"\n- {analysis.title}\n  {analysis.notes[:150]}...\n"
-        
+        if ct_analyses:
+            prompt += "\nSignificant CT Analyses:\n"
+            for analysis in ct_analyses[:3]:
+                prompt += f"- {analysis.title}\n"
+                if analysis.notes:
+                    prompt += f"  Key Findings: {analysis.notes[:150]}...\n"
+
         prompt += """
-        Please provide:
-        1. Executive summary (2-3 sentences)
-        2. Key discoveries and findings
-        3. Technical challenges encountered
-        4. Success metrics and achievements
-        5. Areas for optimization
-        
-        Format the response in markdown with appropriate headers and sections.
-        """
-        
+Please provide a detailed analysis including:
+
+1. Executive Summary (2-3 paragraphs)
+   - Key achievements
+   - Statistical highlights
+   - Major findings
+
+2. Technical Analysis
+   - CT scan quality metrics
+   - Data completeness assessment
+   - Processing efficiency
+
+3. Operational Insights
+   - Workflow patterns
+   - Resource utilization
+   - Team performance
+
+4. Recommendations
+   - Process improvements
+   - Quality enhancements
+   - Resource optimization
+
+Format the response in clear, scientific markdown suitable for stakeholder review.
+"""
         return prompt
 
 def main():
