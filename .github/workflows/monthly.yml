@@ -41,24 +41,16 @@ jobs:
         echo "python_version=$(python --version)" >> $GITHUB_OUTPUT
         echo "requirements_hash=$(md5sum requirements.txt | cut -d' ' -f1)" >> $GITHUB_OUTPUT
 
-    - name: Verify Environment
-      id: verify
+    - name: Set timestamp
+      id: timestamp
       run: |
-        echo "::group::System Information"
-        uname -a
-        echo "::endgroup::"
-        
-        echo "::group::Python Environment"
-        echo "Python: ${{ steps.install.outputs.python_version }}"
-        echo "Requirements Hash: ${{ steps.install.outputs.requirements_hash }}"
-        echo "::endgroup::"
-        
-        echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_ENV
-        echo "run_id=${GITHUB_RUN_ID}" >> $GITHUB_OUTPUT
+        TIMESTAMP=$(date +'%Y-%m-%d_%H-%M-%S')
+        echo "timestamp=$TIMESTAMP" >> $GITHUB_ENV
+        echo "Timestamp set to: $TIMESTAMP"
 
     - name: Create data directories
       run: |
-        mkdir -p "data/${TIMESTAMP}"
+        mkdir -p "data/${{ env.timestamp }}"
 
     - name: Verify script
       run: |
@@ -70,16 +62,24 @@ jobs:
       id: collect
       run: |
         echo "::group::Starting Collection"
-        echo "Run ID: ${{ steps.verify.outputs.run_id }}"
-        echo "Timestamp: ${TIMESTAMP}"
+        echo "Run ID: ${{ github.run_id }}"
+        echo "Timestamp: ${{ env.timestamp }}"
         echo "::endgroup::"
         
-        python .github/scripts/monthly.py --output-dir "data/${TIMESTAMP}"
+        # Run collection script
+        python -v .github/scripts/monthly.py --output-dir "data/${{ env.timestamp }}" 2>&1 | tee collection_log.txt
+        
+        # Show directory contents
+        echo "::group::Directory Contents"
+        ls -R data/
+        echo "::endgroup::"
         
         # Get collection stats
-        if [ -f "data/${TIMESTAMP}/monthly_stats.json" ]; then
-          echo "total_records=$(jq '.total_records' "data/${TIMESTAMP}/monthly_stats.json")" >> $GITHUB_OUTPUT
-          echo "modified_records=$(jq '.modified_records' "data/${TIMESTAMP}/monthly_stats.json")" >> $GITHUB_OUTPUT
+        if [ -f "data/${{ env.timestamp }}/monthly_stats.json" ]; then
+          echo "total_records=$(jq '.total_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
+          echo "modified_records=$(jq '.modified_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
+        else
+          echo "Warning: monthly_stats.json not found"
         fi
 
     - name: Generate Collection Summary
@@ -91,13 +91,12 @@ jobs:
         echo "::endgroup::"
 
     - name: Generate Attestation
-      if: success()
+      if: success() && hashFiles('data/${{ env.timestamp }}/morphosource_data_complete.json') != ''
       uses: actions/attest@v2.1.0
       id: attest
       with:
         subject-path: data/${{ env.timestamp }}/morphosource_data_complete.json
         predicate-type: 'https://in-toto.io/attestation/release/v0.1'
-        output-path: data/${{ env.timestamp }}/attestation.json
         predicate: |
           {
             "purl": "pkg:github/${{ github.repository }}",
@@ -120,33 +119,32 @@ jobs:
             }
           }
 
-    - name: Create Status Files
+    - name: Commit data files
       if: always()
       run: |
-        # Create run status file
-        jq -n \
-          --arg status "${{ job.status }}" \
-          --arg timestamp "${{ env.timestamp }}" \
-          --arg run_id "${{ steps.verify.outputs.run_id }}" \
-          --arg python "${{ steps.install.outputs.python_version }}" \
-          --arg reqs "${{ steps.install.outputs.requirements_hash }}" \
-          '{status: $status, timestamp: $timestamp, run_id: $run_id, python_version: $python, requirements_hash: $reqs}' \
-          > "data/${TIMESTAMP}/run_status.json"
-
-    - name: Commit data files
-      if: success()
-      run: |
-        # Add all files in the timestamped directory
-        git add "data/${TIMESTAMP}"
+        # Show directory contents
+        echo "::group::Files in data directory"
+        ls -R data/
+        echo "::endgroup::"
         
-        # Commit changes
-        git commit -m "Update MorphoSource data [${TIMESTAMP}]" || exit 0
+        # Add everything in the timestamped directory
+        git add -f "data/${{ env.timestamp }}/"
         
-        # Push changes
-        git push
+        # Show what will be committed
+        echo "::group::Git Status"
+        git status
+        echo "::endgroup::"
+        
+        # Commit and push if there are changes
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Update MorphoSource data [${{ env.timestamp }}]"
+          git push origin HEAD:main
+        fi
 
     - name: Create Release
-      if: success()
+      if: success() && hashFiles('data/${{ env.timestamp }}/morphosource_data_complete.json') != ''
       uses: softprops/action-gh-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -158,7 +156,6 @@ jobs:
           data/${{ env.timestamp }}/morphosource_data_complete.json
           data/${{ env.timestamp }}/monthly_stats.json
           data/${{ env.timestamp }}/run_status.json
-          data/${{ env.timestamp }}/attestation.json
 
     - name: Upload detailed logs
       if: always()
@@ -166,9 +163,8 @@ jobs:
       with:
         name: monthly-execution-logs-${{ env.timestamp }}
         path: |
-          data/${{ env.timestamp }}/monthly_collector.log
-          data/${{ env.timestamp }}/monthly_stats.json
-          data/${{ env.timestamp }}/run_status.json
+          data/${{ env.timestamp }}/*
+          collection_log.txt
           requirements.txt
 
     - name: Report Status
@@ -178,5 +174,7 @@ jobs:
         echo "Job Status: ${{ job.status }}"
         echo "Collection Complete: ${{ steps.collect.outputs.total_records != '' }}"
         echo "Attestation Generated: ${{ steps.attest.outcome == 'success' }}"
-        cat "data/${TIMESTAMP}/run_status.json"
+        if [ -f "data/${{ env.timestamp }}/run_status.json" ]; then
+          cat "data/${{ env.timestamp }}/run_status.json"
+        fi
         echo "::endgroup::"
