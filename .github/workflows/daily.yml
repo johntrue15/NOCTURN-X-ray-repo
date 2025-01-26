@@ -127,8 +127,8 @@ jobs:
         files: |
           data/morphosource_data_complete.json
           data/new_records_details.json
-          ${{ steps.attest-complete.outputs.bundle-path }}
-          ${{ steps.attest-new.outputs.bundle-path }}
+          complete_dataset_attestation.json
+          new_records_attestation.json
 
     - name: Commit and push if changes
       if: steps.daily-check.outcome == 'failure'
