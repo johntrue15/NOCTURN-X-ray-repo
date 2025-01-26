@@ -1,0 +1,90 @@
+import json
+import os
+import sys
+from datetime import datetime
+import argparse
+import logging
+
+def setup_logging(log_dir):
+    """Configure logging to file and console"""
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(message)s',
+        handlers=[
+            logging.FileHandler(os.path.join(log_dir, 'test_collection.log')),
+            logging.StreamHandler()
+        ]
+    )
+
+def create_test_data(output_dir, record_count):
+    setup_logging(output_dir)
+    logger = logging.getLogger(__name__)
+    
+    logger.info(f"Creating {record_count} test records in {output_dir}")
+    
+    # Create test records
+    records = []
+    for i in range(record_count):
+        record = {
+            'id': f'test-{i}',
+            'title': f'Test Record {i}',
+            'url': f'https://example.com/record/{i}',
+            'metadata': {
+                'Object': f'Object-{i}',
+                'Publication Status': 'Test'
+            },
+            'scraped_date': datetime.now().isoformat()
+        }
+        records.append(record)
+    
+    # Create output directory
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Save data files with full paths
+    data_file = os.path.join(output_dir, 'morphosource_data_complete.json')
+    stats_file = os.path.join(output_dir, 'monthly_stats.json')
+    notes_file = os.path.join(output_dir, 'monthly_release_notes.txt')
+    
+    logger.info(f"Writing data files to {output_dir}")
+    
+    # Save complete dataset
+    with open(data_file, 'w') as f:
+        json.dump(records, f, indent=2)
+    
+    # Save stats
+    stats = {
+        'total_records': len(records),
+        'modified_records': 0,
+        'new_records': len(records),
+        'collection_date': datetime.now().isoformat()
+    }
+    with open(stats_file, 'w') as f:
+        json.dump(stats, f, indent=2)
+    
+    # Create release notes
+    release_notes = [
+        "# Test Collection Report\n",
+        f"Collection Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n",
+        "## Summary\n",
+        f"- Total Records: {len(records)}\n",
+        f"- Generated Records: {record_count}\n\n",
+        "## Attestations\n",
+        "<!-- ATTESTATION_URLS -->\n"
+    ]
+    
+    with open(notes_file, 'w') as f:
+        f.writelines(release_notes)
+    
+    # Log completion
+    logger.info(f"Successfully created {len(records)} test records")
+    return len(records)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Test Data Generator')
+    parser.add_argument('--output-dir', type=str, required=True,
+                    help='Directory to store output files')
+    parser.add_argument('--record-count', type=int, required=True,
+                    help='Number of test records to generate')
+    args = parser.parse_args()
+    
+    total_records = create_test_data(args.output_dir, args.record_count)
