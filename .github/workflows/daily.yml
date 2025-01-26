@@ -33,7 +33,7 @@ jobs:
     - name: Create data directory
       run: mkdir -p data
         
-    - name: Run daily check
+    - name: Run daily check #need to build in grabbing of latest timestamped folder in data, and then use that .json for comparison
       id: daily-check
       run: |
         python .github/scripts/daily.py
