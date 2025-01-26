@@ -78,6 +78,12 @@ jobs:
             --create-notes
         fi
 
+    - name: Copy Latest Data
+      if: steps.daily-check.outcome == 'failure'
+      run: |
+        cp "${{ steps.find-latest.outputs.dir }}/morphosource_data_complete.json" \
+           "data/${{ env.timestamp }}/morphosource_data_complete.json"
+
     - name: Generate Attestation
       if: steps.daily-check.outcome == 'failure'
       uses: actions/attest@v2.1.0

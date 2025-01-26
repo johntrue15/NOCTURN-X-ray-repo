@@ -156,6 +156,26 @@ def create_no_changes_release_notes(output_dir: str, source_dir: str, logger):
         logger.error(f"Error creating release notes: {e}")
         raise
 
+def create_new_records_release_notes(output_dir: str, daily_info: dict, logger):
+    """Create release notes for when new records are found"""
+    release_notes_path = os.path.join(output_dir, 'release_notes.txt')
+    try:
+        with open(release_notes_path, 'w') as f:
+            f.write("# Daily Check Report\n")
+            f.write(f"Check Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+            f.write("## Summary\n")
+            f.write("New records found - collection needed\n\n")
+            f.write("## Latest Record\n")
+            f.write(f"Record ID: {daily_info['latest_record_id']}\n")
+            f.write("\n## Attestations\n")
+            f.write("<!-- ATTESTATION_URLS -->\n")
+            
+        logger.info(f"Created 'new records' release notes at: {release_notes_path}")
+        
+    except Exception as e:
+        logger.error(f"Error creating release notes: {e}")
+        raise
+
 def main():
     parser = argparse.ArgumentParser(description='Daily MorphoSource Check')
     parser.add_argument('--data-dir', type=str, required=True,
@@ -174,6 +194,7 @@ def main():
             return 0
             
         # Normal daily check flow
+        base_url = "https://www.morphosource.org/catalog/media?locale=en&per_page=100&q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc"
         extractor = DailyMorphoSourceExtractor(base_url, data_dir=args.data_dir)
         has_new_records = extractor.run()
         
@@ -185,12 +206,13 @@ def main():
             'latest_record_id': extractor.latest_webpage_record['id'] if hasattr(extractor, 'latest_webpage_record') else None
         }
         
-        # Save daily info
+        # Save daily info and create appropriate release notes
         os.makedirs(args.output_dir, exist_ok=True)
         with open(os.path.join(args.output_dir, 'daily_info.json'), 'w') as f:
             json.dump(daily_info, f, indent=2)
-        
+            
         if has_new_records:
+            create_new_records_release_notes(args.output_dir, daily_info, extractor.logger)
             print("New records found - ready for collection")
             sys.exit(1)  # Signal that new records are available
         else:
