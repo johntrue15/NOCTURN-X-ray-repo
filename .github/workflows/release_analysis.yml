@@ -5,6 +5,11 @@ on:
     - cron: '0 0 * * 0'  # Runs weekly on Sunday at midnight
   workflow_dispatch:      # Allows manual trigger
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
 jobs:
   analyze-releases:
     runs-on: ubuntu-latest
@@ -34,137 +39,189 @@ jobs:
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
 
+      - name: Create Wiki Directory
+        run: mkdir -p wiki
+
       - name: Clone Wiki
-        run: |
-          git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/$GITHUB_REPOSITORY.wiki.git" wiki
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Generate initial wiki content
         run: |
-          python3 << 'ENDPYTHON'
+          git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" wiki || {
+            echo "Wiki not initialized - creating first page"
+            cd wiki
+            git init
+            echo "# Project Wiki" > Home.md
+            git add Home.md
+            git commit -m "Initialize wiki"
+            git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git"
+            git push -u origin master
+          }
+
+      - name: Create Scripts Directory
+        run: mkdir -p .github/scripts
+
+      - name: Create Wiki Generator Script
+        run: |
+          cat > .github/scripts/generate_wiki.py << 'EOF'
           import os
-          import datetime
+          import sys
+          from datetime import datetime, timedelta
           from github import Github
           from pathlib import Path
           
-          # Initialize GitHub client
-          g = Github(os.environ['GITHUB_TOKEN'])
-          repo = g.get_repo(os.environ['GITHUB_REPOSITORY'])
-          
-          # Create wiki directory if it doesn't exist
-          wiki_dir = Path('wiki')
-          wiki_dir.mkdir(exist_ok=True)
-          
-          # Get all releases
-          try:
-              releases = list(repo.get_releases())
-              releases.sort(key=lambda x: x.created_at, reverse=True)
-          except Exception as e:
-              print(f"Error fetching releases: {str(e)}")
-              releases = []
-          
-          # Group releases by week
-          weekly_releases = {}
-          for release in releases:
-              week_start = release.created_at.date() - datetime.timedelta(days=release.created_at.weekday())
-              if week_start not in weekly_releases:
-                  weekly_releases[week_start] = []
-              weekly_releases[week_start].append(release)
-          
-          # Generate wiki content for each week
-          for week_start, week_releases in weekly_releases.items():
-              week_end = week_start + datetime.timedelta(days=6)
-              page_title = f"Releases-{week_start.strftime('%Y-%m-%d')}"
-              file_path = wiki_dir / f"{page_title}.md"
-              
-              content = f"# Release Summary for Week of {week_start.strftime('%B %d, %Y')}\n\n"
-              
-              # Add overview statistics
-              content += "## Overview\n"
-              content += f"- Total releases this week: {len(week_releases)}\n"
-              content += f"- Period: {week_start.strftime('%B %d')} - {week_end.strftime('%B %d, %Y')}\n\n"
-              
-              # Detailed release information
-              content += "## Release Details\n\n"
-              for release in week_releases:
-                  content += f"### {release.title}\n"
-                  content += f"- Tag: `{release.tag_name}`\n"
-                  content += f"- Released: {release.created_at.strftime('%B %d, %Y %H:%M UTC')}\n"
-                  if hasattr(release.author, 'login'):
-                      content += f"- Author: @{release.author.login}\n"
+          def main():
+              # Initialize GitHub client with token from environment
+              token = os.getenv('GITHUB_TOKEN')
+              if not token:
+                  print("Error: GITHUB_TOKEN not found")
+                  sys.exit(1)
                   
-                  # Add release notes if available
-                  if release.body:
-                      content += "\n#### Release Notes\n"
-                      content += f"{release.body}\n"
+              repo_name = os.getenv('GITHUB_REPOSITORY')
+              if not repo_name:
+                  print("Error: GITHUB_REPOSITORY not found")
+                  sys.exit(1)
+              
+              try:
+                  g = Github(token)
+                  repo = g.get_repo(repo_name)
                   
-                  content += "\n"
+                  # Create wiki directory if it doesn't exist
+                  wiki_dir = Path('wiki')
+                  wiki_dir.mkdir(exist_ok=True)
+                  
+                  # Get all releases
+                  releases = list(repo.get_releases())
+                  releases.sort(key=lambda x: x.created_at, reverse=True)
+                  
+                  # Group releases by week
+                  weekly_releases = {}
+                  for release in releases:
+                      week_start = release.created_at.date() - timedelta(days=release.created_at.weekday())
+                      if week_start not in weekly_releases:
+                          weekly_releases[week_start] = []
+                      weekly_releases[week_start].append(release)
+                  
+                  # Generate wiki content for each week
+                  for week_start, week_releases in weekly_releases.items():
+                      week_end = week_start + timedelta(days=6)
+                      page_title = f"Releases-{week_start.strftime('%Y-%m-%d')}"
+                      file_path = wiki_dir / f"{page_title}.md"
+                      
+                      content = f"# Release Summary for Week of {week_start.strftime('%B %d, %Y')}\n\n"
+                      
+                      # Add overview statistics
+                      content += "## Overview\n"
+                      content += f"- Total releases this week: {len(week_releases)}\n"
+                      content += f"- Period: {week_start.strftime('%B %d')} - {week_end.strftime('%B %d, %Y')}\n\n"
+                      
+                      # Detailed release information
+                      content += "## Release Details\n\n"
+                      for release in week_releases:
+                          content += f"### {release.title}\n"
+                          content += f"- Tag: `{release.tag_name}`\n"
+                          content += f"- Released: {release.created_at.strftime('%B %d, %Y %H:%M UTC')}\n"
+                          if hasattr(release.author, 'login'):
+                              content += f"- Author: @{release.author.login}\n"
+                          
+                          if release.body:
+                              content += "\n#### Release Notes\n"
+                              content += f"{release.body}\n"
+                          
+                          content += "\n"
+                      
+                      # Write content to file
+                      file_path.write_text(content, encoding='utf-8')
+                      
+                      # Save current week's content for AI analysis
+                      if week_start == max(weekly_releases.keys()):
+                          with open('current_week_releases.txt', 'w', encoding='utf-8') as f:
+                              f.write(content)
+                  
+                  return True
               
-              # Write content to file
-              file_path.write_text(content, encoding='utf-8')
-              
-              # Save the content for AI analysis
-              with open('current_week_releases.txt', 'w', encoding='utf-8') as f:
-                  f.write(content)
-          ENDPYTHON
+              except Exception as e:
+                  print(f"Error generating wiki content: {str(e)}")
+                  return False
 
-      - name: Run AI analysis
-        run: |
-          # Copy release analyzer script
-          cp .github/scripts/release_analyzer.py .
-          
-          # Run the analyzer
-          python release_analyzer.py
+          if __name__ == "__main__":
+              success = main()
+              sys.exit(0 if success else 1)
+          EOF
+
+      - name: Generate Wiki Content
+        run: python .github/scripts/generate_wiki.py
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Release Analyzer
+        if: success()
+        run: python release_analyzer.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
-      - name: Generate summary with AI insights
+      - name: Update Index with AI Analysis
+        if: success()
         run: |
-          python3 << 'ENDPYTHON'
-          import os
+          python3 << 'EOF'
           from pathlib import Path
+          import os
           
-          # Read AI analysis results
-          with open('claude_prompt.txt', 'r') as f:
-              claude_analysis = f.read()
-          
-          with open('openai_prompt.txt', 'r') as f:
-              openai_analysis = f.read()
-          
-          # Read existing release summaries
-          wiki_dir = Path('wiki')
-          summaries = []
-          for path in wiki_dir.glob('Releases-*.md'):
-              summaries.append(path.stem)
-          
-          # Sort weeks in reverse chronological order
-          summaries.sort(reverse=True)
-          
-          # Generate enhanced index content
-          index_content = "# Release Summaries Index\n\n"
-          index_content += "This page contains links to all weekly release summaries.\n\n"
-          
-          # Add AI insights for the latest week
-          index_content += "## Latest Week AI Analysis\n\n"
-          index_content += "### Claude Analysis\n"
-          index_content += claude_analysis + "\n\n"
-          index_content += "### OpenAI Analysis\n"
-          index_content += openai_analysis + "\n\n"
-          
-          # Add links to all summaries
-          index_content += "## Weekly Summaries\n\n"
-          for summary in summaries:
-              week_date = summary.split('-')[1]
-              index_content += f"- [{week_date}]({summary})\n"
-          
-          # Write enhanced index page
-          index_path = wiki_dir / "Release-Summaries.md"
-          index_path.write_text(index_content, encoding='utf-8')
-          ENDPYTHON
+          try:
+              # Read AI analysis results
+              claude_analysis = ""
+              openai_analysis = ""
+              
+              if os.path.exists('claude_prompt.txt'):
+                  with open('claude_prompt.txt', 'r') as f:
+                      claude_analysis = f.read()
+              
+              if os.path.exists('openai_prompt.txt'):
+                  with open('openai_prompt.txt', 'r') as f:
+                      openai_analysis = f.read()
+              
+              # Read existing release summaries
+              wiki_dir = Path('wiki')
+              summaries = []
+              for path in wiki_dir.glob('Releases-*.md'):
+                  summaries.append(path.stem)
+              
+              # Sort weeks in reverse chronological order
+              summaries.sort(reverse=True)
+              
+              # Generate enhanced index content
+              index_content = "# Release Summaries Index\n\n"
+              index_content += "This page contains links to all weekly release summaries.\n\n"
+              
+              # Add AI insights if available
+              if claude_analysis or openai_analysis:
+                  index_content += "## Latest Week AI Analysis\n\n"
+                  
+                  if claude_analysis:
+                      index_content += "### Claude Analysis\n"
+                      index_content += claude_analysis + "\n\n"
+                  
+                  if openai_analysis:
+                      index_content += "### OpenAI Analysis\n"
+                      index_content += openai_analysis + "\n\n"
+              
+              # Add links to all summaries
+              index_content += "## Weekly Summaries\n\n"
+              for summary in summaries:
+                  week_date = summary.split('-')[1]
+                  index_content += f"- [{week_date}]({summary})\n"
+              
+              # Write enhanced index page
+              index_path = wiki_dir / "Release-Summaries.md"
+              index_path.write_text(index_content, encoding='utf-8')
+              
+          except Exception as e:
+              print(f"Error updating index: {str(e)}")
+              exit(1)
+          EOF
 
-      - name: Commit and push wiki changes
+      - name: Commit and Push Wiki Changes
         run: |
           cd wiki
           git add .
