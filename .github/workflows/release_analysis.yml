@@ -1,8 +1,8 @@
 name: Release Analysis and Wiki Generation
 
 on:
-  schedule:
-    - cron: '0 0 * * 0'  # Runs weekly on Sunday at midnight
+ # schedule:
+ #   - cron: '0 0 * * 0'  # Runs weekly on Sunday at midnight
   workflow_dispatch:      # Allows manual trigger
 
 env:
