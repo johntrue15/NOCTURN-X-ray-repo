@@ -4,6 +4,18 @@ import re
 from pathlib import Path
 from datetime import datetime
 
+class WorkflowLoader(yaml.SafeLoader):
+    """Custom YAML loader that preserves the 'on' key"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Override the implicit resolver for 'on'
+        self.yaml_implicit_resolvers = {
+            k: [(tag, regexp) 
+                for tag, regexp in resolvers 
+                if not (tag == 'tag:yaml.org,2002:bool' and regexp.match('on'))]
+            for k, resolvers in self.yaml_implicit_resolvers.items()
+        }
+
 def parse_schedule(schedule):
     """Parse cron schedule to human readable format"""
     if not schedule:
@@ -141,10 +153,10 @@ def analyze_workflows():
         try:
             with open(workflow_file, 'r') as f:
                 content = f.read()
-                print(f"File contents:\n{content[:200]}...")  # Show first 200 chars
+                print(f"File contents:\n{content[:200]}...")
                 
-                # Use safe_load with explicit handling of 'on' key
-                workflow_content = yaml.safe_load(content)
+                # Use custom loader to handle 'on' key properly
+                workflow_content = yaml.load(content, Loader=WorkflowLoader)
                 if workflow_content is None:
                     print(f"Warning: Empty workflow file: {workflow_file}")
                     continue
