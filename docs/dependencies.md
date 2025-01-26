@@ -4,30 +4,61 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ## Scheduled Workflows
 
+### Monthly MorphoSource Collection (`monthly.yml`)
+**Schedule:** Cron: 0 0 1 * *
+**Required Scripts:**
+- `.github/scripts/monthly.py`
+
+### Daily MorphoSource Check (`daily.yml`)
+**Schedule:** Daily at midnight
+**Required Scripts:**
+- `.github/scripts/collect.py`
+- `.github/scripts/daily.py`
+
+### Wiki Generation (`wiki-generation.yml`)
+**Schedule:** Daily at midnight
+**Required Scripts:**
+- `.github/scripts/release_analysis.py`
+
+### Parse MorphoSource Data (`parse_morphosource.yml`)
+**Schedule:** Every 5 minutes
+**Required Scripts:**
+- `.github/scripts/scrape_morphosource.py`
+
 ## Other Workflows
 
 ### Auto Code Generation with Claude on Issue (`Claude_issue_automation.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/generate_code.py`
 
 ### OpenAI Release Analysis (`OpenAI-release-analysis.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/OpenAI-release-analysis.py`
 
 ### Analyze Workflow Dependencies (`analyze_dependencies.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/analyze_dependencies.py`
 
 ### Automated Slices to Text (`automated_slices_to_text.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/automated_slices_to_text.py`
 - `.github/scripts/move_slices_and_screenshots.py`
 
 ### Code Review and Analysis (`code_review_workflow.yml`)
+**Triggered by:**
+- `Auto Code Generation with Claude on Issue`
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/analyze_code.py`
 
 ### MorphoSource Analysis Workflow (`combined_ct_images_to_text.yml`)
+**Triggered by:**
+- `Parse MorphoSource Data`
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/2D3D_check.py`
 - `.github/scripts/ct_image_to_text.py`
@@ -35,6 +66,7 @@ This document shows the relationships between GitHub Actions workflows and their
 - `.github/scripts/url_screenshot_check.py`
 
 ### MorphoSource Analysis Workflow (`combined_ct_images_to_text_old.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/2D3D_check.py`
 - `.github/scripts/2D_screenshot.py`
@@ -42,6 +74,7 @@ This document shows the relationships between GitHub Actions workflows and their
 - `.github/scripts/url_screenshot_check.py`
 
 ### MorphoSource URL and Screenshot Check (`combined_url_check_screenshot.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/2D3D_check.py`
 - `.github/scripts/2D_screenshot.py`
@@ -49,59 +82,57 @@ This document shows the relationships between GitHub Actions workflows and their
 - `.github/scripts/url_screenshot_check.py`
 
 ### CT Images to Text (`ct_images_to_text.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/ct_image_to_text.py`
 - `.github/scripts/extract_url.py`
 - `.github/scripts/get_morphosource_release.py`
 
 ### CT to Text (`ct_to_text.yml`)
+**Triggered by:**
+- `Parse MorphoSource Data`
 **Required Scripts:**
 - `.github/scripts/ct_to_text.py`
 
-### Daily MorphoSource Check (`daily.yml`)
-**Required Scripts:**
-- `.github/scripts/collect.py`
-- `.github/scripts/daily.py`
-
 ### 2D or 3D Selenium Fullscreen Test (`dimension_test.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/selenium_fullscreen_test2D.py`
 - `.github/scripts/selenium_fullscreen_test3D.py`
 
 ### Metadata Record Extractor (`metadata_record_extract.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/metadata_record_extract.py`
 
-### Monthly MorphoSource Collection (`monthly.yml`)
-**Required Scripts:**
-- `.github/scripts/monthly.py`
-
 ### Move Slices with Selenium (`move_slices.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/move_slices_and_screenshots.py`
 
-### Parse MorphoSource Data (`parse_morphosource.yml`)
-**Required Scripts:**
-- `.github/scripts/scrape_morphosource.py`
-
 ### Release Analysis and Wiki Generation (`release_analysis.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/release_analysis.py`
 - `.github/scripts/release_analyzer.py`
 
 ### Test New Morphosource Release URL Screenshot (`selenium_screenshot.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/selenium_screenshot.py`
 
 ### Selenium Screenshot New Workflow (`selenium_screenshot_new.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/selenium_screenshot_new.py`
 
 ### Run Selenium Fullscreen Test (`selenium_test.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/selenium_fullscreen_test.py`
 
 ### Test URL Processing Workflow (`test-run-run.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/2D3D_check.py`
 - `.github/scripts/ct_image_to_text.py`
@@ -109,36 +140,39 @@ This document shows the relationships between GitHub Actions workflows and their
 - `.github/scripts/url_screenshot_check.py`
 
 ### 3D Screenshot Tests (`test_3d_screenshot.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/test_3D_screenshot.py`
 
 ### Test 3D Screenshot with Prompt (`test_3d_screenshot_prompt.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/analyze_ct_images.py`
 - `.github/scripts/test_3D_screenshot.py`
 
 ### Test MorphoSource Screenshots Analysis (`test_3d_screenshots_prompt.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/ct_image_to_text.py`
 
 ### Test Workflow (`test_commit_workflow.yml`)
+**Manual trigger available**
 
 ### Test Daily Check (`test_daily.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/daily.py`
 - `.github/scripts/test_daily.py`
 
 ### Test Monthly Collection (`test_monthly.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/test_monthly.py`
 
 ### URL Screenshot Check for 2D/3D (`url_screenshot_check.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/url_screenshot_check.py`
-
-### Wiki Generation (`wiki-generation.yml`)
-**Required Scripts:**
-- `.github/scripts/release_analysis.py`
 
 ## Scripts and Their Workflows
 
