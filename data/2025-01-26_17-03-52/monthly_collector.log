@@ -1,0 +1,9 @@
+2025-01-26 17:03:52,274 - INFO - Initialized collector with output directory: data/2025-01-26_17-03-52
+2025-01-26 17:03:52,274 - INFO - Loading existing data from data/morphosource_data_complete.json
+2025-01-26 17:03:52,274 - INFO - Created backup at: data/2025-01-26_17-03-52/previous_data.json
+2025-01-26 17:03:52,275 - INFO - Loaded 5 existing records
+2025-01-26 17:03:52,275 - INFO - Processing page 1
+2025-01-26 17:03:56,426 - INFO - Processing page 2
+2025-01-26 17:04:02,705 - INFO - Processing page 3
+2025-01-26 17:04:06,953 - INFO - Processing page 4
+2025-01-26 17:04:12,381 - INFO - Processing page 5
