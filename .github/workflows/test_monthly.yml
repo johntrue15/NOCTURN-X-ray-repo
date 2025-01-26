@@ -254,6 +254,7 @@ jobs:
           data/${{ env.timestamp }}/morphosource_data_complete.json
           data/${{ env.timestamp }}/monthly_stats.json
           data/${{ env.timestamp }}/run_status.json
+          data/${{ env.timestamp }}/attestation.json
 
     - name: Upload detailed logs
       if: always()
