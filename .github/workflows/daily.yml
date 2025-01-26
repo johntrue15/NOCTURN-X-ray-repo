@@ -70,8 +70,12 @@ jobs:
 
     - name: Create Release Notes
       if: always()
+      env:
+        LATEST_DATA_DIR: ${{ steps.find-latest.outputs.dir }}
+        CURRENT_DIR: data/${{ env.timestamp }}
       run: |
         if [ "${{ steps.daily-check.outcome }}" == "success" ]; then
+          echo "Creating no-changes release notes"
           python .github/scripts/daily.py \
             --data-dir "$LATEST_DATA_DIR" \
             --output-dir "$CURRENT_DIR" \

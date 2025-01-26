@@ -143,8 +143,21 @@ class DailyMorphoSourceExtractor:
 
 def create_no_changes_release_notes(output_dir: str, source_dir: str, logger):
     """Create release notes for when no changes are found"""
-    release_notes_path = os.path.join(output_dir, 'release_notes.txt')
     try:
+        # Create daily info
+        daily_info = {
+            'check_date': datetime.now().isoformat(),
+            'source_dir': source_dir,
+            'has_new_records': False,
+            'latest_record_id': None
+        }
+        
+        # Save daily info
+        with open(os.path.join(output_dir, 'daily_info.json'), 'w') as f:
+            json.dump(daily_info, f, indent=2)
+            
+        # Create release notes
+        release_notes_path = os.path.join(output_dir, 'release_notes.txt')
         with open(release_notes_path, 'w') as f:
             f.write("# Daily Check Report\n")
             f.write(f"Check Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
@@ -189,11 +202,21 @@ def main():
     args = parser.parse_args()
     
     try:
+        # Validate directories
+        if not args.data_dir:
+            raise ValueError("data-dir cannot be empty")
+        if not args.output_dir:
+            raise ValueError("output-dir cannot be empty")
+            
         # Create output directory
         os.makedirs(args.output_dir, exist_ok=True)
         logger = setup_logging(args.output_dir)
         
+        logger.info(f"Data directory: {args.data_dir}")
+        logger.info(f"Output directory: {args.output_dir}")
+        
         if args.create_notes:
+            logger.info("Creating no-changes release notes")
             create_no_changes_release_notes(args.output_dir, args.data_dir, logger)
             return 0
             
