@@ -41,16 +41,24 @@ jobs:
         echo "python_version=$(python --version)" >> $GITHUB_OUTPUT
         echo "requirements_hash=$(md5sum requirements.txt | cut -d' ' -f1)" >> $GITHUB_OUTPUT
 
-    - name: Set timestamp
-      id: timestamp
+    - name: Verify Environment
+      id: verify
       run: |
-        TIMESTAMP=$(date +'%Y-%m-%d_%H-%M-%S')
-        echo "timestamp=$TIMESTAMP" >> $GITHUB_ENV
-        echo "Timestamp set to: $TIMESTAMP"
+        echo "::group::System Information"
+        uname -a
+        echo "::endgroup::"
+        
+        echo "::group::Python Environment"
+        echo "Python: ${{ steps.install.outputs.python_version }}"
+        echo "Requirements Hash: ${{ steps.install.outputs.requirements_hash }}"
+        echo "::endgroup::"
+        
+        echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_ENV
+        echo "run_id=${GITHUB_RUN_ID}" >> $GITHUB_OUTPUT
 
     - name: Create data directories
       run: |
-        mkdir -p "data/${{ env.timestamp }}"
+        mkdir -p "data/${TIMESTAMP}"
 
     - name: Verify script
       run: |
@@ -62,26 +70,29 @@ jobs:
       id: collect
       run: |
         echo "::group::Starting Collection"
-        echo "Run ID: ${{ github.run_id }}"
-        echo "Timestamp: ${{ env.timestamp }}"
+        echo "Run ID: ${{ steps.verify.outputs.run_id }}"
+        echo "Timestamp: ${TIMESTAMP}"
+        echo "Output Directory: data/${TIMESTAMP}"
         echo "::endgroup::"
         
-        # Run collection script with verbose output
-        python -v .github/scripts/monthly.py --output-dir "data/${{ env.timestamp }}" 2>&1 | tee collection_log.txt
+        # Run with verbose output
+        python -v .github/scripts/monthly.py --output-dir "data/${TIMESTAMP}" 2>&1 | tee collection_log.txt
         
-        # Show directory contents
-        echo "::group::Directory Contents"
-        ls -R data/
+        # Check if files were created
+        echo "::group::Checking Output Files"
+        ls -la "data/${TIMESTAMP}" || echo "No files created"
         echo "::endgroup::"
         
-        # Get collection stats
-        if [ -f "data/${{ env.timestamp }}/monthly_stats.json" ]; then
-          echo "total_records=$(jq '.total_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
-          echo "modified_records=$(jq '.modified_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
+        # Get collection stats if file exists
+        if [ -f "data/${TIMESTAMP}/monthly_stats.json" ]; then
+          echo "total_records=$(jq '.total_records' "data/${TIMESTAMP}/monthly_stats.json")" >> $GITHUB_OUTPUT
+          echo "modified_records=$(jq '.modified_records' "data/${TIMESTAMP}/monthly_stats.json")" >> $GITHUB_OUTPUT
         else
-          echo "Warning: monthly_stats.json not found"
-          find data -type f -name "monthly_stats.json"
+          echo "Warning: monthly_stats.json not created"
         fi
+
+        # Save log file
+        mv collection_log.txt "data/${TIMESTAMP}/collection_log.txt" || true
 
     - name: Generate Collection Summary
       if: always()
@@ -123,28 +134,30 @@ jobs:
     - name: Create Status Files
       if: always()
       run: |
-        echo "::group::Creating Status Files"
         # Create run status file
         jq -n \
           --arg status "${{ job.status }}" \
           --arg timestamp "${{ env.timestamp }}" \
-          --arg run_id "${{ github.run_id }}" \
+          --arg run_id "${{ steps.verify.outputs.run_id }}" \
           --arg python "${{ steps.install.outputs.python_version }}" \
           --arg reqs "${{ steps.install.outputs.requirements_hash }}" \
           '{status: $status, timestamp: $timestamp, run_id: $run_id, python_version: $python, requirements_hash: $reqs}' \
-          > "data/${{ env.timestamp }}/run_status.json"
-        echo "::endgroup::"
+          > "data/${TIMESTAMP}/run_status.json"
 
     - name: Commit data files
-      if: always()
+      if: always()  # Run even if previous steps failed to capture logs
       run: |
-        # Show directory contents
+        # Show what files exist
         echo "::group::Files in data directory"
         ls -R data/
         echo "::endgroup::"
         
+        # Configure git
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
         # Add everything in the timestamped directory
-        git add -f "data/${{ env.timestamp }}/"
+        git add -f "data/${TIMESTAMP}/"
         
         # Show what will be committed
         echo "::group::Git Status"
@@ -155,7 +168,7 @@ jobs:
         if git diff --staged --quiet; then
           echo "No changes to commit"
         else
-          git commit -m "Update MorphoSource data [${{ env.timestamp }}]"
+          git commit -m "Update MorphoSource data [${TIMESTAMP}]"
           git push origin HEAD:main
         fi
 
@@ -179,8 +192,9 @@ jobs:
       with:
         name: monthly-execution-logs-${{ env.timestamp }}
         path: |
-          data/${{ env.timestamp }}/*
-          collection_log.txt
+          data/${{ env.timestamp }}/monthly_collector.log
+          data/${{ env.timestamp }}/monthly_stats.json
+          data/${{ env.timestamp }}/run_status.json
           requirements.txt
 
     - name: Report Status
@@ -190,7 +204,5 @@ jobs:
         echo "Job Status: ${{ job.status }}"
         echo "Collection Complete: ${{ steps.collect.outputs.total_records != '' }}"
         echo "Attestation Generated: ${{ steps.attest.outcome == 'success' }}"
-        if [ -f "data/${{ env.timestamp }}/run_status.json" ]; then
-          cat "data/${{ env.timestamp }}/run_status.json"
-        fi
+        cat "data/${TIMESTAMP}/run_status.json"
         echo "::endgroup::"
