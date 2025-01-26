@@ -1,0 +1,12 @@
+# Test Collection Report
+Collection Date: 2025-01-26 16:48:06
+
+## Summary
+- Total Records: 5
+- Generated Records: 5
+
+## Attestations
+<!-- ATTESTATION_URLS -->
+
+## Details
+This is a test collection of generated records.
