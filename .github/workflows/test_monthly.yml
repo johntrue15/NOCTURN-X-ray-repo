@@ -127,11 +127,12 @@ jobs:
         fi
         
         # Fetch the attestation page and extract SHA256
-        DIGEST=$(curl -s "$ATT_URL" | grep -A2 "Subjects" | grep "sha256:" | awk '{print $2}')
+        DIGEST=$(curl -s "$ATT_URL" | grep -A2 "Subjects" | grep "sha256:" | sed 's/.*sha256:\([a-f0-9]\{64\}\).*/\1/')
         echo "SHA256 Digest: $DIGEST"
         
-        if [ -z "$DIGEST" ]; then
-          echo "Error: Could not extract SHA256 digest"
+        # Validate that we got a proper SHA256 (64 hex characters)
+        if ! [[ $DIGEST =~ ^[a-f0-9]{64}$ ]]; then
+          echo "Error: Invalid SHA256 digest format"
           exit 1
         fi
         
