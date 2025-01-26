@@ -14,16 +14,18 @@ def parse_schedule(schedule):
     if len(cron_parts) != 5:
         return schedule[0]
         
-    frequency = []
-    if cron_parts[0] == '0' and cron_parts[1] == '0':  # Daily at midnight
-        if cron_parts[2] == '*':
-            frequency.append("Daily")
-    elif cron_parts[2] == '1':  # First day of month
-        frequency.append("Monthly")
+    minute, hour, day_month, month, day_week = cron_parts
     
-    if frequency:
-        return f"{', '.join(frequency)} at {cron_parts[1]}:{cron_parts[0]}"
-    return schedule[0]
+    if minute == '*/5':  # Every 5 minutes
+        return "Every 5 minutes"
+    elif minute == '0' and hour == '0':  # Daily at midnight
+        if day_month == '*':
+            return "Daily at midnight"
+    elif day_month == '1':  # First day of month
+        return f"Monthly on day 1 at {hour}:{minute}"
+    
+    # Return raw cron if no pattern matched
+    return f"Cron: {schedule[0]}"
 
 def find_python_scripts(workflow_content):
     """Extract Python script references from workflow content"""
@@ -53,7 +55,8 @@ def analyze_workflow_triggers(workflow_content):
     triggers = {
         'schedule': None,
         'workflow_dependencies': [],
-        'manual': False
+        'manual': False,
+        'workflow_run_triggers': []  # Add this to track what workflows this one triggers
     }
     
     if not isinstance(workflow_content, dict) or 'on' not in workflow_content:
@@ -61,19 +64,26 @@ def analyze_workflow_triggers(workflow_content):
         
     on = workflow_content['on']
     
-    # Check schedule
-    if isinstance(on, dict) and 'schedule' in on:
-        triggers['schedule'] = parse_schedule(on['schedule'])
-    
-    # Check workflow dependencies
-    if isinstance(on, dict) and 'workflow_run' in on:
-        workflow_run = on['workflow_run']
-        if isinstance(workflow_run, dict):
-            workflows = workflow_run.get('workflows', [])
-            if isinstance(workflows, str):
-                triggers['workflow_dependencies'].append(workflows)
-            elif isinstance(workflows, list):
-                triggers['workflow_dependencies'].extend(workflows)
+    # Check schedule - handle both commented and uncommented
+    if isinstance(on, dict):
+        if 'schedule' in on:
+            schedule_data = on['schedule']
+            if isinstance(schedule_data, list):
+                for item in schedule_data:
+                    if isinstance(item, dict) and 'cron' in item:
+                        cron = item['cron']
+                        if not cron.strip().startswith('#'):  # Check if not commented
+                            triggers['schedule'] = parse_schedule([cron])
+        
+        # Check workflow_run triggers
+        if 'workflow_run' in on:
+            workflow_run = on['workflow_run']
+            if isinstance(workflow_run, dict):
+                workflows = workflow_run.get('workflows', [])
+                if isinstance(workflows, str):
+                    triggers['workflow_dependencies'].append(workflows)
+                elif isinstance(workflows, list):
+                    triggers['workflow_dependencies'].extend(workflows)
     
     # Check manual trigger
     if isinstance(on, dict) and 'workflow_dispatch' in on:
@@ -122,7 +132,7 @@ def generate_markdown(workflow_info):
         ""
     ]
     
-    # First list scheduled workflows
+    # First list scheduled workflows with their dependencies
     scheduled_workflows = {name: info for name, info in workflow_info.items() if info['schedule']}
     sorted_scheduled = sorted(scheduled_workflows.items(), 
                             key=lambda x: (x[1]['schedule'] or "", x[0]))
@@ -135,13 +145,18 @@ def generate_markdown(workflow_info):
             for script in info['scripts']:
                 lines.append(f"- `.github/scripts/{script}`")
         
-        # Add dependent workflows
+        # Add dependent workflows as a tree
         dependent_workflows = [name for name, w_info in workflow_info.items() 
                              if workflow_name in w_info['workflow_dependencies']]
         if dependent_workflows:
             lines.append("**Triggers Workflows:**")
             for dep in sorted(dependent_workflows):
                 lines.append(f"- `{dep}`")
+                # Add second-level dependencies
+                second_level = [name for name, w_info in workflow_info.items() 
+                              if dep in w_info['workflow_dependencies']]
+                for sub_dep in sorted(second_level):
+                    lines.append(f"  - `{sub_dep}`")
         lines.append("")
     
     # Then list other workflows
