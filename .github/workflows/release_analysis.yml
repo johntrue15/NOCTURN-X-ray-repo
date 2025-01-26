@@ -62,10 +62,27 @@ jobs:
             --wiki-dir "wiki" \
             --debug
 
+      - name: Prepare Release Data for Analysis
+        if: success()
+        run: |
+          # Get latest release summary file
+          LATEST_RELEASE=$(ls -t wiki/Releases-*.md | head -1)
+          if [ -f "$LATEST_RELEASE" ]; then
+            cp "$LATEST_RELEASE" release_summary.txt
+            echo "Copied $LATEST_RELEASE to release_summary.txt"
+          else
+            echo "No release summary files found"
+            exit 1
+          fi
+
       - name: Run AI Analysis
         if: success()
         run: |
-          python .github/scripts/release_analyzer.py
+          python .github/scripts/release_analyzer.py \
+            --token "${{ secrets.GITHUB_TOKEN }}" \
+            --repository "$GITHUB_REPOSITORY" \
+            --wiki-dir "wiki" \
+            --debug
 
       - name: Generate Enhanced Index
         if: success()
