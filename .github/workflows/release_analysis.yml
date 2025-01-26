@@ -42,7 +42,7 @@ jobs:
 
       - name: Run release analysis
         run: |
-          python release_analysis.py \
+          python .github/scripts/release_analysis.py \
             --token "${{ secrets.GITHUB_TOKEN }}" \
             --repository "$GITHUB_REPOSITORY" \
             --wiki-dir "wiki" \
