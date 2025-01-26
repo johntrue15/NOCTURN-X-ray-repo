@@ -7,19 +7,25 @@ from datetime import datetime
 def parse_schedule(schedule):
     """Parse cron schedule to human readable format"""
     if not schedule:
+        print("No schedule to parse")
         return None
     
-    # Basic cron interpretation - can be expanded
+    print(f"Parsing schedule: {schedule}")
     cron_parts = schedule[0].split()
+    print(f"Cron parts: {cron_parts}")
+    
     if len(cron_parts) != 5:
+        print(f"Invalid cron parts length: {len(cron_parts)}")
         return schedule[0]
         
     minute, hour, day_month, month, day_week = cron_parts
+    print(f"Parsed parts: minute={minute}, hour={hour}, day_month={day_month}, month={month}, day_week={day_week}")
     
     if minute == '*/5':  # Every 5 minutes
         return "Every 5 minutes"
     elif minute == '0' and hour == '0':  # Daily at midnight
         if day_month == '*':
+            print("Detected: Daily at midnight")
             return "Daily at midnight"
     elif day_month == '1':  # First day of month
         return f"Monthly on day 1 at {hour}:{minute}"
@@ -60,28 +66,42 @@ def analyze_workflow_triggers(workflow_content):
     }
     
     if not isinstance(workflow_content, dict) or 'on' not in workflow_content:
+        print(f"No 'on' field found in workflow")
         return triggers
         
     on = workflow_content['on']
+    print(f"\nAnalyzing triggers for: {workflow_content.get('name', 'unnamed')}")
+    print(f"'on' content type: {type(on)}")
+    print(f"'on' content: {on}")
     
     # Check schedule - handle different formats
     if isinstance(on, dict):
         if 'schedule' in on:
             schedule_data = on['schedule']
+            print(f"Found schedule data type: {type(schedule_data)}")
+            print(f"Found schedule data: {schedule_data}")
             # Handle list of schedules
             if isinstance(schedule_data, list):
                 for item in schedule_data:
+                    print(f"Checking schedule item type: {type(item)}")
+                    print(f"Checking schedule item: {item}")
                     # Handle direct cron string
                     if isinstance(item, dict) and 'cron' in item:
                         cron = item['cron'].strip('"\'')  # Remove quotes
+                        print(f"Found cron: {cron}")
                         if not cron.startswith('#'):  # Not commented
-                            triggers['schedule'] = parse_schedule([cron])
+                            schedule = parse_schedule([cron])
+                            print(f"Parsed schedule: {schedule}")
+                            triggers['schedule'] = schedule
                             break
             # Handle single schedule
             elif isinstance(schedule_data, dict) and 'cron' in schedule_data:
                 cron = schedule_data['cron'].strip('"\'')
+                print(f"Found single cron: {cron}")
                 if not cron.startswith('#'):
-                    triggers['schedule'] = parse_schedule([cron])
+                    schedule = parse_schedule([cron])
+                    print(f"Parsed schedule: {schedule}")
+                    triggers['schedule'] = schedule
     
     # Check workflow_run triggers
     if isinstance(on, dict) and 'workflow_run' in on:
