@@ -1,42 +1,4 @@
-- name: Run test collection
-      id: collect
-      run: |
-        echo "::group::Starting Test Collection"
-        echo "Run ID: ${{ github.run_id }}"
-        echo "Timestamp: ${{ env.timestamp }}"
-        echo "Records to generate: ${{ github.event.inputs.record_count }}"
-        echo "::endgroup::"
-        
-        # Run with verbose output
-        python -u test_collection.py \
-          --output-dir "data/${{ env.timestamp }}" \
-          --record-count "${{ github.event.inputs.record_count }}" \
-          2>&1 | tee collection_log.txt
-        
-        # Show directory contents
-        echo "::group::Directory Contents"
-        ls -R data/
-        echo "::endgroup::"
-        
-        # Get collection stats
-        if [ -f "data/${{ env.timestamp }}/monthly_stats.json" ]; then
-          echo "total_records=$(jq '.total_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
-          echo "modified_records=$(jq '.modified_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
-        else
-          echo "Warning: monthly_stats.json not found"
-          find data -type f -name "monthly_stats.json"
-        fi
-
-    - name: Generate Collection Summary
-      if: always()
-      run: |
-        echo "::group::Collection Summary"
-        echo "Total Records: ${{ steps.collect.outputs.total_records || 'N/A' }}"
-        echo "Modified Records: ${{ steps.collect.outputs.modified_records || 'N/A' }}"
-        echo "::endgroup::"
-
-    - name: Generate Attestation
-      if: success() && hashFiles('data/${{ env.timestamp }}/morphosource_data_complete.json') != ''name: Test Monthly Collection
+name: Test Monthly Collection
 on:
   workflow_dispatch:
     inputs:
@@ -233,6 +195,7 @@ jobs:
     - name: Create Status Files
       if: always()
       run: |
+        echo "::group::Creating Status Files"
         # Create run status file
         jq -n \
           --arg status "${{ job.status }}" \
@@ -241,6 +204,7 @@ jobs:
           --arg record_count "${{ github.event.inputs.record_count }}" \
           '{status: $status, timestamp: $timestamp, run_id: $run_id, test_records: $record_count}' \
           > "data/${{ env.timestamp }}/run_status.json"
+        echo "::endgroup::"
 
     - name: Commit data files
       if: always()
