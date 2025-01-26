@@ -86,7 +86,6 @@ jobs:
       with:
         subject-path: data/${{ env.timestamp }}/morphosource_data_complete.json
         predicate-type: 'https://in-toto.io/attestation/release/v0.1'
-        output-path: data/${{ env.timestamp }}/attestation.json
         predicate: |
           {
             "purl": "pkg:github/${{ github.repository }}",
@@ -108,16 +107,18 @@ jobs:
             }
           }
 
-    - name: Update Release Notes with Attestation URLs
-      if: success() && hashFiles('data/${{ env.timestamp }}/attestation.json') != ''
+    - name: Save Attestation
+      if: success() && steps.attest.outputs.id != ''
       run: |
-        ATT_ID="${{ steps.attest.outputs.id }}"
-        if [ ! -z "$ATT_ID" ]; then
-          URLS="Complete Dataset: https://github.com/${{ github.repository }}/attestations/$ATT_ID"$'\n'
-          URLS+="New Records: https://github.com/${{ github.repository }}/attestations/$((ATT_ID + 1))"
-          
-          sed -i "s|<!-- ATTESTATION_URLS -->|$URLS|" "data/${{ env.timestamp }}/monthly_release_notes.txt"
-        fi
+        # Save attestation to file
+        echo "${{ steps.attest.outputs.attestation }}" > "data/${{ env.timestamp }}/attestation.json"
+        
+        # Update release notes with attestation URL
+        ATT_URL="https://github.com/${{ github.repository }}/attestations/${{ steps.attest.outputs.id }}"
+        echo "Attestation URL: $ATT_URL"
+        
+        # Replace placeholder in release notes
+        sed -i "s|<!-- ATTESTATION_URLS -->|Attestation: $ATT_URL|" "data/${{ env.timestamp }}/monthly_release_notes.txt"
 
     - name: Create Status Files
       if: always()

@@ -68,8 +68,10 @@ def create_test_data(output_dir, record_count):
         "## Summary\n",
         f"- Total Records: {len(records)}\n",
         f"- Generated Records: {record_count}\n\n",
-        "## Attestations\n",
-        "<!-- ATTESTATION_URLS -->\n"
+        "## Attestation\n",
+        "<!-- ATTESTATION_URLS -->\n\n",
+        "## Details\n",
+        "This is a test collection of generated records.\n"
     ]
     
     with open(notes_file, 'w') as f:
