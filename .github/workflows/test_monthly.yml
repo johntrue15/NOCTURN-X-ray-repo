@@ -1,4 +1,4 @@
-name: Test MorphoSource Collection
+name: Test Monthly Collection
 on:
   workflow_dispatch:
     inputs:
@@ -179,8 +179,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: "Test MorphoSource Collection #${{ env.timestamp }}"
-        tag_name: "test-collection-${{ env.timestamp }}"
+        name: "Test Monthly Collection #${{ env.timestamp }}"
+        tag_name: "test-monthly-${{ env.timestamp }}"
         body_path: data/${{ env.timestamp }}/monthly_release_notes.txt
         files: |
           data/${{ env.timestamp }}/morphosource_data_complete.json
