@@ -80,9 +80,9 @@ jobs:
         echo "::endgroup::"
 
     - name: Generate Attestation
+      id: attest
       if: success() && hashFiles('data/${{ env.timestamp }}/morphosource_data_complete.json') != ''
       uses: actions/attest@v2.1.0
-      id: attest
       with:
         subject-path: data/${{ env.timestamp }}/morphosource_data_complete.json
         predicate-type: 'https://in-toto.io/attestation/release/v0.1'
@@ -108,15 +108,25 @@ jobs:
             }
           }
 
+    - name: Capture Attestation Output
+      id: capture
+      run: |
+        DIGEST=$(echo '${{ steps.attest.outputs.attestation }}' | grep -o 'sha256:[a-f0-9]\+' || true)
+        if [ -z "$DIGEST" ]; then
+          # Try alternate format
+          DIGEST=$(echo '${{ steps.attest.outputs.attestation-url }}' | grep -o '@sha256:[a-f0-9]\+' | cut -d':' -f2 || true)
+        fi
+        echo "digest=$DIGEST" >> $GITHUB_OUTPUT
+
     - name: Save Attestation and Update Release Notes
       if: success()
       run: |
         # Debug step execution
         echo "Starting Save Attestation step..."
         
-        # Extract SHA256 from the log output
-        DIGEST=$(echo "${{ steps.attest.outputs._logs }}" | grep -o 'sha256:[a-f0-9]\+' | head -1 | cut -d':' -f2)
-        echo "Extracted digest: $DIGEST"
+        # Get the digest from previous step
+        DIGEST="${{ steps.capture.outputs.digest }}"
+        echo "Using digest: $DIGEST"
         
         # Get attestation ID from URL in output
         ATT_URL=$(grep "https://github.com/${{ github.repository }}/attestations/" <<< "${{ steps.attest.outputs.attestation-url }}" || true)
