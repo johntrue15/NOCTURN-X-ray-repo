@@ -113,29 +113,20 @@ def analyze_workflow_triggers(workflow_content):
                             print(f"Parsed schedule: {schedule}")
                             triggers['schedule'] = schedule
                             break
-            # Handle single schedule
-            elif isinstance(schedule_data, dict) and 'cron' in schedule_data:
-                cron = schedule_data['cron'].strip('"\'')
-                print(f"Found single cron: {cron}")
-                if not cron.startswith('#'):
-                    schedule = parse_schedule([cron])
-                    print(f"Parsed schedule: {schedule}")
-                    triggers['schedule'] = schedule
     
-    # Check workflow_run triggers
-    if isinstance(on, dict) and 'workflow_run' in on:
-        workflow_run = on['workflow_run']
-        if isinstance(workflow_run, dict):
-            workflows = workflow_run.get('workflows', [])
-            if isinstance(workflows, str):
-                triggers['workflow_dependencies'].append(workflows)
-            elif isinstance(workflows, list):
-                triggers['workflow_dependencies'].extend(workflows)
+        # Check workflow_run triggers
+        if 'workflow_run' in on:
+            workflow_run = on['workflow_run']
+            if isinstance(workflow_run, dict):
+                workflows = workflow_run.get('workflows', [])
+                if isinstance(workflows, str):
+                    triggers['workflow_dependencies'].append(workflows)
+                elif isinstance(workflows, list):
+                    triggers['workflow_dependencies'].extend(workflows)
+                print(f"Found workflow dependencies: {triggers['workflow_dependencies']}")
     
     # Check manual trigger
-    if isinstance(on, dict) and 'workflow_dispatch' in on:
-        triggers['manual'] = True
-    elif isinstance(on, list) and 'workflow_dispatch' in on:
+    if 'workflow_dispatch' in on:
         triggers['manual'] = True
         
     return triggers
@@ -207,24 +198,27 @@ def generate_markdown(workflow_info):
             for script in info['scripts']:
                 lines.append(f"- `.github/scripts/{script}`")
         
-        # Add child workflows and their scripts
-        dependent_workflows = [name for name, w_info in workflow_info.items() 
-                             if workflow_name in w_info['workflow_dependencies']]
-        if dependent_workflows:
-            lines.append("**Child Workflows:**")
-            for dep in sorted(dependent_workflows):
-                dep_info = workflow_info[dep]
-                lines.append(f"- `{dep}`")
+        # Find workflows triggered by this one
+        triggered_workflows = []
+        for other_name, other_info in workflow_info.items():
+            if info['name'] in other_info['workflow_dependencies']:
+                triggered_workflows.append((other_name, other_info))
+        
+        if triggered_workflows:
+            lines.append("**Triggers Workflows:**")
+            for dep_name, dep_info in sorted(triggered_workflows):
+                lines.append(f"- `{dep_name}`")
                 if dep_info['scripts']:
                     for script in dep_info['scripts']:
                         lines.append(f"  - `.github/scripts/{script}`")
-                # Add second-level dependencies
-                second_level = [name for name, w_info in workflow_info.items() 
-                              if dep in w_info['workflow_dependencies']]
+                # Check for second-level triggers
+                second_level = []
+                for other_name, other_info in workflow_info.items():
+                    if dep_info['name'] in other_info['workflow_dependencies']:
+                        second_level.append((other_name, other_info))
                 if second_level:
-                    for sub_dep in sorted(second_level):
-                        sub_info = workflow_info[sub_dep]
-                        lines.append(f"  - `{sub_dep}`")
+                    for sub_name, sub_info in sorted(second_level):
+                        lines.append(f"  - `{sub_name}`")
                         if sub_info['scripts']:
                             for script in sub_info['scripts']:
                                 lines.append(f"    - `.github/scripts/{script}`")
