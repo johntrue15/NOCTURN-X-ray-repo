@@ -60,21 +60,19 @@ jobs:
 
     - name: Run monthly collection
       id: collect
+      env:
+        GITHUB_RUN_ID: ${{ github.run_id }}
+        GITHUB_REPOSITORY: ${{ github.repository }}
       run: |
         echo "::group::Starting Collection"
         echo "Run ID: ${{ github.run_id }}"
         echo "Timestamp: ${{ env.timestamp }}"
         echo "::endgroup::"
         
-        # Run collection script with verbose output
-        python -v .github/scripts/monthly.py --output-dir "data/${{ env.timestamp }}" 2>&1 | tee collection_log.txt
+        python .github/scripts/monthly.py \
+          --output-dir "data/${{ env.timestamp }}" \
+          2>&1 | tee collection_log.txt
         
-        # Show directory contents
-        echo "::group::Directory Contents"
-        ls -R data/
-        echo "::endgroup::"
-        
-        # Get collection stats
         if [ -f "data/${{ env.timestamp }}/monthly_stats.json" ]; then
           echo "total_records=$(jq '.total_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
           echo "modified_records=$(jq '.modified_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
@@ -98,6 +96,7 @@ jobs:
       with:
         subject-path: data/${{ env.timestamp }}/morphosource_data_complete.json
         predicate-type: 'https://in-toto.io/attestation/release/v0.1'
+        output-path: data/${{ env.timestamp }}/attestation.json
         predicate: |
           {
             "purl": "pkg:github/${{ github.repository }}",
@@ -124,7 +123,6 @@ jobs:
       if: always()
       run: |
         echo "::group::Creating Status Files"
-        # Create run status file
         jq -n \
           --arg status "${{ job.status }}" \
           --arg timestamp "${{ env.timestamp }}" \
@@ -138,20 +136,11 @@ jobs:
     - name: Commit data files
       if: always()
       run: |
-        # Show directory contents
-        echo "::group::Files in data directory"
-        ls -R data/
-        echo "::endgroup::"
-        
-        # Add everything in the timestamped directory
+        echo "::group::Files to be committed"
         git add -f "data/${{ env.timestamp }}/"
-        
-        # Show what will be committed
-        echo "::group::Git Status"
         git status
         echo "::endgroup::"
         
-        # Commit and push if there are changes
         if git diff --staged --quiet; then
           echo "No changes to commit"
         else
@@ -174,7 +163,7 @@ jobs:
           data/${{ env.timestamp }}/run_status.json
           data/${{ env.timestamp }}/attestation.json
 
-    - name: Upload detailed logs
+    - name: Upload logs
       if: always()
       uses: actions/upload-artifact@v4
       with:
@@ -183,15 +172,3 @@ jobs:
           data/${{ env.timestamp }}/*
           collection_log.txt
           requirements.txt
-
-    - name: Report Status
-      if: always()
-      run: |
-        echo "::group::Final Status"
-        echo "Job Status: ${{ job.status }}"
-        echo "Collection Complete: ${{ steps.collect.outputs.total_records != '' }}"
-        echo "Attestation Generated: ${{ steps.attest.outcome == 'success' }}"
-        if [ -f "data/${{ env.timestamp }}/run_status.json" ]; then
-          cat "data/${{ env.timestamp }}/run_status.json"
-        fi
-        echo "::endgroup::"
