@@ -206,6 +206,10 @@ This document shows the relationships between GitHub Actions workflows and their
 **Required Scripts:**
 - `.github/scripts/url_screenshot_check.py`
 
+### Workflow Monitor (`workflow-monitor.yml`)
+**Triggered by:**
+- `*`
+
 ## Scripts and Their Workflows
 
 This section shows which workflows use each script:
