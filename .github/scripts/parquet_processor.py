@@ -418,31 +418,45 @@ def main():
         total_available = len(urls)
         logger.info(f"Found {total_available} URLs to process")
         
+        # Convert inputs to integers and validate
+        try:
+            total_processed = int(args.total_processed)
+            total_target = int(args.total_target)
+            start_index = int(args.start_index)
+        except ValueError as e:
+            logger.error(f"Error converting input parameters: {e}")
+            total_processed = 0
+            total_target = 0
+            start_index = 0
+            
+        logger.info(f"Starting with: index={start_index}, processed={total_processed}, target={total_target}")
+        
         # Determine total records to process
-        total_to_process = args.total_target if args.total_target > 0 else total_available
-        remaining = total_to_process - args.total_processed
+        total_to_process = total_target if total_target > 0 else total_available
+        remaining = total_to_process - total_processed
         
         if remaining <= 0:
-            logger.info("Target number of records already processed")
+            logger.info(f"Target number of records already processed: {total_processed} of {total_to_process}")
             if args.output_file:
                 with open(args.output_file, 'a') as f:
                     f.write("has_more=false\n")
-                    f.write(f"next_index={args.start_index}\n")
-                    f.write(f"total_processed={args.total_processed}\n")
+                    f.write(f"next_index={start_index}\n")
+                    f.write(f"total_processed={total_processed}\n")
             return 0
             
         # Adjust max_records if needed
         max_records = min(args.max_records, remaining)
-        logger.info(f"Processing up to {max_records} records this batch (total target: {total_to_process})")
-        logger.info(f"Starting at index {args.start_index}, processed so far: {args.total_processed}")
+        logger.info(f"Processing up to {max_records} records this batch")
+        logger.info(f"Total target: {total_to_process}, Remaining: {remaining}")
+        logger.info(f"Starting at index {start_index}, processed so far: {total_processed}")
         
         # Process batch
         processed = process_url_batch(
             urls, 
             output_dir, 
             logger,
-            args.start_index,
-            args.total_processed,
+            start_index,
+            total_processed,
             max_records,
             args.output_file
         )
