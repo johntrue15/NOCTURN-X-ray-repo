@@ -1,0 +1,50 @@
+2025-01-27 19:04:00,175 - INFO - Using data file: data/2025-01-27_01-34-38/morphosource_data_complete.json
+2025-01-27 19:04:00,599 - INFO - Found 104398 URLs to process
+2025-01-27 19:04:00,599 - INFO - Processing up to 10 records this batch (total target: 104398)
+2025-01-27 19:04:00,600 - INFO - Starting at index 10, processed so far: 10
+2025-01-27 19:04:00,758 - INFO - Setting up new Chrome driver
+2025-01-27 19:04:01,064 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703945?locale=en (Attempt 1/3)
+2025-01-27 19:04:01,064 - INFO - Starting page load for https://www.morphosource.org/concern/media/000703945?locale=en
+2025-01-27 19:04:04,327 - INFO - Page loaded for https://www.morphosource.org/concern/media/000703945?locale=en
+2025-01-27 19:04:15,731 - INFO - Successfully processed https://www.morphosource.org/concern/media/000703945?locale=en
+2025-01-27 19:04:17,736 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703897?locale=en (Attempt 1/3)
+2025-01-27 19:04:17,736 - INFO - Starting page load for https://www.morphosource.org/concern/media/000703897?locale=en
+2025-01-27 19:04:18,535 - INFO - Page loaded for https://www.morphosource.org/concern/media/000703897?locale=en
+2025-01-27 19:04:39,243 - INFO - Successfully processed https://www.morphosource.org/concern/media/000703897?locale=en
+2025-01-27 19:04:41,245 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703876?locale=en (Attempt 1/3)
+2025-01-27 19:04:41,245 - INFO - Starting page load for https://www.morphosource.org/concern/media/000703876?locale=en
+2025-01-27 19:04:43,144 - INFO - Page loaded for https://www.morphosource.org/concern/media/000703876?locale=en
+2025-01-27 19:04:54,244 - INFO - Successfully processed https://www.morphosource.org/concern/media/000703876?locale=en
+2025-01-27 19:04:56,247 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703862?locale=en (Attempt 1/3)
+2025-01-27 19:04:56,247 - INFO - Starting page load for https://www.morphosource.org/concern/media/000703862?locale=en
+2025-01-27 19:05:00,369 - INFO - Page loaded for https://www.morphosource.org/concern/media/000703862?locale=en
+2025-01-27 19:05:11,113 - INFO - Successfully processed https://www.morphosource.org/concern/media/000703862?locale=en
+2025-01-27 19:05:13,116 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703763?locale=en (Attempt 1/3)
+2025-01-27 19:05:13,116 - INFO - Starting page load for https://www.morphosource.org/concern/media/000703763?locale=en
+2025-01-27 19:05:17,834 - INFO - Page loaded for https://www.morphosource.org/concern/media/000703763?locale=en
+2025-01-27 19:05:29,359 - INFO - Successfully processed https://www.morphosource.org/concern/media/000703763?locale=en
+2025-01-27 19:05:31,362 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703744?locale=en (Attempt 1/3)
+2025-01-27 19:05:31,362 - INFO - Starting page load for https://www.morphosource.org/concern/media/000703744?locale=en
+2025-01-27 19:05:35,307 - INFO - Page loaded for https://www.morphosource.org/concern/media/000703744?locale=en
+2025-01-27 19:05:46,562 - INFO - Successfully processed https://www.morphosource.org/concern/media/000703744?locale=en
+2025-01-27 19:05:48,564 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703699?locale=en (Attempt 1/3)
+2025-01-27 19:05:48,565 - INFO - Starting page load for https://www.morphosource.org/concern/media/000703699?locale=en
+2025-01-27 19:05:50,566 - INFO - Page loaded for https://www.morphosource.org/concern/media/000703699?locale=en
+2025-01-27 19:06:01,540 - INFO - Successfully processed https://www.morphosource.org/concern/media/000703699?locale=en
+2025-01-27 19:06:03,542 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703651?locale=en (Attempt 1/3)
+2025-01-27 19:06:03,542 - INFO - Starting page load for https://www.morphosource.org/concern/media/000703651?locale=en
+2025-01-27 19:06:05,059 - INFO - Page loaded for https://www.morphosource.org/concern/media/000703651?locale=en
+2025-01-27 19:06:16,273 - INFO - Successfully processed https://www.morphosource.org/concern/media/000703651?locale=en
+2025-01-27 19:06:18,276 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703644?locale=en (Attempt 1/3)
+2025-01-27 19:06:18,276 - INFO - Starting page load for https://www.morphosource.org/concern/media/000703644?locale=en
+2025-01-27 19:06:19,853 - INFO - Page loaded for https://www.morphosource.org/concern/media/000703644?locale=en
+2025-01-27 19:06:32,192 - INFO - Successfully processed https://www.morphosource.org/concern/media/000703644?locale=en
+2025-01-27 19:06:34,194 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703625?locale=en (Attempt 1/3)
+2025-01-27 19:06:34,194 - INFO - Starting page load for https://www.morphosource.org/concern/media/000703625?locale=en
+2025-01-27 19:06:36,696 - INFO - Page loaded for https://www.morphosource.org/concern/media/000703625?locale=en
+2025-01-27 19:06:48,105 - INFO - Successfully processed https://www.morphosource.org/concern/media/000703625?locale=en
+2025-01-27 19:06:50,229 - INFO - Saved 10 records to data/parquet/2025-01-27_19-03-59/morphosource_data_20250127_190650.parquet
+2025-01-27 19:06:50,229 - INFO - Columns: url, processed_at, error, media_id, media_type, object_element_or_part, object_represented, object_taxonomy, object_organization, side, orientation, short_description, full_description, creator, date_created, date_uploaded, file_name, file_format(s), file_size_bytes, image_width, image_height, color_space, color_depth, compression, x_pixel_spacing, y_pixel_spacing, z_pixel_spacing, pixel_spacing_units, slice_thickness, number_of_images_in_set, number_of_parent_media, number_of_processing_events, modality, device, data_managed_by, data_uploaded_by, publication_status, download_reviewer, ip_holder, copyright_statement, creative_commons_license, permits_commercial_use, permits_3d_use, required_archival_of_published_derivatives, funding_attribution, publisher, cite_as, media_preview_mode, additional_usage_agreement, morphosource_ark, morphosource_doi, external_identifier, external_media_url, batch_index, attempt
+2025-01-27 19:06:50,329 - INFO - Saved 10 records to data/parquet/2025-01-27_19-03-59/morphosource_data_20250127_190650.parquet
+2025-01-27 19:06:50,330 - INFO - Columns: url, processed_at, error, media_id, media_type, object_element_or_part, object_represented, object_taxonomy, object_organization, side, orientation, short_description, full_description, creator, date_created, date_uploaded, file_name, file_format(s), file_size_bytes, image_width, image_height, color_space, color_depth, compression, x_pixel_spacing, y_pixel_spacing, z_pixel_spacing, pixel_spacing_units, slice_thickness, number_of_images_in_set, number_of_parent_media, number_of_processing_events, modality, device, data_managed_by, data_uploaded_by, publication_status, download_reviewer, ip_holder, copyright_statement, creative_commons_license, permits_commercial_use, permits_3d_use, required_archival_of_published_derivatives, funding_attribution, publisher, cite_as, media_preview_mode, additional_usage_agreement, morphosource_ark, morphosource_doi, external_identifier, external_media_url, batch_index, attempt
+2025-01-27 19:06:50,330 - INFO - Processed 10 records in this batch
