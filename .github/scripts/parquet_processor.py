@@ -48,6 +48,7 @@ def setup_driver():
     chrome_options.add_argument('--disable-infobars')
     chrome_options.add_argument('--disable-notifications')
     chrome_options.page_load_strategy = 'eager'
+    chrome_options.binary_location = '/usr/bin/google-chrome'
     return webdriver.Chrome(options=chrome_options)
 
 def extract_page_data(driver, url, logger):
