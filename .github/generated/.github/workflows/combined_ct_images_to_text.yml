@@ -1,0 +1,581 @@
+name: MorphoSource Analysis Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      morphosource_tag:
+        description: 'MorphoSource update tag to analyze (e.g. morphosource-updates-2025-01-23_14-39-38)'
+        required: false
+        type: string
+      force_rerun:
+        description: 'Force rerun even if analysis exists'
+        required: false
+        type: boolean
+        default: false
+  workflow_run:
+    workflows: ["Parse MorphoSource Data"]
+    types: [completed]
+
+jobs:
+  check_and_analyze:
+    runs-on: ubuntu-22.04
+    outputs:
+      is_morphosource: ${{ steps.check_morpho.outputs.is_morphosource }}
+      has_analysis: ${{ steps.check_existing.outputs.has_analysis }}
+      release_body: ${{ steps.fetch_release.outputs.release_body }}
+      release_tag: ${{ steps.fetch_release.outputs.release_tag }}
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Check for running workflows
+        id: check_runs
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          # Get current workflow ID from workflow name
+          workflow_id=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows" | \
+            jq -r '.workflows[] | select(.name=="MorphoSource Analysis Workflow") | .id')
+          
+          echo "Current workflow ID: $workflow_id"
+          
+          # Get running/queued workflows excluding the current run
+          running_workflows=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?status=in_progress&per_page=100" | \
+            jq -r ".workflow_runs | length")
+            
+          queued_workflows=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?status=queued&per_page=100" | \
+            jq -r ".workflow_runs | length")
+          
+          total_workflows=$((running_workflows + queued_workflows))
+          echo "Found $running_workflows running and $queued_workflows queued workflows"
+          
+          # Only proceed if this is the only workflow (count of 1 includes this run)
+          if [ "$total_workflows" -le 1 ]; then
+            echo "No other workflows running or queued, proceeding"
+          else
+            echo "Other workflows are already running or queued, skipping"
+            exit 1
+          fi
+
+      - name: Fetch Latest MorphoSource Release
+        id: fetch_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          if [ ! -z "${{ inputs.morphosource_tag }}" ]; then
+            echo "Using provided morphosource tag: ${{ inputs.morphosource_tag }}"
+            # Fetch specific release
+            curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+              "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ inputs.morphosource_tag }}" > release.json
+            
+            # Check if release exists and format output
+            if [ "$(cat release.json | jq -r '.message')" = "Not Found" ]; then
+              echo "Specified release tag not found"
+              echo "release_tag=" >> "$GITHUB_OUTPUT"
+              echo "release_body=" >> "$GITHUB_OUTPUT"
+              echo "morphosource_created_at=" >> "$GITHUB_OUTPUT"
+            else
+              echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
+              cat release.json | jq -r .body >> "$GITHUB_OUTPUT"
+              echo "EOF" >> "$GITHUB_OUTPUT"
+              
+              echo "release_tag=${{ inputs.morphosource_tag }}" >> "$GITHUB_OUTPUT"
+              echo "morphosource_created_at=$(cat release.json | jq -r .created_at)" >> "$GITHUB_OUTPUT"
+            fi
+            exit 0
+          fi
+          
+          echo "Fetching releases to find latest morphosource-updates..."
+          curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=10" > releases.json
+          
+          # Use Python to find the latest morphosource-updates release
+          python3 -c 'import json; f=open("releases.json", "r"); releases=json.load(f); f.close(); morpho_releases=[r for r in releases if r["tag_name"].startswith("morphosource-updates-")]; result={"found": True, "tag_name": morpho_releases[0]["tag_name"], "body": morpho_releases[0]["body"], "created_at": morpho_releases[0]["created_at"]} if morpho_releases else {"found": False}; f=open("release_info.json", "w"); json.dump(result, f, indent=2); f.close()'
+          
+          if [ "$(cat release_info.json | jq -r .found)" = "true" ]; then
+              tag_name=$(cat release_info.json | jq -r .tag_name)
+              echo "Found morphosource release: $tag_name"
+              
+              echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
+              cat release_info.json | jq -r .body >> "$GITHUB_OUTPUT"
+              echo "EOF" >> "$GITHUB_OUTPUT"
+              
+              echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
+              echo "morphosource_created_at=$(cat release_info.json | jq -r .created_at)" >> "$GITHUB_OUTPUT"
+          else
+              echo "No morphosource-updates release found"
+              echo "release_tag=" >> "$GITHUB_OUTPUT"
+              echo "release_body=" >> "$GITHUB_OUTPUT"
+              echo "morphosource_created_at=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check if morphosource-updates
+        id: check_morpho
+        run: |
+          TAG_NAME="${{ steps.fetch_release.outputs.release_tag }}"
+          if [[ -z "$TAG_NAME" ]]; then
+            echo "is_morphosource=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check for existing analysis
+        id: check_existing
+        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          if [ "${{ inputs.force_rerun }}" = "true" ]; then
+            echo "Force rerun requested, skipping existing analysis check"
+            echo "has_analysis=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          
+          releases=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
+          
+          morphosource_date="${{ steps.fetch_release.outputs.morphosource_created_at }}"
+          
+          # Check for any ct_image_analysis or ct_slice_analysis releases created after this morphosource release
+          existing_analysis=$(echo "$releases" | jq -r '.[] | 
+            select(.tag_name | startswith("ct_image_analysis-") or startswith("ct_slice_analysis-")) | 
+            select(.created_at > "'$morphosource_date'") | 
+            .tag_name')
+          
+          if [ ! -z "$existing_analysis" ]; then
+            echo "Found existing analysis: $existing_analysis"
+            echo "has_analysis=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No existing analysis found"
+            echo "has_analysis=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  url_check:
+    needs: check_and_analyze
+    if: |
+      needs.check_and_analyze.outputs.is_morphosource == 'true' &&
+      needs.check_and_analyze.outputs.has_analysis != 'true'
+    runs-on: ubuntu-22.04
+    outputs:
+      has_media_error: ${{ steps.url_check.outputs.has_media_error }}
+      has_server_error: ${{ steps.url_check.outputs.has_server_error }}
+      has_mesh: ${{ steps.type_check.outputs.has_mesh }}
+      has_volumetric_images: ${{ steps.type_check.outputs.has_volumetric_images }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+          
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install selenium webdriver-manager
+          
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget gnupg2 unzip
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+
+      - name: Create Release Body File
+        run: |
+          echo "${{ needs.check_and_analyze.outputs.release_body }}" > release_body.txt
+          
+      - name: Create Screenshots Directory
+        run: mkdir -p screenshots
+
+      - name: Run URL check
+        id: url_check
+        run: |
+          python .github/scripts/url_screenshot_check.py release_body.txt || true
+          
+          if [ -f "url_check_status.json" ]; then
+            status=$(cat url_check_status.json | jq -r .status)
+            if [ "$status" = "media_error" ]; then
+              echo "has_media_error=true" >> "$GITHUB_OUTPUT"
+              echo "has_server_error=false" >> "$GITHUB_OUTPUT"
+            elif [ "$status" = "server_error" ]; then
+              echo "has_media_error=false" >> "$GITHUB_OUTPUT"
+              echo "has_server_error=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "has_media_error=false" >> "$GITHUB_OUTPUT"
+              echo "has_server_error=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "has_media_error=false" >> "$GITHUB_OUTPUT"
+            echo "has_server_error=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload URL Check Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: url-check-screenshots
+          path: |
+            screenshots/*.png
+          retention-days: 90
+
+      - name: Run 2D/3D Type Check
+        id: type_check
+        run: |
+          python .github/scripts/2D3D_check.py release_body.txt || true
+          if [ -f "url_check_status.json" ]; then
+            has_mesh=$(cat url_check_status.json | jq -r .has_mesh)
+            has_volumetric=$(cat url_check_status.json | jq -r .has_volumetric_images)
+            echo "has_mesh=$has_mesh" >> "$GITHUB_OUTPUT"
+            echo "has_volumetric_images=$has_volumetric" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_mesh=false" >> "$GITHUB_OUTPUT"
+            echo "has_volumetric_images=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  process_3d:
+    needs: [check_and_analyze, url_check]
+    if: |
+      needs.check_and_analyze.outputs.is_morphosource == 'true' &&
+      needs.check_and_analyze.outputs.has_analysis != 'true' &&
+      needs.url_check.outputs.has_media_error != 'true' &&
+      needs.url_check.outputs.has_server_error != 'true' &&
+      needs.url_check.outputs.has_mesh == 'true'
+    runs-on: ubuntu-22.04
+    outputs:
+      has_token_error: ${{ steps.process_images.outputs.has_token_error }}
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser libnss3 libgbm1 libasound2 xvfb
+          pip install --upgrade pip
+          pip install --upgrade openai selenium pillow webdriver-manager urllib3
+
+      - name: Start Xvfb
+        run: |
+          Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
+
+      - name: Generate Timestamp
+        id: gen_ts
+        run: |
+          TS=$(date +'%Y-%m-%d_%H-%M-%S')
+          echo "timestamp=$TS" >> "$GITHUB_OUTPUT"
+
+      - name: Process CT Images
+        id: process_images
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PYTHONUNBUFFERED: 1
+        run: |
+          echo "${{ needs.check_and_analyze.outputs.release_body }}" > release_body.txt
+          mkdir -p screenshots
+          
+          timeout 30m python3 .github/scripts/ct_image_to_text.py release_body.txt screenshots 2>&1 | tee process.log
+          
+          # Check for token limit error in log
+          if grep -q "Error code: 429.*tokens" process.log; then
+            echo "Token limit error detected"
+            echo "has_token_error=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          else
+            echo "has_token_error=false" >> "$GITHUB_OUTPUT"
+          fi
+          
+          if [ ! -f screenshots/*.png ]; then
+            echo "No screenshots were generated. Check process.log for details."
+            cat process.log
+            exit 1
+          fi
+          
+          echo "description<<EOF" >> "$GITHUB_OUTPUT"
+          cat process.log | grep -v "DEBUG" | grep -v "INFO" | grep -v "WARNING" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Create Release
+        id: create_release
+        if: steps.process_images.outputs.has_token_error != 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          tag_name: "ct_image_analysis-${{ steps.gen_ts.outputs.timestamp }}"
+          release_name: "CT Image Analysis #${{ steps.gen_ts.outputs.timestamp }}"
+          body: |
+            Analysis for MorphoSource release: ${{ needs.check_and_analyze.outputs.release_tag }}
+            
+            ${{ steps.process_images.outputs.description }}
+            
+            ### Orientation Views
+            The following orientation views were captured:
+            - Default (Y+ Up)
+            - Upside Down (Y- Up)
+            - Forward 90° (Z- Up)
+            - Back 90° (Z+ Up)
+            
+            See attached images for details.
+          draft: false
+          prerelease: false
+
+      - name: Upload Default Orientation
+        if: steps.process_images.outputs.has_token_error != 'true'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./screenshots/Default_Yplus_Up.png
+          asset_name: Default_Yplus_Up.png
+          asset_content_type: image/png
+
+      - name: Upload Upside Down Orientation
+        if: steps.process_images.outputs.has_token_error != 'true'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./screenshots/Upside_Down_Y-_Up.png
+          asset_name: Upside_Down_Y-_Up.png
+          asset_content_type: image/png
+
+      - name: Upload Forward Orientation
+        if: steps.process_images.outputs.has_token_error != 'true'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./screenshots/Forward_90_Z-_Up.png
+          asset_name: Forward_90_Z-_Up.png
+          asset_content_type: image/png
+
+      - name: Upload Back Orientation
+        if: steps.process_images.outputs.has_token_error != 'true'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./screenshots/Back_90_Zplus_Up.png
+          asset_name: Back_90_Zplus_Up.png
+          asset_content_type: image/png
+
+      - name: Upload Log File
+        if: steps.process_images.outputs.has_token_error != 'true'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./process.log
+          asset_name: process.log
+          asset_content_type: text/plain
+
+      - name: Upload Screenshots
+        if: success() && steps.process_images.outputs.has_token_error != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ct-scan-screenshots
+          path: screenshots/*.png
+          retention-days: 90
+
+  process_2d:
+    needs: [check_and_analyze, url_check]
+    if: |
+      needs.check_and_analyze.outputs.is_morphosource == 'true' &&
+      needs.check_and_analyze.outputs.has_analysis != 'true' &&
+      needs.url_check.outputs.has_media_error != 'true' &&
+      needs.url_check.outputs.has_server_error != 'true' &&
+      needs.url_check.outputs.has_volumetric_images == 'true'
+    runs-on: ubuntu-22.04
+    outputs:
+      has_token_error: ${{ steps.process_slices.outputs.has_token_error }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+          
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser libnss3 libgbm1 libasound2 xvfb
+          pip install --upgrade pip
+          pip install --upgrade openai selenium pillow webdriver-manager urllib3 requests
+
+      - name: Start Xvfb
+        run: |
+          Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
+
+      - name: Create screenshots directory
+        run: mkdir -p screenshots
+
+      - name: Generate Timestamp
+        id: gen_ts
+        run: |
+          TS=$(date +'%Y-%m-%d_%H-%M-%S')
+          echo "timestamp=$TS" >> "$GITHUB_OUTPUT"
+
+      - name: Process CT Slices
+        id: process_slices
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PYTHONUNBUFFERED: 1
+        run: |
+          echo "${{ needs.check_and_analyze.outputs.release_body }}" > release_body.txt
+          timeout 30m python3 .github/scripts/ct_slices_to_text.py release_body.txt screenshots 2>&1 | tee process.log
+          
+          # Check for token limit error in log
+          if grep -q "Error code: 429.*tokens" process.log; then
+            echo "Token limit error detected"
+            echo "has_token_error=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          else
+            echo "has_token_error=false" >> "$GITHUB_OUTPUT"
+          fi
+          
+          if [ ! -f screenshots/*.png ]; then
+            echo "No screenshots were generated. Check process.log for details."
+            cat process.log
+            exit 1
+          fi
+          
+          echo "description<<EOF" >> "$GITHUB_OUTPUT"
+          cat process.log | grep -v "DEBUG" | grep -v "INFO" | grep -v "WARNING" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Create Slice Analysis Release
+        if: success() && steps.process_slices.outputs.has_token_error != 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          tag_name: "ct_slice_analysis-${{ steps.gen_ts.outputs.timestamp }}"
+          release_name: "CT Slice Analysis #${{ steps.gen_ts.outputs.timestamp }}"
+          body: |
+            Analysis for MorphoSource release: ${{ needs.check_and_analyze.outputs.release_tag }}
+            
+            ${{ steps.process_slices.outputs.description }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Screenshots
+        if: success() && steps.process_slices.outputs.has_token_error != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: morphosource_2d_screenshots
+          path: |
+            screenshots/*.png
+            !screenshots/error_*.png
+            
+  handle_errors:
+    needs: [check_and_analyze, url_check, process_3d, process_2d]
+    if: |
+      always() && 
+      needs.check_and_analyze.outputs.is_morphosource == 'true' &&
+      (failure() || 
+       needs.url_check.outputs.has_media_error == 'true' || 
+       needs.url_check.outputs.has_server_error == 'true' ||
+       needs.process_3d.outputs.has_token_error == 'true' ||
+       needs.process_2d.outputs.has_token_error == 'true')
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check for Existing Error Release
+        id: check_error
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          # Get the morphosource release tag
+          MS_TAG="${{ needs.check_and_analyze.outputs.release_tag }}"
+          
+          # Check for existing error releases for this morphosource release
+          response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
+          
+          has_error=$(echo "$response" | jq -r "
+            [.[] | 
+            select(
+              (.tag_name | startswith(\"ct_analysis_error-\")) and
+              (.body | contains(\"$MS_TAG\"))
+            )] | length")
+            
+          if [ "$has_error" -gt "0" ]; then
+            echo "Error release already exists for $MS_TAG"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No existing error release found for $MS_TAG"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create Error Release
+        if: steps.check_error.outputs.skip != 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          tag_name: "ct_analysis_error-${{ github.run_id }}"
+          release_name: "CT Analysis Error #${{ github.run_id }}"
+          body: |
+            Error occurred during analysis of MorphoSource release: ${{ needs.check_and_analyze.outputs.release_tag }}
+            
+            Status:
+            - Media Error: ${{ needs.url_check.outputs.has_media_error }}
+            - Server Error: ${{ needs.url_check.outputs.has_server_error }}
+            - Token Limit Error (3D): ${{ needs.process_3d.outputs.has_token_error }}
+            - Token Limit Error (2D): ${{ needs.process_2d.outputs.has_token_error }}
+            - 3D Process: ${{ needs.process_3d.result }}
+            - 2D Process: ${{ needs.process_2d.result }}
+
+      - name: Upload Error Screenshots
+        if: steps.check_error.outputs.skip != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: error_screenshots
+          path: |
+            error_*.png
+            screenshots/error_*.png
+            process.log
+            
+      - name: Set Error Status
+        if: steps.check_error.outputs.skip != 'true'
+        run: |
+          if [ "${{ needs.url_check.outputs.has_media_error }}" == "true" ]; then
+            echo "Media error occurred - marking as completed to prevent loops"
+            exit 0
+          fi
+          
+          if [ "${{ needs.url_check.outputs.has_server_error }}" == "true" ]; then
+            echo "Server error occurred - marking as completed to prevent loops"
+            exit 0
+          fi
+          
+          if [ "${{ needs.process_3d.outputs.has_token_error }}" == "true" ] || [ "${{ needs.process_2d.outputs.has_token_error }}" == "true" ]; then
+            echo "Token limit error occurred - marking as completed to prevent loops"
+            exit 0
+          fi
+          
+          if [ "${{ needs.process_3d.result }}" == "success" ] || [ "${{ needs.process_2d.result }}" == "success" ]; then
+            echo "Analysis completed successfully"
+            exit 0
+          else
+            echo "Analysis failed"
+            exit 0
+          fi
