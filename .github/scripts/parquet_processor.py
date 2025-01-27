@@ -55,92 +55,88 @@ def extract_page_data(soup, url, logger):
         'number_of_images': None
     }
     
-    # Find the file object details section
-    sections = soup.find_all('div', class_='detail-section')
-    found_section = False
+    # Find the file object details section using the showcase-value class
+    file_details = soup.find_all('div', class_='showcase-value')
+    logger.debug(f"Found {len(file_details)} showcase values")
     
-    for section in sections:
-        section_title = section.find('h2')
-        if not section_title:
+    # Get the labels (they're in showcase-label divs)
+    labels = soup.find_all('div', class_='showcase-label')
+    
+    # Process each label-value pair
+    for label, value_div in zip(labels, file_details):
+        if not label or not value_div:
             continue
             
-        if 'FILE OBJECT DETAILS' in section_title.text.strip():
-            found_section = True
-            fields = section.find_all('div', class_='field-item')
-            logger.debug(f"Found {len(fields)} fields in FILE OBJECT DETAILS section")
-            
-            for field in fields:
-                label = field.find('div', class_='field-label')
-                value = field.find('div', class_='field-value')
-                
-                if label and value:
-                    field_name = label.text.strip().lower().replace(' ', '_')
-                    field_value = value.text.strip()
-                    logger.debug(f"Found field: {field_name} = {field_value}")
-                    
-                    # Map fields to our data structure
-                    if field_name == 'file_name':
-                        data['file_name'] = field_value
-                    elif field_name == 'file_formats':
-                        data['file_format'] = field_value
-                    elif field_name == 'file_size':
-                        try:
-                            size_str = field_value.lower()
-                            number = float(''.join(c for c in size_str if c.isdigit() or c == '.'))
-                            if 'gb' in size_str:
-                                data['file_size_bytes'] = number * 1024 * 1024 * 1024
-                            elif 'mb' in size_str:
-                                data['file_size_bytes'] = number * 1024 * 1024
-                            elif 'kb' in size_str:
-                                data['file_size_bytes'] = number * 1024
-                        except ValueError as e:
-                            logger.error(f"Error converting file size '{field_value}': {e}")
-                    elif field_name == 'image_width':
-                        try:
-                            data['image_width'] = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
-                        except ValueError as e:
-                            logger.error(f"Error converting image width '{field_value}': {e}")
-                    elif field_name == 'image_height':
-                        try:
-                            data['image_height'] = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
-                        except ValueError as e:
-                            logger.error(f"Error converting image height '{field_value}': {e}")
-                    elif field_name == 'color_space':
-                        data['color_space'] = field_value
-                    elif field_name == 'color_depth':
-                        try:
-                            data['color_depth'] = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
-                        except ValueError as e:
-                            logger.error(f"Error converting color depth '{field_value}': {e}")
-                    elif field_name == 'compression':
-                        data['compression'] = field_value
-                    elif field_name == 'x_pixel_spacing':
-                        try:
-                            data['x_pixel_spacing'] = float(field_value)
-                        except ValueError as e:
-                            logger.error(f"Error converting x pixel spacing '{field_value}': {e}")
-                    elif field_name == 'y_pixel_spacing':
-                        try:
-                            data['y_pixel_spacing'] = float(field_value)
-                        except ValueError as e:
-                            logger.error(f"Error converting y pixel spacing '{field_value}': {e}")
-                    elif field_name == 'z_pixel_spacing':
-                        try:
-                            data['z_pixel_spacing'] = float(field_value)
-                        except ValueError as e:
-                            logger.error(f"Error converting z pixel spacing '{field_value}': {e}")
-                    elif field_name == 'pixel_spacing_units':
-                        data['pixel_spacing_units'] = field_value
-                    elif field_name == 'slice_thickness':
-                        data['slice_thickness'] = field_value
-                    elif field_name == 'number_of_images_in_set':
-                        try:
-                            data['number_of_images'] = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
-                        except ValueError as e:
-                            logger.error(f"Error converting number of images '{field_value}': {e}")
+        field_name = label.text.strip().lower().replace(' ', '_')
+        field_value = value_div.text.strip()
+        logger.debug(f"Found field: {field_name} = {field_value}")
+        
+        # Map fields to our data structure
+        if 'file name' in field_name:
+            data['file_name'] = field_value
+        elif 'file format' in field_name:
+            data['file_format'] = field_value
+        elif 'file size' in field_name:
+            try:
+                size_str = field_value.lower()
+                number = float(''.join(c for c in size_str if c.isdigit() or c == '.'))
+                if 'gb' in size_str:
+                    data['file_size_bytes'] = number * 1024 * 1024 * 1024
+                elif 'mb' in size_str:
+                    data['file_size_bytes'] = number * 1024 * 1024
+                elif 'kb' in size_str:
+                    data['file_size_bytes'] = number * 1024
+            except ValueError as e:
+                logger.error(f"Error converting file size '{field_value}': {e}")
+        elif 'image width' in field_name:
+            try:
+                data['image_width'] = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
+            except ValueError as e:
+                logger.error(f"Error converting image width '{field_value}': {e}")
+        elif 'image height' in field_name:
+            try:
+                data['image_height'] = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
+            except ValueError as e:
+                logger.error(f"Error converting image height '{field_value}': {e}")
+        elif 'color space' in field_name:
+            data['color_space'] = field_value
+        elif 'color depth' in field_name:
+            try:
+                data['color_depth'] = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
+            except ValueError as e:
+                logger.error(f"Error converting color depth '{field_value}': {e}")
+        elif 'compression' in field_name:
+            data['compression'] = field_value
+        elif 'x pixel spacing' in field_name:
+            try:
+                data['x_pixel_spacing'] = float(field_value)
+            except ValueError as e:
+                logger.error(f"Error converting x pixel spacing '{field_value}': {e}")
+        elif 'y pixel spacing' in field_name:
+            try:
+                data['y_pixel_spacing'] = float(field_value)
+            except ValueError as e:
+                logger.error(f"Error converting y pixel spacing '{field_value}': {e}")
+        elif 'z pixel spacing' in field_name:
+            try:
+                data['z_pixel_spacing'] = float(field_value)
+            except ValueError as e:
+                logger.error(f"Error converting z pixel spacing '{field_value}': {e}")
+        elif 'pixel spacing units' in field_name:
+            data['pixel_spacing_units'] = field_value
+        elif 'slice thickness' in field_name:
+            data['slice_thickness'] = field_value
+        elif 'number of images in set' in field_name:
+            try:
+                data['number_of_images'] = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
+            except ValueError as e:
+                logger.error(f"Error converting number of images '{field_value}': {e}")
     
-    if not found_section:
-        logger.warning(f"No FILE OBJECT DETAILS section found for {url}")
+    # Log what we found
+    logger.info(f"Extracted fields for {url}:")
+    for key, value in data.items():
+        if value is not None:
+            logger.info(f"  {key}: {value}")
     
     return data
 
