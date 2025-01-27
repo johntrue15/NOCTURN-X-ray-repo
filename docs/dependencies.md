@@ -31,7 +31,6 @@ This document shows the relationships between GitHub Actions workflows and their
 **Schedule:** Daily at midnight
 
 **Required Scripts:**
-- `.github/scripts/collect.py`
 - `.github/scripts/daily.py`
 
 
@@ -182,10 +181,6 @@ This section shows which workflows use each script:
 ### analyze_dependencies.py
 **Used in Workflows:**
 - `analyze_dependencies.yml`
-
-### collect.py
-**Used in Workflows:**
-- `daily.yml`
 
 ### ct_image_to_text.py
 **Used in Workflows:**
