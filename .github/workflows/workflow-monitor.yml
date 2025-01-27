@@ -60,28 +60,33 @@ jobs:
             
             async function getMainIssue() {
               try {
-                // Search specifically for the tracking issue
-                const issues = await github.rest.issues.listForRepo({
+                // First try to get the most recent tracking issue
+                const { data: issues } = await github.rest.issues.listForRepo({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   state: 'open',
                   labels: ['workflow-tracker'],
-                  per_page: 100
+                  sort: 'created',
+                  direction: 'desc',
+                  per_page: 1
                 });
-                
-                // Find exact title match and ensure it's not a PR
-                const mainIssue = issues.data.find(issue => 
+
+                const mainIssue = issues.find(issue => 
                   issue.title === MAIN_ISSUE_TITLE && !issue.pull_request
                 );
                 
                 if (mainIssue) {
-                  console.log(`Found existing tracking issue #${mainIssue.number}`);
-                  return mainIssue;
+                  // Get fresh issue data to ensure we have latest content
+                  const { data: freshIssue } = await github.rest.issues.get({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: mainIssue.number
+                  });
+                  return freshIssue;
                 }
                 
-                // Create new tracking issue if none exists
-                console.log('Creating new tracking issue...');
-                const newIssue = await github.rest.issues.create({
+                // Create new if none exists
+                const { data: newIssue } = await github.rest.issues.create({
                   owner: context.repo.owner,
                   repo: context.repo.repo,
                   title: MAIN_ISSUE_TITLE,
@@ -89,7 +94,7 @@ jobs:
                   labels: ['workflow-tracker']
                 });
                 
-                return newIssue.data;
+                return newIssue;
               } catch (error) {
                 console.error('Error in getMainIssue:', error);
                 throw error;
