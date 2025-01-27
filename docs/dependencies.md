@@ -104,6 +104,11 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ### Issue Workflow Dependency Check (`issue-dependency-check.yml`)
 
+### Metadata Record Extractor (`metadata_record_extract.yml`)
+**Manual trigger available**
+**Required Scripts:**
+- `.github/scripts/metadata_record_extract.py`
+
 ### Release Analysis and Wiki Generation (`release_analysis.yml`)
 **Manual trigger available**
 **Required Scripts:**
@@ -200,6 +205,10 @@ This section shows which workflows use each script:
 ### generate_code.py
 **Used in Workflows:**
 - `Claude_issue_automation.yml`
+
+### metadata_record_extract.py
+**Used in Workflows:**
+- `metadata_record_extract.yml`
 
 ### monthly.py
 **Used in Workflows:**
