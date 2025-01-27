@@ -46,13 +46,15 @@ def setup_driver():
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--disable-extensions')
     chrome_options.binary_location = '/usr/bin/google-chrome'
     
-    # Create driver with timeouts
+    # Create driver with increased timeouts
     driver = webdriver.Chrome(options=chrome_options)
-    driver.set_page_load_timeout(30)  # 30 seconds for page load
-    driver.set_script_timeout(30)     # 30 seconds for scripts
-    driver.implicitly_wait(10)        # 10 seconds for finding elements
+    driver.set_page_load_timeout(45)    # Increased to 45 seconds
+    driver.set_script_timeout(45)       # Increased to 45 seconds
+    driver.implicitly_wait(20)          # Increased to 20 seconds
     
     return driver
 
@@ -114,14 +116,38 @@ def check_page_structure(driver, url, logger):
     logger.info(f"Analyzing structure for: {url}")
     
     try:
-        # Wait for initial page load
+        # Wait for initial page load with progressive checks
         driver.get(url)
-        time.sleep(5)
         
-        # First check if we're on a valid page
-        title = driver.title
-        if "Showcase Media" not in title:
+        # Wait for title to be present
+        WebDriverWait(driver, 10).until(lambda d: d.title)
+        logger.info("Title loaded")
+        
+        # Check if we're on a valid page
+        if "Showcase Media" not in driver.title:
             return None, "Not a valid MorphoSource media page"
+        
+        # Wait for content to be present
+        content_present = False
+        max_attempts = 3
+        attempt = 0
+        
+        while not content_present and attempt < max_attempts:
+            try:
+                # Try to find any showcase-label or field-name element
+                WebDriverWait(driver, 10).until(lambda d: (
+                    d.find_elements(By.CLASS_NAME, "showcase-label") or 
+                    d.find_elements(By.CLASS_NAME, "field-name")
+                ))
+                content_present = True
+                logger.info("Content elements found")
+            except:
+                attempt += 1
+                logger.warning(f"Content load attempt {attempt} failed, retrying...")
+                time.sleep(5)
+        
+        if not content_present:
+            return None, "Content failed to load after multiple attempts"
             
         # Try different layout patterns
         layouts = {
@@ -137,16 +163,20 @@ def check_page_structure(driver, url, logger):
             }
         }
         
-        # Detect layout type and media type
+        # Detect layout type and media type with retries
         layout_used = None
         media_type = None
         
         for layout_name, selectors in layouts.items():
             try:
-                elem = driver.find_element(By.XPATH, selectors['media_type_xpath'])
+                # Wait for media type element with timeout
+                elem = WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.XPATH, selectors['media_type_xpath']))
+                )
                 if elem:
                     media_type = elem.text.strip()
                     layout_used = layout_name
+                    logger.info(f"Found media type using {layout_name} layout")
                     break
             except:
                 continue
@@ -169,6 +199,7 @@ def check_page_structure(driver, url, logger):
         }, None
         
     except Exception as e:
+        logger.error(f"Error analyzing page structure: {str(e)}", exc_info=True)
         return None, f"Error analyzing page structure: {str(e)}"
 
 def extract_page_data(driver, url, logger):
