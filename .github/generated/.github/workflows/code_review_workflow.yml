@@ -1,0 +1,52 @@
+name: Code Review and Analysis
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to analyze'
+        required: true
+  workflow_run:
+    workflows: ["Auto Code Generation with Claude on Issue"]
+    types:
+      - completed
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Check if issue exists
+        id: check_issue
+        uses: actions/github-script@v6
+        with:
+          script: |
+            try {
+              const issue = await github.rest.issues.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: ${{ github.event.inputs.issue_number || github.event.workflow_run.pull_requests[0].number }}
+              });
+              return true;
+            } catch (error) {
+              core.setFailed('Issue not found');
+              return false;
+            }
+
+      - name: Set up Python
+        if: steps.check_issue.outputs.result == 'true'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        if: steps.check_issue.outputs.result == 'true'
+        run: |
+          python -m pip install --upgrade pip
+          pip install pylint black
+
+      - name: Run code analysis
+        if: steps.check_issue.outputs.result == 'true'
+        run: |
+          python .github/scripts/analyze_code.py

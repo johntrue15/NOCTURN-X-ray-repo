@@ -1,0 +1,5 @@
+{
+  "generated_files": [
+    ".github/workflows/code_review_workflow.yml",
+    ".github/scripts/analyze_code.py"  ]
+}
