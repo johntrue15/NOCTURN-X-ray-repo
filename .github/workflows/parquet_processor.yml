@@ -1,10 +1,17 @@
 name: Parquet Data Processor
 
 on:
-  workflow_dispatch:  # Manual trigger
-  schedule:
-    - cron: '0 */6 * * *'  # Run every 6 hours
-
+  workflow_dispatch:
+    inputs:
+      start_index:
+        description: 'Starting index for batch processing'
+        required: false
+        default: '0'
+      total_processed:
+        description: 'Total records processed so far'
+        required: false
+        default: '0'
+        
 permissions:
   contents: write
   id-token: write
@@ -41,6 +48,9 @@ jobs:
           python .github/scripts/parquet_processor.py \
             --output-dir data/parquet/${{ steps.timestamp.outputs.timestamp }} \
             --batch-size 100 \
+            --max-records 500 \
+            --start-index ${{ inputs.start_index }} \
+            --total-processed ${{ inputs.total_processed }} \
             --log-file data/parquet/${{ steps.timestamp.outputs.timestamp }}/processor.log
             
       - name: Upload Artifacts
@@ -55,5 +65,39 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add data/parquet/${{ steps.timestamp.outputs.timestamp }}
-          git commit -m "Parquet data processing [${{ steps.timestamp.outputs.timestamp }}]"
-          git push 
+          git commit -m "Parquet data processing [${{ steps.timestamp.outputs.timestamp }}] - Batch starting at ${{ inputs.start_index }}"
+          git push
+          
+      - name: Trigger Next Batch or Create Release
+        if: steps.process_urls.outputs.has_more == 'true'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const nextIndex = parseInt('${{ steps.process_urls.outputs.next_index }}');
+            const totalProcessed = parseInt('${{ steps.process_urls.outputs.total_processed }}');
+            
+            if ('${{ steps.process_urls.outputs.has_more }}' === 'true') {
+              // Trigger next batch
+              await github.rest.actions.createWorkflowDispatch({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                workflow_id: 'parquet_processor.yml',
+                ref: context.ref,
+                inputs: {
+                  start_index: nextIndex.toString(),
+                  total_processed: totalProcessed.toString()
+                }
+              });
+            } else {
+              // Create release for completion
+              await github.rest.repos.createRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag_name: `parquet-complete-${process.env.TIMESTAMP}`,
+                name: 'Parquet Processing Complete',
+                body: `Completed processing ${totalProcessed} records\n\nFinal batch timestamp: ${process.env.TIMESTAMP}`,
+                draft: false,
+                prerelease: false
+              });
+            } 

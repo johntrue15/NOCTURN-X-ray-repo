@@ -63,11 +63,15 @@ def extract_page_data(soup):
         
     return data
 
-def process_url_batch(urls, output_dir, logger):
+def process_url_batch(urls, output_dir, logger, start_index, total_processed, max_records):
     """Process a batch of URLs and save to parquet"""
     all_data = []
+    processed_count = 0
     
-    for url in tqdm(urls, desc="Processing URLs"):
+    end_index = min(start_index + max_records, len(urls))
+    batch_urls = urls[start_index:end_index]
+    
+    for url in tqdm(batch_urls, desc=f"Processing URLs {start_index}-{end_index}"):
         try:
             logger.info(f"Processing URL: {url}")
             response = requests.get(url)
@@ -79,8 +83,10 @@ def process_url_batch(urls, output_dir, logger):
             # Add metadata
             page_data['url'] = url
             page_data['processed_at'] = datetime.now().isoformat()
+            page_data['batch_index'] = start_index + processed_count
             
             all_data.append(page_data)
+            processed_count += 1
             
             # Be nice to the server
             time.sleep(1)
@@ -99,7 +105,14 @@ def process_url_batch(urls, output_dir, logger):
         df.to_parquet(parquet_file, index=False)
         
         logger.info(f"Saved {len(all_data)} records to {parquet_file}")
-        return len(all_data)
+        
+        # Set outputs for GitHub Actions
+        has_more = end_index < len(urls)
+        print(f"::set-output name=has_more::{str(has_more).lower()}")
+        print(f"::set-output name=next_index::{end_index}")
+        print(f"::set-output name=total_processed::{total_processed + processed_count}")
+        
+        return processed_count
     
     return 0
 
@@ -107,6 +120,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--output-dir', required=True)
     parser.add_argument('--batch-size', type=int, default=100)
+    parser.add_argument('--max-records', type=int, default=500)
+    parser.add_argument('--start-index', type=int, default=0)
+    parser.add_argument('--total-processed', type=int, default=0)
     parser.add_argument('--log-file', required=True)
     args = parser.parse_args()
     
@@ -126,13 +142,18 @@ def main():
             
         urls = [record['url'] for record in data if record.get('url')]
         logger.info(f"Found {len(urls)} URLs to process")
+        logger.info(f"Starting at index {args.start_index}, processed so far: {args.total_processed}")
         
-        # Process in batches
-        for i in range(0, len(urls), args.batch_size):
-            batch = urls[i:i + args.batch_size]
-            logger.info(f"Processing batch {i//args.batch_size + 1}")
-            processed = process_url_batch(batch, output_dir, logger)
-            logger.info(f"Processed {processed} records in batch")
+        # Process batch
+        processed = process_url_batch(
+            urls, 
+            output_dir, 
+            logger,
+            args.start_index,
+            args.total_processed,
+            args.max_records
+        )
+        logger.info(f"Processed {processed} records in this batch")
             
     except Exception as e:
         logger.error(f"Fatal error: {e}")
