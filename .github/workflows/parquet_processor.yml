@@ -170,10 +170,12 @@ jobs:
                     start_index: nextIndex.toString(),
                     total_processed: totalProcessed.toString(),
                     batch_size: '${{ inputs.batch_size }}',
-                    max_records: '${{ inputs.max_records }}'
+                    max_records: '${{ inputs.max_records }}',
+                    total_target: '${{ inputs.total_target }}'
                   }
                 });
                 console.log('Successfully triggered next batch');
+                console.log(`Progress: ${totalProcessed} of ${{ inputs.total_target }} records processed`);
               } catch (error) {
                 console.error('Error triggering next batch:', error);
                 core.setFailed(error.message);
