@@ -21,6 +21,11 @@ on:
         required: false
         default: '500'
         type: string
+      total_target:
+        description: 'Total records to process (0 for all records)'
+        required: false
+        default: '0'
+        type: string
         
 permissions:
   contents: write
@@ -85,6 +90,7 @@ jobs:
             --max-records ${{ inputs.max_records }} \
             --start-index ${{ inputs.start_index }} \
             --total-processed ${{ inputs.total_processed }} \
+            --total-target ${{ inputs.total_target }} \
             --log-file data/parquet/${{ steps.timestamp.outputs.timestamp }}/processor.log \
             --output-file "${GITHUB_OUTPUT}"
             

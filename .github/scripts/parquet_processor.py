@@ -227,6 +227,7 @@ def main():
     parser.add_argument('--max-records', type=int, default=500)
     parser.add_argument('--start-index', type=int, default=0)
     parser.add_argument('--total-processed', type=int, default=0)
+    parser.add_argument('--total-target', type=int, default=0)
     parser.add_argument('--log-file', required=True)
     parser.add_argument('--output-file', help='GitHub Actions output file')
     args = parser.parse_args()
@@ -246,7 +247,25 @@ def main():
             data = json.load(f)
             
         urls = [record['url'] for record in data if record.get('url')]
-        logger.info(f"Found {len(urls)} URLs to process")
+        total_available = len(urls)
+        logger.info(f"Found {total_available} URLs to process")
+        
+        # Determine total records to process
+        total_to_process = args.total_target if args.total_target > 0 else total_available
+        remaining = total_to_process - args.total_processed
+        
+        if remaining <= 0:
+            logger.info("Target number of records already processed")
+            if args.output_file:
+                with open(args.output_file, 'a') as f:
+                    f.write("has_more=false\n")
+                    f.write(f"next_index={args.start_index}\n")
+                    f.write(f"total_processed={args.total_processed}\n")
+            return 0
+            
+        # Adjust max_records if needed
+        max_records = min(args.max_records, remaining)
+        logger.info(f"Processing up to {max_records} records this batch (total target: {total_to_process})")
         logger.info(f"Starting at index {args.start_index}, processed so far: {args.total_processed}")
         
         # Process batch
@@ -256,7 +275,7 @@ def main():
             logger,
             args.start_index,
             args.total_processed,
-            args.max_records,
+            max_records,
             args.output_file
         )
         logger.info(f"Processed {processed} records in this batch")
