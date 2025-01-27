@@ -109,6 +109,11 @@ This document shows the relationships between GitHub Actions workflows and their
 **Required Scripts:**
 - `.github/scripts/metadata_record_extract.py`
 
+### Parquet Data Grapher (`parquet_grapher.yml`)
+**Manual trigger available**
+**Required Scripts:**
+- `.github/scripts/parquet_grapher.py`
+
 ### Parquet Data Processor (`parquet_processor.yml`)
 **Manual trigger available**
 **Required Scripts:**
@@ -218,6 +223,10 @@ This section shows which workflows use each script:
 ### monthly.py
 **Used in Workflows:**
 - `monthly.yml`
+
+### parquet_grapher.py
+**Used in Workflows:**
+- `parquet_grapher.yml`
 
 ### parquet_processor.py
 **Used in Workflows:**
