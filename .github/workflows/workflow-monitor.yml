@@ -20,120 +20,138 @@ jobs:
       - name: Manage issues
         uses: actions/github-script@v7
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const MAIN_ISSUE_TITLE = "🔍 Workflow Failures Tracking";
             
+            // Validate repository information
+            if (!context.repo || !context.repo.owner || !context.repo.repo) {
+              throw new Error('Repository information is missing from context');
+            }
+            
             // Function to find or create the main tracking issue
             async function getMainIssue() {
-              const issues = await github.rest.issues.listForRepo({
-                owner: context.repo.owner,
-                repo: context.repo.name,
-                state: 'open',
-                labels: ['workflow-tracker']
-              });
-              
-              const mainIssue = issues.data.find(issue => issue.title === MAIN_ISSUE_TITLE);
-              
-              if (mainIssue) {
-                return mainIssue;
+              try {
+                console.log(`Searching for issues in ${context.repo.owner}/${context.repo.repo}`);
+                
+                const issues = await github.rest.issues.listForRepo({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  state: 'open'
+                });
+                
+                const mainIssue = issues.data.find(issue => issue.title === MAIN_ISSUE_TITLE);
+                
+                if (mainIssue) {
+                  console.log('Found existing main issue:', mainIssue.number);
+                  return mainIssue;
+                }
+                
+                console.log('Creating new main issue...');
+                const newIssue = await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: MAIN_ISSUE_TITLE,
+                  body: `# Workflow Failures Dashboard
+                  This issue tracks all workflow failures in the repository.
+                  
+                  ## Active Failures
+                  No active failures yet.
+                  
+                  ## Resolved Failures
+                  No resolved failures yet.`,
+                  labels: ['workflow-tracker']
+                });
+                
+                return newIssue.data;
+              } catch (error) {
+                console.error('Error in getMainIssue:', error);
+                throw error;
               }
-              
-              // Create main tracking issue if it doesn't exist
-              const newIssue = await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.name,
-                title: MAIN_ISSUE_TITLE,
-                body: `# Workflow Failures Dashboard
-                This issue tracks all workflow failures in the repository.
-                
-                ## Active Failures
-                No active failures yet.
-                
-                ## Resolved Failures
-                No resolved failures yet.`,
-                labels: ['workflow-tracker']
-              });
-              
-              return newIssue.data;
             }
             
             // Create a sub-issue for the current failure
             async function createSubIssue(mainIssueNumber) {
-              // Get workflow run details
-              const run = await github.rest.actions.getWorkflowRun({
-                owner: context.repo.owner,
-                repo: context.repo.name,
-                run_id: context.payload.workflow_run.id
-              });
-              
-              const subIssue = await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.name,
-                title: `Failure: ${context.payload.workflow_run.name} (${new Date().toISOString().split('T')[0]})`,
-                body: `
-                ## Workflow Failure Details
-                Parent issue: #${mainIssueNumber}
+              try {
+                console.log('Creating sub-issue for workflow failure...');
                 
-                ### Failed Workflow
-                - Workflow: ${context.payload.workflow_run.name}
-                - Run ID: ${context.payload.workflow_run.id}
-                - Triggered by: ${run.data.head_commit.message || 'Unknown'}
-                - Commit: ${run.data.head_commit.id || 'Unknown'}
+                // Basic workflow information that should always be available
+                const workflowInfo = {
+                  name: context.payload.workflow_run.name,
+                  id: context.payload.workflow_run.id,
+                  url: context.payload.workflow_run.html_url,
+                  created_at: new Date().toISOString()
+                };
                 
-                ### Links
-                - [Failed Workflow Run](${context.payload.workflow_run.html_url})
-                - [Workflow File](${context.payload.workflow_run.path})
-                - [Commit](${run.data.head_commit.url || '#'})
+                const subIssue = await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: `Failure: ${workflowInfo.name} (${workflowInfo.created_at.split('T')[0]})`,
+                  body: `
+                  ## Workflow Failure Details
+                  Parent issue: #${mainIssueNumber}
+                  
+                  ### Failed Workflow
+                  - Workflow: ${workflowInfo.name}
+                  - Run ID: ${workflowInfo.id}
+                  - Failed at: ${workflowInfo.created_at}
+                  
+                  ### Links
+                  - [Failed Workflow Run](${workflowInfo.url})
+                  
+                  To see detailed logs, visit the workflow run link above.`,
+                  labels: ['workflow-failure']
+                });
                 
-                To see detailed logs, visit the workflow run link above.`,
-                labels: ['workflow-failure', 'bug']
-              });
-              
-              return subIssue.data;
+                return subIssue.data;
+              } catch (error) {
+                console.error('Error in createSubIssue:', error);
+                throw error;
+              }
             }
             
             // Update main issue with new failure
             async function updateMainIssue(mainIssue, subIssue) {
-              const mainIssueBody = mainIssue.body;
-              const newFailureEntry = `- [${subIssue.title}](${subIssue.html_url}) - Created ${new Date().toISOString().split('T')[0]}`;
-              
-              let updatedBody = mainIssueBody;
-              if (mainIssueBody.includes('No active failures yet.')) {
-                updatedBody = mainIssueBody.replace(
-                  'No active failures yet.',
-                  newFailureEntry
-                );
-              } else {
-                updatedBody = mainIssueBody.replace(
-                  '## Active Failures\n',
-                  `## Active Failures\n${newFailureEntry}\n`
-                );
+              try {
+                console.log('Updating main issue with new failure...');
+                
+                const mainIssueBody = mainIssue.body;
+                const newFailureEntry = `- [${subIssue.title}](${subIssue.html_url}) - Created ${new Date().toISOString().split('T')[0]}`;
+                
+                let updatedBody = mainIssueBody;
+                if (mainIssueBody.includes('No active failures yet.')) {
+                  updatedBody = mainIssueBody.replace(
+                    'No active failures yet.',
+                    newFailureEntry
+                  );
+                } else {
+                  updatedBody = mainIssueBody.replace(
+                    '## Active Failures\n',
+                    `## Active Failures\n${newFailureEntry}\n`
+                  );
+                }
+                
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: mainIssue.number,
+                  body: updatedBody
+                });
+              } catch (error) {
+                console.error('Error in updateMainIssue:', error);
+                throw error;
               }
-              
-              await github.rest.issues.update({
-                owner: context.repo.owner,
-                repo: context.repo.name,
-                issue_number: mainIssue.number,
-                body: updatedBody
-              });
             }
             
             // Main execution
             try {
+              console.log('Starting workflow monitor...');
               const mainIssue = await getMainIssue();
               const subIssue = await createSubIssue(mainIssue.number);
               await updateMainIssue(mainIssue, subIssue);
               
-              // Add comment to the failed commit
-              if (context.payload.workflow_run.head_commit) {
-                await github.rest.repos.createCommitComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.name,
-                  commit_sha: context.payload.workflow_run.head_sha,
-                  body: `⚠️ Workflow "${context.payload.workflow_run.name}" failed. [View details](${subIssue.html_url})`
-                });
-              }
+              console.log('Successfully created and linked issues');
             } catch (error) {
-              console.error('Error in workflow monitor:', error);
-              core.setFailed(error.message);
+              console.error('Fatal error in workflow monitor:', error);
+              core.setFailed(`Workflow monitor failed: ${error.message}`);
             }
