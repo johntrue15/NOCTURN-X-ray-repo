@@ -1,0 +1,8 @@
+# Daily Check Report
+Check Date: 2025-01-27 01:34:42
+
+No new records found since last check.
+
+## Data Files
+Current data: data/2025-01-27_01-34-38/morphosource_data_complete.json
+Previous data: data/2025-01-26_20-45-42/morphosource_data_complete.json
