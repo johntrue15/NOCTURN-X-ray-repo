@@ -166,11 +166,13 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
         
         logger.info(f"Saved {len(all_data)} records to {parquet_file}")
         
-        # Set outputs for GitHub Actions
-        has_more = end_index < len(urls)
-        print(f"::set-output name=has_more::{str(has_more).lower()}")
-        print(f"::set-output name=next_index::{end_index}")
-        print(f"::set-output name=total_processed::{total_processed + processed_count}")
+        # Write outputs to GitHub Actions output file
+        if args.output_file:
+            with open(args.output_file, 'a') as f:
+                has_more = end_index < len(urls)
+                f.write(f"has_more={str(has_more).lower()}\n")
+                f.write(f"next_index={end_index}\n")
+                f.write(f"total_processed={total_processed + processed_count}\n")
         
         return processed_count
     
@@ -184,6 +186,7 @@ def main():
     parser.add_argument('--start-index', type=int, default=0)
     parser.add_argument('--total-processed', type=int, default=0)
     parser.add_argument('--log-file', required=True)
+    parser.add_argument('--output-file', help='GitHub Actions output file')
     args = parser.parse_args()
     
     # Setup
