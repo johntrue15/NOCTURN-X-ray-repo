@@ -43,11 +43,6 @@ def setup_driver():
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
-    chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument('--disable-extensions')
-    chrome_options.add_argument('--disable-infobars')
-    chrome_options.add_argument('--disable-notifications')
-    chrome_options.page_load_strategy = 'eager'
     chrome_options.binary_location = '/usr/bin/google-chrome'
     return webdriver.Chrome(options=chrome_options)
 
@@ -56,99 +51,108 @@ def extract_page_data(driver, url, logger):
     data = {
         'url': url,
         'processed_at': datetime.now().isoformat(),
-        'media_id': None,
-        'media_type': None,
-        'object_element': None,
-        'file_name': None,
-        'file_format': None,
-        'file_size_bytes': None,
-        'image_width': None,
-        'image_height': None,
-        'color_space': None,
-        'color_depth': None,
-        'compression': None,
-        'x_pixel_spacing': None,
-        'y_pixel_spacing': None,
-        'z_pixel_spacing': None,
-        'pixel_spacing_units': None,
-        'slice_thickness': None,
-        'number_of_images': None,
-        'creator': None,
-        'date_created': None,
-        'date_uploaded': None
     }
     
     try:
         driver.get(url)
-        wait = WebDriverWait(driver, 10)
-        wait.until(EC.presence_of_element_located((By.CLASS_NAME, "field-value")))
+        time.sleep(5)  # Wait for content to load
         
-        # Dictionary mapping field names to their XPath expressions
-        field_mappings = {
-            'media_id': '//div[contains(text(), "Media ID")]/following-sibling::*[1]',
-            'media_type': '//div[contains(text(), "Media type")]/following-sibling::*[1]',
-            'object_element': '//div[contains(text(), "Object element or part")]/following-sibling::*[1]',
-            'file_name': '//div[contains(text(), "File name")]/following-sibling::*[1]',
-            'file_format': '//div[contains(text(), "File format")]/following-sibling::*[1]',
-            'file_size': '//div[contains(text(), "File size")]/following-sibling::*[1]',
-            'image_width': '//div[contains(text(), "Image width")]/following-sibling::*[1]',
-            'image_height': '//div[contains(text(), "Image height")]/following-sibling::*[1]',
-            'color_space': '//div[contains(text(), "Color space")]/following-sibling::*[1]',
-            'color_depth': '//div[contains(text(), "Color depth")]/following-sibling::*[1]',
-            'compression': '//div[contains(text(), "Compression")]/following-sibling::*[1]',
-            'x_pixel_spacing': '//div[contains(text(), "X pixel spacing")]/following-sibling::*[1]',
-            'y_pixel_spacing': '//div[contains(text(), "Y pixel spacing")]/following-sibling::*[1]',
-            'z_pixel_spacing': '//div[contains(text(), "Z pixel spacing")]/following-sibling::*[1]',
-            'pixel_spacing_units': '//div[contains(text(), "Pixel spacing units")]/following-sibling::*[1]',
-            'slice_thickness': '//div[contains(text(), "Slice thickness")]/following-sibling::*[1]',
-            'number_of_images': '//div[contains(text(), "Number of images in set")]/following-sibling::*[1]',
-            'creator': '//div[contains(text(), "Creator")]/following-sibling::*[1]',
-            'date_created': '//div[contains(text(), "Date created")]/following-sibling::*[1]',
-            'date_uploaded': '//div[contains(text(), "Date uploaded")]/following-sibling::*[1]'
+        # Dictionary of all sections and their fields
+        sections = {
+            'GENERAL DETAILS': {
+                'fields': [
+                    'Media ID', 'Media type', 'Object element or part',
+                    'Object represented', 'Object taxonomy', 'Object organization',
+                    'Side', 'Orientation', 'Short description', 'Full description',
+                    'Creator', 'Date created', 'Date uploaded'
+                ]
+            },
+            'FILE OBJECT DETAILS': {
+                'fields': [
+                    'File name', 'File format(s)', 'File size', 'Image width',
+                    'Image height', 'Color space', 'Color depth', 'Compression',
+                    'X pixel spacing', 'Y pixel spacing', 'Z pixel spacing',
+                    'Pixel spacing units', 'Slice thickness', 'Number of images in set'
+                ]
+            },
+            'IMAGE ACQUISITION AND PROCESSING AT A GLANCE': {
+                'fields': [
+                    'Number of parent media', 'Number of processing events', 'Modality',
+                    'Device'
+                ]
+            },
+            'OWNERSHIP AND PERMISSIONS': {
+                'fields': [
+                    'Data managed by', 'Data uploaded by', 'Publication status',
+                    'Download reviewer', 'IP holder', 'Copyright statement',
+                    'Creative Commons license', 'MorphoSource use agreement type',
+                    'Permits commercial use', 'Permits 3D use',
+                    'Required archival of published derivatives', 'Funding attribution',
+                    'Publisher', 'Cite as', 'Media preview mode',
+                    'Additional usage agreement'
+                ]
+            },
+            'IDENTIFIERS AND EXTERNAL LINKS': {
+                'fields': [
+                    'MorphoSource ARK', 'MorphoSource DOI', 'External identifier',
+                    'External media URL'
+                ]
+            }
         }
         
-        for field, xpath in field_mappings.items():
-            try:
-                element = driver.find_element(By.XPATH, xpath)
-                value = element.text.strip()
-                if '\n' in value:
-                    value = value.split('\n')[0]
+        for section_name, section_info in sections.items():
+            logger.debug(f"Looking for section: {section_name}")
+            
+            for field in section_info['fields']:
+                try:
+                    # Look for field names and their corresponding values
+                    field_elements = driver.find_elements(By.XPATH, 
+                        f"//*[contains(text(), '{field}')]/following-sibling::*[1]")
                     
-                # Handle special field conversions
-                if field == 'file_size':
-                    try:
-                        size_str = value.lower()
-                        number = float(''.join(c for c in size_str if c.isdigit() or c == '.'))
-                        if 'gb' in size_str:
-                            data['file_size_bytes'] = number * 1024 * 1024 * 1024
-                        elif 'mb' in size_str:
-                            data['file_size_bytes'] = number * 1024 * 1024
-                        elif 'kb' in size_str:
-                            data['file_size_bytes'] = number * 1024
-                    except ValueError as e:
-                        logger.error(f"Error converting file size '{value}': {e}")
-                elif field in ['image_width', 'image_height', 'color_depth', 'number_of_images']:
-                    try:
-                        data[field] = float(''.join(c for c in value if c.isdigit() or c == '.'))
-                    except ValueError as e:
-                        logger.error(f"Error converting {field} '{value}': {e}")
-                elif field in ['x_pixel_spacing', 'y_pixel_spacing', 'z_pixel_spacing']:
-                    try:
-                        data[field] = float(value)
-                    except ValueError as e:
-                        logger.error(f"Error converting {field} '{value}': {e}")
-                else:
-                    data[field] = value
-                    
-                logger.debug(f"Found {field}: {value}")
-                
-            except Exception as e:
-                logger.debug(f"Field {field} not found: {e}")
-                
+                    if field_elements:
+                        value = field_elements[0].text.strip()
+                        # Clean up value - remove 'More...' and similar trailing text
+                        if '\n' in value:
+                            value = value.split('\n')[0]
+                        
+                        # Convert field name to column name
+                        column_name = field.lower().replace(' ', '_')
+                        
+                        # Handle special conversions
+                        if field == 'File size':
+                            try:
+                                size_str = value.lower()
+                                number = float(''.join(c for c in size_str if c.isdigit() or c == '.'))
+                                if 'gb' in size_str:
+                                    data['file_size_bytes'] = number * 1024 * 1024 * 1024
+                                elif 'mb' in size_str:
+                                    data['file_size_bytes'] = number * 1024 * 1024
+                                elif 'kb' in size_str:
+                                    data['file_size_bytes'] = number * 1024
+                            except ValueError:
+                                data['file_size_bytes'] = None
+                        elif field in ['Image width', 'Image height', 'Color depth', 'Number of images in set']:
+                            try:
+                                data[column_name] = float(''.join(c for c in value if c.isdigit() or c == '.'))
+                            except ValueError:
+                                data[column_name] = None
+                        elif field in ['X pixel spacing', 'Y pixel spacing', 'Z pixel spacing']:
+                            try:
+                                data[column_name] = float(value)
+                            except ValueError:
+                                data[column_name] = None
+                        else:
+                            data[column_name] = value
+                            
+                        logger.debug(f"Found {field}: {value}")
+                except Exception as e:
+                    logger.debug(f"Error finding {field}: {e}")
+                    data[column_name] = None
+        
         return data
         
     except Exception as e:
-        logger.error(f"Error extracting data from {url}: {e}")
+        logger.error(f"Error extracting data from {url}: {e}", exc_info=True)
         return data
 
 def process_url_batch(urls, output_dir, logger, start_index, total_processed, max_records, output_file=None):
