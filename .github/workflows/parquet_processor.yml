@@ -64,9 +64,46 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add data/parquet/${{ steps.timestamp.outputs.timestamp }}
-          git commit -m "Parquet data processing [${{ steps.timestamp.outputs.timestamp }}] - Batch starting at ${{ inputs.start_index }}"
-          git push
+          
+          # Function to attempt commit and push
+          push_changes() {
+            git add data/parquet/${{ steps.timestamp.outputs.timestamp }}
+            git commit -m "Parquet data processing [${{ steps.timestamp.outputs.timestamp }}] - Batch starting at ${{ inputs.start_index }}"
+            git push && return 0
+            return 1
+          }
+          
+          # Try to push directly first
+          if push_changes; then
+            echo "Changes pushed successfully"
+            exit 0
+          fi
+          
+          # If direct push failed, try pull and rebase
+          MAX_ATTEMPTS=3
+          ATTEMPT=1
+          
+          while [ $ATTEMPT -le $MAX_ATTEMPTS ]; do
+            echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to push changes"
+            
+            # Fetch and rebase
+            git fetch origin main
+            git rebase origin/main
+            
+            if push_changes; then
+              echo "Changes pushed successfully on attempt $ATTEMPT"
+              exit 0
+            fi
+            
+            ATTEMPT=$((ATTEMPT + 1))
+            if [ $ATTEMPT -le $MAX_ATTEMPTS ]; then
+              echo "Push failed, waiting 10 seconds before retry..."
+              sleep 10
+            fi
+          done
+          
+          echo "Failed to push changes after $MAX_ATTEMPTS attempts"
+          exit 1
           
       - name: Trigger Next Batch or Create Release
         if: steps.process_urls.outputs.has_more == 'true'

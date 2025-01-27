@@ -42,6 +42,26 @@ def extract_page_data(soup):
     title_elem = soup.find('h1')
     data['title'] = title_elem.text.strip() if title_elem else None
     
+    # Extract collections
+    collections_section = soup.find('div', class_='collections-section')
+    if collections_section:
+        collections = []
+        for collection in collections_section.find_all('div', class_='collection-item'):
+            name = collection.find('div', class_='collection-name')
+            type_elem = collection.find('div', class_='collection-type')
+            if name:
+                collections.append({
+                    'name': name.text.strip(),
+                    'type': type_elem.text.strip() if type_elem else None
+                })
+        data['collections'] = collections
+    
+    # Extract tags
+    tags_section = soup.find('div', class_='tags-section')
+    if tags_section:
+        tags = [tag.text.strip() for tag in tags_section.find_all('div', class_='tag-item')]
+        data['tags'] = tags
+    
     # Extract all detail sections
     sections = soup.find_all('div', class_='detail-section')
     for section in sections:
@@ -57,10 +77,50 @@ def extract_page_data(soup):
             label = field.find('div', class_='field-label')
             value = field.find('div', class_='field-value')
             if label and value:
-                section_data[label.text.strip()] = value.text.strip()
+                # Clean and normalize field names
+                field_name = label.text.strip().lower().replace(' ', '_')
+                field_value = value.text.strip()
                 
-        data[section_name] = section_data
-        
+                # Convert numeric values where appropriate
+                if any(num in field_name for num in ['size', 'width', 'height', 'depth', 'spacing', 'voltage', 'power']):
+                    try:
+                        # Extract numeric part
+                        numeric_part = ''.join(c for c in field_value if c.isdigit() or c == '.')
+                        if numeric_part:
+                            field_value = float(numeric_part)
+                    except ValueError:
+                        pass
+                
+                section_data[field_name] = field_value
+                
+        # Normalize section names
+        section_key = section_name.lower().replace(' ', '_')
+        data[section_key] = section_data
+    
+    # Extract image acquisition steps
+    acquisition_steps = soup.find_all('div', class_='acquisition-step')
+    if acquisition_steps:
+        steps_data = []
+        for step in acquisition_steps:
+            step_title = step.find('h3')
+            step_fields = step.find_all('div', class_='field-item')
+            
+            step_data = {
+                'title': step_title.text.strip() if step_title else None,
+                'fields': {}
+            }
+            
+            for field in step_fields:
+                label = field.find('div', class_='field-label')
+                value = field.find('div', class_='field-value')
+                if label and value:
+                    field_name = label.text.strip().lower().replace(' ', '_')
+                    step_data['fields'][field_name] = value.text.strip()
+                    
+            steps_data.append(step_data)
+            
+        data['acquisition_steps'] = steps_data
+    
     return data
 
 def process_url_batch(urls, output_dir, logger, start_index, total_processed, max_records):
