@@ -46,6 +46,16 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ---
 
+### Parquet Data Processor (`parquet_processor.yml`)
+
+**Schedule:** Cron: 0 */6 * * *
+
+**Required Scripts:**
+- `.github/scripts/parquet_processor.py`
+
+
+---
+
 ### Wiki Generation (`wiki-generation.yml`)
 
 **Schedule:** Weekly on Sunday at midnight
@@ -213,6 +223,10 @@ This section shows which workflows use each script:
 ### monthly.py
 **Used in Workflows:**
 - `monthly.yml`
+
+### parquet_processor.py
+**Used in Workflows:**
+- `parquet_processor.yml`
 
 ### release_analysis.py
 **Used in Workflows:**
