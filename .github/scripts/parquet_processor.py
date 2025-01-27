@@ -56,6 +56,86 @@ def setup_driver():
     
     return driver
 
+def get_fields_for_type(media_type):
+    """Get relevant fields based on media type"""
+    base_fields = {
+        'GENERAL DETAILS': [
+            'Media ID', 'Media type', 'Object element or part',
+            'Object represented', 'Object taxonomy', 'Object organization',
+            'Side', 'Orientation', 'Short description', 'Full description',
+            'Creator', 'Date created', 'Date uploaded'
+        ],
+        'OWNERSHIP AND PERMISSIONS': [
+            'Data managed by', 'Data uploaded by', 'Publication status',
+            'Download reviewer', 'IP holder', 'Copyright statement',
+            'Creative Commons license', 'Morphosource use agreement type',
+            'Permits commercial use', 'Permits 3D use',
+            'Required archival of published derivatives', 'Funding attribution',
+            'Publisher', 'Cite as', 'Media preview mode',
+            'Additional usage agreement'
+        ],
+        'IDENTIFIERS AND EXTERNAL LINKS': [
+            'MorphoSource ARK', 'MorphoSource DOI', 
+            'External identifier', 'External media URL'
+        ]
+    }
+    
+    if media_type.lower() == 'volumetric image series':
+        base_fields.update({
+            'FILE OBJECT DETAILS': [
+                'File name', 'File format(s)', 'File size', 'Image width',
+                'Image height', 'Color space', 'Color depth', 'Compression',
+                'X pixel spacing', 'Y pixel spacing', 'Z pixel spacing',
+                'Pixel spacing units', 'Slice thickness', 'Number of images in set'
+            ],
+            'IMAGE ACQUISITION AND PROCESSING AT A GLANCE': [
+                'Number of parent media', 'Number of processing events', 
+                'Modality', 'Device'
+            ]
+        })
+    elif media_type.lower() == 'mesh':
+        base_fields.update({
+            'FILE OBJECT DETAILS': [
+                'File name', 'File format(s)', 'File size',
+                'Points', 'Polygons', 'Map type', 'UV coordinates',
+                'Vertex color', 'Bounding box dimensions', 
+                'Centroid coordinates', 'Units of point coordinates'
+            ],
+            'IMAGE ACQUISITION AND PROCESSING AT A GLANCE': [
+                'Number of parent media', 'Number of processing events',
+                'Derived directly from', 'Modality', 'Device'
+            ]
+        })
+    
+    return base_fields
+
+def detect_page_layout(driver, logger):
+    """Detect page layout and media type"""
+    layouts = {
+        'showcase': {
+            'media_type_xpath': "//div[contains(@class, 'showcase-label')][contains(text(), 'Media type')]/following-sibling::div[contains(@class, 'showcase-value')]",
+            'field_class': 'showcase-label',
+            'value_class': 'showcase-value'
+        },
+        'traditional': {
+            'media_type_xpath': "//div[@class='field-name'][contains(text(), 'Media type')]/following-sibling::div[@class='field-value']",
+            'field_class': 'field-name',
+            'value_class': 'field-value'
+        }
+    }
+    
+    for layout_name, selectors in layouts.items():
+        try:
+            elem = driver.find_element(By.XPATH, selectors['media_type_xpath'])
+            if elem:
+                media_type = elem.text.strip()
+                logger.info(f"Detected layout: {layout_name}, Media type: {media_type}")
+                return layout_name, media_type, selectors
+        except:
+            continue
+            
+    return None, None, None
+
 def extract_page_data(driver, url, logger):
     """Extract structured data from MorphoSource page using Selenium"""
     data = {
@@ -67,76 +147,45 @@ def extract_page_data(driver, url, logger):
     try:
         logger.info(f"Starting page load for {url}")
         driver.get(url)
+        time.sleep(5)
         
-        # Use explicit wait for content
-        wait = WebDriverWait(driver, 10)
-        try:
-            wait.until(EC.presence_of_element_located((By.CLASS_NAME, "showcase-label")))
-        except TimeoutException:
-            logger.warning("Timeout waiting for content, attempting to continue...")
+        # Check if we're on a valid page
+        if "Showcase Media" not in driver.title:
+            raise ValueError("Not a valid MorphoSource media page")
         
-        logger.info(f"Page loaded for {url}")
-        
-        # Dictionary of all sections and their fields
-        sections = {
-            'GENERAL DETAILS': {
-                'fields': [
-                    'Media ID', 'Media type', 'Object element or part',
-                    'Object represented', 'Object taxonomy', 'Object organization',
-                    'Side', 'Orientation', 'Short description', 'Full description',
-                    'Creator', 'Date created', 'Date uploaded'
-                ]
-            },
-            'FILE OBJECT DETAILS': {
-                'fields': [
-                    'File name', 'File format(s)', 'File size', 'Image width',
-                    'Image height', 'Color space', 'Color depth', 'Compression',
-                    'X pixel spacing', 'Y pixel spacing', 'Z pixel spacing',
-                    'Pixel spacing units', 'Slice thickness', 'Number of images in set'
-                ]
-            },
-            'IMAGE ACQUISITION AND PROCESSING AT A GLANCE': {
-                'fields': [
-                    'Number of parent media', 'Number of processing events', 'Modality',
-                    'Device'
-                ]
-            },
-            'OWNERSHIP AND PERMISSIONS': {
-                'fields': [
-                    'Data managed by', 'Data uploaded by', 'Publication status',
-                    'Download reviewer', 'IP holder', 'Copyright statement',
-                    'Creative Commons license', 'MorphoSource use agreement type',
-                    'Permits commercial use', 'Permits 3D use',
-                    'Required archival of published derivatives', 'Funding attribution',
-                    'Publisher', 'Cite as', 'Media preview mode',
-                    'Additional usage agreement'
-                ]
-            },
-            'IDENTIFIERS AND EXTERNAL LINKS': {
-                'fields': [
-                    'MorphoSource ARK', 'MorphoSource DOI', 'External identifier',
-                    'External media URL'
-                ]
-            }
-        }
-        
-        for section_name, section_info in sections.items():
-            logger.debug(f"Looking for section: {section_name}")
+        # Detect layout and media type
+        layout, media_type, selectors = detect_page_layout(driver, logger)
+        if not layout or not media_type:
+            raise ValueError("Could not determine page layout or media type")
             
-            for field in section_info['fields']:
+        data['media_type'] = media_type
+        data['layout_type'] = layout
+        
+        # Get fields based on media type
+        sections = get_fields_for_type(media_type)
+        
+        # Extract data using detected layout
+        for section_name, fields in sections.items():
+            logger.debug(f"Processing section: {section_name}")
+            
+            for field in fields:
                 try:
-                    # Look for field names and their corresponding values
-                    field_elements = driver.find_elements(By.XPATH, 
-                        f"//*[contains(text(), '{field}')]/following-sibling::*[1]")
+                    if layout == 'showcase':
+                        field_xpath = f"//div[contains(@class, 'showcase-label')][contains(text(), '{field}')]"
+                        value_xpath = "./following-sibling::div[contains(@class, 'showcase-value')]"
+                    else:
+                        field_xpath = f"//div[@class='field-name'][contains(text(), '{field}')]"
+                        value_xpath = "./following-sibling::div[@class='field-value']"
                     
-                    if field_elements:
-                        value = field_elements[0].text.strip()
-                        # Clean up value - remove 'More...' and similar trailing text
+                    field_elem = driver.find_element(By.XPATH, field_xpath)
+                    if field_elem:
+                        value_elem = field_elem.find_element(By.XPATH, value_xpath)
+                        value = value_elem.text.strip() if value_elem else ""
                         if '\n' in value:
                             value = value.split('\n')[0]
-                        
+                            
                         # Convert field name to column name
-                        column_name = field.lower().replace(' ', '_')
+                        column_name = field.lower().replace(' ', '_').replace('(', '').replace(')', '')
                         
                         # Handle special conversions
                         if field == 'File size':
@@ -151,7 +200,8 @@ def extract_page_data(driver, url, logger):
                                     data['file_size_bytes'] = number * 1024
                             except ValueError:
                                 data['file_size_bytes'] = None
-                        elif field in ['Image width', 'Image height', 'Color depth', 'Number of images in set']:
+                        elif field in ['Image width', 'Image height', 'Color depth', 'Number of images in set',
+                                     'Points', 'Polygons']:
                             try:
                                 data[column_name] = float(''.join(c for c in value if c.isdigit() or c == '.'))
                             except ValueError:
@@ -167,26 +217,14 @@ def extract_page_data(driver, url, logger):
                         logger.debug(f"Found {field}: {value}")
                 except Exception as e:
                     logger.debug(f"Error finding {field}: {e}")
+                    column_name = field.lower().replace(' ', '_').replace('(', '').replace(')', '')
                     data[column_name] = None
         
         return data
         
-    except TimeoutException as e:
-        logger.error(f"Timeout processing {url}: {e}")
-        data['error'] = f"Timeout: {str(e)}"
-        # Force quit the hanging browser
-        try:
-            driver.quit()
-        except:
-            pass
-        return data
-    except WebDriverException as e:
-        logger.error(f"WebDriver error for {url}: {e}")
-        data['error'] = f"WebDriver: {str(e)}"
-        return data
     except Exception as e:
         logger.error(f"Error extracting data from {url}: {e}", exc_info=True)
-        data['error'] = f"General: {str(e)}"
+        data['error'] = str(e)
         return data
 
 def process_url_batch(urls, output_dir, logger, start_index, total_processed, max_records, output_file=None):
