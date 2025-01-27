@@ -109,33 +109,6 @@ def get_fields_for_type(media_type):
     
     return base_fields
 
-def detect_page_layout(driver, logger):
-    """Detect page layout and media type"""
-    layouts = {
-        'showcase': {
-            'media_type_xpath': "//div[contains(@class, 'showcase-label')][contains(text(), 'Media type')]/following-sibling::div[contains(@class, 'showcase-value')]",
-            'field_class': 'showcase-label',
-            'value_class': 'showcase-value'
-        },
-        'traditional': {
-            'media_type_xpath': "//div[@class='field-name'][contains(text(), 'Media type')]/following-sibling::div[@class='field-value']",
-            'field_class': 'field-name',
-            'value_class': 'field-value'
-        }
-    }
-    
-    for layout_name, selectors in layouts.items():
-        try:
-            elem = driver.find_element(By.XPATH, selectors['media_type_xpath'])
-            if elem:
-                media_type = elem.text.strip()
-                logger.info(f"Detected layout: {layout_name}, Media type: {media_type}")
-                return layout_name, media_type, selectors
-        except:
-            continue
-            
-    return None, None, None
-
 def extract_page_data(driver, url, logger):
     """Extract structured data from MorphoSource page using Selenium"""
     data = {
@@ -147,19 +120,45 @@ def extract_page_data(driver, url, logger):
     try:
         logger.info(f"Starting page load for {url}")
         driver.get(url)
-        time.sleep(5)
+        time.sleep(5)  # Keep the reliable sleep
         
-        # Check if we're on a valid page
-        if "Showcase Media" not in driver.title:
+        # First check if we're on a valid page
+        title = driver.title
+        if "Showcase Media" not in title:
             raise ValueError("Not a valid MorphoSource media page")
         
-        # Detect layout and media type
-        layout, media_type, selectors = detect_page_layout(driver, logger)
-        if not layout or not media_type:
+        # Try different layout patterns
+        layouts = {
+            'showcase': {
+                'media_type_xpath': "//div[contains(@class, 'showcase-label')][contains(text(), 'Media type')]/following-sibling::div[contains(@class, 'showcase-value')]",
+                'field_class': 'showcase-label',
+                'value_class': 'showcase-value'
+            },
+            'traditional': {
+                'media_type_xpath': "//div[@class='field-name'][contains(text(), 'Media type')]/following-sibling::div[@class='field-value']",
+                'field_class': 'field-name',
+                'value_class': 'field-value'
+            }
+        }
+        
+        # Detect layout type and media type
+        layout_used = None
+        media_type = None
+        
+        for layout_name, selectors in layouts.items():
+            try:
+                elem = driver.find_element(By.XPATH, selectors['media_type_xpath'])
+                if elem:
+                    media_type = elem.text.strip()
+                    layout_used = layout_name
+                    break
+            except:
+                continue
+        
+        if not layout_used or not media_type:
             raise ValueError("Could not determine page layout or media type")
             
-        data['media_type'] = media_type
-        data['layout_type'] = layout
+        logger.info(f"Detected layout: {layout_used}, Media type: {media_type}")
         
         # Get fields based on media type
         sections = get_fields_for_type(media_type)
@@ -170,7 +169,7 @@ def extract_page_data(driver, url, logger):
             
             for field in fields:
                 try:
-                    if layout == 'showcase':
+                    if layout_used == 'showcase':
                         field_xpath = f"//div[contains(@class, 'showcase-label')][contains(text(), '{field}')]"
                         value_xpath = "./following-sibling::div[contains(@class, 'showcase-value')]"
                     else:
@@ -183,40 +182,14 @@ def extract_page_data(driver, url, logger):
                         value = value_elem.text.strip() if value_elem else ""
                         if '\n' in value:
                             value = value.split('\n')[0]
-                            
+                        
                         # Convert field name to column name
                         column_name = field.lower().replace(' ', '_').replace('(', '').replace(')', '')
-                        
-                        # Handle special conversions
-                        if field == 'File size':
-                            try:
-                                size_str = value.lower()
-                                number = float(''.join(c for c in size_str if c.isdigit() or c == '.'))
-                                if 'gb' in size_str:
-                                    data['file_size_bytes'] = number * 1024 * 1024 * 1024
-                                elif 'mb' in size_str:
-                                    data['file_size_bytes'] = number * 1024 * 1024
-                                elif 'kb' in size_str:
-                                    data['file_size_bytes'] = number * 1024
-                            except ValueError:
-                                data['file_size_bytes'] = None
-                        elif field in ['Image width', 'Image height', 'Color depth', 'Number of images in set',
-                                     'Points', 'Polygons']:
-                            try:
-                                data[column_name] = float(''.join(c for c in value if c.isdigit() or c == '.'))
-                            except ValueError:
-                                data[column_name] = None
-                        elif field in ['X pixel spacing', 'Y pixel spacing', 'Z pixel spacing']:
-                            try:
-                                data[column_name] = float(value)
-                            except ValueError:
-                                data[column_name] = None
-                        else:
-                            data[column_name] = value
-                            
+                        data[column_name] = value
                         logger.debug(f"Found {field}: {value}")
+                        
                 except Exception as e:
-                    logger.debug(f"Error finding {field}: {e}")
+                    logger.debug(f"Could not find {field}: {str(e)}")
                     column_name = field.lower().replace(' ', '_').replace('(', '').replace(')', '')
                     data[column_name] = None
         
