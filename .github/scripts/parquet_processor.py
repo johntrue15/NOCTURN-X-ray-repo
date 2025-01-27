@@ -2,13 +2,16 @@ import os
 import json
 import logging
 import argparse
-import requests
-from bs4 import BeautifulSoup
 import pandas as pd
 from pathlib import Path
 from datetime import datetime
 from tqdm import tqdm
 import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
 
 def setup_logging(log_file):
     """Configure logging"""
@@ -34,11 +37,27 @@ def get_latest_data_file():
             
     raise FileNotFoundError("No morphosource_data_complete.json found")
 
-def extract_page_data(soup, url, logger):
-    """Extract structured data from MorphoSource page"""
+def setup_driver():
+    """Configure Chrome driver with optimized settings"""
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--disable-extensions')
+    chrome_options.add_argument('--disable-infobars')
+    chrome_options.add_argument('--disable-notifications')
+    chrome_options.page_load_strategy = 'eager'
+    return webdriver.Chrome(options=chrome_options)
+
+def extract_page_data(driver, url, logger):
+    """Extract structured data from MorphoSource page using Selenium"""
     data = {
         'url': url,
         'processed_at': datetime.now().isoformat(),
+        'media_id': None,
+        'media_type': None,
+        'object_element': None,
         'file_name': None,
         'file_format': None,
         'file_size_bytes': None,
@@ -52,106 +71,84 @@ def extract_page_data(soup, url, logger):
         'z_pixel_spacing': None,
         'pixel_spacing_units': None,
         'slice_thickness': None,
-        'number_of_images': None
+        'number_of_images': None,
+        'creator': None,
+        'date_created': None,
+        'date_uploaded': None
     }
     
-    # Find the file object details section
-    file_section = soup.find('h2', string='FILE OBJECT DETAILS')
-    if not file_section:
-        logger.warning("Could not find FILE OBJECT DETAILS heading")
+    try:
+        driver.get(url)
+        wait = WebDriverWait(driver, 10)
+        wait.until(EC.presence_of_element_located((By.CLASS_NAME, "field-value")))
+        
+        # Dictionary mapping field names to their XPath expressions
+        field_mappings = {
+            'media_id': '//div[contains(text(), "Media ID")]/following-sibling::*[1]',
+            'media_type': '//div[contains(text(), "Media type")]/following-sibling::*[1]',
+            'object_element': '//div[contains(text(), "Object element or part")]/following-sibling::*[1]',
+            'file_name': '//div[contains(text(), "File name")]/following-sibling::*[1]',
+            'file_format': '//div[contains(text(), "File format")]/following-sibling::*[1]',
+            'file_size': '//div[contains(text(), "File size")]/following-sibling::*[1]',
+            'image_width': '//div[contains(text(), "Image width")]/following-sibling::*[1]',
+            'image_height': '//div[contains(text(), "Image height")]/following-sibling::*[1]',
+            'color_space': '//div[contains(text(), "Color space")]/following-sibling::*[1]',
+            'color_depth': '//div[contains(text(), "Color depth")]/following-sibling::*[1]',
+            'compression': '//div[contains(text(), "Compression")]/following-sibling::*[1]',
+            'x_pixel_spacing': '//div[contains(text(), "X pixel spacing")]/following-sibling::*[1]',
+            'y_pixel_spacing': '//div[contains(text(), "Y pixel spacing")]/following-sibling::*[1]',
+            'z_pixel_spacing': '//div[contains(text(), "Z pixel spacing")]/following-sibling::*[1]',
+            'pixel_spacing_units': '//div[contains(text(), "Pixel spacing units")]/following-sibling::*[1]',
+            'slice_thickness': '//div[contains(text(), "Slice thickness")]/following-sibling::*[1]',
+            'number_of_images': '//div[contains(text(), "Number of images in set")]/following-sibling::*[1]',
+            'creator': '//div[contains(text(), "Creator")]/following-sibling::*[1]',
+            'date_created': '//div[contains(text(), "Date created")]/following-sibling::*[1]',
+            'date_uploaded': '//div[contains(text(), "Date uploaded")]/following-sibling::*[1]'
+        }
+        
+        for field, xpath in field_mappings.items():
+            try:
+                element = driver.find_element(By.XPATH, xpath)
+                value = element.text.strip()
+                if '\n' in value:
+                    value = value.split('\n')[0]
+                    
+                # Handle special field conversions
+                if field == 'file_size':
+                    try:
+                        size_str = value.lower()
+                        number = float(''.join(c for c in size_str if c.isdigit() or c == '.'))
+                        if 'gb' in size_str:
+                            data['file_size_bytes'] = number * 1024 * 1024 * 1024
+                        elif 'mb' in size_str:
+                            data['file_size_bytes'] = number * 1024 * 1024
+                        elif 'kb' in size_str:
+                            data['file_size_bytes'] = number * 1024
+                    except ValueError as e:
+                        logger.error(f"Error converting file size '{value}': {e}")
+                elif field in ['image_width', 'image_height', 'color_depth', 'number_of_images']:
+                    try:
+                        data[field] = float(''.join(c for c in value if c.isdigit() or c == '.'))
+                    except ValueError as e:
+                        logger.error(f"Error converting {field} '{value}': {e}")
+                elif field in ['x_pixel_spacing', 'y_pixel_spacing', 'z_pixel_spacing']:
+                    try:
+                        data[field] = float(value)
+                    except ValueError as e:
+                        logger.error(f"Error converting {field} '{value}': {e}")
+                else:
+                    data[field] = value
+                    
+                logger.debug(f"Found {field}: {value}")
+                
+            except Exception as e:
+                logger.debug(f"Field {field} not found: {e}")
+                
         return data
         
-    # Get the container div that follows the heading
-    details_container = file_section.find_next('div', class_='detail-fields')
-    if not details_container:
-        logger.warning("Could not find detail-fields container")
+    except Exception as e:
+        logger.error(f"Error extracting data from {url}: {e}")
         return data
-    
-    # Find all label-value pairs
-    rows = details_container.find_all('div', class_='row')
-    logger.debug(f"Found {len(rows)} detail rows")
-    
-    for row in rows:
-        # Find label and value in this row
-        label_div = row.find('div', class_='col-xs-6 showcase-label')
-        value_div = row.find('div', class_='col-xs-6 showcase-value')
-        
-        if not label_div or not value_div:
-            continue
-            
-        field_name = label_div.text.strip().lower()
-        field_value = value_div.text.strip()
-        
-        logger.debug(f"Found field: '{field_name}' = '{field_value}'")
-        
-        # Map fields to our data structure
-        if 'file name' in field_name:
-            data['file_name'] = field_value
-        elif 'file format' in field_name:
-            data['file_format'] = field_value
-        elif 'file size' in field_name:
-            try:
-                size_str = field_value.lower()
-                number = float(''.join(c for c in size_str if c.isdigit() or c == '.'))
-                if 'gb' in size_str:
-                    data['file_size_bytes'] = number * 1024 * 1024 * 1024
-                elif 'mb' in size_str:
-                    data['file_size_bytes'] = number * 1024 * 1024
-                elif 'kb' in size_str:
-                    data['file_size_bytes'] = number * 1024
-            except ValueError as e:
-                logger.error(f"Error converting file size '{field_value}': {e}")
-        elif 'image width' in field_name:
-            try:
-                data['image_width'] = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
-            except ValueError as e:
-                logger.error(f"Error converting image width '{field_value}': {e}")
-        elif 'image height' in field_name:
-            try:
-                data['image_height'] = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
-            except ValueError as e:
-                logger.error(f"Error converting image height '{field_value}': {e}")
-        elif 'color space' in field_name:
-            data['color_space'] = field_value
-        elif 'color depth' in field_name:
-            try:
-                data['color_depth'] = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
-            except ValueError as e:
-                logger.error(f"Error converting color depth '{field_value}': {e}")
-        elif 'compression' in field_name:
-            data['compression'] = field_value
-        elif 'x pixel spacing' in field_name:
-            try:
-                data['x_pixel_spacing'] = float(field_value)
-            except ValueError as e:
-                logger.error(f"Error converting x pixel spacing '{field_value}': {e}")
-        elif 'y pixel spacing' in field_name:
-            try:
-                data['y_pixel_spacing'] = float(field_value)
-            except ValueError as e:
-                logger.error(f"Error converting y pixel spacing '{field_value}': {e}")
-        elif 'z pixel spacing' in field_name:
-            try:
-                data['z_pixel_spacing'] = float(field_value)
-            except ValueError as e:
-                logger.error(f"Error converting z pixel spacing '{field_value}': {e}")
-        elif 'pixel spacing units' in field_name:
-            data['pixel_spacing_units'] = field_value
-        elif 'slice thickness' in field_name:
-            data['slice_thickness'] = field_value
-        elif 'number of images in set' in field_name:
-            try:
-                data['number_of_images'] = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
-            except ValueError as e:
-                logger.error(f"Error converting number of images '{field_value}': {e}")
-    
-    # Log what we found
-    logger.info(f"Extracted fields for {url}:")
-    for key, value in data.items():
-        if value is not None:
-            logger.info(f"  {key}: {value}")
-    
-    return data
 
 def process_url_batch(urls, output_dir, logger, start_index, total_processed, max_records, output_file=None):
     """Process a batch of URLs and save to parquet"""
@@ -161,34 +158,41 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
     end_index = min(start_index + max_records, len(urls))
     batch_urls = urls[start_index:end_index]
     
-    for url in tqdm(batch_urls, desc=f"Processing URLs {start_index}-{end_index}"):
+    # Setup Chrome driver
+    driver = setup_driver()
+    
+    try:
+        for url in tqdm(batch_urls, desc=f"Processing URLs {start_index}-{end_index}"):
+            try:
+                logger.info(f"Processing URL: {url}")
+                page_data = extract_page_data(driver, url, logger)
+                page_data['batch_index'] = start_index + processed_count
+                
+                # Log extracted data
+                logger.info(f"Extracted data for {url}:")
+                for key, value in page_data.items():
+                    if value is not None:
+                        logger.info(f"  {key}: {value}")
+                
+                all_data.append(page_data)
+                processed_count += 1
+                
+                # Be nice to the server
+                time.sleep(1)
+                
+            except Exception as e:
+                logger.error(f"Error processing {url}: {str(e)}", exc_info=True)
+                continue
+                
+    finally:
+        # Clean up driver
         try:
-            logger.info(f"Processing URL: {url}")
-            response = requests.get(url)
-            response.raise_for_status()
-            
-            soup = BeautifulSoup(response.text, 'html.parser')
-            page_data = extract_page_data(soup, url, logger)
-            page_data['batch_index'] = start_index + processed_count
-            
-            # Log extracted data
-            logger.info(f"Extracted data for {url}:")
-            for key, value in page_data.items():
-                if value is not None:  # Only log non-None values
-                    logger.info(f"  {key}: {value}")
-            
-            all_data.append(page_data)
-            processed_count += 1
-            
-            # Be nice to the server
-            time.sleep(1)
-            
-        except Exception as e:
-            logger.error(f"Error processing {url}: {str(e)}", exc_info=True)
-            continue
+            driver.quit()
+        except:
+            pass
     
     if all_data:
-        # Convert to DataFrame directly (no need for json_normalize)
+        # Convert to DataFrame
         df = pd.DataFrame(all_data)
         
         # Save to parquet
