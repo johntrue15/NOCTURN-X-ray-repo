@@ -97,14 +97,6 @@ This document shows the relationships between GitHub Actions workflows and their
 - `.github/scripts/ct_slices_to_text.py`
 - `.github/scripts/url_screenshot_check.py`
 
-### MorphoSource Analysis Workflow (`combined_ct_images_to_text_old.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/2D3D_check.py`
-- `.github/scripts/2D_screenshot.py`
-- `.github/scripts/ct_image_to_text.py`
-- `.github/scripts/url_screenshot_check.py`
-
 ### MorphoSource URL and Screenshot Check (`combined_url_check_screenshot.yml`)
 **Manual trigger available**
 **Required Scripts:**
@@ -217,13 +209,11 @@ This section shows which workflows use each script:
 ### 2D3D_check.py
 **Used in Workflows:**
 - `combined_ct_images_to_text.yml`
-- `combined_ct_images_to_text_old.yml`
 - `combined_url_check_screenshot.yml`
 - `test-run-run.yml`
 
 ### 2D_screenshot.py
 **Used in Workflows:**
-- `combined_ct_images_to_text_old.yml`
 - `combined_url_check_screenshot.yml`
 
 ### 3D_screenshot.py
@@ -257,7 +247,6 @@ This section shows which workflows use each script:
 ### ct_image_to_text.py
 **Used in Workflows:**
 - `combined_ct_images_to_text.yml`
-- `combined_ct_images_to_text_old.yml`
 - `ct_images_to_text.yml`
 - `test-run-run.yml`
 - `test_3d_screenshots_prompt.yml`
@@ -350,7 +339,6 @@ This section shows which workflows use each script:
 ### url_screenshot_check.py
 **Used in Workflows:**
 - `combined_ct_images_to_text.yml`
-- `combined_ct_images_to_text_old.yml`
 - `combined_url_check_screenshot.yml`
 - `test-run-run.yml`
 - `url_screenshot_check.yml`
