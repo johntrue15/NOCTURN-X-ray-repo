@@ -46,16 +46,6 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ---
 
-### Parquet Data Processor (`parquet_processor.yml`)
-
-**Schedule:** Cron: 0 */6 * * *
-
-**Required Scripts:**
-- `.github/scripts/parquet_processor.py`
-
-
----
-
 ### Wiki Generation (`wiki-generation.yml`)
 
 **Schedule:** Weekly on Sunday at midnight
@@ -118,6 +108,11 @@ This document shows the relationships between GitHub Actions workflows and their
 **Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/metadata_record_extract.py`
+
+### Parquet Data Processor (`parquet_processor.yml`)
+**Manual trigger available**
+**Required Scripts:**
+- `.github/scripts/parquet_processor.py`
 
 ### Release Analysis and Wiki Generation (`release_analysis.yml`)
 **Manual trigger available**
