@@ -109,24 +109,20 @@ def get_fields_for_type(media_type):
     
     return base_fields
 
-def extract_page_data(driver, url, logger):
-    """Extract structured data from MorphoSource page using Selenium"""
-    data = {
-        'url': url,
-        'processed_at': datetime.now().isoformat(),
-        'error': None
-    }
+def check_page_structure(driver, url, logger):
+    """Analyze page structure and return appropriate configuration"""
+    logger.info(f"Analyzing structure for: {url}")
     
     try:
-        logger.info(f"Starting page load for {url}")
+        # Wait for initial page load
         driver.get(url)
-        time.sleep(5)  # Keep the reliable sleep
+        time.sleep(5)
         
         # First check if we're on a valid page
         title = driver.title
         if "Showcase Media" not in title:
-            raise ValueError("Not a valid MorphoSource media page")
-        
+            return None, "Not a valid MorphoSource media page"
+            
         # Try different layout patterns
         layouts = {
             'showcase': {
@@ -154,22 +150,51 @@ def extract_page_data(driver, url, logger):
                     break
             except:
                 continue
-        
+                
         if not layout_used or not media_type:
-            raise ValueError("Could not determine page layout or media type")
+            return None, "Could not determine page layout or media type"
             
-        logger.info(f"Detected layout: {layout_used}, Media type: {media_type}")
+        logger.info(f"Detected Layout: {layout_used}")
+        logger.info(f"Media Type: {media_type}")
         
-        # Get fields based on media type
+        # Get fields for type
         sections = get_fields_for_type(media_type)
+            
+        # Return configuration
+        return {
+            'layout': layout_used,
+            'media_type': media_type,
+            'selectors': layouts[layout_used],
+            'sections': sections
+        }, None
         
+    except Exception as e:
+        return None, f"Error analyzing page structure: {str(e)}"
+
+def extract_page_data(driver, url, logger):
+    """Extract structured data from MorphoSource page using Selenium"""
+    data = {
+        'url': url,
+        'processed_at': datetime.now().isoformat(),
+        'error': None
+    }
+    
+    try:
+        # Get page structure configuration
+        config, error = check_page_structure(driver, url, logger)
+        
+        if error:
+            logger.error(f"Error: {error}")
+            data['error'] = error
+            return data
+            
         # Extract data using detected layout
-        for section_name, fields in sections.items():
+        for section_name, fields in config['sections'].items():
             logger.debug(f"Processing section: {section_name}")
             
             for field in fields:
                 try:
-                    if layout_used == 'showcase':
+                    if config['layout'] == 'showcase':
                         field_xpath = f"//div[contains(@class, 'showcase-label')][contains(text(), '{field}')]"
                         value_xpath = "./following-sibling::div[contains(@class, 'showcase-value')]"
                     else:
