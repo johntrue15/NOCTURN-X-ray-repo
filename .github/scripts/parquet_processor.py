@@ -38,92 +38,56 @@ def extract_page_data(soup):
     """Extract structured data from MorphoSource page"""
     data = {}
     
-    # Extract basic information
-    title_elem = soup.find('h1')
-    data['title'] = title_elem.text.strip() if title_elem else None
-    
-    # Extract collections
-    collections_section = soup.find('div', class_='collections-section')
-    if collections_section:
-        collections = []
-        for collection in collections_section.find_all('div', class_='collection-item'):
-            name = collection.find('div', class_='collection-name')
-            type_elem = collection.find('div', class_='collection-type')
-            if name:
-                collections.append({
-                    'name': name.text.strip(),
-                    'type': type_elem.text.strip() if type_elem else None
-                })
-        data['collections'] = collections
-    
-    # Extract tags
-    tags_section = soup.find('div', class_='tags-section')
-    if tags_section:
-        tags = [tag.text.strip() for tag in tags_section.find_all('div', class_='tag-item')]
-        data['tags'] = tags
-    
-    # Extract all detail sections
+    # Find the file object details section
     sections = soup.find_all('div', class_='detail-section')
     for section in sections:
         section_title = section.find('h2')
-        if not section_title:
+        if not section_title or 'FILE OBJECT DETAILS' not in section_title.text.strip():
             continue
             
-        section_name = section_title.text.strip()
         fields = section.find_all('div', class_='field-item')
-        
-        section_data = {}
         for field in fields:
             label = field.find('div', class_='field-label')
             value = field.find('div', class_='field-value')
             if label and value:
-                # Clean and normalize field names
                 field_name = label.text.strip().lower().replace(' ', '_')
                 field_value = value.text.strip()
                 
-                # Convert numeric values where appropriate
-                if any(num in field_name for num in ['size', 'width', 'height', 'depth', 'spacing', 'voltage', 'power']):
+                # Handle specific fields
+                if field_name == 'file_size':
                     try:
-                        # Extract numeric part
-                        numeric_part = ''.join(c for c in field_value if c.isdigit() or c == '.')
-                        if numeric_part:
-                            field_value = float(numeric_part)
+                        size_str = field_value.lower()
+                        number = float(''.join(c for c in size_str if c.isdigit() or c == '.'))
+                        if 'gb' in size_str:
+                            field_value = number * 1024 * 1024 * 1024
+                        elif 'mb' in size_str:
+                            field_value = number * 1024 * 1024
+                        elif 'kb' in size_str:
+                            field_value = number * 1024
+                    except ValueError:
+                        pass
+                # Convert numeric fields
+                elif field_name in ['image_width', 'image_height', 'color_depth', 'number_of_images_in_set']:
+                    try:
+                        field_value = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
+                    except ValueError:
+                        pass
+                # Handle pixel spacing fields
+                elif 'pixel_spacing' in field_name:
+                    try:
+                        field_value = float(field_value)
                     except ValueError:
                         pass
                 
-                section_data[field_name] = field_value
-                
-        # Normalize section names
-        section_key = section_name.lower().replace(' ', '_')
-        data[section_key] = section_data
+                data[field_name] = field_value
     
-    # Extract image acquisition steps
-    acquisition_steps = soup.find_all('div', class_='acquisition-step')
-    if acquisition_steps:
-        steps_data = []
-        for step in acquisition_steps:
-            step_title = step.find('h3')
-            step_fields = step.find_all('div', class_='field-item')
-            
-            step_data = {
-                'title': step_title.text.strip() if step_title else None,
-                'fields': {}
-            }
-            
-            for field in step_fields:
-                label = field.find('div', class_='field-label')
-                value = field.find('div', class_='field-value')
-                if label and value:
-                    field_name = label.text.strip().lower().replace(' ', '_')
-                    step_data['fields'][field_name] = value.text.strip()
-                    
-            steps_data.append(step_data)
-            
-        data['acquisition_steps'] = steps_data
+    # Add URL and processing metadata
+    data['url'] = url
+    data['processed_at'] = datetime.now().isoformat()
     
     return data
 
-def process_url_batch(urls, output_dir, logger, start_index, total_processed, max_records):
+def process_url_batch(urls, output_dir, logger, start_index, total_processed, max_records, output_file=None):
     """Process a batch of URLs and save to parquet"""
     all_data = []
     processed_count = 0
@@ -145,6 +109,12 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
             page_data['processed_at'] = datetime.now().isoformat()
             page_data['batch_index'] = start_index + processed_count
             
+            # Convert collections and tags to strings
+            if 'collections' in page_data:
+                page_data['collections'] = json.dumps(page_data['collections'])
+            if 'tags' in page_data:
+                page_data['tags'] = json.dumps(page_data['tags'])
+            
             all_data.append(page_data)
             processed_count += 1
             
@@ -156,8 +126,8 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
             continue
     
     if all_data:
-        # Convert to DataFrame
-        df = pd.json_normalize(all_data)
+        # Convert to DataFrame directly (no need for json_normalize)
+        df = pd.DataFrame(all_data)
         
         # Save to parquet
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -165,10 +135,11 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
         df.to_parquet(parquet_file, index=False)
         
         logger.info(f"Saved {len(all_data)} records to {parquet_file}")
+        logger.info(f"Columns: {', '.join(df.columns)}")
         
         # Write outputs to GitHub Actions output file
-        if args.output_file:
-            with open(args.output_file, 'a') as f:
+        if output_file:
+            with open(output_file, 'a') as f:
                 has_more = end_index < len(urls)
                 f.write(f"has_more={str(has_more).lower()}\n")
                 f.write(f"next_index={end_index}\n")
@@ -214,7 +185,8 @@ def main():
             logger,
             args.start_index,
             args.total_processed,
-            args.max_records
+            args.max_records,
+            args.output_file
         )
         logger.info(f"Processed {processed} records in this batch")
             
