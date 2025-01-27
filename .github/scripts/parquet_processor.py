@@ -36,54 +36,111 @@ def get_latest_data_file():
 
 def extract_page_data(soup, url):
     """Extract structured data from MorphoSource page"""
-    data = {}
+    data = {
+        'url': url,
+        'processed_at': datetime.now().isoformat(),
+        'file_name': None,
+        'file_format': None,
+        'file_size_bytes': None,
+        'image_width': None,
+        'image_height': None,
+        'color_space': None,
+        'color_depth': None,
+        'compression': None,
+        'x_pixel_spacing': None,
+        'y_pixel_spacing': None,
+        'z_pixel_spacing': None,
+        'pixel_spacing_units': None,
+        'slice_thickness': None,
+        'number_of_images': None
+    }
     
     # Find the file object details section
     sections = soup.find_all('div', class_='detail-section')
+    found_section = False
+    
     for section in sections:
         section_title = section.find('h2')
-        if not section_title or 'FILE OBJECT DETAILS' not in section_title.text.strip():
+        if not section_title:
             continue
             
-        fields = section.find_all('div', class_='field-item')
-        for field in fields:
-            label = field.find('div', class_='field-label')
-            value = field.find('div', class_='field-value')
-            if label and value:
-                field_name = label.text.strip().lower().replace(' ', '_')
-                field_value = value.text.strip()
+        if 'FILE OBJECT DETAILS' in section_title.text.strip():
+            found_section = True
+            fields = section.find_all('div', class_='field-item')
+            logger.debug(f"Found {len(fields)} fields in FILE OBJECT DETAILS section")
+            
+            for field in fields:
+                label = field.find('div', class_='field-label')
+                value = field.find('div', class_='field-value')
                 
-                # Handle specific fields
-                if field_name == 'file_size':
-                    try:
-                        size_str = field_value.lower()
-                        number = float(''.join(c for c in size_str if c.isdigit() or c == '.'))
-                        if 'gb' in size_str:
-                            field_value = number * 1024 * 1024 * 1024
-                        elif 'mb' in size_str:
-                            field_value = number * 1024 * 1024
-                        elif 'kb' in size_str:
-                            field_value = number * 1024
-                    except ValueError:
-                        pass
-                # Convert numeric fields
-                elif field_name in ['image_width', 'image_height', 'color_depth', 'number_of_images_in_set']:
-                    try:
-                        field_value = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
-                    except ValueError:
-                        pass
-                # Handle pixel spacing fields
-                elif 'pixel_spacing' in field_name:
-                    try:
-                        field_value = float(field_value)
-                    except ValueError:
-                        pass
-                
-                data[field_name] = field_value
+                if label and value:
+                    field_name = label.text.strip().lower().replace(' ', '_')
+                    field_value = value.text.strip()
+                    logger.debug(f"Found field: {field_name} = {field_value}")
+                    
+                    # Map fields to our data structure
+                    if field_name == 'file_name':
+                        data['file_name'] = field_value
+                    elif field_name == 'file_formats':
+                        data['file_format'] = field_value
+                    elif field_name == 'file_size':
+                        try:
+                            size_str = field_value.lower()
+                            number = float(''.join(c for c in size_str if c.isdigit() or c == '.'))
+                            if 'gb' in size_str:
+                                data['file_size_bytes'] = number * 1024 * 1024 * 1024
+                            elif 'mb' in size_str:
+                                data['file_size_bytes'] = number * 1024 * 1024
+                            elif 'kb' in size_str:
+                                data['file_size_bytes'] = number * 1024
+                        except ValueError as e:
+                            logger.error(f"Error converting file size '{field_value}': {e}")
+                    elif field_name == 'image_width':
+                        try:
+                            data['image_width'] = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
+                        except ValueError as e:
+                            logger.error(f"Error converting image width '{field_value}': {e}")
+                    elif field_name == 'image_height':
+                        try:
+                            data['image_height'] = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
+                        except ValueError as e:
+                            logger.error(f"Error converting image height '{field_value}': {e}")
+                    elif field_name == 'color_space':
+                        data['color_space'] = field_value
+                    elif field_name == 'color_depth':
+                        try:
+                            data['color_depth'] = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
+                        except ValueError as e:
+                            logger.error(f"Error converting color depth '{field_value}': {e}")
+                    elif field_name == 'compression':
+                        data['compression'] = field_value
+                    elif field_name == 'x_pixel_spacing':
+                        try:
+                            data['x_pixel_spacing'] = float(field_value)
+                        except ValueError as e:
+                            logger.error(f"Error converting x pixel spacing '{field_value}': {e}")
+                    elif field_name == 'y_pixel_spacing':
+                        try:
+                            data['y_pixel_spacing'] = float(field_value)
+                        except ValueError as e:
+                            logger.error(f"Error converting y pixel spacing '{field_value}': {e}")
+                    elif field_name == 'z_pixel_spacing':
+                        try:
+                            data['z_pixel_spacing'] = float(field_value)
+                        except ValueError as e:
+                            logger.error(f"Error converting z pixel spacing '{field_value}': {e}")
+                    elif field_name == 'pixel_spacing_units':
+                        data['pixel_spacing_units'] = field_value
+                    elif field_name == 'slice_thickness':
+                        data['slice_thickness'] = field_value
+                    elif field_name == 'number_of_images_in_set':
+                        try:
+                            data['number_of_images'] = float(''.join(c for c in field_value if c.isdigit() or c == '.'))
+                        except ValueError as e:
+                            logger.error(f"Error converting number of images '{field_value}': {e}")
     
-    # Add URL and processing metadata
-    data['url'] = url
-    data['processed_at'] = datetime.now().isoformat()
+    if not found_section:
+        logger.warning(f"No FILE OBJECT DETAILS section found for {url}")
     
     return data
 
@@ -103,15 +160,13 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
             
             soup = BeautifulSoup(response.text, 'html.parser')
             page_data = extract_page_data(soup, url)
-            
-            # Add batch metadata
             page_data['batch_index'] = start_index + processed_count
             
-            # Convert collections and tags to strings
-            if 'collections' in page_data:
-                page_data['collections'] = json.dumps(page_data['collections'])
-            if 'tags' in page_data:
-                page_data['tags'] = json.dumps(page_data['tags'])
+            # Log extracted data
+            logger.info(f"Extracted data for {url}:")
+            for key, value in page_data.items():
+                if value is not None:  # Only log non-None values
+                    logger.info(f"  {key}: {value}")
             
             all_data.append(page_data)
             processed_count += 1
@@ -120,7 +175,7 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
             time.sleep(1)
             
         except Exception as e:
-            logger.error(f"Error processing {url}: {e}")
+            logger.error(f"Error processing {url}: {str(e)}", exc_info=True)
             continue
     
     if all_data:
