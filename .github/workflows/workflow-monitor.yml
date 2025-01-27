@@ -55,7 +55,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const logsUrl = ${{ steps.get-logs.outputs.result }};
+            // Get logs URL from previous step
+            const logsUrl = `${{ steps.get-logs.outputs.result }}`;
             const MAIN_ISSUE_TITLE = "🔍 Workflow Failures Tracking";
             
             // Function to find or create the main tracking issue
