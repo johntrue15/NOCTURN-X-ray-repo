@@ -9,51 +9,13 @@ jobs:
   monitor:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-    
+    permissions:
+      issues: write
+      contents: read
+      
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
-      - name: Download workflow logs
-        uses: actions/github-script@v7
-        id: download-logs
-        with:
-          script: |
-            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-              owner: context.repo.owner,
-              repo: context.repo.name,
-              run_id: context.payload.workflow_run.id,
-            });
-            
-            const matchArtifact = artifacts.data.artifacts.find(
-              artifact => artifact.name === "workflow-logs"
-            );
-            
-            if (!matchArtifact) {
-              console.log('No logs found');
-              return;
-            }
-            
-            const download = await github.rest.actions.downloadArtifact({
-              owner: context.repo.owner,
-              repo: context.repo.name,
-              artifact_id: matchArtifact.id,
-              archive_format: 'zip',
-            });
-
-      - name: Analyze failure
-        id: analyze
-        run: |
-          # Extract the failed job and step information
-          FAILED_JOB=$(jq -r '.jobs[] | select(.conclusion=="failure") | .name' ${GITHUB_EVENT_PATH})
-          FAILED_STEP=$(jq -r '.jobs[] | select(.conclusion=="failure") | .steps[] | select(.conclusion=="failure") | .name' ${GITHUB_EVENT_PATH})
-          
-          # Get the relevant files that might be related to the failure
-          FILES_CHANGED=$(git diff --name-only HEAD^)
-          
-          echo "::set-output name=failed_job::$FAILED_JOB"
-          echo "::set-output name=failed_step::$FAILED_STEP"
-          echo "::set-output name=files_changed::$FILES_CHANGED"
 
       - name: Manage issues
         uses: actions/github-script@v7
@@ -67,8 +29,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.name,
                 state: 'open',
-                labels: ['workflow-tracker'],
-                creator: 'github-actions[bot]'
+                labels: ['workflow-tracker']
               });
               
               const mainIssue = issues.data.find(issue => issue.title === MAIN_ISSUE_TITLE);
@@ -98,9 +59,12 @@ jobs:
             
             // Create a sub-issue for the current failure
             async function createSubIssue(mainIssueNumber) {
-              const failedJob = '${{ steps.analyze.outputs.failed_job }}';
-              const failedStep = '${{ steps.analyze.outputs.failed_step }}';
-              const filesChanged = '${{ steps.analyze.outputs.files_changed }}'.split('\n');
+              // Get workflow run details
+              const run = await github.rest.actions.getWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.name,
+                run_id: context.payload.workflow_run.id
+              });
               
               const subIssue = await github.rest.issues.create({
                 owner: context.repo.owner,
@@ -113,25 +77,15 @@ jobs:
                 ### Failed Workflow
                 - Workflow: ${context.payload.workflow_run.name}
                 - Run ID: ${context.payload.workflow_run.id}
-                - Job: ${failedJob}
-                - Step: ${failedStep}
-                
-                ### Recent Changes
-                The following files were modified in this run:
-                ${filesChanged.map(file => `- \`${file}\``).join('\n')}
-                
-                ### Logs
-                <details>
-                <summary>Workflow Logs</summary>
-                
-                \`\`\`
-                ${process.env.WORKFLOW_LOGS}
-                \`\`\`
-                </details>
+                - Triggered by: ${run.data.head_commit.message || 'Unknown'}
+                - Commit: ${run.data.head_commit.id || 'Unknown'}
                 
                 ### Links
                 - [Failed Workflow Run](${context.payload.workflow_run.html_url})
-                - [Workflow File](${context.payload.workflow_run.path})`,
+                - [Workflow File](${context.payload.workflow_run.path})
+                - [Commit](${run.data.head_commit.url || '#'})
+                
+                To see detailed logs, visit the workflow run link above.`,
                 labels: ['workflow-failure', 'bug']
               });
               
@@ -143,10 +97,18 @@ jobs:
               const mainIssueBody = mainIssue.body;
               const newFailureEntry = `- [${subIssue.title}](${subIssue.html_url}) - Created ${new Date().toISOString().split('T')[0]}`;
               
-              const updatedBody = mainIssueBody.replace(
-                '## Active Failures\n',
-                `## Active Failures\n${newFailureEntry}\n`
-              );
+              let updatedBody = mainIssueBody;
+              if (mainIssueBody.includes('No active failures yet.')) {
+                updatedBody = mainIssueBody.replace(
+                  'No active failures yet.',
+                  newFailureEntry
+                );
+              } else {
+                updatedBody = mainIssueBody.replace(
+                  '## Active Failures\n',
+                  `## Active Failures\n${newFailureEntry}\n`
+                );
+              }
               
               await github.rest.issues.update({
                 owner: context.repo.owner,
@@ -157,14 +119,21 @@ jobs:
             }
             
             // Main execution
-            const mainIssue = await getMainIssue();
-            const subIssue = await createSubIssue(mainIssue.number);
-            await updateMainIssue(mainIssue, subIssue);
-            
-            // Add comment to the failed commit
-            await github.rest.repos.createCommitComment({
-              owner: context.repo.owner,
-              repo: context.repo.name,
-              commit_sha: context.payload.workflow_run.head_sha,
-              body: `⚠️ Workflow "${context.payload.workflow_run.name}" failed. [View details](${subIssue.html_url})`
-            });
+            try {
+              const mainIssue = await getMainIssue();
+              const subIssue = await createSubIssue(mainIssue.number);
+              await updateMainIssue(mainIssue, subIssue);
+              
+              // Add comment to the failed commit
+              if (context.payload.workflow_run.head_commit) {
+                await github.rest.repos.createCommitComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.name,
+                  commit_sha: context.payload.workflow_run.head_sha,
+                  body: `⚠️ Workflow "${context.payload.workflow_run.name}" failed. [View details](${subIssue.html_url})`
+                });
+              }
+            } catch (error) {
+              console.error('Error in workflow monitor:', error);
+              core.setFailed(error.message);
+            }
