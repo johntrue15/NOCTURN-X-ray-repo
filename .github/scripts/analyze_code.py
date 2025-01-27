@@ -394,9 +394,10 @@ def process_files():
                 else:
                     msg = f"Validation failed for combined code"
                     logger.error(msg)
-                    logger.error(f"Line counts - Original: {len(original_content.split('\n'))}, " +
-                               f"Generated: {len(generated_content.split('\n'))}, " +
-                               f"Combined: {len(combined_code.split('\n'))}")
+                    logger.error(
+                        f"Line counts - Original: {len(original_content.split(r'\n'))}, "
+                        f"Updated: {len(generated_content.split(r'\n'))}"
+                    )
                     results.append({"file": file, "status": "error", "message": msg})
                     continue
                 

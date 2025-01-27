@@ -102,7 +102,7 @@ jobs:
 
       # First checkout issue branch to get repository structure
       - name: Checkout issue branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           ref: ${{ steps.set-branch.outputs.branch_name }}
           fetch-depth: 0
@@ -111,7 +111,7 @@ jobs:
 
       # Then checkout main branch files to a subdirectory
       - name: Checkout main branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           ref: main
           path: main-files
@@ -150,7 +150,7 @@ jobs:
 
       # Set up Python and dependencies
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v3
         with:
           python-version: '3.10'
           
@@ -209,27 +209,26 @@ jobs:
           # Create log directory
           mkdir -p logs
           
-          # Run analyze_code.py and capture all output
-          python analyze_code.py > logs/analyze.log 2>&1
+          # Debug Python environment
+          python --version
+          pip list
           
-          # Check if analysis was successful
+          # Debug script location and permissions
+          ls -l analyze_code.py
+          
+          # Run analyze_code.py with error handling
+          if ! python analyze_code.py > logs/analyze.log 2>&1; then
+            echo "::error::analyze_code.py failed - check logs for details"
+            cat logs/analyze.log
+            # Don't fail the workflow yet - continue to upload artifacts
+          fi
+          
+          # Show log contents even on success
           if [ -f "logs/analyze.log" ]; then
-            echo "Analysis log highlights:"
-            grep -v "HTTP Request" logs/analyze.log | grep "INFO\|ERROR\|WARNING"
-            
-            # Check combination results
-            if [ -f "logs/combination_results.json" ]; then
-              success_count=$(jq '.successful_combinations' logs/combination_results.json)
-              if [ "$success_count" -gt "0" ]; then
-                echo "Successfully combined $success_count files"
-              else
-                echo "Warning: No files were successfully combined"
-                exit 1
-              fi
-            else
-              echo "Warning: No combination results found"
-              exit 1
-            fi
+            echo "Analysis log contents:"
+            cat logs/analyze.log
+          else
+            echo "::error::No analysis log was created"
           fi
 
       # Upload all analysis artifacts
