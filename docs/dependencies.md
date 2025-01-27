@@ -103,6 +103,8 @@ This document shows the relationships between GitHub Actions workflows and their
 - `.github/scripts/selenium_fullscreen_test2D.py`
 - `.github/scripts/selenium_fullscreen_test3D.py`
 
+### Issue Workflow Dependency Check (`issue-dependency-check.yml`)
+
 ### Metadata Record Extractor (`metadata_record_extract.yml`)
 **Manual trigger available**
 **Required Scripts:**
