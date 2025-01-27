@@ -12,6 +12,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import TimeoutException, WebDriverException
+import signal
+import functools
 
 def setup_logging(log_file):
     """Configure logging"""
@@ -46,16 +49,40 @@ def setup_driver():
     chrome_options.binary_location = '/usr/bin/google-chrome'
     return webdriver.Chrome(options=chrome_options)
 
+def timeout_handler(signum, frame):
+    raise TimeoutException("Processing timed out")
+
+def with_timeout(timeout):
+    """Decorator to add timeout to a function"""
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            # Set the signal handler
+            signal.signal(signal.SIGALRM, timeout_handler)
+            signal.alarm(timeout)
+            try:
+                result = func(*args, **kwargs)
+            finally:
+                # Disable the alarm
+                signal.alarm(0)
+            return result
+        return wrapper
+    return decorator
+
+@with_timeout(30)  # 30 second timeout per URL
 def extract_page_data(driver, url, logger):
     """Extract structured data from MorphoSource page using Selenium"""
     data = {
         'url': url,
         'processed_at': datetime.now().isoformat(),
+        'error': None  # Add error field
     }
     
     try:
+        logger.info(f"Starting page load for {url}")
         driver.get(url)
         time.sleep(5)  # Wait for content to load
+        logger.info(f"Page loaded for {url}")
         
         # Dictionary of all sections and their fields
         sections = {
@@ -151,62 +178,96 @@ def extract_page_data(driver, url, logger):
         
         return data
         
+    except TimeoutException as e:
+        logger.error(f"Timeout processing {url}: {e}")
+        data['error'] = f"Timeout: {str(e)}"
+        return data
+    except WebDriverException as e:
+        logger.error(f"WebDriver error for {url}: {e}")
+        data['error'] = f"WebDriver: {str(e)}"
+        return data
     except Exception as e:
         logger.error(f"Error extracting data from {url}: {e}", exc_info=True)
+        data['error'] = f"General: {str(e)}"
         return data
 
 def process_url_batch(urls, output_dir, logger, start_index, total_processed, max_records, output_file=None):
     """Process a batch of URLs and save to parquet"""
     all_data = []
     processed_count = 0
+    error_count = 0
+    retry_count = 3  # Number of retries per URL
     
     end_index = min(start_index + max_records, len(urls))
     batch_urls = urls[start_index:end_index]
     
     # Setup Chrome driver
-    driver = setup_driver()
+    driver = None
     
     try:
         for url in tqdm(batch_urls, desc=f"Processing URLs {start_index}-{end_index}"):
-            try:
-                logger.info(f"Processing URL: {url}")
-                page_data = extract_page_data(driver, url, logger)
-                page_data['batch_index'] = start_index + processed_count
-                
-                # Log extracted data
-                logger.info(f"Extracted data for {url}:")
-                for key, value in page_data.items():
-                    if value is not None:
-                        logger.info(f"  {key}: {value}")
-                
-                all_data.append(page_data)
-                processed_count += 1
+            attempts = 0
+            success = False
+            
+            while attempts < retry_count and not success:
+                try:
+                    if driver is None:
+                        logger.info("Setting up new Chrome driver")
+                        driver = setup_driver()
+                    
+                    logger.info(f"Processing URL: {url} (Attempt {attempts + 1}/{retry_count})")
+                    page_data = extract_page_data(driver, url, logger)
+                    page_data['batch_index'] = start_index + processed_count
+                    page_data['attempt'] = attempts + 1
+                    
+                    all_data.append(page_data)
+                    
+                    if page_data.get('error'):
+                        logger.warning(f"Data extracted with error: {page_data['error']}")
+                        error_count += 1
+                    else:
+                        success = True
+                        logger.info(f"Successfully processed {url}")
+                    
+                    processed_count += 1
+                    
+                except Exception as e:
+                    logger.error(f"Error on attempt {attempts + 1} for {url}: {str(e)}", exc_info=True)
+                    attempts += 1
+                    
+                    # Reset driver on error
+                    if driver is not None:
+                        try:
+                            driver.quit()
+                        except:
+                            pass
+                        driver = None
+                    
+                    if attempts < retry_count:
+                        logger.info(f"Retrying {url} after error...")
+                        time.sleep(5)  # Wait before retry
                 
                 # Be nice to the server
-                time.sleep(1)
+                time.sleep(2)
+            
+            if not success:
+                logger.error(f"Failed to process {url} after {retry_count} attempts")
                 
-            except Exception as e:
-                logger.error(f"Error processing {url}: {str(e)}", exc_info=True)
-                continue
+            # Save intermediate results every 10 records
+            if len(all_data) % 10 == 0:
+                save_batch_results(all_data, output_dir, logger)
                 
     finally:
         # Clean up driver
-        try:
-            driver.quit()
-        except:
-            pass
+        if driver is not None:
+            try:
+                driver.quit()
+            except:
+                pass
     
+    # Save final results
     if all_data:
-        # Convert to DataFrame
-        df = pd.DataFrame(all_data)
-        
-        # Save to parquet
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        parquet_file = output_dir / f'morphosource_data_{timestamp}.parquet'
-        df.to_parquet(parquet_file, index=False)
-        
-        logger.info(f"Saved {len(all_data)} records to {parquet_file}")
-        logger.info(f"Columns: {', '.join(df.columns)}")
+        save_batch_results(all_data, output_dir, logger)
         
         # Write outputs to GitHub Actions output file
         if output_file:
@@ -215,10 +276,23 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
                 f.write(f"has_more={str(has_more).lower()}\n")
                 f.write(f"next_index={end_index}\n")
                 f.write(f"total_processed={total_processed + processed_count}\n")
+                f.write(f"error_count={error_count}\n")
         
         return processed_count
     
     return 0
+
+def save_batch_results(data, output_dir, logger):
+    """Save current batch of results to parquet file"""
+    try:
+        df = pd.DataFrame(data)
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        parquet_file = output_dir / f'morphosource_data_{timestamp}.parquet'
+        df.to_parquet(parquet_file, index=False)
+        logger.info(f"Saved {len(data)} records to {parquet_file}")
+        logger.info(f"Columns: {', '.join(df.columns)}")
+    except Exception as e:
+        logger.error(f"Error saving batch results: {e}", exc_info=True)
 
 def main():
     parser = argparse.ArgumentParser()
