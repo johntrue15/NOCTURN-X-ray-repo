@@ -172,6 +172,60 @@ def analyze_workflows():
                 
     return workflow_info
 
+def parse_cron_frequency(cron):
+    """Parse cron string to determine frequency in minutes"""
+    parts = cron.strip().split()
+    if len(parts) != 5:
+        return float('inf')  # Invalid cron returns lowest priority
+        
+    minute, hour, day_month, month, day_week = parts
+    
+    # Calculate frequency in minutes
+    if minute.startswith('*/'):
+        # Every X minutes
+        try:
+            return int(minute[2:])  # */5 -> 5 minutes
+        except ValueError:
+            return float('inf')
+            
+    elif minute == '0':
+        if hour == '*':
+            return 60  # Every hour
+        elif hour == '0':
+            if day_month == '*':
+                return 1440  # Daily
+            elif day_month == '1':
+                return 43200  # Monthly (approx 30 days)
+            
+    # Handle special cases
+    if day_week == '0' and minute == '0' and hour == '0':
+        return 10080  # Weekly
+        
+    # Default to low priority for complex patterns
+    return float('inf')
+
+def get_schedule_priority(schedule):
+    """Return a priority number for sorting schedules (lower = more frequent)"""
+    if not schedule:
+        return (float('inf'), '')
+    
+    # Extract cron pattern from schedule string
+    if "Cron: " in schedule:
+        cron = schedule.split("Cron: ")[1]
+    else:
+        # Handle human-readable formats
+        if "Every 5 minutes" in schedule:
+            cron = "*/5 * * * *"
+        elif "Daily at midnight" in schedule:
+            cron = "0 0 * * *"
+        elif "Monthly" in schedule and "day 1" in schedule:
+            cron = "0 0 1 * *"
+        else:
+            return (float('inf'), schedule)
+    
+    frequency = parse_cron_frequency(cron)
+    return (frequency, schedule)
+
 def generate_markdown(workflow_info):
     """Generate markdown documentation of dependencies"""
     lines = [
@@ -186,7 +240,7 @@ def generate_markdown(workflow_info):
     # First list scheduled workflows with their dependencies
     scheduled_workflows = {name: info for name, info in workflow_info.items() if info['schedule']}
     sorted_scheduled = sorted(scheduled_workflows.items(), 
-                            key=lambda x: (x[1]['schedule'] or "", x[0]))
+                            key=lambda x: get_schedule_priority(x[1]['schedule']))
     
     for workflow_name, info in sorted_scheduled:
         # Workflow name and schedule on separate lines
