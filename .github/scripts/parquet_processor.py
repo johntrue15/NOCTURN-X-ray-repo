@@ -267,7 +267,7 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
     
     # Calculate the correct start and end indices
     end_index = min(start_index + max_records, len(urls))
-    batch_urls = urls[start_index:end_index]  # Get the correct slice of URLs
+    batch_urls = urls[start_index:end_index]
     
     logger.info(f"Processing batch from index {start_index} to {end_index} (total processed so far: {total_processed})")
     
@@ -295,8 +295,6 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
                     page_data['attempt'] = attempts + 1
                     page_data['processing_time'] = time.time() - start_time
                     
-                    all_data.append(page_data)
-                    
                     if page_data.get('error'):
                         logger.warning(f"Data extracted with error: {page_data['error']}")
                         error_count += 1
@@ -304,8 +302,8 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
                     else:
                         success = True
                         logger.info(f"Successfully processed {url} (record {current_index})")
-                    
-                    processed_count += 1
+                        all_data.append(page_data)
+                        processed_count += 1
                     
                 except Exception as e:
                     logger.error(f"Error on attempt {attempts + 1} for {url}: {str(e)}", exc_info=True)
@@ -323,40 +321,37 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
                         logger.info(f"Retrying {url} after error...")
                         time.sleep(5)
                 
-                # Check timeout
+                # Check timeout outside the try block
                 if (time.time() - start_time) >= record_timeout:
                     logger.warning(f"Record processing timeout reached for {url}")
-                    skipped_records.append({
-                        'url': url,
-                        'index': current_index,
-                        'reason': 'timeout',
-                        'processing_time': time.time() - start_time,
-                        'attempts': attempts
-                    })
+                    if not success:  # Only add to skipped if not already processed
+                        skipped_records.append({
+                            'url': url,
+                            'index': current_index,
+                            'reason': 'timeout',
+                            'processing_time': time.time() - start_time,
+                            'attempts': attempts
+                        })
+                        # Save skipped record immediately
+                        skipped_file = output_dir / f'skipped_records_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'
+                        with open(skipped_file, 'w') as f:
+                            json.dump([skipped_records[-1]], f, indent=2)  # Save only the current skipped record
+                        logger.info(f"Saved skipped record to {skipped_file}")
                     break
-                
-                time.sleep(2)
             
-            if not success:
-                logger.error(f"Failed to process {url} after {retry_count} attempts or timeout")
-                if url not in [r['url'] for r in skipped_records]:
-                    skipped_records.append({
-                        'url': url,
-                        'reason': 'max_attempts',
-                        'processing_time': time.time() - start_time,
-                        'attempts': attempts
-                    })
+            # Only add to skipped records if truly failed and not already processed
+            if not success and not any(r['url'] == url for r in skipped_records):
+                skipped_records.append({
+                    'url': url,
+                    'index': current_index,
+                    'reason': 'max_attempts',
+                    'processing_time': time.time() - start_time,
+                    'attempts': attempts
+                })
             
             # Save intermediate results every 10 records
-            if len(all_data) % 10 == 0:
+            if len(all_data) % 10 == 0 and all_data:
                 save_batch_results(all_data, output_dir, logger)
-                
-            # Save skipped records
-            if skipped_records:
-                skipped_file = output_dir / f'skipped_records_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'
-                with open(skipped_file, 'w') as f:
-                    json.dump(skipped_records, f, indent=2)
-                logger.info(f"Saved {len(skipped_records)} skipped records to {skipped_file}")
                 
     finally:
         if driver is not None:
