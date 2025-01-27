@@ -1,0 +1,86 @@
+name: Issue Workflow Dependency Check
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  check-dependencies:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install PyYAML PyGithub
+
+      - name: Check for workflow dependencies
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          cat > check_dependencies.py << 'EOL'
+          import os
+          import re
+          from github import Github
+
+          def read_dependencies_file():
+              with open('docs/dependencies.md', 'r') as f:
+                  content = f.read()
+              return content
+
+          def find_workflow_dependencies(content, workflow_name):
+              # Parse the markdown content to find dependencies
+              workflow_section = re.search(rf'### {workflow_name}.*?(?=###|$)', content, re.DOTALL)
+              if not workflow_section:
+                  return []
+              
+              # Extract required scripts
+              scripts_section = re.search(r'Required Scripts:(.*?)(?=\n\n|$)', workflow_section.group(0), re.DOTALL)
+              if not scripts_section:
+                  return []
+              
+              # Get list of scripts
+              scripts = re.findall(r'- `(.+?)`', scripts_section.group(1))
+              return scripts
+
+          def check_issue_for_workflow():
+              # Initialize GitHub client
+              gh = Github(os.environ['GITHUB_TOKEN'])
+              repo = gh.get_repo(os.environ['GITHUB_REPOSITORY'])
+              issue = repo.get_issue(number=int(os.environ['ISSUE_NUMBER']))
+              
+              # Check if issue title mentions parse_morphosource.yml
+              if 'parse_morphosource.yml' in issue.title.lower():
+                  # Read dependencies file
+                  deps_content = read_dependencies_file()
+                  
+                  # Find associated scripts
+                  scripts = find_workflow_dependencies(deps_content, 'Parse MorphoSource Data')
+                  
+                  if scripts:
+                      comment = "### Related Python Scripts\n\n"
+                      comment += "The following Python scripts are associated with `parse_morphosource.yml`:\n\n"
+                      for script in scripts:
+                          comment += f"- {script}\n"
+                      comment += "\nPlease ensure any changes to the workflow consider these dependencies."
+                      
+                      # Add comment to issue
+                      issue.create_comment(comment)
+
+          if __name__ == '__main__':
+              check_issue_for_workflow()
+          EOL
+          
+          python check_dependencies.py
