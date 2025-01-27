@@ -35,12 +35,15 @@ def parse_schedule(schedule):
     
     if minute == '*/5':  # Every 5 minutes
         return "Every 5 minutes"
-    elif minute == '0' and hour == '0':  # Daily at midnight
-        if day_month == '*':
+    elif minute == '0' and hour == '0':  # Midnight schedules
+        if day_month == '*' and day_week == '*':
             print("Detected: Daily at midnight")
             return "Daily at midnight"
-    elif day_month == '1':  # First day of month
-        return f"Monthly on day 1 at {hour}:{minute}"
+        elif day_month == '*' and day_week == '0':
+            print("Detected: Weekly on Sunday at midnight")
+            return "Weekly on Sunday at midnight"
+        elif day_month == '1':  # First day of month
+            return f"Monthly on day 1 at {hour}:{minute}"
     
     # Return raw cron if no pattern matched
     return f"Cron: {schedule[0]}"
