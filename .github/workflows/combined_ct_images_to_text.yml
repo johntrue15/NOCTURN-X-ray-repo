@@ -246,6 +246,8 @@ jobs:
       needs.url_check.outputs.has_server_error != 'true' &&
       needs.url_check.outputs.has_mesh == 'true'
     runs-on: ubuntu-22.04
+    outputs:
+      has_token_error: ${{ steps.process_images.outputs.has_token_error }}
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
@@ -284,6 +286,15 @@ jobs:
           
           timeout 30m python3 .github/scripts/ct_image_to_text.py release_body.txt screenshots 2>&1 | tee process.log
           
+          # Check for token limit error in log
+          if grep -q "Error code: 429.*tokens" process.log; then
+            echo "Token limit error detected"
+            echo "has_token_error=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          else
+            echo "has_token_error=false" >> "$GITHUB_OUTPUT"
+          fi
+          
           if [ ! -f screenshots/*.png ]; then
             echo "No screenshots were generated. Check process.log for details."
             cat process.log
@@ -296,6 +307,7 @@ jobs:
 
       - name: Create Release
         id: create_release
+        if: steps.process_images.outputs.has_token_error != 'true'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
@@ -319,6 +331,7 @@ jobs:
           prerelease: false
 
       - name: Upload Default Orientation
+        if: steps.process_images.outputs.has_token_error != 'true'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
@@ -329,6 +342,7 @@ jobs:
           asset_content_type: image/png
 
       - name: Upload Upside Down Orientation
+        if: steps.process_images.outputs.has_token_error != 'true'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
@@ -339,6 +353,7 @@ jobs:
           asset_content_type: image/png
 
       - name: Upload Forward Orientation
+        if: steps.process_images.outputs.has_token_error != 'true'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
@@ -349,6 +364,7 @@ jobs:
           asset_content_type: image/png
 
       - name: Upload Back Orientation
+        if: steps.process_images.outputs.has_token_error != 'true'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
@@ -359,6 +375,7 @@ jobs:
           asset_content_type: image/png
 
       - name: Upload Log File
+        if: steps.process_images.outputs.has_token_error != 'true'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
@@ -369,7 +386,7 @@ jobs:
           asset_content_type: text/plain
 
       - name: Upload Screenshots
-        if: success()
+        if: success() && steps.process_images.outputs.has_token_error != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: ct-scan-screenshots
@@ -385,6 +402,8 @@ jobs:
       needs.url_check.outputs.has_server_error != 'true' &&
       needs.url_check.outputs.has_volumetric_images == 'true'
     runs-on: ubuntu-22.04
+    outputs:
+      has_token_error: ${{ steps.process_slices.outputs.has_token_error }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
@@ -424,6 +443,15 @@ jobs:
           echo "${{ needs.check_and_analyze.outputs.release_body }}" > release_body.txt
           timeout 30m python3 .github/scripts/ct_slices_to_text.py release_body.txt screenshots 2>&1 | tee process.log
           
+          # Check for token limit error in log
+          if grep -q "Error code: 429.*tokens" process.log; then
+            echo "Token limit error detected"
+            echo "has_token_error=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          else
+            echo "has_token_error=false" >> "$GITHUB_OUTPUT"
+          fi
+          
           if [ ! -f screenshots/*.png ]; then
             echo "No screenshots were generated. Check process.log for details."
             cat process.log
@@ -435,7 +463,7 @@ jobs:
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Create Slice Analysis Release
-        if: success()
+        if: success() && steps.process_slices.outputs.has_token_error != 'true'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
@@ -450,7 +478,7 @@ jobs:
           prerelease: false
 
       - name: Upload Screenshots
-        if: success()
+        if: success() && steps.process_slices.outputs.has_token_error != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: morphosource_2d_screenshots
@@ -465,7 +493,9 @@ jobs:
       needs.check_and_analyze.outputs.is_morphosource == 'true' &&
       (failure() || 
        needs.url_check.outputs.has_media_error == 'true' || 
-       needs.url_check.outputs.has_server_error == 'true')
+       needs.url_check.outputs.has_server_error == 'true' ||
+       needs.process_3d.outputs.has_token_error == 'true' ||
+       needs.process_2d.outputs.has_token_error == 'true')
     runs-on: ubuntu-22.04
     steps:
       - name: Check for Existing Error Release
@@ -509,6 +539,8 @@ jobs:
             Status:
             - Media Error: ${{ needs.url_check.outputs.has_media_error }}
             - Server Error: ${{ needs.url_check.outputs.has_server_error }}
+            - Token Limit Error (3D): ${{ needs.process_3d.outputs.has_token_error }}
+            - Token Limit Error (2D): ${{ needs.process_2d.outputs.has_token_error }}
             - 3D Process: ${{ needs.process_3d.result }}
             - 2D Process: ${{ needs.process_2d.result }}
 
@@ -532,6 +564,11 @@ jobs:
           
           if [ "${{ needs.url_check.outputs.has_server_error }}" == "true" ]; then
             echo "Server error occurred - marking as completed to prevent loops"
+            exit 0
+          fi
+          
+          if [ "${{ needs.process_3d.outputs.has_token_error }}" == "true" ] || [ "${{ needs.process_2d.outputs.has_token_error }}" == "true" ]; then
+            echo "Token limit error occurred - marking as completed to prevent loops"
             exit 0
           fi
           
