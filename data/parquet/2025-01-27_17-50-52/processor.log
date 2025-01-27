@@ -1,0 +1,106 @@
+2025-01-27 17:50:53,351 - INFO - Using data file: data/2025-01-27_01-34-38/morphosource_data_complete.json
+2025-01-27 17:50:53,780 - INFO - Found 104398 URLs to process
+2025-01-27 17:50:53,780 - INFO - Starting at index 10, processed so far: 10
+2025-01-27 17:50:53,860 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703945?locale=en
+2025-01-27 17:50:56,059 - INFO - Extracted fields for https://www.morphosource.org/concern/media/000703945?locale=en:
+2025-01-27 17:50:56,059 - INFO -   url: https://www.morphosource.org/concern/media/000703945?locale=en
+2025-01-27 17:50:56,059 - INFO -   processed_at: 2025-01-27T17:50:56.047838
+2025-01-27 17:50:56,059 - INFO -   compression: PackBits
+2025-01-27 17:50:56,059 - INFO - Extracted data for https://www.morphosource.org/concern/media/000703945?locale=en:
+2025-01-27 17:50:56,059 - INFO -   url: https://www.morphosource.org/concern/media/000703945?locale=en
+2025-01-27 17:50:56,059 - INFO -   processed_at: 2025-01-27T17:50:56.047838
+2025-01-27 17:50:56,059 - INFO -   compression: PackBits
+2025-01-27 17:50:56,059 - INFO -   batch_index: 10
+2025-01-27 17:50:57,061 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703897?locale=en
+2025-01-27 17:50:57,518 - INFO - Extracted fields for https://www.morphosource.org/concern/media/000703897?locale=en:
+2025-01-27 17:50:57,518 - INFO -   url: https://www.morphosource.org/concern/media/000703897?locale=en
+2025-01-27 17:50:57,518 - INFO -   processed_at: 2025-01-27T17:50:57.507580
+2025-01-27 17:50:57,518 - INFO -   compression: --
+2025-01-27 17:50:57,518 - INFO - Extracted data for https://www.morphosource.org/concern/media/000703897?locale=en:
+2025-01-27 17:50:57,518 - INFO -   url: https://www.morphosource.org/concern/media/000703897?locale=en
+2025-01-27 17:50:57,518 - INFO -   processed_at: 2025-01-27T17:50:57.507580
+2025-01-27 17:50:57,518 - INFO -   compression: --
+2025-01-27 17:50:57,518 - INFO -   batch_index: 11
+2025-01-27 17:50:58,520 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703876?locale=en
+2025-01-27 17:50:59,808 - INFO - Extracted fields for https://www.morphosource.org/concern/media/000703876?locale=en:
+2025-01-27 17:50:59,808 - INFO -   url: https://www.morphosource.org/concern/media/000703876?locale=en
+2025-01-27 17:50:59,808 - INFO -   processed_at: 2025-01-27T17:50:59.797710
+2025-01-27 17:50:59,809 - INFO -   compression: LZW
+2025-01-27 17:50:59,809 - INFO - Extracted data for https://www.morphosource.org/concern/media/000703876?locale=en:
+2025-01-27 17:50:59,809 - INFO -   url: https://www.morphosource.org/concern/media/000703876?locale=en
+2025-01-27 17:50:59,809 - INFO -   processed_at: 2025-01-27T17:50:59.797710
+2025-01-27 17:50:59,809 - INFO -   compression: LZW
+2025-01-27 17:50:59,809 - INFO -   batch_index: 12
+2025-01-27 17:51:00,810 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703862?locale=en
+2025-01-27 17:51:02,098 - INFO - Extracted fields for https://www.morphosource.org/concern/media/000703862?locale=en:
+2025-01-27 17:51:02,099 - INFO -   url: https://www.morphosource.org/concern/media/000703862?locale=en
+2025-01-27 17:51:02,099 - INFO -   processed_at: 2025-01-27T17:51:02.087660
+2025-01-27 17:51:02,099 - INFO -   compression: Uncompressed
+2025-01-27 17:51:02,099 - INFO - Extracted data for https://www.morphosource.org/concern/media/000703862?locale=en:
+2025-01-27 17:51:02,099 - INFO -   url: https://www.morphosource.org/concern/media/000703862?locale=en
+2025-01-27 17:51:02,099 - INFO -   processed_at: 2025-01-27T17:51:02.087660
+2025-01-27 17:51:02,099 - INFO -   compression: Uncompressed
+2025-01-27 17:51:02,099 - INFO -   batch_index: 13
+2025-01-27 17:51:03,100 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703763?locale=en
+2025-01-27 17:51:05,067 - INFO - Extracted fields for https://www.morphosource.org/concern/media/000703763?locale=en:
+2025-01-27 17:51:05,067 - INFO -   url: https://www.morphosource.org/concern/media/000703763?locale=en
+2025-01-27 17:51:05,067 - INFO -   processed_at: 2025-01-27T17:51:05.056215
+2025-01-27 17:51:05,067 - INFO -   compression: PackBits
+2025-01-27 17:51:05,067 - INFO - Extracted data for https://www.morphosource.org/concern/media/000703763?locale=en:
+2025-01-27 17:51:05,067 - INFO -   url: https://www.morphosource.org/concern/media/000703763?locale=en
+2025-01-27 17:51:05,067 - INFO -   processed_at: 2025-01-27T17:51:05.056215
+2025-01-27 17:51:05,067 - INFO -   compression: PackBits
+2025-01-27 17:51:05,067 - INFO -   batch_index: 14
+2025-01-27 17:51:06,069 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703744?locale=en
+2025-01-27 17:51:07,191 - INFO - Extracted fields for https://www.morphosource.org/concern/media/000703744?locale=en:
+2025-01-27 17:51:07,191 - INFO -   url: https://www.morphosource.org/concern/media/000703744?locale=en
+2025-01-27 17:51:07,191 - INFO -   processed_at: 2025-01-27T17:51:07.180491
+2025-01-27 17:51:07,191 - INFO -   compression: Uncompressed
+2025-01-27 17:51:07,191 - INFO - Extracted data for https://www.morphosource.org/concern/media/000703744?locale=en:
+2025-01-27 17:51:07,191 - INFO -   url: https://www.morphosource.org/concern/media/000703744?locale=en
+2025-01-27 17:51:07,191 - INFO -   processed_at: 2025-01-27T17:51:07.180491
+2025-01-27 17:51:07,191 - INFO -   compression: Uncompressed
+2025-01-27 17:51:07,192 - INFO -   batch_index: 15
+2025-01-27 17:51:08,193 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703699?locale=en
+2025-01-27 17:51:09,737 - INFO - Extracted fields for https://www.morphosource.org/concern/media/000703699?locale=en:
+2025-01-27 17:51:09,737 - INFO -   url: https://www.morphosource.org/concern/media/000703699?locale=en
+2025-01-27 17:51:09,737 - INFO -   processed_at: 2025-01-27T17:51:09.726110
+2025-01-27 17:51:09,737 - INFO -   compression: Uncompressed
+2025-01-27 17:51:09,737 - INFO - Extracted data for https://www.morphosource.org/concern/media/000703699?locale=en:
+2025-01-27 17:51:09,737 - INFO -   url: https://www.morphosource.org/concern/media/000703699?locale=en
+2025-01-27 17:51:09,737 - INFO -   processed_at: 2025-01-27T17:51:09.726110
+2025-01-27 17:51:09,737 - INFO -   compression: Uncompressed
+2025-01-27 17:51:09,737 - INFO -   batch_index: 16
+2025-01-27 17:51:10,738 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703651?locale=en
+2025-01-27 17:51:12,538 - INFO - Extracted fields for https://www.morphosource.org/concern/media/000703651?locale=en:
+2025-01-27 17:51:12,538 - INFO -   url: https://www.morphosource.org/concern/media/000703651?locale=en
+2025-01-27 17:51:12,538 - INFO -   processed_at: 2025-01-27T17:51:12.527611
+2025-01-27 17:51:12,538 - INFO -   compression: Uncompressed
+2025-01-27 17:51:12,538 - INFO - Extracted data for https://www.morphosource.org/concern/media/000703651?locale=en:
+2025-01-27 17:51:12,538 - INFO -   url: https://www.morphosource.org/concern/media/000703651?locale=en
+2025-01-27 17:51:12,539 - INFO -   processed_at: 2025-01-27T17:51:12.527611
+2025-01-27 17:51:12,539 - INFO -   compression: Uncompressed
+2025-01-27 17:51:12,539 - INFO -   batch_index: 17
+2025-01-27 17:51:13,540 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703644?locale=en
+2025-01-27 17:51:14,623 - INFO - Extracted fields for https://www.morphosource.org/concern/media/000703644?locale=en:
+2025-01-27 17:51:14,623 - INFO -   url: https://www.morphosource.org/concern/media/000703644?locale=en
+2025-01-27 17:51:14,623 - INFO -   processed_at: 2025-01-27T17:51:14.612838
+2025-01-27 17:51:14,623 - INFO -   compression: Uncompressed
+2025-01-27 17:51:14,624 - INFO - Extracted data for https://www.morphosource.org/concern/media/000703644?locale=en:
+2025-01-27 17:51:14,624 - INFO -   url: https://www.morphosource.org/concern/media/000703644?locale=en
+2025-01-27 17:51:14,624 - INFO -   processed_at: 2025-01-27T17:51:14.612838
+2025-01-27 17:51:14,624 - INFO -   compression: Uncompressed
+2025-01-27 17:51:14,624 - INFO -   batch_index: 18
+2025-01-27 17:51:15,625 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703625?locale=en
+2025-01-27 17:51:17,399 - INFO - Extracted fields for https://www.morphosource.org/concern/media/000703625?locale=en:
+2025-01-27 17:51:17,399 - INFO -   url: https://www.morphosource.org/concern/media/000703625?locale=en
+2025-01-27 17:51:17,399 - INFO -   processed_at: 2025-01-27T17:51:17.387404
+2025-01-27 17:51:17,400 - INFO -   compression: Uncompressed
+2025-01-27 17:51:17,400 - INFO - Extracted data for https://www.morphosource.org/concern/media/000703625?locale=en:
+2025-01-27 17:51:17,400 - INFO -   url: https://www.morphosource.org/concern/media/000703625?locale=en
+2025-01-27 17:51:17,400 - INFO -   processed_at: 2025-01-27T17:51:17.387404
+2025-01-27 17:51:17,400 - INFO -   compression: Uncompressed
+2025-01-27 17:51:17,400 - INFO -   batch_index: 19
+2025-01-27 17:51:18,432 - INFO - Saved 10 records to data/parquet/2025-01-27_17-50-52/morphosource_data_20250127_175118.parquet
+2025-01-27 17:51:18,432 - INFO - Columns: url, processed_at, file_name, file_format, file_size_bytes, image_width, image_height, color_space, color_depth, compression, x_pixel_spacing, y_pixel_spacing, z_pixel_spacing, pixel_spacing_units, slice_thickness, number_of_images, batch_index
+2025-01-27 17:51:18,432 - INFO - Processed 10 records in this batch
