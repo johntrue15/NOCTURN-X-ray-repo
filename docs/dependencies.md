@@ -74,12 +74,6 @@ This document shows the relationships between GitHub Actions workflows and their
 **Required Scripts:**
 - `.github/scripts/analyze_dependencies.py`
 
-### Automated Slices to Text (`automated_slices_to_text.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/automated_slices_to_text.py`
-- `.github/scripts/move_slices_and_screenshots.py`
-
 ### Code Review and Analysis (`code_review_workflow.yml`)
 **Triggered by:**
 - `Auto Code Generation with Claude on Issue`
@@ -119,11 +113,6 @@ This document shows the relationships between GitHub Actions workflows and their
 **Required Scripts:**
 - `.github/scripts/release_analysis.py`
 - `.github/scripts/release_analyzer.py`
-
-### Test New Morphosource Release URL Screenshot (`selenium_screenshot.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/selenium_screenshot.py`
 
 ### Selenium Screenshot New Workflow (`selenium_screenshot_new.yml`)
 **Manual trigger available**
@@ -207,10 +196,6 @@ This section shows which workflows use each script:
 **Used in Workflows:**
 - `analyze_dependencies.yml`
 
-### automated_slices_to_text.py
-**Used in Workflows:**
-- `automated_slices_to_text.yml`
-
 ### collect.py
 **Used in Workflows:**
 - `daily.yml`
@@ -247,10 +232,6 @@ This section shows which workflows use each script:
 **Used in Workflows:**
 - `monthly.yml`
 
-### move_slices_and_screenshots.py
-**Used in Workflows:**
-- `automated_slices_to_text.yml`
-
 ### release_analysis.py
 **Used in Workflows:**
 - `release_analysis.yml`
@@ -275,10 +256,6 @@ This section shows which workflows use each script:
 ### selenium_fullscreen_test3D.py
 **Used in Workflows:**
 - `dimension_test.yml`
-
-### selenium_screenshot.py
-**Used in Workflows:**
-- `selenium_screenshot.yml`
 
 ### selenium_screenshot_new.py
 **Used in Workflows:**
