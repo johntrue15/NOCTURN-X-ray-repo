@@ -97,13 +97,6 @@ This document shows the relationships between GitHub Actions workflows and their
 - `.github/scripts/ct_slices_to_text.py`
 - `.github/scripts/url_screenshot_check.py`
 
-### CT Images to Text (`ct_images_to_text.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/ct_image_to_text.py`
-- `.github/scripts/extract_url.py`
-- `.github/scripts/get_morphosource_release.py`
-
 ### CT to Text (`ct_to_text.yml`)
 **Triggered by:**
 - `Parse MorphoSource Data`
@@ -230,7 +223,6 @@ This section shows which workflows use each script:
 ### ct_image_to_text.py
 **Used in Workflows:**
 - `combined_ct_images_to_text.yml`
-- `ct_images_to_text.yml`
 - `test-run-run.yml`
 - `test_3d_screenshots_prompt.yml`
 
@@ -248,17 +240,9 @@ This section shows which workflows use each script:
 - `daily.yml`
 - `test_daily.yml`
 
-### extract_url.py
-**Used in Workflows:**
-- `ct_images_to_text.yml`
-
 ### generate_code.py
 **Used in Workflows:**
 - `Claude_issue_automation.yml`
-
-### get_morphosource_release.py
-**Used in Workflows:**
-- `ct_images_to_text.yml`
 
 ### metadata_record_extract.py
 **Used in Workflows:**
