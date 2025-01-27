@@ -37,22 +37,17 @@ jobs:
         id: get-logs
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string
           script: |
-            const run_id = context.payload.workflow_run.id;
-            console.log(`Fetching logs for run ${run_id}...`);
-            
             try {
               const logs = await github.rest.actions.downloadWorkflowRunLogs({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                run_id: run_id
+                run_id: context.payload.workflow_run.id
               });
-              
-              console.log('Successfully downloaded logs');
-              return logs.url;
+              return logs.url || '';
             } catch (error) {
-              console.log(`Error downloading logs: ${error.message}`);
-              return null;
+              return '';
             }
 
       - name: Manage issues
@@ -60,6 +55,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
+            const logsUrl = ${{ steps.get-logs.outputs.result }};
             const MAIN_ISSUE_TITLE = "🔍 Workflow Failures Tracking";
             
             // Function to find or create the main tracking issue
@@ -107,7 +103,6 @@ jobs:
             // Create a sub-issue for the current failure
             async function createSubIssue(mainIssueNumber) {
               const workflowRun = context.payload.workflow_run;
-              const logsUrl = steps.get-logs.outputs.result;
               
               const body = `
               ## Workflow Failure Details
@@ -116,8 +111,8 @@ jobs:
               ### Failed Workflow
               - **Workflow:** ${workflowRun.name}
               - **Run ID:** ${workflowRun.id}
-              - **Branch:** ${workflowRun.head_branch}
-              - **Commit:** ${workflowRun.head_sha}
+              - **Branch:** ${workflowRun.head_branch || 'N/A'}
+              - **Commit:** ${workflowRun.head_sha || 'N/A'}
               - **Failed at:** ${new Date(workflowRun.updated_at).toISOString()}
               - **Conclusion:** ${workflowRun.conclusion}
               
