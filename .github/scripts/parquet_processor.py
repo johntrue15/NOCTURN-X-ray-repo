@@ -34,7 +34,7 @@ def get_latest_data_file():
             
     raise FileNotFoundError("No morphosource_data_complete.json found")
 
-def extract_page_data(soup, url):
+def extract_page_data(soup, url, logger):
     """Extract structured data from MorphoSource page"""
     data = {
         'url': url,
@@ -159,7 +159,7 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
             response.raise_for_status()
             
             soup = BeautifulSoup(response.text, 'html.parser')
-            page_data = extract_page_data(soup, url)
+            page_data = extract_page_data(soup, url, logger)
             page_data['batch_index'] = start_index + processed_count
             
             # Log extracted data
