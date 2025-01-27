@@ -114,11 +114,6 @@ This document shows the relationships between GitHub Actions workflows and their
 **Required Scripts:**
 - `.github/scripts/metadata_record_extract.py`
 
-### Move Slices with Selenium (`move_slices.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/move_slices_and_screenshots.py`
-
 ### Release Analysis and Wiki Generation (`release_analysis.yml`)
 **Manual trigger available**
 **Required Scripts:**
@@ -255,7 +250,6 @@ This section shows which workflows use each script:
 ### move_slices_and_screenshots.py
 **Used in Workflows:**
 - `automated_slices_to_text.yml`
-- `move_slices.yml`
 
 ### release_analysis.py
 **Used in Workflows:**
