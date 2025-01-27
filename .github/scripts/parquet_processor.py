@@ -55,21 +55,34 @@ def extract_page_data(soup, url, logger):
         'number_of_images': None
     }
     
-    # Find the file object details section using the showcase-value class
-    file_details = soup.find_all('div', class_='showcase-value')
-    logger.debug(f"Found {len(file_details)} showcase values")
+    # Find the file object details section
+    file_section = soup.find('h2', string='FILE OBJECT DETAILS')
+    if not file_section:
+        logger.warning("Could not find FILE OBJECT DETAILS heading")
+        return data
+        
+    # Get the container div that follows the heading
+    details_container = file_section.find_next('div', class_='detail-fields')
+    if not details_container:
+        logger.warning("Could not find detail-fields container")
+        return data
     
-    # Get the labels (they're in showcase-label divs)
-    labels = soup.find_all('div', class_='showcase-label')
+    # Find all label-value pairs
+    rows = details_container.find_all('div', class_='row')
+    logger.debug(f"Found {len(rows)} detail rows")
     
-    # Process each label-value pair
-    for label, value_div in zip(labels, file_details):
-        if not label or not value_div:
+    for row in rows:
+        # Find label and value in this row
+        label_div = row.find('div', class_='col-xs-6 showcase-label')
+        value_div = row.find('div', class_='col-xs-6 showcase-value')
+        
+        if not label_div or not value_div:
             continue
             
-        field_name = label.text.strip().lower().replace(' ', '_')
+        field_name = label_div.text.strip().lower()
         field_value = value_div.text.strip()
-        logger.debug(f"Found field: {field_name} = {field_value}")
+        
+        logger.debug(f"Found field: '{field_name}' = '{field_value}'")
         
         # Map fields to our data structure
         if 'file name' in field_name:
