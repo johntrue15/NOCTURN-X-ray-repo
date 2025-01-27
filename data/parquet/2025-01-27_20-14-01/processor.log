@@ -1,0 +1,90 @@
+2025-01-27 20:14:02,505 - INFO - Using data file: data/2025-01-27_01-34-38/morphosource_data_complete.json
+2025-01-27 20:14:02,944 - INFO - Found 104398 URLs to process
+2025-01-27 20:14:02,944 - INFO - Processing up to 10 records this batch (total target: 20)
+2025-01-27 20:14:02,944 - INFO - Starting at index 0, processed so far: 0
+2025-01-27 20:14:03,034 - INFO - Setting up new Chrome driver
+2025-01-27 20:14:03,421 - INFO - Processing URL: https://www.morphosource.org/concern/media/000704255?locale=en (Attempt 1/3)
+2025-01-27 20:14:03,421 - INFO - Analyzing structure for: https://www.morphosource.org/concern/media/000704255?locale=en
+2025-01-27 20:14:05,430 - INFO - Title loaded
+2025-01-27 20:14:05,446 - INFO - Content elements found
+2025-01-27 20:14:05,465 - INFO - Found media type using showcase layout
+2025-01-27 20:14:05,465 - INFO - Detected Layout: showcase
+2025-01-27 20:14:05,465 - INFO - Media Type: Volumetric Image Series
+2025-01-27 20:14:06,879 - INFO - Successfully processed https://www.morphosource.org/concern/media/000704255?locale=en
+2025-01-27 20:14:08,881 - INFO - Processing URL: https://www.morphosource.org/concern/media/000704249?locale=en (Attempt 1/3)
+2025-01-27 20:14:08,881 - INFO - Analyzing structure for: https://www.morphosource.org/concern/media/000704249?locale=en
+2025-01-27 20:14:10,660 - INFO - Title loaded
+2025-01-27 20:14:10,675 - INFO - Content elements found
+2025-01-27 20:14:10,691 - INFO - Found media type using showcase layout
+2025-01-27 20:14:10,691 - INFO - Detected Layout: showcase
+2025-01-27 20:14:10,691 - INFO - Media Type: Volumetric Image Series
+2025-01-27 20:14:12,023 - INFO - Successfully processed https://www.morphosource.org/concern/media/000704249?locale=en
+2025-01-27 20:14:14,025 - INFO - Processing URL: https://www.morphosource.org/concern/media/000704150?locale=en (Attempt 1/3)
+2025-01-27 20:14:14,026 - INFO - Analyzing structure for: https://www.morphosource.org/concern/media/000704150?locale=en
+2025-01-27 20:14:14,756 - INFO - Title loaded
+2025-01-27 20:14:14,772 - INFO - Content elements found
+2025-01-27 20:14:14,793 - INFO - Found media type using showcase layout
+2025-01-27 20:14:14,793 - INFO - Detected Layout: showcase
+2025-01-27 20:14:14,793 - INFO - Media Type: Volumetric Image Series
+2025-01-27 20:14:35,799 - INFO - Successfully processed https://www.morphosource.org/concern/media/000704150?locale=en
+2025-01-27 20:14:37,801 - INFO - Processing URL: https://www.morphosource.org/concern/media/000704145?locale=en (Attempt 1/3)
+2025-01-27 20:14:37,801 - INFO - Analyzing structure for: https://www.morphosource.org/concern/media/000704145?locale=en
+2025-01-27 20:14:39,123 - INFO - Title loaded
+2025-01-27 20:14:39,138 - INFO - Content elements found
+2025-01-27 20:14:39,152 - INFO - Found media type using showcase layout
+2025-01-27 20:14:39,153 - INFO - Detected Layout: showcase
+2025-01-27 20:14:39,153 - INFO - Media Type: Volumetric Image Series
+2025-01-27 20:14:40,442 - INFO - Successfully processed https://www.morphosource.org/concern/media/000704145?locale=en
+2025-01-27 20:14:42,445 - INFO - Processing URL: https://www.morphosource.org/concern/media/000704140?locale=en (Attempt 1/3)
+2025-01-27 20:14:42,445 - INFO - Analyzing structure for: https://www.morphosource.org/concern/media/000704140?locale=en
+2025-01-27 20:14:45,289 - INFO - Title loaded
+2025-01-27 20:14:45,301 - INFO - Content elements found
+2025-01-27 20:14:45,314 - INFO - Found media type using showcase layout
+2025-01-27 20:14:45,314 - INFO - Detected Layout: showcase
+2025-01-27 20:14:45,314 - INFO - Media Type: Volumetric Image Series
+2025-01-27 20:14:46,883 - INFO - Successfully processed https://www.morphosource.org/concern/media/000704140?locale=en
+2025-01-27 20:14:48,886 - INFO - Processing URL: https://www.morphosource.org/concern/media/000704135?locale=en (Attempt 1/3)
+2025-01-27 20:14:48,886 - INFO - Analyzing structure for: https://www.morphosource.org/concern/media/000704135?locale=en
+2025-01-27 20:14:52,764 - INFO - Title loaded
+2025-01-27 20:14:52,777 - INFO - Content elements found
+2025-01-27 20:14:52,789 - INFO - Found media type using showcase layout
+2025-01-27 20:14:52,789 - INFO - Detected Layout: showcase
+2025-01-27 20:14:52,789 - INFO - Media Type: Volumetric Image Series
+2025-01-27 20:14:53,810 - INFO - Successfully processed https://www.morphosource.org/concern/media/000704135?locale=en
+2025-01-27 20:14:55,813 - INFO - Processing URL: https://www.morphosource.org/concern/media/000704075?locale=en (Attempt 1/3)
+2025-01-27 20:14:55,813 - INFO - Analyzing structure for: https://www.morphosource.org/concern/media/000704075?locale=en
+2025-01-27 20:14:56,876 - INFO - Title loaded
+2025-01-27 20:14:56,890 - INFO - Content elements found
+2025-01-27 20:14:56,902 - INFO - Found media type using showcase layout
+2025-01-27 20:14:56,902 - INFO - Detected Layout: showcase
+2025-01-27 20:14:56,902 - INFO - Media Type: Volumetric Image Series
+2025-01-27 20:14:57,928 - INFO - Successfully processed https://www.morphosource.org/concern/media/000704075?locale=en
+2025-01-27 20:14:59,930 - INFO - Processing URL: https://www.morphosource.org/concern/media/000704042?locale=en (Attempt 1/3)
+2025-01-27 20:14:59,930 - INFO - Analyzing structure for: https://www.morphosource.org/concern/media/000704042?locale=en
+2025-01-27 20:15:03,676 - INFO - Title loaded
+2025-01-27 20:15:03,693 - INFO - Content elements found
+2025-01-27 20:15:03,712 - INFO - Found media type using showcase layout
+2025-01-27 20:15:03,712 - INFO - Detected Layout: showcase
+2025-01-27 20:15:03,712 - INFO - Media Type: Volumetric Image Series
+2025-01-27 20:15:04,684 - INFO - Successfully processed https://www.morphosource.org/concern/media/000704042?locale=en
+2025-01-27 20:15:06,686 - INFO - Processing URL: https://www.morphosource.org/concern/media/000704012?locale=en (Attempt 1/3)
+2025-01-27 20:15:06,686 - INFO - Analyzing structure for: https://www.morphosource.org/concern/media/000704012?locale=en
+2025-01-27 20:15:11,651 - INFO - Title loaded
+2025-01-27 20:15:11,666 - INFO - Content elements found
+2025-01-27 20:15:11,684 - INFO - Found media type using showcase layout
+2025-01-27 20:15:11,684 - INFO - Detected Layout: showcase
+2025-01-27 20:15:11,684 - INFO - Media Type: Mesh
+2025-01-27 20:15:12,927 - INFO - Successfully processed https://www.morphosource.org/concern/media/000704012?locale=en
+2025-01-27 20:15:14,929 - INFO - Processing URL: https://www.morphosource.org/concern/media/000703950?locale=en (Attempt 1/3)
+2025-01-27 20:15:14,930 - INFO - Analyzing structure for: https://www.morphosource.org/concern/media/000703950?locale=en
+2025-01-27 20:15:21,622 - INFO - Title loaded
+2025-01-27 20:15:21,636 - INFO - Content elements found
+2025-01-27 20:15:21,647 - INFO - Found media type using showcase layout
+2025-01-27 20:15:21,647 - INFO - Detected Layout: showcase
+2025-01-27 20:15:21,647 - INFO - Media Type: Volumetric Image Series
+2025-01-27 20:15:22,845 - INFO - Successfully processed https://www.morphosource.org/concern/media/000703950?locale=en
+2025-01-27 20:15:24,917 - INFO - Saved 10 records to data/parquet/2025-01-27_20-14-01/morphosource_data_20250127_201524.parquet
+2025-01-27 20:15:24,917 - INFO - Columns: url, processed_at, error, media_id, media_type, object_element_or_part, object_represented, object_taxonomy, object_organization, side, orientation, short_description, full_description, creator, date_created, date_uploaded, data_managed_by, data_uploaded_by, publication_status, download_reviewer, ip_holder, copyright_statement, creative_commons_license, morphosource_use_agreement_type, permits_commercial_use, permits_3d_use, required_archival_of_published_derivatives, funding_attribution, publisher, cite_as, media_preview_mode, additional_usage_agreement, morphosource_ark, morphosource_doi, external_identifier, external_media_url, file_name, file_formats, file_size, image_width, image_height, color_space, color_depth, compression, x_pixel_spacing, y_pixel_spacing, z_pixel_spacing, pixel_spacing_units, slice_thickness, number_of_images_in_set, number_of_parent_media, number_of_processing_events, modality, device, batch_index, attempt, points, polygons, map_type, uv_coordinates, vertex_color, bounding_box_dimensions, centroid_coordinates, units_of_point_coordinates, derived_directly_from
+2025-01-27 20:15:25,031 - INFO - Saved 10 records to data/parquet/2025-01-27_20-14-01/morphosource_data_20250127_201525.parquet
+2025-01-27 20:15:25,032 - INFO - Columns: url, processed_at, error, media_id, media_type, object_element_or_part, object_represented, object_taxonomy, object_organization, side, orientation, short_description, full_description, creator, date_created, date_uploaded, data_managed_by, data_uploaded_by, publication_status, download_reviewer, ip_holder, copyright_statement, creative_commons_license, morphosource_use_agreement_type, permits_commercial_use, permits_3d_use, required_archival_of_published_derivatives, funding_attribution, publisher, cite_as, media_preview_mode, additional_usage_agreement, morphosource_ark, morphosource_doi, external_identifier, external_media_url, file_name, file_formats, file_size, image_width, image_height, color_space, color_depth, compression, x_pixel_spacing, y_pixel_spacing, z_pixel_spacing, pixel_spacing_units, slice_thickness, number_of_images_in_set, number_of_parent_media, number_of_processing_events, modality, device, batch_index, attempt, points, polygons, map_type, uv_coordinates, vertex_color, bounding_box_dimensions, centroid_coordinates, units_of_point_coordinates, derived_directly_from
+2025-01-27 20:15:25,032 - INFO - Processed 10 records in this batch
