@@ -47,41 +47,34 @@ def setup_driver():
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-dev-shm-usage')
     chrome_options.binary_location = '/usr/bin/google-chrome'
-    return webdriver.Chrome(options=chrome_options)
+    
+    # Create driver with timeouts
+    driver = webdriver.Chrome(options=chrome_options)
+    driver.set_page_load_timeout(30)  # 30 seconds for page load
+    driver.set_script_timeout(30)     # 30 seconds for scripts
+    driver.implicitly_wait(10)        # 10 seconds for finding elements
+    
+    return driver
 
-def timeout_handler(signum, frame):
-    raise TimeoutException("Processing timed out")
-
-def with_timeout(timeout):
-    """Decorator to add timeout to a function"""
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            # Set the signal handler
-            signal.signal(signal.SIGALRM, timeout_handler)
-            signal.alarm(timeout)
-            try:
-                result = func(*args, **kwargs)
-            finally:
-                # Disable the alarm
-                signal.alarm(0)
-            return result
-        return wrapper
-    return decorator
-
-@with_timeout(30)  # 30 second timeout per URL
 def extract_page_data(driver, url, logger):
     """Extract structured data from MorphoSource page using Selenium"""
     data = {
         'url': url,
         'processed_at': datetime.now().isoformat(),
-        'error': None  # Add error field
+        'error': None
     }
     
     try:
         logger.info(f"Starting page load for {url}")
         driver.get(url)
-        time.sleep(5)  # Wait for content to load
+        
+        # Use explicit wait for content
+        wait = WebDriverWait(driver, 10)
+        try:
+            wait.until(EC.presence_of_element_located((By.CLASS_NAME, "showcase-label")))
+        except TimeoutException:
+            logger.warning("Timeout waiting for content, attempting to continue...")
+        
         logger.info(f"Page loaded for {url}")
         
         # Dictionary of all sections and their fields
@@ -181,6 +174,11 @@ def extract_page_data(driver, url, logger):
     except TimeoutException as e:
         logger.error(f"Timeout processing {url}: {e}")
         data['error'] = f"Timeout: {str(e)}"
+        # Force quit the hanging browser
+        try:
+            driver.quit()
+        except:
+            pass
         return data
     except WebDriverException as e:
         logger.error(f"WebDriver error for {url}: {e}")
@@ -196,12 +194,11 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
     all_data = []
     processed_count = 0
     error_count = 0
-    retry_count = 3  # Number of retries per URL
+    retry_count = 3
     
     end_index = min(start_index + max_records, len(urls))
     batch_urls = urls[start_index:end_index]
     
-    # Setup Chrome driver
     driver = None
     
     try:
@@ -216,7 +213,24 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
                         driver = setup_driver()
                     
                     logger.info(f"Processing URL: {url} (Attempt {attempts + 1}/{retry_count})")
-                    page_data = extract_page_data(driver, url, logger)
+                    
+                    # Add overall timeout for the entire extraction
+                    start_time = time.time()
+                    while time.time() - start_time < 60:  # 60 second total timeout
+                        try:
+                            page_data = extract_page_data(driver, url, logger)
+                            break
+                        except TimeoutException:
+                            logger.warning("Extraction timed out, retrying...")
+                            if driver is not None:
+                                try:
+                                    driver.quit()
+                                except:
+                                    pass
+                                driver = setup_driver()
+                    else:
+                        raise TimeoutException("Total extraction time exceeded 60 seconds")
+                    
                     page_data['batch_index'] = start_index + processed_count
                     page_data['attempt'] = attempts + 1
                     
@@ -225,6 +239,7 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
                     if page_data.get('error'):
                         logger.warning(f"Data extracted with error: {page_data['error']}")
                         error_count += 1
+                        attempts += 1
                     else:
                         success = True
                         logger.info(f"Successfully processed {url}")
@@ -245,20 +260,18 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
                     
                     if attempts < retry_count:
                         logger.info(f"Retrying {url} after error...")
-                        time.sleep(5)  # Wait before retry
+                        time.sleep(5)
                 
-                # Be nice to the server
                 time.sleep(2)
             
             if not success:
                 logger.error(f"Failed to process {url} after {retry_count} attempts")
-                
+            
             # Save intermediate results every 10 records
             if len(all_data) % 10 == 0:
                 save_batch_results(all_data, output_dir, logger)
                 
     finally:
-        # Clean up driver
         if driver is not None:
             try:
                 driver.quit()
