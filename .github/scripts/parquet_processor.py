@@ -265,8 +265,11 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
     retry_count = 3
     record_timeout = 120  # 2 minutes timeout per record
     
+    # Calculate the correct start and end indices
     end_index = min(start_index + max_records, len(urls))
-    batch_urls = urls[start_index:end_index]
+    batch_urls = urls[start_index:end_index]  # Get the correct slice of URLs
+    
+    logger.info(f"Processing batch from index {start_index} to {end_index} (total processed so far: {total_processed})")
     
     driver = None
     
@@ -275,6 +278,9 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
             attempts = 0
             success = False
             start_time = time.time()
+            
+            current_index = start_index + processed_count
+            logger.info(f"Processing record {current_index} (URL: {url})")
             
             while attempts < retry_count and not success and (time.time() - start_time) < record_timeout:
                 try:
@@ -285,7 +291,7 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
                     logger.info(f"Processing URL: {url} (Attempt {attempts + 1}/{retry_count})")
                     page_data = extract_page_data(driver, url, logger)
                     
-                    page_data['batch_index'] = start_index + processed_count
+                    page_data['batch_index'] = current_index
                     page_data['attempt'] = attempts + 1
                     page_data['processing_time'] = time.time() - start_time
                     
@@ -297,7 +303,7 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
                         attempts += 1
                     else:
                         success = True
-                        logger.info(f"Successfully processed {url}")
+                        logger.info(f"Successfully processed {url} (record {current_index})")
                     
                     processed_count += 1
                     
@@ -322,6 +328,7 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
                     logger.warning(f"Record processing timeout reached for {url}")
                     skipped_records.append({
                         'url': url,
+                        'index': current_index,
                         'reason': 'timeout',
                         'processing_time': time.time() - start_time,
                         'attempts': attempts
