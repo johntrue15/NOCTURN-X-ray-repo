@@ -114,16 +114,6 @@ This document shows the relationships between GitHub Actions workflows and their
 - `.github/scripts/release_analysis.py`
 - `.github/scripts/release_analyzer.py`
 
-### Selenium Screenshot New Workflow (`selenium_screenshot_new.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/selenium_screenshot_new.py`
-
-### Run Selenium Fullscreen Test (`selenium_test.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/selenium_fullscreen_test.py`
-
 ### Test URL Processing Workflow (`test-run-run.yml`)
 **Manual trigger available**
 **Required Scripts:**
@@ -161,11 +151,6 @@ This document shows the relationships between GitHub Actions workflows and their
 **Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/test_monthly.py`
-
-### URL Screenshot Check for 2D/3D (`url_screenshot_check.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/url_screenshot_check.py`
 
 ### Workflow Monitor (`workflow-monitor.yml`)
 **Triggered by:**
@@ -245,10 +230,6 @@ This section shows which workflows use each script:
 **Used in Workflows:**
 - `parse_morphosource.yml`
 
-### selenium_fullscreen_test.py
-**Used in Workflows:**
-- `selenium_test.yml`
-
 ### selenium_fullscreen_test2D.py
 **Used in Workflows:**
 - `dimension_test.yml`
@@ -256,10 +237,6 @@ This section shows which workflows use each script:
 ### selenium_fullscreen_test3D.py
 **Used in Workflows:**
 - `dimension_test.yml`
-
-### selenium_screenshot_new.py
-**Used in Workflows:**
-- `selenium_screenshot_new.yml`
 
 ### test_3D_screenshot.py
 **Used in Workflows:**
@@ -278,4 +255,3 @@ This section shows which workflows use each script:
 **Used in Workflows:**
 - `combined_ct_images_to_text.yml`
 - `test-run-run.yml`
-- `url_screenshot_check.yml`
