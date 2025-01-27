@@ -261,7 +261,9 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
     all_data = []
     processed_count = 0
     error_count = 0
+    skipped_records = []
     retry_count = 3
+    record_timeout = 120  # 2 minutes timeout per record
     
     end_index = min(start_index + max_records, len(urls))
     batch_urls = urls[start_index:end_index]
@@ -272,34 +274,20 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
         for url in tqdm(batch_urls, desc=f"Processing URLs {start_index}-{end_index}"):
             attempts = 0
             success = False
+            start_time = time.time()
             
-            while attempts < retry_count and not success:
+            while attempts < retry_count and not success and (time.time() - start_time) < record_timeout:
                 try:
                     if driver is None:
                         logger.info("Setting up new Chrome driver")
                         driver = setup_driver()
                     
                     logger.info(f"Processing URL: {url} (Attempt {attempts + 1}/{retry_count})")
-                    
-                    # Add overall timeout for the entire extraction
-                    start_time = time.time()
-                    while time.time() - start_time < 60:  # 60 second total timeout
-                        try:
-                            page_data = extract_page_data(driver, url, logger)
-                            break
-                        except TimeoutException:
-                            logger.warning("Extraction timed out, retrying...")
-                            if driver is not None:
-                                try:
-                                    driver.quit()
-                                except:
-                                    pass
-                                driver = setup_driver()
-                    else:
-                        raise TimeoutException("Total extraction time exceeded 60 seconds")
+                    page_data = extract_page_data(driver, url, logger)
                     
                     page_data['batch_index'] = start_index + processed_count
                     page_data['attempt'] = attempts + 1
+                    page_data['processing_time'] = time.time() - start_time
                     
                     all_data.append(page_data)
                     
@@ -329,14 +317,39 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
                         logger.info(f"Retrying {url} after error...")
                         time.sleep(5)
                 
+                # Check timeout
+                if (time.time() - start_time) >= record_timeout:
+                    logger.warning(f"Record processing timeout reached for {url}")
+                    skipped_records.append({
+                        'url': url,
+                        'reason': 'timeout',
+                        'processing_time': time.time() - start_time,
+                        'attempts': attempts
+                    })
+                    break
+                
                 time.sleep(2)
             
             if not success:
-                logger.error(f"Failed to process {url} after {retry_count} attempts")
+                logger.error(f"Failed to process {url} after {retry_count} attempts or timeout")
+                if url not in [r['url'] for r in skipped_records]:
+                    skipped_records.append({
+                        'url': url,
+                        'reason': 'max_attempts',
+                        'processing_time': time.time() - start_time,
+                        'attempts': attempts
+                    })
             
             # Save intermediate results every 10 records
             if len(all_data) % 10 == 0:
                 save_batch_results(all_data, output_dir, logger)
+                
+            # Save skipped records
+            if skipped_records:
+                skipped_file = output_dir / f'skipped_records_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'
+                with open(skipped_file, 'w') as f:
+                    json.dump(skipped_records, f, indent=2)
+                logger.info(f"Saved {len(skipped_records)} skipped records to {skipped_file}")
                 
     finally:
         if driver is not None:
@@ -357,6 +370,7 @@ def process_url_batch(urls, output_dir, logger, start_index, total_processed, ma
                 f.write(f"next_index={end_index}\n")
                 f.write(f"total_processed={total_processed + processed_count}\n")
                 f.write(f"error_count={error_count}\n")
+                f.write(f"skipped_count={len(skipped_records)}\n")
         
         return processed_count
     
