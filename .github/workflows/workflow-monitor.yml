@@ -58,24 +58,26 @@ jobs:
             const logsUrl = `${{ steps.get-logs.outputs.result }}`;
             const TRACKING_ISSUE_NUMBER = 43;
             
-            async function getMainIssue() {
-              try {
-                // Get the tracking issue directly by number
-                const { data: issue } = await github.rest.issues.get({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: TRACKING_ISSUE_NUMBER
-                });
-                return issue;
-              } catch (error) {
-                console.error('Error getting tracking issue:', error);
-                throw error;
-              }
-            }
-            
-            // Create a sub-issue for the current failure
             async function createSubIssue(mainIssueNumber) {
               const workflowRun = context.payload.workflow_run;
+              
+              // First check if a sub-issue already exists for this workflow run
+              const { data: existingIssues } = await github.rest.issues.listForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                labels: ['workflow-failure'],
+                per_page: 100
+              });
+              
+              const existingIssue = existingIssues.find(issue => 
+                issue.body?.includes(`Run ID: ${workflowRun.id}`)
+              );
+              
+              if (existingIssue) {
+                console.log(`Found existing issue #${existingIssue.number} for workflow run ${workflowRun.id}`);
+                return existingIssue;
+              }
               
               const body = `
               ## Workflow Failure Details
@@ -100,38 +102,48 @@ jobs:
               - [ ] Mark as resolved in main tracking issue
               `;
               
-              const subIssue = await github.rest.issues.create({
+              const { data: newIssue } = await github.rest.issues.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: `⚠️ Workflow Failure: ${workflowRun.name}`,
                 body: body,
-                labels: ['workflow-failure', 'automated']
+                labels: ['workflow-failure']
               });
               
-              return subIssue.data;
+              return newIssue;
             }
             
             // Main execution
             try {
               console.log('Starting workflow monitor...');
-              const mainIssue = await getMainIssue();
-              const subIssue = await createSubIssue(mainIssue.number);
               
-              // Update main issue
-              const newEntry = `- [${subIssue.title}](${subIssue.html_url}) - ${new Date().toISOString().split('T')[0]}`;
-              const updatedBody = mainIssue.body.replace(
-                'No active failures yet.',
-                newEntry
-              );
-              
-              await github.rest.issues.update({
+              // Get the tracking issue
+              const { data: mainIssue } = await github.rest.issues.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: mainIssue.number,
-                body: updatedBody
+                issue_number: TRACKING_ISSUE_NUMBER
               });
               
-              console.log('Successfully created and linked issues');
+              // Create or get existing sub-issue
+              const subIssue = await createSubIssue(TRACKING_ISSUE_NUMBER);
+              
+              // Only update main issue if this is a new sub-issue
+              if (!mainIssue.body.includes(subIssue.html_url)) {
+                const newEntry = `- [${subIssue.title}](${subIssue.html_url}) - ${new Date().toISOString().split('T')[0]}`;
+                const updatedBody = mainIssue.body.replace(
+                  'No active failures yet.',
+                  newEntry
+                );
+                
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: TRACKING_ISSUE_NUMBER,
+                  body: updatedBody
+                });
+              }
+              
+              console.log('Successfully processed workflow failure');
             } catch (error) {
               console.error('Fatal error in workflow monitor:', error);
               core.setFailed(`Workflow monitor failed: ${error.message}`);
