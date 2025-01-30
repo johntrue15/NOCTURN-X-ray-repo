@@ -82,18 +82,23 @@ jobs:
           --source-dir "${{ steps.find-latest.outputs.dir }}" \
           --output-dir "data/${{ env.test_timestamp }}" \
           --source-file "$SOURCE_FILE"
+        
+        # Rename the test data file
+        mv "data/${{ env.test_timestamp }}/morphosource_data_complete.json" \
+           "data/${{ env.test_timestamp }}/test_morphosource_data_complete.json"
 
     - name: Simulate Daily Collection
       run: |
         mkdir -p "data/${{ env.daily_timestamp }}"
         
-        # Copy from test directory, which we know has morphosource_data_complete.json
-        TEST_FILE="data/${{ env.test_timestamp }}/morphosource_data_complete.json"
+        # Copy from test directory with the new name
+        TEST_FILE="data/${{ env.test_timestamp }}/test_morphosource_data_complete.json"
         if [ ! -f "$TEST_FILE" ]; then
           echo "Test data file not found: $TEST_FILE"
           exit 1
         fi
         
+        # Copy to daily directory with original name for testing
         cp "$TEST_FILE" "data/${{ env.daily_timestamp }}/morphosource_data_complete.json"
 
     - name: Run Daily Check
@@ -232,7 +237,7 @@ jobs:
         tag_name: "test-daily-${{ env.test_timestamp }}"
         body_path: data/${{ env.test_timestamp }}/release_notes.txt
         files: |
-          data/${{ env.test_timestamp }}/morphosource_data_complete.json
+          data/${{ env.test_timestamp }}/test_morphosource_data_complete.json
           data/${{ env.test_timestamp }}/test_info.json
           data/${{ env.daily_timestamp }}/morphosource_data_complete.json
 
