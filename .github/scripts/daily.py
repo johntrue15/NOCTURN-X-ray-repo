@@ -37,22 +37,37 @@ class DailyMorphoSourceExtractor:
     def setup_directories(self):
         os.makedirs(self.data_dir, exist_ok=True)
 
-    def get_latest_webpage_record(self) -> dict:
+    def get_all_records(self) -> list:
+        """Get all records from the webpage"""
         try:
-            response = requests.get(self.base_url)
-            if response.status_code != 200:
-                raise Exception(f"Failed to fetch page: {response.status_code}")
-            
-            soup = BeautifulSoup(response.text, 'html.parser')
-            first_record = soup.find('div', class_='search-result-wrapper')
-            if not first_record:
-                raise Exception("Could not find any records on page")
-            
-            self.latest_webpage_record = self.parse_record(first_record)  # Store for info file
-            return self.latest_webpage_record
+            records = []
+            page = 1
+            while True:
+                url = f"{self.base_url}&page={page}"
+                self.logger.info(f"Fetching page {page}")
+                
+                response = requests.get(url)
+                if response.status_code != 200:
+                    raise Exception(f"Failed to fetch page {page}: {response.status_code}")
+                
+                soup = BeautifulSoup(response.text, 'html.parser')
+                record_elements = soup.find_all('div', class_='search-result-wrapper')
+                
+                if not record_elements:
+                    break
+                    
+                for elem in record_elements:
+                    record = self.parse_record(elem)
+                    records.append(record)
+                
+                page += 1
+                time.sleep(1)  # Be nice to the server
+                
+            self.logger.info(f"Found {len(records)} total records")
+            return records
             
         except Exception as e:
-            self.logger.error(f"Error getting latest webpage record: {e}")
+            self.logger.error(f"Error getting records: {e}")
             raise
 
     def load_latest_stored_record(self) -> dict:
@@ -135,37 +150,43 @@ class DailyMorphoSourceExtractor:
     def run(self):
         """Run the daily check and save results"""
         try:
-            # Get latest records from webpage and stored data
-            latest_webpage = self.get_latest_webpage_record()
-            latest_stored = self.load_latest_stored_record()
+            # Get all records from webpage
+            webpage_records = self.get_all_records()
+            if not webpage_records:
+                self.logger.error("No records found on webpage")
+                return 0
             
-            self.logger.info(f"Latest webpage record ID: {latest_webpage['id']}")
+            self.latest_webpage_record = webpage_records[0]  # First is most recent
+            self.logger.info(f"Latest webpage record ID: {self.latest_webpage_record['id']}")
+            
+            # Get latest stored record
+            latest_stored = self.load_latest_stored_record()
             if latest_stored:
                 self.logger.info(f"Latest stored record ID: {latest_stored['id']}")
             else:
                 self.logger.info("No stored records found")
 
             # Compare records
-            if not latest_stored or latest_webpage['id'] != latest_stored['id']:
+            if not latest_stored or self.latest_webpage_record['id'] != latest_stored['id']:
                 self.logger.info("New records available - latest records differ")
                 
-                # Save the new record
+                # Save all records
                 output_file = os.path.join(self.data_dir, 'morphosource_data_complete.json')
                 with open(output_file, 'w') as f:
-                    json.dump([latest_webpage], f, indent=2)
-                self.logger.info(f"Saved new record to: {output_file}")
+                    json.dump(webpage_records, f, indent=2)
+                self.logger.info(f"Saved {len(webpage_records)} records to: {output_file}")
                 
                 # Create release notes
                 release_notes_path = os.path.join(self.data_dir, 'release_notes.txt')
                 with open(release_notes_path, 'w') as f:
                     f.write("# Daily Check Report\n\n")
                     f.write("## New Records Found\n")
-                    f.write(f"Latest Record ID: {latest_webpage['id']}\n")
+                    f.write(f"Latest Record ID: {self.latest_webpage_record['id']}\n")
                     if latest_stored:
                         f.write(f"Previous Record ID: {latest_stored['id']}\n")
+                    f.write(f"\nTotal Records: {len(webpage_records)}\n")
                 self.logger.info(f"Created 'new records' release notes at: {release_notes_path}")
                 
-                # Return failure to trigger collection
                 return 1
             else:
                 self.logger.info("No new records found")
