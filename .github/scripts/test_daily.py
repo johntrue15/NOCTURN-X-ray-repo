@@ -64,16 +64,9 @@ def create_release_notes(output_dir, test_info, logger):
         logger.error(f"Error creating release notes: {e}")
         raise
 
-def create_test_data(source_dir, output_dir, logger):
+def create_test_data(source_data, output_dir, logger):
     """Create test data by modifying the source data"""
     try:
-        # Load source data
-        source_file = os.path.join(source_dir, 'morphosource_data_complete.json')
-        logger.info(f"Loading source data from: {source_file}")
-        
-        with open(source_file, 'r') as f:
-            source_data = json.load(f)
-        
         # Modify records
         modified_data = modify_records(source_data)
         removed_records = source_data[:5]  # The records we removed
@@ -122,6 +115,8 @@ def main():
                       help='Directory containing source data files')
     parser.add_argument('--output-dir', type=str, required=True,
                       help='Directory to store test files')
+    parser.add_argument('--source-file', type=str, required=True,
+                      help='Path to source data file')
     args = parser.parse_args()
     
     # Create output directory
@@ -131,7 +126,12 @@ def main():
     logger = setup_logging(args.output_dir)
     
     try:
-        total_records = create_test_data(args.source_dir, args.output_dir, logger)
+        # Load source data from specified file
+        logger.info(f"Loading source data from: {args.source_file}")
+        with open(args.source_file, 'r') as f:
+            source_data = json.load(f)
+            
+        total_records = create_test_data(source_data, args.output_dir, logger)
         logger.info(f"Test data creation complete. Total records: {total_records}")
         return 0
         

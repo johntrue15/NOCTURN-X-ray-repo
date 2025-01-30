@@ -46,20 +46,43 @@ jobs:
     - name: Find Latest Data Directory
       id: find-latest
       run: |
-        LATEST_DIR=$(find data -maxdepth 1 -type d -name "20*" | sort -r | head -n1 || echo "")
+        # First check for updated_morphosource_data.json
+        LATEST_DIR=$(find data -maxdepth 2 -type f -name "updated_morphosource_data.json" -exec dirname {} \; | sort -r | head -n1 || echo "")
+        
+        # If not found, look for morphosource_data_complete.json
         if [ -z "$LATEST_DIR" ]; then
-          echo "No timestamped data directories found"
+          LATEST_DIR=$(find data -maxdepth 2 -type f -name "morphosource_data_complete.json" -exec dirname {} \; | sort -r | head -n1 || echo "")
+        fi
+        
+        if [ -z "$LATEST_DIR" ]; then
+          echo "No data files found"
           exit 1
         fi
+        
         echo "Found latest data directory: $LATEST_DIR"
         echo "dir=$LATEST_DIR" >> $GITHUB_OUTPUT
 
     - name: Create Test Data
       run: |
         mkdir -p "data/${{ env.test_timestamp }}"
+        
+        # Find the actual source file
+        SOURCE_FILE=""
+        if [ -f "${{ steps.find-latest.outputs.dir }}/updated_morphosource_data.json" ]; then
+          SOURCE_FILE="${{ steps.find-latest.outputs.dir }}/updated_morphosource_data.json"
+        elif [ -f "${{ steps.find-latest.outputs.dir }}/morphosource_data_complete.json" ]; then
+          SOURCE_FILE="${{ steps.find-latest.outputs.dir }}/morphosource_data_complete.json"
+        else
+          echo "No source data file found"
+          exit 1
+        fi
+        
+        echo "Using source file: $SOURCE_FILE"
+        
         python .github/scripts/test_daily.py \
           --source-dir "${{ steps.find-latest.outputs.dir }}" \
-          --output-dir "data/${{ env.test_timestamp }}"
+          --output-dir "data/${{ env.test_timestamp }}" \
+          --source-file "$SOURCE_FILE"
 
     - name: Run Daily Check
       id: daily-check
