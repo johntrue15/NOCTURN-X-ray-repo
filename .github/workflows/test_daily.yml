@@ -81,8 +81,9 @@ jobs:
     - name: Simulate Daily Collection
       run: |
         mkdir -p "data/${{ env.daily_timestamp }}"
-        SOURCE_FILE="${{ steps.find-latest.outputs.dir }}/${{ steps.find-latest.outputs.filename }}"
-        cp "$SOURCE_FILE" "data/${{ env.daily_timestamp }}/morphosource_data_complete.json"
+        # Always use morphosource_data_complete.json
+        cp "data/${{ env.test_timestamp }}/morphosource_data_complete.json" \
+           "data/${{ env.daily_timestamp }}/morphosource_data_complete.json"
 
     - name: Run Daily Check
       id: daily-check
