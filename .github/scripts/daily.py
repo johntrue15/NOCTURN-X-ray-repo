@@ -170,34 +170,41 @@ class DailyMorphoSourceExtractor:
                 self.logger.info("No stored records found")
             
             # Get new records up to latest stored
-            webpage_records = self.get_all_records(latest_stored_id)
-            if not webpage_records:
+            new_records = self.get_all_records(latest_stored_id)
+            if not new_records:
                 self.logger.error("No records found on webpage")
                 return 0
             
-            self.latest_webpage_record = webpage_records[0]  # First is most recent
+            self.latest_webpage_record = new_records[0]  # First is most recent
             self.logger.info(f"Latest webpage record ID: {self.latest_webpage_record['id']}")
             
             # Compare records
             if not latest_stored or self.latest_webpage_record['id'] != latest_stored['id']:
                 self.logger.info("New records available - latest records differ")
                 
-                # Calculate record differences
-                new_ids = set(r['id'] for r in webpage_records)
-                old_ids = set(r['id'] for r in stored_records)
-                added_ids = new_ids - old_ids
-                removed_ids = old_ids - new_ids
+                # Combine new records with stored records
+                existing_ids = set(r['id'] for r in stored_records)
+                combined_records = new_records[:]  # Start with new records
                 
-                self.logger.info(f"New records: {len(added_ids)}")
-                self.logger.info(f"Removed records: {len(removed_ids)}")
+                # Add old records that aren't in new records
+                for record in stored_records:
+                    if record['id'] not in set(r['id'] for r in new_records):
+                        combined_records.append(record)
                 
-                # Save all records
+                # Sort combined records by ID to maintain order
+                combined_records.sort(key=lambda x: x['id'], reverse=True)
+                
+                self.logger.info(f"New records: {len(new_records)}")
+                self.logger.info(f"Previous records: {len(stored_records)}")
+                self.logger.info(f"Combined records: {len(combined_records)}")
+                
+                # Save combined records
                 output_file = os.path.join(self.data_dir, 'morphosource_data_complete.json')
                 with open(output_file, 'w') as f:
-                    json.dump(webpage_records, f, indent=2)
-                self.logger.info(f"Saved {len(webpage_records)} records to: {output_file}")
+                    json.dump(combined_records, f, indent=2)
+                self.logger.info(f"Saved {len(combined_records)} records to: {output_file}")
                 
-                # Create release notes with detailed comparison
+                # Create release notes
                 release_notes_path = os.path.join(self.data_dir, 'release_notes.txt')
                 with open(release_notes_path, 'w') as f:
                     f.write("# Daily Check Report\n\n")
@@ -205,21 +212,18 @@ class DailyMorphoSourceExtractor:
                     f.write(f"Latest Record ID: {self.latest_webpage_record['id']}\n")
                     if latest_stored:
                         f.write(f"Previous Record ID: {latest_stored['id']}\n")
-                    f.write(f"\nTotal Current Records: {len(webpage_records)}\n")
-                    f.write(f"Total Previous Records: {len(stored_records)}\n")
-                    f.write(f"Net Change: {len(webpage_records) - len(stored_records)}\n\n")
-                    f.write(f"New Records Added: {len(added_ids)}\n")
-                    f.write(f"Records Removed: {len(removed_ids)}\n")
+                    f.write(f"\nTotal Records: {len(combined_records)}\n")
+                    f.write(f"Previous Records: {len(stored_records)}\n")
+                    f.write(f"New Records Added: {len(new_records)}\n")
                     
-                    if added_ids:
+                    if new_records:
                         f.write("\n### New Record IDs:\n")
-                        for id in sorted(added_ids)[:10]:  # Show first 10
-                            f.write(f"- {id}\n")
-                        if len(added_ids) > 10:
-                            f.write(f"... and {len(added_ids) - 10} more\n")
-                            
-                self.logger.info(f"Created detailed release notes at: {release_notes_path}")
+                        for record in new_records[:10]:  # Show first 10
+                            f.write(f"- {record['id']}: {record['title']}\n")
+                        if len(new_records) > 10:
+                            f.write(f"... and {len(new_records) - 10} more\n")
                 
+                self.logger.info(f"Created detailed release notes at: {release_notes_path}")
                 return 1
             else:
                 self.logger.info("No new records found")
@@ -262,24 +266,65 @@ def create_no_changes_release_notes(output_dir: str, source_dir: str, logger):
         logger.error(f"Error creating release notes: {e}")
         raise
 
-def create_new_records_release_notes(output_dir: str, daily_info: dict, logger):
-    """Create release notes for when new records are found"""
-    release_notes_path = os.path.join(output_dir, 'release_notes.txt')
+def create_new_records_release_notes(output_dir: str, daily_info: dict, logger: logging.Logger):
+    """Create release notes for new records case"""
     try:
+        release_notes_path = os.path.join(output_dir, 'release_notes.txt')
         with open(release_notes_path, 'w') as f:
             f.write("# Daily Check Report\n")
             f.write(f"Check Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+            
             f.write("## Summary\n")
             f.write("New records found - collection in progress\n\n")
-            f.write("## Latest Record\n")
-            f.write(f"Record ID: {daily_info['latest_record_id']}\n")
-            f.write("\n## Data Files\n")
-            f.write(f"Current data: {os.path.join(output_dir, 'morphosource_data_complete.json')}\n")
-            f.write(f"Previous data: {os.path.join(daily_info['source_dir'], 'morphosource_data_complete.json')}\n")
-            f.write("\n## Attestations\n")
-            f.write("<!-- ATTESTATION_URLS -->\n")
             
-        logger.info(f"Created 'new records' release notes at: {release_notes_path}")
+            f.write("## Latest Record\n")
+            f.write(f"Record ID: {daily_info['latest_record_id']}\n\n")
+            
+            # Get the previous data directory from stored records
+            previous_dir = None
+            parent_dir = Path(output_dir).parent
+            timestamp_dirs = sorted(
+                [d for d in parent_dir.iterdir() 
+                 if d.is_dir() and d.name[0].isdigit()],
+                reverse=True
+            )
+            
+            for dir in timestamp_dirs:
+                if dir != Path(output_dir):  # Skip current directory
+                    if any(f.name in ['morphosource_data_complete.json', 'updated_morphosource_data.json'] 
+                          for f in dir.iterdir()):
+                        previous_dir = dir
+                        break
+            
+            f.write("## Data Files\n")
+            f.write(f"Current data: {output_dir}/morphosource_data_complete.json\n")
+            if previous_dir:
+                f.write(f"Previous data: {previous_dir}/morphosource_data_complete.json\n")
+            else:
+                f.write("Previous data: No previous data found\n")
+            f.write("\n")
+            
+            # Load record counts
+            current_count = 0
+            previous_count = 0
+            
+            current_file = Path(output_dir) / 'morphosource_data_complete.json'
+            if current_file.exists():
+                with open(current_file) as cf:
+                    current_count = len(json.load(cf))
+            
+            if previous_dir:
+                previous_file = previous_dir / 'morphosource_data_complete.json'
+                if previous_file.exists():
+                    with open(previous_file) as pf:
+                        previous_count = len(json.load(pf))
+            
+            f.write("## Record Counts\n")
+            f.write(f"Previous records: {previous_count}\n")
+            f.write(f"Current records: {current_count}\n")
+            f.write(f"Difference: {current_count - previous_count}\n\n")
+            
+        logger.info(f"Created release notes at: {release_notes_path}")
         
     except Exception as e:
         logger.error(f"Error creating release notes: {e}")
