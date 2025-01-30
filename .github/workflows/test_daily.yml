@@ -103,11 +103,9 @@ jobs:
         TEST_DATA_DIR: data/${{ env.test_timestamp }}
         DAILY_OUTPUT_DIR: data/${{ env.daily_timestamp }}
       run: |
-        # Verify file exists before proceeding
-        if [ ! -f "$DAILY_OUTPUT_DIR/updated_morphosource_data.json" ]; then
-          echo "Error: Required file not found at $DAILY_OUTPUT_DIR/updated_morphosource_data.json"
-          exit 1
-        fi
+        # Copy and rename the file to what daily.py expects
+        cp "$DAILY_OUTPUT_DIR/updated_morphosource_data.json" \
+           "$DAILY_OUTPUT_DIR/morphosource_data_complete.json"
         
         python .github/scripts/daily.py \
           --data-dir "$DAILY_OUTPUT_DIR" \
