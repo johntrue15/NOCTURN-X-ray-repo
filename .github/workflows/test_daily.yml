@@ -68,8 +68,13 @@ jobs:
         TEST_DATA_DIR: data/${{ env.test_timestamp }}
         DAILY_OUTPUT_DIR: data/${{ env.daily_timestamp }}
       run: |
+        # Wait for the file to be available
+        while [ ! -f "$DAILY_OUTPUT_DIR/updated_morphosource_data.json" ]; do
+          sleep 1
+        done
+        
         python .github/scripts/daily.py \
-          --data-dir "$TEST_DATA_DIR" \
+          --data-dir "$DAILY_OUTPUT_DIR" \
           --output-dir "$DAILY_OUTPUT_DIR"
       continue-on-error: true
 
