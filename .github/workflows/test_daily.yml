@@ -84,6 +84,13 @@ jobs:
           --output-dir "data/${{ env.test_timestamp }}" \
           --source-file "$SOURCE_FILE"
 
+    - name: Simulate Daily Collection
+      run: |
+        mkdir -p "data/${{ env.daily_timestamp }}"
+        # Copy the original data to simulate collection with a different name
+        cp "${{ steps.find-latest.outputs.dir }}/morphosource_data_complete.json" \
+           "data/${{ env.daily_timestamp }}/updated_morphosource_data.json"
+
     - name: Run Daily Check
       id: daily-check
       env:
@@ -91,23 +98,16 @@ jobs:
         TEST_DATA_DIR: data/${{ env.test_timestamp }}
         DAILY_OUTPUT_DIR: data/${{ env.daily_timestamp }}
       run: |
-        # Wait for the file to be available
-        while [ ! -f "$DAILY_OUTPUT_DIR/updated_morphosource_data.json" ]; do
-          sleep 1
-        done
+        # Verify file exists before proceeding
+        if [ ! -f "$DAILY_OUTPUT_DIR/updated_morphosource_data.json" ]; then
+          echo "Error: Required file not found at $DAILY_OUTPUT_DIR/updated_morphosource_data.json"
+          exit 1
+        fi
         
         python .github/scripts/daily.py \
           --data-dir "$DAILY_OUTPUT_DIR" \
           --output-dir "$DAILY_OUTPUT_DIR"
       continue-on-error: true
-
-    - name: Simulate Daily Collection
-      if: steps.daily-check.outcome == 'failure'
-      run: |
-        mkdir -p "data/${{ env.daily_timestamp }}"
-        # Copy the original data to simulate collection with a different name
-        cp "${{ steps.find-latest.outputs.dir }}/morphosource_data_complete.json" \
-           "data/${{ env.daily_timestamp }}/updated_morphosource_data.json"
 
     - name: Create Release Notes
       if: always()
