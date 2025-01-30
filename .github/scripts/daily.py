@@ -132,21 +132,44 @@ class DailyMorphoSourceExtractor:
                 record1['title'] == record2['title'] and 
                 record1['url'] == record2['url'])
 
-    def run(self) -> bool:
+    def run(self):
+        """Run the daily check and save results"""
         try:
-            latest_webpage_record = self.get_latest_webpage_record()
-            self.logger.info(f"Latest webpage record ID: {latest_webpage_record['id']}")
+            # Get latest records from webpage and stored data
+            latest_webpage = self.get_latest_webpage_record()
+            latest_stored = self.load_latest_stored_record()
             
-            latest_stored_record = self.load_latest_stored_record()
-            if latest_stored_record:
-                self.logger.info(f"Latest stored record ID: {latest_stored_record['id']}")
-            
-            if self.records_match(latest_webpage_record, latest_stored_record):
-                self.logger.info("No new records found - latest records match")
-                return False
+            self.logger.info(f"Latest webpage record ID: {latest_webpage['id']}")
+            if latest_stored:
+                self.logger.info(f"Latest stored record ID: {latest_stored['id']}")
             else:
+                self.logger.info("No stored records found")
+
+            # Compare records
+            if not latest_stored or latest_webpage['id'] != latest_stored['id']:
                 self.logger.info("New records available - latest records differ")
-                return True
+                
+                # Save the new record
+                output_file = os.path.join(self.data_dir, 'morphosource_data_complete.json')
+                with open(output_file, 'w') as f:
+                    json.dump([latest_webpage], f, indent=2)
+                self.logger.info(f"Saved new record to: {output_file}")
+                
+                # Create release notes
+                release_notes_path = os.path.join(self.data_dir, 'release_notes.txt')
+                with open(release_notes_path, 'w') as f:
+                    f.write("# Daily Check Report\n\n")
+                    f.write("## New Records Found\n")
+                    f.write(f"Latest Record ID: {latest_webpage['id']}\n")
+                    if latest_stored:
+                        f.write(f"Previous Record ID: {latest_stored['id']}\n")
+                self.logger.info(f"Created 'new records' release notes at: {release_notes_path}")
+                
+                # Return failure to trigger collection
+                return 1
+            else:
+                self.logger.info("No new records found")
+                return 0
                 
         except Exception as e:
             self.logger.error(f"Error in daily check: {e}")
@@ -240,21 +263,21 @@ def main():
         # Normal daily check flow
         base_url = "https://www.morphosource.org/catalog/media?locale=en&per_page=100&q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc"
         extractor = DailyMorphoSourceExtractor(base_url, data_dir=args.data_dir)
-        has_new_records = extractor.run()
+        result = extractor.run()
         
         # Create daily info regardless of result
         daily_info = {
             'check_date': datetime.now().isoformat(),
             'source_dir': args.data_dir,
-            'has_new_records': has_new_records,
-            'latest_record_id': extractor.latest_webpage_record['id'] if hasattr(extractor, 'latest_webpage_record') else None
+            'has_new_records': result == 1,
+            'latest_record_id': extractor.latest_webpage_record['id'] if extractor.latest_webpage_record else None
         }
         
         # Save daily info and create appropriate release notes
         with open(os.path.join(args.output_dir, 'daily_info.json'), 'w') as f:
             json.dump(daily_info, f, indent=2)
             
-        if has_new_records:
+        if result == 1:
             create_new_records_release_notes(args.output_dir, daily_info, logger)
             print("New records found - ready for collection")
             sys.exit(1)  # Signal that new records are available
