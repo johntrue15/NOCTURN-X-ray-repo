@@ -91,10 +91,7 @@ jobs:
         TEST_DATA_DIR: data/${{ env.test_timestamp }}
         DAILY_OUTPUT_DIR: data/${{ env.daily_timestamp }}
       run: |
-        # Copy and rename the file to what daily.py expects
-        cp "$DAILY_OUTPUT_DIR/updated_morphosource_data.json" \
-           "$DAILY_OUTPUT_DIR/morphosource_data_complete.json"
-        
+        # No need to copy/rename files anymore
         python .github/scripts/daily.py \
           --data-dir "$DAILY_OUTPUT_DIR" \
           --output-dir "$DAILY_OUTPUT_DIR"

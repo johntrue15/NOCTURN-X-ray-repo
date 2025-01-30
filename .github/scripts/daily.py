@@ -7,6 +7,7 @@ import os
 import sys
 import logging
 import argparse
+from pathlib import Path
 
 def setup_logging(log_dir):
     """Configure logging for release notes creation"""
@@ -27,7 +28,6 @@ class DailyMorphoSourceExtractor:
         self.data_dir = data_dir
         self.setup_logging()
         self.setup_directories()
-        self.complete_data_path = None  # Will be set when file is found
         self.latest_webpage_record = None
         self.logger.info(f"Using data directory: {self.data_dir}")
 
@@ -58,25 +58,36 @@ class DailyMorphoSourceExtractor:
     def load_latest_stored_record(self) -> dict:
         """Load latest stored record"""
         try:
-            # Try both possible file names
-            possible_files = [
-                os.path.join(self.data_dir, 'morphosource_data_complete.json'),
-                os.path.join(self.data_dir, 'updated_morphosource_data.json')
-            ]
+            # First try morphosource_data_complete.json in current directory
+            current_file = os.path.join(self.data_dir, 'morphosource_data_complete.json')
+            if os.path.exists(current_file):
+                self.logger.info(f"Using current directory file: {current_file}")
+                with open(current_file, 'r') as f:
+                    data = json.load(f)
+                    if data:
+                        return data[0]  # First record is the most recent
+                
+            # If not found, look in parent directory
+            parent_dir = str(Path(self.data_dir).parent)
+            self.logger.info(f"Looking in parent directory: {parent_dir}")
             
-            for file_path in possible_files:
-                if os.path.exists(file_path):
-                    self.logger.info(f"Using data file: {file_path}")
-                    with open(file_path, 'r') as f:
-                        data = json.load(f)
-                        
-                    if not data:
-                        self.logger.info(f"No records in {file_path}")
-                        continue
-                        
-                    self.complete_data_path = file_path  # Store the path that worked
-                    return data[0]  # First record is the most recent
-                    
+            # List all timestamp directories in reverse order
+            timestamp_dirs = sorted(
+                [d for d in Path(parent_dir).iterdir() 
+                 if d.is_dir() and d.name[0].isdigit()],
+                reverse=True
+            )
+            
+            for dir in timestamp_dirs:
+                for filename in ['morphosource_data_complete.json', 'updated_morphosource_data.json']:
+                    file_path = dir / filename
+                    if file_path.exists():
+                        self.logger.info(f"Using file from previous run: {file_path}")
+                        with open(file_path, 'r') as f:
+                            data = json.load(f)
+                            if data:
+                                return data[0]
+            
             self.logger.info("No existing data files found")
             return None
             
