@@ -227,6 +227,28 @@ class DailyMorphoSourceExtractor:
                 return 1
             else:
                 self.logger.info("No new records found")
+                
+                # Copy over the previous data file
+                if stored_records:
+                    output_file = os.path.join(self.data_dir, 'morphosource_data_complete.json')
+                    with open(output_file, 'w') as f:
+                        json.dump(stored_records, f, indent=2)
+                    self.logger.info(f"Copied {len(stored_records)} previous records to: {output_file}")
+                    
+                    # Create release notes for no changes
+                    release_notes_path = os.path.join(self.data_dir, 'release_notes.txt')
+                    with open(release_notes_path, 'w') as f:
+                        f.write("# Daily Check Report\n\n")
+                        f.write(f"Check Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+                        f.write("## Status\n")
+                        f.write("No new records found - using previous dataset\n\n")
+                        f.write("## Latest Record\n")
+                        f.write(f"Record ID: {latest_stored['id']}\n\n")
+                        f.write("## Record Counts\n")
+                        f.write(f"Total Records: {len(stored_records)}\n")
+                    
+                    self.logger.info(f"Created 'no changes' release notes at: {release_notes_path}")
+                
                 return 0
                 
         except Exception as e:
@@ -372,16 +394,15 @@ def main():
             'latest_record_id': extractor.latest_webpage_record['id'] if extractor.latest_webpage_record else None
         }
         
-        # Save daily info and create appropriate release notes
+        # Save daily info
         with open(os.path.join(args.output_dir, 'daily_info.json'), 'w') as f:
             json.dump(daily_info, f, indent=2)
-            
+        
         if result == 1:
-            create_new_records_release_notes(args.output_dir, daily_info, logger)
             print("New records found - ready for collection")
             sys.exit(1)  # Signal that new records are available
         else:
-            print("No new records found")
+            print("No new records found - using previous dataset")
             sys.exit(0)  # Signal that no new records are needed
             
     except Exception as e:
