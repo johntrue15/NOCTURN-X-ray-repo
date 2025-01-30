@@ -37,11 +37,13 @@ class DailyMorphoSourceExtractor:
     def setup_directories(self):
         os.makedirs(self.data_dir, exist_ok=True)
 
-    def get_all_records(self) -> list:
-        """Get all records from the webpage"""
+    def get_all_records(self, latest_stored_id: str = None) -> list:
+        """Get all records from the webpage until we hit the latest stored record"""
         try:
             records = []
             page = 1
+            found_latest = False
+            
             while True:
                 url = f"{self.base_url}&page={page}"
                 self.logger.info(f"Fetching page {page}")
@@ -60,11 +62,20 @@ class DailyMorphoSourceExtractor:
                     record = self.parse_record(elem)
                     records.append(record)
                     self.logger.info(f"Found record {record['id']} - Total records: {len(records)}")
+                    
+                    # Stop if we hit the latest stored record
+                    if latest_stored_id and record['id'] == latest_stored_id:
+                        self.logger.info(f"Found latest stored record {latest_stored_id} - stopping fetch")
+                        found_latest = True
+                        break
                 
+                if found_latest:
+                    break
+                    
                 page += 1
                 time.sleep(1)  # Be nice to the server
                 
-            self.logger.info(f"Completed fetch - Found {len(records)} total records")
+            self.logger.info(f"Completed fetch - Found {len(records)} new records")
             return records
             
         except Exception as e:
@@ -147,8 +158,19 @@ class DailyMorphoSourceExtractor:
     def run(self):
         """Run the daily check and save results"""
         try:
-            # Get all records from webpage
-            webpage_records = self.get_all_records()
+            # Load stored records first to get latest ID
+            stored_records = self.load_stored_records()
+            latest_stored = stored_records[0] if stored_records else None
+            latest_stored_id = latest_stored['id'] if latest_stored else None
+            
+            if latest_stored:
+                self.logger.info(f"Latest stored record ID: {latest_stored['id']}")
+                self.logger.info(f"Previous record count: {len(stored_records)}")
+            else:
+                self.logger.info("No stored records found")
+            
+            # Get new records up to latest stored
+            webpage_records = self.get_all_records(latest_stored_id)
             if not webpage_records:
                 self.logger.error("No records found on webpage")
                 return 0
@@ -156,16 +178,6 @@ class DailyMorphoSourceExtractor:
             self.latest_webpage_record = webpage_records[0]  # First is most recent
             self.logger.info(f"Latest webpage record ID: {self.latest_webpage_record['id']}")
             
-            # Load all stored records
-            stored_records = self.load_stored_records()
-            latest_stored = stored_records[0] if stored_records else None
-            
-            if latest_stored:
-                self.logger.info(f"Latest stored record ID: {latest_stored['id']}")
-                self.logger.info(f"Previous record count: {len(stored_records)}")
-            else:
-                self.logger.info("No stored records found")
-
             # Compare records
             if not latest_stored or self.latest_webpage_record['id'] != latest_stored['id']:
                 self.logger.info("New records available - latest records differ")
