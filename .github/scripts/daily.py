@@ -27,9 +27,9 @@ class DailyMorphoSourceExtractor:
         self.data_dir = data_dir
         self.setup_logging()
         self.setup_directories()
-        self.complete_data_path = os.path.join(data_dir, 'morphosource_data_complete.json')
-        self.latest_webpage_record = None  # Store for info file
-        self.logger.info(f"Using data file: {self.complete_data_path}")
+        self.complete_data_path = None  # Will be set when file is found
+        self.latest_webpage_record = None
+        self.logger.info(f"Using data directory: {self.data_dir}")
 
     def setup_logging(self):
         self.logger = setup_logging(self.data_dir)
@@ -56,29 +56,38 @@ class DailyMorphoSourceExtractor:
             raise
 
     def load_latest_stored_record(self) -> dict:
+        """Load latest stored record from either file name"""
         try:
             abs_path = os.path.abspath(self.complete_data_path)
-            self.logger.info(f"Looking for data file at: {abs_path}")
+            dir_path = os.path.dirname(abs_path)
+            self.logger.info(f"Looking for data files in: {dir_path}")
             
             # List directory contents for debugging
-            dir_path = os.path.dirname(abs_path)
-            self.logger.info(f"Contents of {dir_path}:")
             if os.path.exists(dir_path):
+                self.logger.info(f"Contents of {dir_path}:")
                 for f in os.listdir(dir_path):
                     self.logger.info(f"  - {f}")
             
-            if not os.path.exists(self.complete_data_path):
-                self.logger.info("No existing data file found")
-                return None
-                
-            with open(self.complete_data_path, 'r') as f:
-                data = json.load(f)
-                
-            if not data:
-                self.logger.info("No records in existing data")
-                return None
-                
-            return data[0]  # First record is the most recent
+            # Try both possible file names
+            possible_files = [
+                os.path.join(self.data_dir, 'morphosource_data_complete.json'),
+                os.path.join(self.data_dir, 'updated_morphosource_data.json')
+            ]
+            
+            for file_path in possible_files:
+                if os.path.exists(file_path):
+                    self.logger.info(f"Using data file: {file_path}")
+                    with open(file_path, 'r') as f:
+                        data = json.load(f)
+                        
+                    if not data:
+                        self.logger.info(f"No records in {file_path}")
+                        continue
+                        
+                    return data[0]  # First record is the most recent
+                    
+            self.logger.info("No existing data files found")
+            return None
             
         except Exception as e:
             self.logger.error(f"Error loading latest stored record: {e}")
