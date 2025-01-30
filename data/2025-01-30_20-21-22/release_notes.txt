@@ -1,0 +1,15 @@
+# Daily Check Report
+Check Date: 2025-01-30 20:20:27
+
+## Summary
+New records found - collection in progress
+
+## Latest Record
+Record ID: 000705534
+
+## Data Files
+Current data: data/2025-01-30_20-21-22/morphosource_data_complete.json
+Previous data: data/2025-01-30_20-21-22/morphosource_data_complete.json
+
+## Attestations
+<!-- ATTESTATION_URLS -->
