@@ -1,0 +1,20 @@
+# Test Daily Check Report
+Test Date: 2025-01-30 21:49:27
+
+## Summary
+Removed 5 record(s) for testing
+
+## Modified Records
+| Title | Object ID | Taxonomy | Element | Data Manager | Status | Link |
+|-------|-----------|----------|---------|--------------|--------|------|
+| TEST MODIFIED - Skeleton [Ct] | CUMV:Mamm:11461 | Sorex fumeus | N/A | Priscila Rothier | Restricted Download | [View](https://www.morphosource.org/concern/media/000704135?locale=en) |
+| TEST MODIFIED - Head [C Tscan] Ichnotropis Microlepidota | MHNC-UP:REP:0983 | Ichnotropis microlepidota | N/A | Javier Lobon-Rovira | Restricted Download | [View](https://www.morphosource.org/concern/media/000704075?locale=en) |
+| TEST MODIFIED - Hongshanopterus lacustris IVPP V 33029 | ivpp:v:33029 | Hongshanopterus lacustris | N/A | Yizhi Xu | Restricted Download | [View](https://www.morphosource.org/concern/media/000704042?locale=en) |
+| TEST MODIFIED - Skull | UF:Herp:84822 | Eunectes murinus | N/A | Jaimi Gray | Open Download | [View](https://www.morphosource.org/concern/media/000704012?locale=en) |
+| TEST MODIFIED - Element Unspecified [CTImageSeries] [CT] | UCMP:V:37543 | Hypolagus sp. | N/A | University of California Museum of Paleontology | Open Download | [View](https://www.morphosource.org/concern/media/000703950?locale=en) |
+
+## Attestations
+<!-- ATTESTATION_URLS -->
+
+## Attestation
+Test Dataset: https://github.com/johntrue15/NOCTURN-X-ray-repo/attestations/4712108
