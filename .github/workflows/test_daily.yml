@@ -87,9 +87,14 @@ jobs:
     - name: Simulate Daily Collection
       run: |
         mkdir -p "data/${{ env.daily_timestamp }}"
-        # Copy the original data to simulate collection with a different name
-        cp "${{ steps.find-latest.outputs.dir }}/morphosource_data_complete.json" \
-           "data/${{ env.daily_timestamp }}/updated_morphosource_data.json"
+        # Use the same source file that was found earlier
+        if [ -f "${{ steps.find-latest.outputs.dir }}/updated_morphosource_data.json" ]; then
+          cp "${{ steps.find-latest.outputs.dir }}/updated_morphosource_data.json" \
+             "data/${{ env.daily_timestamp }}/updated_morphosource_data.json"
+        else
+          echo "Source file not found at ${{ steps.find-latest.outputs.dir }}/updated_morphosource_data.json"
+          exit 1
+        fi
 
     - name: Run Daily Check
       id: daily-check
