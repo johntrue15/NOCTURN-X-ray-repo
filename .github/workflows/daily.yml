@@ -31,6 +31,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4
+          sudo apt-get update && sudo apt-get install -y jq
           
       - name: Generate Timestamp
         id: timestamp
@@ -72,10 +73,21 @@ jobs:
             --data-dir data/${{ steps.timestamp.outputs.timestamp }} \
             --output-dir data/${{ steps.timestamp.outputs.timestamp }}
 
+      - name: Check Data File
+        id: check-data
+        run: |
+          DATA_FILE="data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json"
+          if [ ! -f "$DATA_FILE" ]; then
+            echo "No data file found at $DATA_FILE"
+            echo "has_data=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          echo "has_data=true" >> $GITHUB_OUTPUT
+
       - name: Generate Attestation
-        if: steps.daily_check.outcome == 'failure'
+        if: steps.daily_check.outcome == 'failure' && steps.check-data.outputs.has_data == 'true'
+        id: generate-attestation
         uses: actions/attest@v2.1.0
-        id: attest-daily
         with:
           subject-path: data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json
           predicate-type: 'https://in-toto.io/attestation/release/v0.1'
@@ -93,30 +105,35 @@ jobs:
                 },
                 "daily_info": {
                   "type": "daily_check",
-                  "timestamp": "${{ steps.timestamp.outputs.timestamp }}"
+                  "timestamp": "${{ steps.timestamp.outputs.timestamp }}",
+                  "previous_data": "${{ steps.find-latest.outputs.dir }}",
+                  "current_data": "data/${{ steps.timestamp.outputs.timestamp }}"
                 }
               }
             }
 
       - name: Save Attestation and Update Release Notes
-        if: steps.daily_check.outcome == 'failure'
+        if: steps.daily_check.outcome == 'failure' && steps.generate-attestation.outcome == 'success' && steps.check-data.outputs.has_data == 'true'
         run: |
-          ATT_URL="${{ steps.attest-daily.outputs.attestation-url }}"
-          ATT_ID=$(echo "$ATT_URL" | grep -o '[0-9]*$' || true)
-          
-          if [ -z "$ATT_ID" ]; then
-            echo "Error: Could not extract attestation ID"
+          ATT_URL="${{ steps.generate-attestation.outputs.attestation-url }}"
+          if [ -z "$ATT_URL" ]; then
+            echo "No attestation URL found"
             exit 1
           fi
           
-          DIGEST=$(curl -s "$ATT_URL" | grep -A2 "Subjects" | grep "sha256:" | sed 's/.*sha256:\([a-f0-9]\{64\}\).*/\1/')
+          # Get record counts for comparison
+          PREV_COUNT=$(jq length "${{ steps.find-latest.outputs.dir }}/${{ steps.find-latest.outputs.filename }}")
+          CURR_COUNT=$(jq length "data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json")
           
-          if ! [[ $DIGEST =~ ^[a-f0-9]{64}$ ]]; then
-            echo "Error: Invalid SHA256 digest format"
-            exit 1
-          fi
-          
-          echo -e "\n## Attestation\nDaily Dataset: $ATT_URL" >> "data/${{ steps.timestamp.outputs.timestamp }}/release_notes.txt"
+          # Update release notes with counts
+          {
+            echo -e "\n## Data Comparison"
+            echo "Previous records: $PREV_COUNT"
+            echo "Current records: $CURR_COUNT"
+            echo "Difference: $((CURR_COUNT - PREV_COUNT))"
+            echo -e "\n## Attestation"
+            echo "Daily Dataset: $ATT_URL"
+          } >> "data/${{ steps.timestamp.outputs.timestamp }}/release_notes.txt"
 
       - name: Commit and Push Changes
         run: |
