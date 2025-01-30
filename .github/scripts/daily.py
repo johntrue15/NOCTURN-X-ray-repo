@@ -59,11 +59,12 @@ class DailyMorphoSourceExtractor:
                 for elem in record_elements:
                     record = self.parse_record(elem)
                     records.append(record)
+                    self.logger.info(f"Found record {record['id']} - Total records: {len(records)}")
                 
                 page += 1
                 time.sleep(1)  # Be nice to the server
                 
-            self.logger.info(f"Found {len(records)} total records")
+            self.logger.info(f"Completed fetch - Found {len(records)} total records")
             return records
             
         except Exception as e:
@@ -161,8 +162,23 @@ class DailyMorphoSourceExtractor:
             
             # Get latest stored record
             latest_stored = self.load_latest_stored_record()
+            stored_records = []
             if latest_stored:
                 self.logger.info(f"Latest stored record ID: {latest_stored['id']}")
+                # Load all stored records for comparison
+                stored_file = None
+                for dir in sorted([d for d in Path(self.data_dir).parent.iterdir() if d.is_dir()], reverse=True):
+                    for filename in ['morphosource_data_complete.json', 'updated_morphosource_data.json']:
+                        if (dir / filename).exists():
+                            stored_file = dir / filename
+                            break
+                    if stored_file:
+                        break
+                
+                if stored_file:
+                    with open(stored_file, 'r') as f:
+                        stored_records = json.load(f)
+                    self.logger.info(f"Loaded {len(stored_records)} records from {stored_file}")
             else:
                 self.logger.info("No stored records found")
 
@@ -170,22 +186,40 @@ class DailyMorphoSourceExtractor:
             if not latest_stored or self.latest_webpage_record['id'] != latest_stored['id']:
                 self.logger.info("New records available - latest records differ")
                 
+                # Calculate record differences
+                new_ids = set(r['id'] for r in webpage_records)
+                old_ids = set(r['id'] for r in stored_records)
+                added_ids = new_ids - old_ids
+                removed_ids = old_ids - new_ids
+                
                 # Save all records
                 output_file = os.path.join(self.data_dir, 'morphosource_data_complete.json')
                 with open(output_file, 'w') as f:
                     json.dump(webpage_records, f, indent=2)
                 self.logger.info(f"Saved {len(webpage_records)} records to: {output_file}")
                 
-                # Create release notes
+                # Create release notes with detailed comparison
                 release_notes_path = os.path.join(self.data_dir, 'release_notes.txt')
                 with open(release_notes_path, 'w') as f:
                     f.write("# Daily Check Report\n\n")
-                    f.write("## New Records Found\n")
+                    f.write("## Record Changes\n")
                     f.write(f"Latest Record ID: {self.latest_webpage_record['id']}\n")
                     if latest_stored:
                         f.write(f"Previous Record ID: {latest_stored['id']}\n")
-                    f.write(f"\nTotal Records: {len(webpage_records)}\n")
-                self.logger.info(f"Created 'new records' release notes at: {release_notes_path}")
+                    f.write(f"\nTotal Current Records: {len(webpage_records)}\n")
+                    f.write(f"Total Previous Records: {len(stored_records)}\n")
+                    f.write(f"Net Change: {len(webpage_records) - len(stored_records)}\n\n")
+                    f.write(f"New Records Added: {len(added_ids)}\n")
+                    f.write(f"Records Removed: {len(removed_ids)}\n")
+                    
+                    if added_ids:
+                        f.write("\n### New Record IDs:\n")
+                        for id in sorted(added_ids)[:10]:  # Show first 10
+                            f.write(f"- {id}\n")
+                        if len(added_ids) > 10:
+                            f.write(f"... and {len(added_ids) - 10} more\n")
+                            
+                self.logger.info(f"Created detailed release notes at: {release_notes_path}")
                 
                 return 1
             else:
