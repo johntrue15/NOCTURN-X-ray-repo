@@ -71,44 +71,40 @@ class DailyMorphoSourceExtractor:
             self.logger.error(f"Error getting records: {e}")
             raise
 
-    def load_latest_stored_record(self) -> dict:
-        """Load latest stored record"""
+    def load_stored_records(self) -> list:
+        """Load all records from the most recent data file"""
         try:
-            # First try morphosource_data_complete.json in current directory
-            current_file = os.path.join(self.data_dir, 'morphosource_data_complete.json')
-            if os.path.exists(current_file):
-                self.logger.info(f"Using current directory file: {current_file}")
-                with open(current_file, 'r') as f:
-                    data = json.load(f)
-                    if data:
-                        return data[0]  # First record is the most recent
-                
-            # If not found, look in parent directory
-            parent_dir = str(Path(self.data_dir).parent)
-            self.logger.info(f"Looking in parent directory: {parent_dir}")
+            # First try to find the most recent data file
+            parent_dir = Path(self.data_dir).parent
+            self.logger.info(f"Looking for previous data in: {parent_dir}")
             
-            # List all timestamp directories in reverse order
+            # Find all timestamp directories and sort by name (which is the timestamp)
             timestamp_dirs = sorted(
-                [d for d in Path(parent_dir).iterdir() 
+                [d for d in parent_dir.iterdir() 
                  if d.is_dir() and d.name[0].isdigit()],
                 reverse=True
             )
             
+            # Look for data files in each directory until we find one
             for dir in timestamp_dirs:
+                if dir == Path(self.data_dir):  # Skip current directory
+                    continue
+                    
                 for filename in ['morphosource_data_complete.json', 'updated_morphosource_data.json']:
                     file_path = dir / filename
                     if file_path.exists():
-                        self.logger.info(f"Using file from previous run: {file_path}")
+                        self.logger.info(f"Loading previous data from: {file_path}")
                         with open(file_path, 'r') as f:
                             data = json.load(f)
                             if data:
-                                return data[0]
-            
-            self.logger.info("No existing data files found")
-            return None
+                                self.logger.info(f"Loaded {len(data)} records from previous data file")
+                                return data
+                                
+            self.logger.info("No previous data file found")
+            return []
             
         except Exception as e:
-            self.logger.error(f"Error loading latest stored record: {e}")
+            self.logger.error(f"Error loading stored records: {e}")
             raise
 
     def parse_record(self, record_elem) -> dict:
@@ -160,25 +156,13 @@ class DailyMorphoSourceExtractor:
             self.latest_webpage_record = webpage_records[0]  # First is most recent
             self.logger.info(f"Latest webpage record ID: {self.latest_webpage_record['id']}")
             
-            # Get latest stored record
-            latest_stored = self.load_latest_stored_record()
-            stored_records = []
+            # Load all stored records
+            stored_records = self.load_stored_records()
+            latest_stored = stored_records[0] if stored_records else None
+            
             if latest_stored:
                 self.logger.info(f"Latest stored record ID: {latest_stored['id']}")
-                # Load all stored records for comparison
-                stored_file = None
-                for dir in sorted([d for d in Path(self.data_dir).parent.iterdir() if d.is_dir()], reverse=True):
-                    for filename in ['morphosource_data_complete.json', 'updated_morphosource_data.json']:
-                        if (dir / filename).exists():
-                            stored_file = dir / filename
-                            break
-                    if stored_file:
-                        break
-                
-                if stored_file:
-                    with open(stored_file, 'r') as f:
-                        stored_records = json.load(f)
-                    self.logger.info(f"Loaded {len(stored_records)} records from {stored_file}")
+                self.logger.info(f"Previous record count: {len(stored_records)}")
             else:
                 self.logger.info("No stored records found")
 
@@ -191,6 +175,9 @@ class DailyMorphoSourceExtractor:
                 old_ids = set(r['id'] for r in stored_records)
                 added_ids = new_ids - old_ids
                 removed_ids = old_ids - new_ids
+                
+                self.logger.info(f"New records: {len(added_ids)}")
+                self.logger.info(f"Removed records: {len(removed_ids)}")
                 
                 # Save all records
                 output_file = os.path.join(self.data_dir, 'morphosource_data_complete.json')
