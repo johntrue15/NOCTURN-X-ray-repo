@@ -56,18 +56,8 @@ class DailyMorphoSourceExtractor:
             raise
 
     def load_latest_stored_record(self) -> dict:
-        """Load latest stored record from either file name"""
+        """Load latest stored record"""
         try:
-            abs_path = os.path.abspath(self.complete_data_path)
-            dir_path = os.path.dirname(abs_path)
-            self.logger.info(f"Looking for data files in: {dir_path}")
-            
-            # List directory contents for debugging
-            if os.path.exists(dir_path):
-                self.logger.info(f"Contents of {dir_path}:")
-                for f in os.listdir(dir_path):
-                    self.logger.info(f"  - {f}")
-            
             # Try both possible file names
             possible_files = [
                 os.path.join(self.data_dir, 'morphosource_data_complete.json'),
@@ -84,6 +74,7 @@ class DailyMorphoSourceExtractor:
                         self.logger.info(f"No records in {file_path}")
                         continue
                         
+                    self.complete_data_path = file_path  # Store the path that worked
                     return data[0]  # First record is the most recent
                     
             self.logger.info("No existing data files found")

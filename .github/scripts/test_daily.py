@@ -72,11 +72,10 @@ def create_test_data(source_data, output_dir, logger):
         removed_records = source_data[:5]  # The records we removed
         logger.info(f"Modified {len(source_data) - len(modified_data)} records")
         
-        # Save modified data
+        # Save modified data as morphosource_data_complete.json
         output_file = os.path.join(output_dir, 'morphosource_data_complete.json')
         with open(output_file, 'w') as f:
             json.dump(modified_data, f, indent=2)
-        
         logger.info(f"Saved modified data to: {output_file}")
         
         # Create test info with detailed record information
