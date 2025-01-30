@@ -10,6 +10,7 @@ permissions:
   id-token: write
   actions: write
   checks: write
+  attestations: write
 
 jobs:
   daily-check:
@@ -17,14 +18,14 @@ jobs:
     
     steps:
       - name: Check out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Fetch all history for git operations
       
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: "3.10"
           
       - name: Install dependencies
         run: |
@@ -36,85 +37,149 @@ jobs:
         run: |
           TS=$(date +'%Y-%m-%d_%H-%M-%S')
           echo "timestamp=$TS" >> $GITHUB_OUTPUT
+          echo "Generated timestamp: $TS"
+
+      - name: Find Latest Data Directory
+        id: find-latest
+        run: |
+          # First try to find morphosource_data_complete.json
+          LATEST_DIR=$(find data -maxdepth 2 -type f -name "morphosource_data_complete.json" -exec dirname {} \; | sort -r | head -n1 || echo "")
+          if [ ! -z "$LATEST_DIR" ]; then
+            echo "Found latest data directory: $LATEST_DIR with morphosource_data_complete.json"
+            echo "dir=$LATEST_DIR" >> $GITHUB_OUTPUT
+            echo "filename=morphosource_data_complete.json" >> $GITHUB_OUTPUT
+            exit 0
+          fi
           
+          # If not found, try updated_morphosource_data.json
+          LATEST_DIR=$(find data -maxdepth 2 -type f -name "updated_morphosource_data.json" -exec dirname {} \; | sort -r | head -n1 || echo "")
+          if [ ! -z "$LATEST_DIR" ]; then
+            echo "Found latest data directory: $LATEST_DIR with updated_morphosource_data.json"
+            echo "dir=$LATEST_DIR" >> $GITHUB_OUTPUT
+            echo "filename=updated_morphosource_data.json" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          echo "No data files found"
+          exit 1
+            
       - name: Run Daily Check
         id: daily_check
-        continue-on-error: true  # Allow continuing even if script fails
+        continue-on-error: true
         run: |
           mkdir -p data/${{ steps.timestamp.outputs.timestamp }}
           python .github/scripts/daily.py \
-            --output-dir data/${{ steps.timestamp.outputs.timestamp }} \
-            --log-file data/${{ steps.timestamp.outputs.timestamp }}/daily_extractor.log
-            
-      - name: Upload Artifacts
-        if: always()  # Upload artifacts whether script succeeded or failed
-        uses: actions/upload-artifact@v3
+            --data-dir data/${{ steps.timestamp.outputs.timestamp }} \
+            --output-dir data/${{ steps.timestamp.outputs.timestamp }}
+
+      - name: Generate Attestation
+        if: steps.daily_check.outcome == 'failure'
+        uses: actions/attest@v2.1.0
+        id: attest-daily
         with:
-          name: daily-check-${{ steps.timestamp.outputs.timestamp }}
-          path: data/${{ steps.timestamp.outputs.timestamp }}
-          
-      - name: Configure Git
+          subject-path: data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json
+          predicate-type: 'https://in-toto.io/attestation/release/v0.1'
+          show-summary: true
+          predicate: |
+            {
+              "purl": "pkg:github/${{ github.repository }}",
+              "version": "${{ github.sha }}",
+              "metadata": {
+                "buildInvocationId": "${{ github.run_id }}",
+                "completeness": {
+                  "parameters": true,
+                  "environment": true,
+                  "materials": true
+                },
+                "daily_info": {
+                  "type": "daily_check",
+                  "timestamp": "${{ steps.timestamp.outputs.timestamp }}"
+                }
+              }
+            }
+
+      - name: Save Attestation and Update Release Notes
+        if: steps.daily_check.outcome == 'failure'
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
+          ATT_URL="${{ steps.attest-daily.outputs.attestation-url }}"
+          ATT_ID=$(echo "$ATT_URL" | grep -o '[0-9]*$' || true)
           
+          if [ -z "$ATT_ID" ]; then
+            echo "Error: Could not extract attestation ID"
+            exit 1
+          fi
+          
+          DIGEST=$(curl -s "$ATT_URL" | grep -A2 "Subjects" | grep "sha256:" | sed 's/.*sha256:\([a-f0-9]\{64\}\).*/\1/')
+          
+          if ! [[ $DIGEST =~ ^[a-f0-9]{64}$ ]]; then
+            echo "Error: Invalid SHA256 digest format"
+            exit 1
+          fi
+          
+          echo -e "\n## Attestation\nDaily Dataset: $ATT_URL" >> "data/${{ steps.timestamp.outputs.timestamp }}/release_notes.txt"
+
       - name: Commit and Push Changes
-        id: push_changes
         run: |
-          # Try to commit and push up to 3 times
-          max_attempts=3
-          attempt=1
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          while [ $attempt -le $max_attempts ]; do
-            echo "::group::Attempt $attempt to commit and push"
+          # Function to attempt commit and push with pull/rebase strategy
+          push_changes() {
+            local attempt=$1
+            echo "Push attempt $attempt:"
             
-            # Pull latest changes
-            git pull --rebase origin main
+            git pull --rebase origin main || return 1
             
-            # Stage and commit
-            git add data/${{ steps.timestamp.outputs.timestamp }}
-            git commit -m "Daily check data [${{ steps.timestamp.outputs.timestamp }}]"
+            git add "data/${{ steps.timestamp.outputs.timestamp }}/"
             
-            # Try to push
-            if git push; then
-              echo "::notice::Successfully pushed changes on attempt $attempt"
-              exit 0
-            else
-              echo "::warning::Push failed on attempt $attempt"
-              if [ $attempt -eq $max_attempts ]; then
-                echo "::error::Failed to push after $max_attempts attempts"
-                exit 1
-              fi
-              sleep 5  # Wait before retrying
+            if git diff --staged --quiet; then
+              echo "No changes to commit"
+              return 0
             fi
             
-            echo "::endgroup::"
+            git commit -m "Daily check data [${{ steps.timestamp.outputs.timestamp }}]" || return 1
+            git push origin HEAD:main || return 1
+            
+            return 0
+          }
+          
+          max_attempts=3
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            if push_changes $attempt; then
+              echo "Successfully pushed changes on attempt $attempt"
+              exit 0
+            fi
+            
+            echo "Push failed on attempt $attempt of $max_attempts"
+            if [ $attempt -lt $max_attempts ]; then
+              sleep_time=$((5 * attempt))
+              echo "Waiting ${sleep_time} seconds before retry..."
+              sleep $sleep_time
+            fi
+            
             attempt=$((attempt + 1))
           done
+          
+          echo "Failed to push changes after $max_attempts attempts"
+          exit 1
 
       - name: Create Release
-        if: always()  # Create release whether previous steps succeeded or failed
-        uses: actions/create-release@v1
+        if: always()
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: daily-${{ steps.timestamp.outputs.timestamp }}
-          release_name: "Daily Check ${{ steps.timestamp.outputs.timestamp }}"
-          body: |
-            Daily check results for ${{ steps.timestamp.outputs.timestamp }}
-            
-            Status:
-            - Script: ${{ steps.daily_check.outcome }}
-            - Push: ${{ steps.push_changes.outcome }}
-            
-            See attached artifacts for details.
-          draft: false
-          prerelease: ${{ steps.daily_check.outcome != 'success' || steps.push_changes.outcome != 'success' }}
+          name: "Daily Check #${{ steps.timestamp.outputs.timestamp }}"
+          tag_name: "daily-${{ steps.timestamp.outputs.timestamp }}"
+          body_path: data/${{ steps.timestamp.outputs.timestamp }}/release_notes.txt
+          files: |
+            data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json
+            data/${{ steps.timestamp.outputs.timestamp }}/daily_info.json
 
-      - name: Report Status
+      - name: Upload Artifacts
         if: always()
-        run: |
-          if [ "${{ steps.daily_check.outcome }}" != "success" ] || [ "${{ steps.push_changes.outcome }}" != "success" ]; then
-            echo "::error::Daily check encountered issues - see release for details"
-            exit 1
-          fi
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-logs-${{ steps.timestamp.outputs.timestamp }}
+          path: data/${{ steps.timestamp.outputs.timestamp }}/*
