@@ -1,0 +1,8 @@
+2025-01-30 21:48:18,507 - Data directory: data/2025-01-30_21-49-16
+2025-01-30 21:48:18,507 - Output directory: data/2025-01-30_21-49-16
+2025-01-30 21:48:18,507 - Using data directory: data/2025-01-30_21-49-16
+2025-01-30 21:48:32,437 - Latest webpage record ID: 000705639
+2025-01-30 21:48:32,437 - Using current directory file: data/2025-01-30_21-49-16/morphosource_data_complete.json
+2025-01-30 21:48:32,887 - Latest stored record ID: 000704135
+2025-01-30 21:48:32,887 - New records available - latest records differ
+2025-01-30 21:48:32,888 - Created 'new records' release notes at: data/2025-01-30_21-49-16/release_notes.txt
