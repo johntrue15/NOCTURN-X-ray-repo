@@ -163,6 +163,11 @@ This document shows the relationships between GitHub Actions workflows and their
 **Required Scripts:**
 - `.github/scripts/test_monthly.py`
 
+### Test Parquet Data Processor (`test_parquet_processor.yml`)
+**Manual trigger available**
+**Required Scripts:**
+- `.github/scripts/test_parquet_processor.py`
+
 ### Workflow Monitor (`workflow-monitor.yml`)
 **Triggered by:**
 - `*`
@@ -265,6 +270,10 @@ This section shows which workflows use each script:
 ### test_monthly.py
 **Used in Workflows:**
 - `test_monthly.yml`
+
+### test_parquet_processor.py
+**Used in Workflows:**
+- `test_parquet_processor.yml`
 
 ### url_screenshot_check.py
 **Used in Workflows:**
