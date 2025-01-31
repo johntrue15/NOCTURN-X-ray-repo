@@ -48,22 +48,30 @@ def setup_driver():
     chrome_options.add_argument('--disable-dev-shm-usage')
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument('--disable-extensions')
+    chrome_options.add_argument('--disable-javascript')  # Disable JavaScript completely
+    chrome_options.add_argument('--blink-settings=imagesEnabled=false')  # Disable images at browser level
     
-    # Add settings to stop loading after metadata
+    # Add more aggressive settings to stop loading
     chrome_options.add_experimental_option("prefs", {
-        "profile.managed_default_content_settings.images": 2,  # Disable images
-        "profile.default_content_settings.media_stream": 2,  # Disable media
-        "profile.managed_default_content_settings.plugins": 2,  # Disable plugins
-        "profile.managed_default_content_settings.mixed_script": 2,  # Disable mixed content
-        "profile.managed_default_content_settings.media_stream": 2,  # Disable media stream
-        "profile.managed_default_content_settings.javascript": 1  # Enable JS for basic functionality
+        "profile.managed_default_content_settings.images": 2,
+        "profile.default_content_settings.media_stream": 2,
+        "profile.managed_default_content_settings.plugins": 2,
+        "profile.managed_default_content_settings.mixed_script": 2,
+        "profile.managed_default_content_settings.media_stream": 2,
+        "profile.managed_default_content_settings.javascript": 2,  # Disable JS
+        "profile.managed_default_content_settings.cookies": 2,  # Disable cookies
+        "profile.managed_default_content_settings.popups": 2,  # Disable popups
+        "download.prompt_for_download": False,
+        "download.directory_upgrade": True,
+        "safebrowsing.enabled": False
     })
+    
     chrome_options.binary_location = '/usr/bin/google-chrome'
     
     driver = webdriver.Chrome(options=chrome_options)
-    driver.set_page_load_timeout(30)    # Reduced timeout
-    driver.set_script_timeout(30)       # Reduced timeout
-    driver.implicitly_wait(10)          # Reduced timeout
+    driver.set_page_load_timeout(15)    # Further reduced timeout
+    driver.set_script_timeout(15)       # Further reduced timeout
+    driver.implicitly_wait(5)           # Further reduced timeout
     
     return driver
 
@@ -123,47 +131,36 @@ def get_fields_for_type(media_type):
 def check_page_structure(driver, url, logger):
     """Analyze page structure with focus on metadata"""
     try:
-        # Set script to stop page load after metadata
+        # Set script to stop page load after initial HTML
         stop_load_script = """
         window.stop();
         document.body.style.display = 'block';
         """
         
+        # Set page load strategy to eager
+        driver.execute_cdp_cmd('Page.setLifecycleEventsEnabled', {'enabled': True})
+        driver.execute_cdp_cmd('Network.setBypassServiceWorker', {'bypass': True})
+        
         driver.get(url)
-        # Execute stop load after brief delay
-        time.sleep(2)
+        
+        # Execute stop load immediately
         driver.execute_script(stop_load_script)
         
-        # Quick check for title
-        WebDriverWait(driver, 5).until(lambda d: d.title)
-        logger.info("Title loaded")
+        # Quick check for title with shorter timeout
+        WebDriverWait(driver, 3).until(lambda d: d.title)
         
-        # Check if we're on a valid page
         if "Showcase Media" not in driver.title:
             return None, "Not a valid MorphoSource media page"
         
-        # Wait for content to be present
-        content_present = False
-        max_attempts = 3
-        attempt = 0
+        # Single attempt to find content with shorter timeout
+        try:
+            WebDriverWait(driver, 5).until(lambda d: (
+                d.find_elements(By.CLASS_NAME, "showcase-label") or 
+                d.find_elements(By.CLASS_NAME, "field-name")
+            ))
+        except TimeoutException:
+            return None, "Content not found quickly enough"
         
-        while not content_present and attempt < max_attempts:
-            try:
-                # Try to find any showcase-label or field-name element
-                WebDriverWait(driver, 10).until(lambda d: (
-                    d.find_elements(By.CLASS_NAME, "showcase-label") or 
-                    d.find_elements(By.CLASS_NAME, "field-name")
-                ))
-                content_present = True
-                logger.info("Content elements found")
-            except:
-                attempt += 1
-                logger.warning(f"Content load attempt {attempt} failed, retrying...")
-                time.sleep(5)
-        
-        if not content_present:
-            return None, "Content failed to load after multiple attempts"
-            
         # Try different layout patterns
         layouts = {
             'showcase': {
@@ -218,7 +215,7 @@ def check_page_structure(driver, url, logger):
         return None, f"Error analyzing page structure: {str(e)}"
 
 def extract_page_data(driver, url, logger):
-    """Extract structured data from MorphoSource page using Selenium"""
+    """Extract structured data with optimized timing"""
     data = {
         'url': url,
         'processed_at': datetime.now().isoformat(),
@@ -226,7 +223,10 @@ def extract_page_data(driver, url, logger):
     }
     
     try:
-        # Get page structure configuration
+        # Add timeout for entire extraction process
+        start_time = time.time()
+        extraction_timeout = 30  # 30 seconds max for extraction
+        
         config, error = check_page_structure(driver, url, logger)
         
         if error:
@@ -234,33 +234,26 @@ def extract_page_data(driver, url, logger):
             data['error'] = error
             return data
             
-        # Extract data using detected layout
         for section_name, fields in config['sections'].items():
-            logger.debug(f"Processing section: {section_name}")
-            
+            if time.time() - start_time > extraction_timeout:
+                logger.warning("Extraction timeout reached")
+                break
+                
             for field in fields:
                 try:
+                    # Use faster XPath queries
                     if config['layout'] == 'showcase':
-                        field_xpath = f"//div[contains(@class, 'showcase-label')][contains(text(), '{field}')]"
-                        value_xpath = "./following-sibling::div[contains(@class, 'showcase-value')]"
+                        value_elem = driver.find_element(By.XPATH, 
+                            f"//div[contains(@class, 'showcase-label')][contains(text(), '{field}')]/following-sibling::div[1]")
                     else:
-                        field_xpath = f"//div[@class='field-name'][contains(text(), '{field}')]"
-                        value_xpath = "./following-sibling::div[@class='field-value']"
+                        value_elem = driver.find_element(By.XPATH,
+                            f"//div[@class='field-name'][contains(text(), '{field}')]/following-sibling::div[1]")
                     
-                    field_elem = driver.find_element(By.XPATH, field_xpath)
-                    if field_elem:
-                        value_elem = field_elem.find_element(By.XPATH, value_xpath)
-                        value = value_elem.text.strip() if value_elem else ""
-                        if '\n' in value:
-                            value = value.split('\n')[0]
-                        
-                        # Convert field name to column name
+                    if value_elem:
+                        value = value_elem.text.strip().split('\n')[0]
                         column_name = field.lower().replace(' ', '_').replace('(', '').replace(')', '')
                         data[column_name] = value
-                        logger.debug(f"Found {field}: {value}")
-                        
-                except Exception as e:
-                    logger.debug(f"Could not find {field}: {str(e)}")
+                except:
                     column_name = field.lower().replace(' ', '_').replace('(', '').replace(')', '')
                     data[column_name] = None
         
