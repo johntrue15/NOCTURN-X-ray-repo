@@ -21,6 +21,11 @@ on:
         required: false
         default: '50'
         type: string
+      segment_name:
+        description: 'Name of the segment being processed'
+        required: false
+        default: 'default'
+        type: string
       total_target:
         description: 'Total records to process (0 for all records)'
         required: false
@@ -79,21 +84,21 @@ jobs:
           echo "GITHUB_OUTPUT=${GITHUB_OUTPUT}"
           
           python .github/scripts/test_parquet_processor.py \
-            --output-dir data/test_parquet/${{ steps.timestamp.outputs.timestamp }} \
+            --output-dir data/test_parquet/${{ inputs.segment_name }}/${{ steps.timestamp.outputs.timestamp }} \
             --batch-size ${{ inputs.batch_size }} \
             --max-records ${{ inputs.max_records }} \
             --start-index ${{ inputs.start_index }} \
             --total-processed ${{ inputs.total_processed }} \
             --total-target ${{ inputs.total_target }} \
-            --log-file data/test_parquet/${{ steps.timestamp.outputs.timestamp }}/processor.log \
+            --log-file data/test_parquet/${{ inputs.segment_name }}/${{ steps.timestamp.outputs.timestamp }}/processor.log \
             --output-file "${GITHUB_OUTPUT}"
             
       - name: Upload Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-parquet-data-${{ steps.timestamp.outputs.timestamp }}
-          path: data/test_parquet/${{ steps.timestamp.outputs.timestamp }}
+          name: test-parquet-data-${{ inputs.segment_name }}-${{ steps.timestamp.outputs.timestamp }}
+          path: data/test_parquet/${{ inputs.segment_name }}/${{ steps.timestamp.outputs.timestamp }}
           
       - name: Compare Results
         run: |
