@@ -163,6 +163,12 @@ This document shows the relationships between GitHub Actions workflows and their
 **Required Scripts:**
 - `.github/scripts/test_monthly.py`
 
+### Test Parquet Results Aggregator (`test_parquet_aggregator.yml`)
+**Manual trigger available**
+
+### Test Parquet Processing Coordinator (`test_parquet_coordinator.yml`)
+**Manual trigger available**
+
 ### Test Parquet Data Processor (`test_parquet_processor.yml`)
 **Manual trigger available**
 **Required Scripts:**
