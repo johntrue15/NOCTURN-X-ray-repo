@@ -1,0 +1,23 @@
+# Daily Check Report
+
+## Record Changes
+Latest Record ID: 000706029
+Previous Record ID: 000705989
+
+Total Records: 104526
+Previous Records: 104523
+New Records Added: 4
+
+### New Record IDs:
+- 000706029: Skull [CTImageSeries] [CT]
+- 000706024: Skull [CTImageSeries] [CT]
+- 000706023: Partial Skeleton [CTImageSeries] [CT]
+- 000705989: Whole Specimen [CTImageSeries] [CT]
+
+## Data Comparison
+Previous records: 104523
+Current records: 104526
+Difference: 3
+
+## Attestation
+Daily Dataset: https://github.com/johntrue15/NOCTURN-X-ray-repo/attestations/4741441
