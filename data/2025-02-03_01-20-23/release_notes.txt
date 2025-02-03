@@ -1,0 +1,24 @@
+# Daily Check Report
+
+## Record Changes
+Latest Record ID: 000706045
+Previous Record ID: 000706029
+
+Total Records: 104530
+Previous Records: 104526
+New Records Added: 5
+
+### New Record IDs:
+- 000706045: Whole Specimen [CTImageSeries] [CT]
+- 000706044: Whole Specimen [CTImageSeries] [CT]
+- 000706043: Weberian Apparatus [CTImageSeries] [CT]
+- 000706042: Whole Specimen [CTImageSeries] [CT]
+- 000706029: Skull [CTImageSeries] [CT]
+
+## Data Comparison
+Previous records: 104526
+Current records: 104530
+Difference: 4
+
+## Attestation
+Daily Dataset: https://github.com/johntrue15/NOCTURN-X-ray-repo/attestations/4751674
