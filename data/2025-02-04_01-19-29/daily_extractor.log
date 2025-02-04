@@ -1,0 +1,67 @@
+2025-02-04 01:19:30,090 - Data directory: data/2025-02-04_01-19-29
+2025-02-04 01:19:30,090 - Output directory: data/2025-02-04_01-19-29
+2025-02-04 01:19:30,090 - Using data directory: data/2025-02-04_01-19-29
+2025-02-04 01:19:30,090 - Looking for previous data in: data
+2025-02-04 01:19:30,091 - Loading previous data from: data/2025-02-03_01-20-23/morphosource_data_complete.json
+2025-02-04 01:19:30,469 - Loaded 104530 records from previous data file
+2025-02-04 01:19:30,469 - Latest stored record ID: 000706045
+2025-02-04 01:19:30,469 - Previous record count: 104530
+2025-02-04 01:19:30,469 - Fetching page 1
+2025-02-04 01:19:33,358 - Found record 000706626 - Total records: 1
+2025-02-04 01:19:33,358 - Found record 000706615 - Total records: 2
+2025-02-04 01:19:33,358 - Found record 000706584 - Total records: 3
+2025-02-04 01:19:33,359 - Found record 000706554 - Total records: 4
+2025-02-04 01:19:33,359 - Found record 000706550 - Total records: 5
+2025-02-04 01:19:33,359 - Found record 000706544 - Total records: 6
+2025-02-04 01:19:33,360 - Found record 000706537 - Total records: 7
+2025-02-04 01:19:33,360 - Found record 000706528 - Total records: 8
+2025-02-04 01:19:33,360 - Found record 000706524 - Total records: 9
+2025-02-04 01:19:33,361 - Found record 000706520 - Total records: 10
+2025-02-04 01:19:33,361 - Found record 000706516 - Total records: 11
+2025-02-04 01:19:33,361 - Found record 000706510 - Total records: 12
+2025-02-04 01:19:33,362 - Found record 000706509 - Total records: 13
+2025-02-04 01:19:33,362 - Found record 000706496 - Total records: 14
+2025-02-04 01:19:33,362 - Found record 000706492 - Total records: 15
+2025-02-04 01:19:33,363 - Found record 000706488 - Total records: 16
+2025-02-04 01:19:33,363 - Found record 000706479 - Total records: 17
+2025-02-04 01:19:33,363 - Found record 000706478 - Total records: 18
+2025-02-04 01:19:33,364 - Found record 000706468 - Total records: 19
+2025-02-04 01:19:33,364 - Found record 000706464 - Total records: 20
+2025-02-04 01:19:33,364 - Found record 000706455 - Total records: 21
+2025-02-04 01:19:33,365 - Found record 000706450 - Total records: 22
+2025-02-04 01:19:33,365 - Found record 000706443 - Total records: 23
+2025-02-04 01:19:33,366 - Found record 000706437 - Total records: 24
+2025-02-04 01:19:33,366 - Found record 000706433 - Total records: 25
+2025-02-04 01:19:33,366 - Found record 000706429 - Total records: 26
+2025-02-04 01:19:33,367 - Found record 000706424 - Total records: 27
+2025-02-04 01:19:33,367 - Found record 000706416 - Total records: 28
+2025-02-04 01:19:33,367 - Found record 000706412 - Total records: 29
+2025-02-04 01:19:33,368 - Found record 000706405 - Total records: 30
+2025-02-04 01:19:33,368 - Found record 000706393 - Total records: 31
+2025-02-04 01:19:33,368 - Found record 000706389 - Total records: 32
+2025-02-04 01:19:33,369 - Found record 000706385 - Total records: 33
+2025-02-04 01:19:33,369 - Found record 000706381 - Total records: 34
+2025-02-04 01:19:33,369 - Found record 000706377 - Total records: 35
+2025-02-04 01:19:33,370 - Found record 000706371 - Total records: 36
+2025-02-04 01:19:33,370 - Found record 000706364 - Total records: 37
+2025-02-04 01:19:33,371 - Found record 000706360 - Total records: 38
+2025-02-04 01:19:33,371 - Found record 000706352 - Total records: 39
+2025-02-04 01:19:33,371 - Found record 000706347 - Total records: 40
+2025-02-04 01:19:33,372 - Found record 000706343 - Total records: 41
+2025-02-04 01:19:33,372 - Found record 000706339 - Total records: 42
+2025-02-04 01:19:33,372 - Found record 000706318 - Total records: 43
+2025-02-04 01:19:33,373 - Found record 000706277 - Total records: 44
+2025-02-04 01:19:33,373 - Found record 000706265 - Total records: 45
+2025-02-04 01:19:33,373 - Found record 000706250 - Total records: 46
+2025-02-04 01:19:33,374 - Found record 000706057 - Total records: 47
+2025-02-04 01:19:33,374 - Found record 000706053 - Total records: 48
+2025-02-04 01:19:33,374 - Found record 000706045 - Total records: 49
+2025-02-04 01:19:33,374 - Found latest stored record 000706045 - stopping fetch
+2025-02-04 01:19:33,374 - Completed fetch - Found 49 new records
+2025-02-04 01:19:33,375 - Latest webpage record ID: 000706626
+2025-02-04 01:19:33,375 - New records available - latest records differ
+2025-02-04 01:19:33,723 - New records: 49
+2025-02-04 01:19:33,723 - Previous records: 104530
+2025-02-04 01:19:33,723 - Combined records: 104578
+2025-02-04 01:19:35,260 - Saved 104578 records to: data/2025-02-04_01-19-29/morphosource_data_complete.json
+2025-02-04 01:19:35,260 - Created detailed release notes at: data/2025-02-04_01-19-29/release_notes.txt
