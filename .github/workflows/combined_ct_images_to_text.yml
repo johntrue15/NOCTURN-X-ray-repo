@@ -216,7 +216,7 @@ jobs:
           
           if [ -f "url_check_status.json" ]; then
             status=$(cat url_check_status.json | jq -r .status)
-            if [ "$status" = "media_error" ]; then
+            if [ "$status" = "media_error" ] || [ "$status" = "no_file_error" ]; then
               echo "has_media_error=true" >> "$GITHUB_OUTPUT"
               echo "has_server_error=false" >> "$GITHUB_OUTPUT"
             elif [ "$status" = "server_error" ]; then
