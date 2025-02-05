@@ -40,23 +40,28 @@ jobs:
           
           echo "Current workflow ID: $workflow_id"
           
+          # Get current run ID
+          current_run_id=${{ github.run_id }}
+          echo "Current run ID: $current_run_id"
+          
           # Get running/queued workflows excluding the current run
           running_workflows=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?status=in_progress&per_page=100" | \
-            jq -r ".workflow_runs | length")
+            jq -r ".workflow_runs | map(select(.id != $current_run_id)) | length")
             
           queued_workflows=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?status=queued&per_page=100" | \
-            jq -r ".workflow_runs | length")
+            jq -r ".workflow_runs | map(select(.id != $current_run_id)) | length")
           
           total_workflows=$((running_workflows + queued_workflows))
-          echo "Found $running_workflows running and $queued_workflows queued workflows"
+          echo "Found $running_workflows other running and $queued_workflows queued workflows (excluding current)"
           
-          # Only proceed if this is the only workflow (count of 1 includes this run)
-          if [ "$total_workflows" -le 1 ]; then
-            echo "No other workflows running or queued, proceeding"
+          # Only proceed if there are no other instances of this workflow running
+          if [ "$total_workflows" -eq 0 ]; then
+            echo "No other instances of this workflow running or queued, proceeding"
+            exit 0
           else
-            echo "Other workflows are already running or queued, skipping"
+            echo "Other instances of this workflow are already running or queued, skipping"
             exit 1
           fi
 
