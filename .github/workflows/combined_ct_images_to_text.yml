@@ -30,6 +30,7 @@ jobs:
 
       - name: Check for running workflows
         id: check_runs
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
@@ -56,6 +57,9 @@ jobs:
           total_workflows=$((running_workflows + queued_workflows))
           echo "Found $running_workflows other running and $queued_workflows queued workflows (excluding current)"
           
+          # Set output for subsequent steps
+          echo "has_other_runs=$([[ "$total_workflows" -gt 0 ]] && echo 'true' || echo 'false')" >> "$GITHUB_OUTPUT"
+          
           # Only proceed if there are no other instances of this workflow running
           if [ "$total_workflows" -eq 0 ]; then
             echo "No other instances of this workflow running or queued, proceeding"
@@ -64,6 +68,12 @@ jobs:
             echo "Other instances of this workflow are already running or queued, skipping"
             exit 1
           fi
+
+      - name: Skip if other runs detected
+        if: steps.check_runs.outputs.has_other_runs == 'true'
+        run: |
+          echo "Other workflow runs detected, skipping this run"
+          exit 0
 
       - name: Fetch Latest MorphoSource Release
         id: fetch_release
