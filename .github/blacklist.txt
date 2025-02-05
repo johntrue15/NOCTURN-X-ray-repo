@@ -1,0 +1,5 @@
+# Data Manager blacklist
+# Format: "Data Manager: <name>"
+# One entry per line, exact matches only
+
+Data Manager: 宇豪 黄 
