@@ -81,7 +81,7 @@ def handle_media_error(url, driver, error_type="media_error", error_message=None
         status_data['error_message'] = error_message
     
     # Save the error state screenshot
-    error_file = f"error_{file_id}.png"
+    error_file = os.path.join('screenshots', f"error_{file_id}.png")
     try:
         driver.save_screenshot(error_file)
         logging.info(f"Error state screenshot saved to {error_file}")
@@ -108,7 +108,7 @@ def handle_server_error(url, driver=None):
     
     # Try to save error screenshot if driver is available
     if driver:
-        error_file = f"error_{file_id}_500.png"
+        error_file = os.path.join('screenshots', f"error_{file_id}_500.png")
         try:
             driver.save_screenshot(error_file)
             logging.info(f"500 error screenshot saved as {error_file}")
@@ -124,8 +124,8 @@ def handle_server_error(url, driver=None):
 
 def take_screenshot(url):
     file_id = extract_id_from_url(url)
-    output_file = f"{file_id}.png"
-    error_file = f"error_{file_id}.png"
+    output_file = os.path.join('screenshots', f"{file_id}.png")
+    error_file = os.path.join('screenshots', f"error_{file_id}.png")
     max_retries = 3
     server_error_count = 0
 

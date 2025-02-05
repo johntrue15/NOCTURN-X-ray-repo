@@ -207,12 +207,17 @@ jobs:
           echo "${{ needs.check_and_analyze.outputs.release_body }}" > release_body.txt
           
       - name: Create Screenshots Directory
-        run: mkdir -p screenshots
+        run: |
+          mkdir -p screenshots
+          chmod 777 screenshots
 
       - name: Run URL check
         id: url_check
         run: |
           python .github/scripts/url_screenshot_check.py release_body.txt || true
+          
+          # Move any screenshots that might have been created in root to screenshots dir
+          mv -f *.png screenshots/ 2>/dev/null || true
           
           if [ -f "url_check_status.json" ]; then
             status=$(cat url_check_status.json | jq -r .status)
