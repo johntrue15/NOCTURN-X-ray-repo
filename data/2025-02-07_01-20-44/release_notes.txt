@@ -1,0 +1,29 @@
+# Daily Check Report
+
+## Record Changes
+Latest Record ID: 000707576
+Previous Record ID: 000707436
+
+Total Records: 104722
+Previous Records: 104713
+New Records Added: 10
+
+### New Record IDs:
+- 000707576: Sebecidae tooth [CTImageSeries] [CT]
+- 000707572: Sebecidae tooth [Mesh] [CT]
+- 000707565: Right Mandibular Second Molar Treatment Anterior Tooth Root
+- 000707561: Right Mandibular Second Molar Post Treatment Alveolar Subbone Root
+- 000707557: Right Mandibular Second Molar Treatment Anterior Subalveolar Bone Root
+- 000707553: Right Mandibular Second Molar Post Treatment Teeth
+- 000707549: Right Mandibular Second Molar Pre Treatment Teeth
+- 000707514: Left Mandible [Mesh] [CT]
+- 000707484: Left Mandible [Video] [CT]
+- 000707436: Element Unspecified [CTImageSeries] [CT]
+
+## Data Comparison
+Previous records: 104713
+Current records: 104722
+Difference: 9
+
+## Attestation
+Daily Dataset: https://github.com/johntrue15/NOCTURN-X-ray-repo/attestations/4836720
