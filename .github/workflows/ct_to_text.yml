@@ -95,8 +95,8 @@ jobs:
             line=$(echo "$line" | sed -e 's/[[:space:]]*$//')
             echo "Checking for: '$line'"
             
-            # Use perl for better unicode handling
-            if perl -ne 'print if index($_, "'"$line"'") != -1' temp_release.txt; then
+            # Use grep with exact line matching and word boundaries
+            if grep -F -x "$line" temp_release.txt; then
               echo "Blacklisted data manager found: $line"
               echo "is_blacklisted=true" >> "$GITHUB_OUTPUT"
               exit 0
@@ -105,7 +105,11 @@ jobs:
           
           # Debug: If no match found, show the release body
           echo "=== Release Body Contents ==="
-          cat temp_release.txt | xxd  # Show hex dump to check for hidden characters
+          echo "First 10 lines of release body:"
+          head -n 10 temp_release.txt
+          echo "..."
+          echo "Data Manager lines:"
+          grep "Data Manager:" temp_release.txt
           echo "==========================="
           
           echo "No blacklisted data managers found"
