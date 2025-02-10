@@ -20,6 +20,10 @@ This document shows the relationships between GitHub Actions workflows and their
   - `.github/scripts/ct_slices_to_text.py`
   - `.github/scripts/url_screenshot_check.py`
 
+- `ct_to_text.yml`
+  Scripts:
+  - `.github/scripts/ct_to_text.py`
+
 ---
 
 ### Daily MorphoSource Check (`daily.yml`)
@@ -85,6 +89,12 @@ This document shows the relationships between GitHub Actions workflows and their
 - `.github/scripts/ct_image_to_text.py`
 - `.github/scripts/ct_slices_to_text.py`
 - `.github/scripts/url_screenshot_check.py`
+
+### CT to Text (`ct_to_text.yml`)
+**Triggered by:**
+- `Parse MorphoSource Data`
+**Required Scripts:**
+- `.github/scripts/ct_to_text.py`
 
 ### 2D or 3D Selenium Fullscreen Test (`dimension_test.yml`)
 **Manual trigger available**
@@ -203,6 +213,10 @@ This section shows which workflows use each script:
 **Used in Workflows:**
 - `combined_ct_images_to_text.yml`
 - `test-run-run.yml`
+
+### ct_to_text.py
+**Used in Workflows:**
+- `ct_to_text.yml`
 
 ### daily.py
 **Used in Workflows:**
