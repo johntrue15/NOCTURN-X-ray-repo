@@ -45,6 +45,18 @@ jobs:
               unique_ids = list(dict.fromkeys(all_ids))
               return ','.join(unique_ids) if unique_ids else None
           
+          def extract_commit_hash(body):
+              if not body:
+                  return "unknown"
+              # Look for commit hash in the format "ct_to_text_an... 579fdd4"
+              lines = body.split("\n")
+              for line in lines:
+                  if line.startswith(" ct_to_text_analysis-"):
+                      parts = line.strip().split()
+                      if len(parts) > 1 and len(parts[-1]) == 7 and all(c in "0123456789abcdef" for c in parts[-1]):
+                          return parts[-1]
+              return "unknown"
+          
           token=os.environ["GITHUB_TOKEN"]
           headers={"Authorization":f"Bearer {token}"}
           days=int(os.environ["DAYS"])
@@ -61,14 +73,13 @@ jobs:
                   created=datetime.strptime(rel["created_at"],"%Y-%m-%dT%H:%M:%SZ")
                   if created < start_date:break
                   morpho_ref=next((line for line in rel["body"].split("\n") if "morphosource-updates-" in line),"No reference found")
-                  commit_hash=next((line.split()[0] for line in rel["body"].split("\n") if len(line.split()) > 0 and all(c in "0123456789abcdef" for c in line.split()[0]) and len(line.split()[0])==7),"unknown")
                   body_escaped = rel["body"].replace("\n", "\\n") if rel["body"] else ""
                   identifiers = extract_identifiers(rel["body"])
                   batch.append({
                       "ct_release": rel["tag_name"],
                       "created_at": rel["created_at"],
                       "morphosource_ref": morpho_ref,
-                      "commit": commit_hash,
+                      "commit": extract_commit_hash(rel["body"]),
                       "identifiers": identifiers,
                       "release_body": body_escaped
                   })
