@@ -105,17 +105,15 @@ jobs:
           df=pd.DataFrame(releases)
           df["date"]=pd.to_datetime(df["created_at"])
           
-          # Find exact duplicates (same creation time and identifiers)
-          df_with_ids = df[df["identifiers"].notna()]
-          exact_dupes = df_with_ids[df_with_ids.duplicated(["created_at", "identifiers", "commit"], keep=False)].sort_values(["created_at", "identifiers"])
+          # Remove the exact duplicates check since we only care about commits
           
-          # Group by identifier and commit to find all duplicates per record
-          identifier_groups = df_with_ids.groupby(["identifiers", "commit"])
+          # Group by commit to find all duplicates
+          commit_groups = df.groupby("commit")
           duplicates_to_delete = []
           kept_releases = []
           
-          for (identifier, commit), group in identifier_groups:
-              if len(group) > 1:
+          for commit, group in commit_groups:
+              if len(group) > 1 and commit != "unknown":  # Only process groups with multiple releases and valid commits
                   # Sort by created_at to keep the first release
                   sorted_group = group.sort_values("created_at")
                   kept_release = sorted_group.iloc[0]
@@ -134,14 +132,14 @@ jobs:
               kept_df.to_csv("releases_to_keep.csv", index=False, quoting=1)
               
               print("\nFound duplicate releases:")
-              print(f"\nTotal unique records with duplicates: {len(identifier_groups)}")
+              print(f"\nTotal unique commits with duplicates: {len([c for c,g in commit_groups if len(g)>1 and c!='unknown'])}")
               print(f"Total duplicate releases to delete: {len(duplicates_to_delete)}")
               print(f"Releases to keep: {len(kept_releases)}")
               
               print("\nExample duplicates:")
-              for (identifier, commit), group in identifier_groups:
-                  if len(group) > 1:
-                      print(f"\nIdentifier: {identifier}")
+              for commit, group in commit_groups:
+                  if len(group) > 1 and commit != "unknown":
+                      print(f"\nCommit: {commit}")
                       print(f"  Keeping: {group.iloc[0]['ct_release']} ({group.iloc[0]['created_at']})")
                       print(f"  Deleting {len(group)-1} duplicates:")
                       for _, dupe in group.iloc[1:].iterrows():
