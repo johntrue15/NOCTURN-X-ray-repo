@@ -11,9 +11,9 @@ This repository automatically tracks and analyzes X-ray CT data from MorphoSourc
 ## Latest Analysis Results
 
 ### MorphoSource Updates
-```
-Release: [View on GitHub](https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-02-13_02-04-52)
+[View MorphoSource Updates #2025-02-13_02-04-52 on GitHub](https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-02-13_02-04-52)
 
+```
 A new increase in X-ray Computed Tomography records was found on MorphoSource.
 
 We found 1 new record(s) (old record value: 105152).
@@ -29,9 +29,9 @@ Publication Status: Restricted Download
 ```
 
 ### CT Analysis
-```
-Release: [View on GitHub](https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-02-13_14-31-33)
+[View CT to Text Analysis #2025-02-13_14-31-33 on GitHub](https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-02-13_14-31-33)
 
+```
 **Record #N/A:**
 
 No information is available for Record #N/A. As a result, we are unable to provide a description of the specimen's taxonomy or morphological features at this time. Additional data or updates to this record would be necessary to offer meaningful insights into the specimen's characteristics and significance.
@@ -44,9 +44,9 @@ By examining the complete test, scientists can gain valuable insights into the g
 ```
 
 ### CT Slice Analysis
-```
-Release: [View on GitHub](https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_slice_analysis-2025-02-13_10-19-34)
+[View CT Slice Analysis #2025-02-13_10-19-34 on GitHub](https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_slice_analysis-2025-02-13_10-19-34)
 
+```
 Analysis for MorphoSource release: morphosource-updates-2025-02-13_02-04-52
 
 
@@ -115,4 +115,4 @@ Daily Check #2025-02-13_01-21-07 ()
 Please see our [Project Overview](docs/index.md#contributing) for guidelines on contributing to this project.
 
 ---
-Last updated: 2025-02-13 22:13:01 UTC
+Last updated: 2025-02-13 22:16:02 UTC
