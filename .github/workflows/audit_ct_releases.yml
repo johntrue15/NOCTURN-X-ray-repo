@@ -48,13 +48,13 @@ jobs:
           def extract_commit_hash(body):
               if not body:
                   return "unknown"
-              # Look for commit hash in the format "ct_to_text_an... 579fdd4"
+              # Look for the commit hash line
               lines = body.split("\n")
               for line in lines:
-                  if line.startswith(" ct_to_text_analysis-"):
-                      parts = line.strip().split()
-                      if len(parts) > 1 and len(parts[-1]) == 7 and all(c in "0123456789abcdef" for c in parts[-1]):
-                          return parts[-1]
+                  # Look for a line that contains just a 7-character hex string
+                  line = line.strip()
+                  if len(line) == 7 and all(c in "0123456789abcdef" for c in line):
+                      return line
               return "unknown"
           
           token=os.environ["GITHUB_TOKEN"]
