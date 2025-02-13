@@ -28,11 +28,14 @@ jobs:
       - name: Create README content
         id: readme
         run: |
-          # Function to get release body
-          get_release_body() {
+          # Function to get release info (both body and html_url)
+          get_release_info() {
             local tag=$1
             if [ -n "$tag" ]; then
-              gh release view "$tag" --json body -q .body || echo "No release body found"
+              local info=$(gh release view "$tag" --json body,url -q '{"body":.body,"url":.url}')
+              local body=$(echo "$info" | jq -r .body)
+              local url=$(echo "$info" | jq -r .url)
+              echo -e "Release: [View on GitHub]($url)\n\n$body"
             else
               echo "No release found"
             fi
@@ -43,10 +46,10 @@ jobs:
           latest_ct_tag=$(gh release list --limit 10 | grep "ct_to_text_analysis-" | head -n 1 | cut -f3 || echo "")
           latest_slice_tag=$(gh release list --limit 10 | grep "ct_slice_analysis-" | head -n 1 | cut -f3 || echo "")
 
-          # Get release bodies
-          ms_body=$(get_release_body "$latest_ms_tag")
-          ct_body=$(get_release_body "$latest_ct_tag")
-          slice_body=$(get_release_body "$latest_slice_tag")
+          # Get release info (body + URL)
+          ms_info=$(get_release_info "$latest_ms_tag")
+          ct_info=$(get_release_info "$latest_ct_tag")
+          slice_info=$(get_release_info "$latest_slice_tag")
           
           # Format the recent activity
           recent_activity=$(gh release list --limit 5 | while IFS=$'\t' read -r title status tag date; do
@@ -68,17 +71,17 @@ jobs:
 
           ### MorphoSource Updates
           \`\`\`
-          ${ms_body}
+          ${ms_info}
           \`\`\`
 
           ### CT Analysis
           \`\`\`
-          ${ct_body}
+          ${ct_info}
           \`\`\`
 
           ### CT Slice Analysis
           \`\`\`
-          ${slice_body}
+          ${slice_info}
           \`\`\`
 
           ## Workflow Overview
