@@ -28,12 +28,27 @@ jobs:
       - name: Create README content
         id: readme
         run: |
-          # Get the latest releases with better filtering
-          latest_ms=$(gh release list --limit 10 | grep "morphosource-updates-" | head -n 1 || echo "No updates found")
-          latest_ct=$(gh release list --limit 10 | grep "ct_to_text_analysis-" | head -n 1 || echo "No analysis found")
-          latest_slice=$(gh release list --limit 10 | grep "ct_slice_analysis-" | head -n 1 || echo "No analysis found")
+          # Function to get release body
+          get_release_body() {
+            local tag=$1
+            if [ -n "$tag" ]; then
+              gh release view "$tag" --json body -q .body || echo "No release body found"
+            else
+              echo "No release found"
+            fi
+          }
+
+          # Get the latest release tags
+          latest_ms_tag=$(gh release list --limit 10 | grep "morphosource-updates-" | head -n 1 | cut -f3 || echo "")
+          latest_ct_tag=$(gh release list --limit 10 | grep "ct_to_text_analysis-" | head -n 1 | cut -f3 || echo "")
+          latest_slice_tag=$(gh release list --limit 10 | grep "ct_slice_analysis-" | head -n 1 | cut -f3 || echo "")
+
+          # Get release bodies
+          ms_body=$(get_release_body "$latest_ms_tag")
+          ct_body=$(get_release_body "$latest_ct_tag")
+          slice_body=$(get_release_body "$latest_slice_tag")
           
-          # Format the recent activity to be more readable
+          # Format the recent activity
           recent_activity=$(gh release list --limit 5 | while IFS=$'\t' read -r title status tag date; do
             printf "%s (%s)\\n" "$title" "$date"
           done || echo "No recent activity")
@@ -53,17 +68,17 @@ jobs:
 
           ### MorphoSource Updates
           \`\`\`
-          ${latest_ms}
+          ${ms_body}
           \`\`\`
 
           ### CT Analysis
           \`\`\`
-          ${latest_ct}
+          ${ct_body}
           \`\`\`
 
           ### CT Slice Analysis
           \`\`\`
-          ${latest_slice}
+          ${slice_body}
           \`\`\`
 
           ## Workflow Overview
