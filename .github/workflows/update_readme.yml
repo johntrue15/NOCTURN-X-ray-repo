@@ -28,16 +28,18 @@ jobs:
       - name: Create README content
         id: readme
         run: |
-          # Function to get release info (both body and html_url)
+          # Function to get release info (both body and url)
           get_release_info() {
             local tag=$1
             if [ -n "$tag" ]; then
-              local info=$(gh release view "$tag" --json body,url -q '{"body":.body,"url":.url}')
+              local info=$(gh release view "$tag" --json body,url,name -q '{"body":.body,"url":.url,"name":.name}')
               local body=$(echo "$info" | jq -r .body)
               local url=$(echo "$info" | jq -r .url)
-              echo -e "Release: [View on GitHub]($url)\n\n$body"
+              local name=$(echo "$info" | jq -r .name)
+              printf "%s\n\n%s\n%s" "[View $name on GitHub]($url)" "\`\`\`" "$body"
+              echo -e "\n\`\`\`"
             else
-              echo "No release found"
+              echo -e "\`\`\`\nNo release found\n\`\`\`"
             fi
           }
 
@@ -70,19 +72,13 @@ jobs:
           ## Latest Analysis Results
 
           ### MorphoSource Updates
-          \`\`\`
           ${ms_info}
-          \`\`\`
 
           ### CT Analysis
-          \`\`\`
           ${ct_info}
-          \`\`\`
 
           ### CT Slice Analysis
-          \`\`\`
           ${slice_info}
-          \`\`\`
 
           ## Workflow Overview
 
