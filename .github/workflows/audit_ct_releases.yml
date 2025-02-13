@@ -46,31 +46,57 @@ jobs:
                   if created < start_date:break
                   morpho_ref=next((line for line in rel["body"].split("\n") if "morphosource-updates-" in line),"No reference found")
                   commit_hash=next((line.split()[0] for line in rel["body"].split("\n") if len(line.split()) > 0 and all(c in "0123456789abcdef" for c in line.split()[0]) and len(line.split()[0])==7),"unknown")
-                  batch.append({"ct_release":rel["tag_name"],"created_at":rel["created_at"],"morphosource_ref":morpho_ref,"commit":commit_hash,"body":rel["body"]})
+                  batch.append({"ct_release":rel["tag_name"],"created_at":rel["created_at"],"morphosource_ref":morpho_ref,"commit":commit_hash})
               if not batch:break
               releases.extend(batch)
               page+=1
+          
           df=pd.DataFrame(releases)
           df["date"]=pd.to_datetime(df["created_at"])
-          df["hour"]=df["date"].dt.floor("H")
-          df["morpho_date"]=df["morphosource_ref"].str.extract(r"morphosource-updates-(\d{4}-\d{2}-\d{2})")
-          df=df.sort_values("created_at")
-          duplicates=df[df.groupby(["morpho_date","commit"])["morpho_date"].transform("count")>1]
-          duplicates["time_diff"]=duplicates.groupby("morpho_date")["date"].diff().dt.total_seconds()
-          duplicates=duplicates[["ct_release","created_at","morphosource_ref","commit","time_diff"]]
-          duplicates.to_csv("duplicate_releases.csv",index=False)
-          print(f"\nFound {len(duplicates)} potentially duplicate releases")
-          print("\nDuplicate releases by commit and date:")
-          print(duplicates.groupby(["commit","morphosource_ref"]).size())
-          print("\nTime differences between duplicates (seconds):")
-          print(duplicates["time_diff"].describe())
+          
+          # Group by commit hash to find loops
+          commit_groups = df.groupby("commit")
+          loop_data = []
+          
+          for commit, group in commit_groups:
+              if len(group) > 1:  # This commit triggered multiple releases
+                  first_release = group.iloc[0]
+                  loop_data.append({
+                      "commit": commit,
+                      "first_release": first_release["ct_release"],
+                      "first_time": first_release["created_at"],
+                      "morphosource_ref": first_release["morphosource_ref"],
+                      "repeat_count": len(group),
+                      "time_span_hours": (group["date"].max() - group["date"].min()).total_seconds() / 3600
+                  })
+          
+          if loop_data:
+              loops_df = pd.DataFrame(loop_data)
+              loops_df.to_csv("duplicate_releases.csv", index=False)
+              print("\nFound workflow loops:")
+              print("\nCommits that triggered multiple releases:")
+              for _, row in loops_df.iterrows():
+                  print(f"\nCommit {row['commit']}:")
+                  print(f"  Morphosource ref: {row['morphosource_ref']}")
+                  print(f"  First release: {row['first_release']}")
+                  print(f"  Number of repeats: {row['repeat_count']}")
+                  print(f"  Loop duration: {row['time_span_hours']:.1f} hours")
+          else:
+              print("\nNo workflow loops found")
           EOF
 
       - name: Run Analysis
+        id: analyze
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
           DAYS: ${{ inputs.days_to_check }}
-        run: python3 analyze_releases.py
+        run: |
+          python3 analyze_releases.py
+          if [ -f "duplicate_releases.csv" ]; then
+            echo "has_duplicates=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_duplicates=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Upload Results
         if: steps.analyze.outputs.has_duplicates == 'true'
