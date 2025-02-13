@@ -46,7 +46,15 @@ jobs:
                   if created < start_date:break
                   morpho_ref=next((line for line in rel["body"].split("\n") if "morphosource-updates-" in line),"No reference found")
                   commit_hash=next((line.split()[0] for line in rel["body"].split("\n") if len(line.split()) > 0 and all(c in "0123456789abcdef" for c in line.split()[0]) and len(line.split()[0])==7),"unknown")
-                  batch.append({"ct_release":rel["tag_name"],"created_at":rel["created_at"],"morphosource_ref":morpho_ref,"commit":commit_hash})
+                  # Escape newlines in body for CSV
+                  body_escaped = rel["body"].replace("\n", "\\n") if rel["body"] else ""
+                  batch.append({
+                      "ct_release": rel["tag_name"],
+                      "created_at": rel["created_at"],
+                      "morphosource_ref": morpho_ref,
+                      "commit": commit_hash,
+                      "release_body": body_escaped
+                  })
               if not batch:break
               releases.extend(batch)
               page+=1
@@ -54,12 +62,17 @@ jobs:
           df=pd.DataFrame(releases)
           df["date"]=pd.to_datetime(df["created_at"])
           
-          # Group by commit hash to find loops
+          # Save all releases in loops to detailed CSV
+          loop_releases = df[df.groupby("commit")["commit"].transform("count") > 1].sort_values(["commit", "created_at"])
+          if not loop_releases.empty:
+              loop_releases.to_csv("all_duplicate_releases.csv", index=False, quoting=1)  # Force quotes around all fields
+          
+          # Create summary data
           commit_groups = df.groupby("commit")
           loop_data = []
           
           for commit, group in commit_groups:
-              if len(group) > 1:  # This commit triggered multiple releases
+              if len(group) > 1:
                   first_release = group.iloc[0]
                   loop_data.append({
                       "commit": commit,
@@ -72,7 +85,7 @@ jobs:
           
           if loop_data:
               loops_df = pd.DataFrame(loop_data)
-              loops_df.to_csv("duplicate_releases.csv", index=False)
+              loops_df.to_csv("duplicate_releases_summary.csv", index=False)
               print("\nFound workflow loops:")
               print("\nCommits that triggered multiple releases:")
               for _, row in loops_df.iterrows():
@@ -92,7 +105,7 @@ jobs:
           DAYS: ${{ inputs.days_to_check }}
         run: |
           python3 analyze_releases.py
-          if [ -f "duplicate_releases.csv" ]; then
+          if [ -f "duplicate_releases_summary.csv" ]; then
             echo "has_duplicates=true" >> "$GITHUB_OUTPUT"
           else
             echo "has_duplicates=false" >> "$GITHUB_OUTPUT"
@@ -103,7 +116,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: duplicate-releases-report
-          path: duplicate_releases.csv
+          path: |
+            duplicate_releases_summary.csv
+            all_duplicate_releases.csv
           retention-days: 90
 
       - name: Display Summary
@@ -113,4 +128,4 @@ jobs:
           echo "Full details available in the artifacts section"
           echo ""
           echo "Preview of duplicates (showing time differences):"
-          head -n 5 duplicate_releases.csv 
+          head -n 5 duplicate_releases_summary.csv 
