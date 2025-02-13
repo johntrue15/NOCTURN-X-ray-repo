@@ -74,11 +74,45 @@ jobs:
           fi
 
       # -------------------------------------------------------
-      # 6. Check Blacklist (Only if it's morphosource-updates)
+      # 6. Check for existing analysis
+      # -------------------------------------------------------
+      - name: Check for existing analysis
+        id: check_existing
+        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          # Get the morphosource release tag
+          MS_TAG="${{ steps.fetch_release.outputs.release_tag }}"
+          MS_DATE=$(echo "$MS_TAG" | cut -d'-' -f3-)
+          
+          # Check for existing ct_to_text analysis for this morphosource release
+          response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
+          
+          has_analysis=$(echo "$response" | jq -r "
+            [.[] | 
+            select(
+              (.tag_name | startswith(\"ct_to_text_analysis-\")) and
+              (.created_at | startswith(\"${MS_DATE%_*}\"))
+            )] | length")
+            
+          if [ "$has_analysis" -gt "0" ]; then
+            echo "CT to Text analysis already exists for $MS_TAG"
+            echo "has_analysis=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No existing CT to Text analysis found for $MS_TAG"
+            echo "has_analysis=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # -------------------------------------------------------
+      # 7. Check Blacklist (Only if it's morphosource-updates)
       # -------------------------------------------------------
       - name: Check Blacklist
         id: check_blacklist
-        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        if: |
+          steps.check_morpho.outputs.is_morphosource == 'true' &&
+          steps.check_existing.outputs.has_analysis != 'true'
         run: |
           # Write release body to temp file
           echo "${{ steps.fetch_release.outputs.release_body }}" > temp_release.txt
@@ -128,12 +162,13 @@ jobs:
           echo "is_blacklisted=false" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 7. Generate Timestamp (Only if it's morphosource-updates)
+      # 8. Generate Timestamp (Only if it's morphosource-updates)
       # -------------------------------------------------------
       - name: Generate Timestamp
         id: gen_ts
         if: |
           steps.check_morpho.outputs.is_morphosource == 'true' &&
+          steps.check_existing.outputs.has_analysis != 'true' &&
           steps.check_blacklist.outputs.is_blacklisted != 'true'
         run: |
           # Example format: YYYY-MM-DD_HH-MM-SS
@@ -141,12 +176,13 @@ jobs:
           echo "timestamp=$TS" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 8. Run CT to Text (Only if it's morphosource-updates)
+      # 9. Run CT to Text (Only if it's morphosource-updates)
       # -------------------------------------------------------
       - name: Run CT to Text
         id: ct2text
         if: |
           steps.check_morpho.outputs.is_morphosource == 'true' &&
+          steps.check_existing.outputs.has_analysis != 'true' &&
           steps.check_blacklist.outputs.is_blacklisted != 'true'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -163,11 +199,12 @@ jobs:
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 9. Create or Update Release with AI Summary
+      # 10. Create or Update Release with AI Summary
       # -------------------------------------------------------
       - name: Create or Update Release with AI Summary
         if: |
           steps.check_morpho.outputs.is_morphosource == 'true' &&
+          steps.check_existing.outputs.has_analysis != 'true' &&
           steps.check_blacklist.outputs.is_blacklisted != 'true'
         uses: actions/create-release@v1
         env:
@@ -180,7 +217,7 @@ jobs:
           prerelease: false
 
       # -------------------------------------------------------
-      # 10. Log Blacklisted Release
+      # 11. Log Blacklisted Release
       # -------------------------------------------------------
       - name: Log Blacklisted Release
         if: steps.check_blacklist.outputs.is_blacklisted == 'true'
@@ -189,7 +226,7 @@ jobs:
           echo "Release tag: ${{ steps.fetch_release.outputs.release_tag }}"
 
       # -------------------------------------------------------
-      # 11. Fallback step if not morphosource-updates
+      # 12. Fallback step if not morphosource-updates
       # -------------------------------------------------------
       - name: No new morphosource release
         if: steps.check_morpho.outputs.is_morphosource == 'false'
