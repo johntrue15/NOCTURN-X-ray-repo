@@ -178,16 +178,42 @@ jobs:
         run: |
           echo "Reading releases to delete from previous audit..."
           
-          # First get all releases and their IDs
+          # Get all releases with pagination
           echo "Fetching all releases..."
-          curl -s \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100" \
-            > releases.json
+          page=1
+          rm -f releases.json  # Clear any existing file
+          total_releases=0
           
-          # Debug: Show what we got from the API
-          echo "Found releases:"
+          while true; do
+            echo "Fetching page $page..."
+            response=$(curl -s \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100&page=${page}")
+            
+            # Check if we got any releases
+            batch_count=$(echo "$response" | jq '. | length')
+            echo "Found $batch_count releases on page $page"
+            
+            if [ "$batch_count" -eq "0" ]; then
+              break
+            fi
+            
+            # Append to our releases file
+            if [ "$page" -eq "1" ]; then
+              echo "$response" > releases.json
+            else
+              # Combine the arrays
+              jq -s '.[0] + .[1]' releases.json <(echo "$response") > releases.tmp
+              mv releases.tmp releases.json
+            fi
+            
+            total_releases=$((total_releases + batch_count))
+            ((page++))
+          done
+          
+          echo "Total releases found: $total_releases"
+          echo "Found releases (first 5):"
           jq -r '.[].tag_name' releases.json | head -n 5
           
           # Process the CSV, removing all quotes and getting just the tag names
@@ -195,7 +221,6 @@ jobs:
           sed 1d ./audit/releases_to_delete.csv | cut -d',' -f1 | tr -d '"' | while read -r release_tag; do
             if [[ -n "$release_tag" ]]; then  # Skip empty lines
               echo "Processing release: $release_tag"
-              # Get release ID from our cached releases.json
               release_id=$(jq -r --arg tag "$release_tag" '.[] | select(.tag_name==$tag) | .id' releases.json)
               
               if [[ -n "$release_id" && "$release_id" != "null" ]]; then
