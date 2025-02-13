@@ -30,10 +30,14 @@ jobs:
           import json,sys,os,requests,pandas as pd,re
           from datetime import datetime,timedelta
           
-          def extract_record_numbers(body):
-              # Find all Record #XXXXX mentions
-              records = re.findall(r'Record #(\d+)', body) if body else []
-              return ','.join(records) if records else 'N/A'
+          def extract_identifiers(body):
+              if not body:
+                  return None
+              record_nums = re.findall(r'Record #(\d+)', body)
+              specimen_ids = re.findall(r'(?:Object|Specimen):\s*([A-Z]+:[A-Za-z]+:\d+)', body)
+              all_ids = record_nums + specimen_ids
+              unique_ids = list(dict.fromkeys(all_ids))
+              return ','.join(unique_ids) if unique_ids else None
           
           token=os.environ["GITHUB_TOKEN"]
           headers={"Authorization":f"Bearer {token}"}
@@ -53,13 +57,13 @@ jobs:
                   morpho_ref=next((line for line in rel["body"].split("\n") if "morphosource-updates-" in line),"No reference found")
                   commit_hash=next((line.split()[0] for line in rel["body"].split("\n") if len(line.split()) > 0 and all(c in "0123456789abcdef" for c in line.split()[0]) and len(line.split()[0])==7),"unknown")
                   body_escaped = rel["body"].replace("\n", "\\n") if rel["body"] else ""
-                  record_numbers = extract_record_numbers(rel["body"])
+                  identifiers = extract_identifiers(rel["body"])
                   batch.append({
                       "ct_release": rel["tag_name"],
                       "created_at": rel["created_at"],
                       "morphosource_ref": morpho_ref,
                       "commit": commit_hash,
-                      "record_numbers": record_numbers,
+                      "identifiers": identifiers,
                       "release_body": body_escaped
                   })
               if not batch:break
@@ -69,42 +73,49 @@ jobs:
           df=pd.DataFrame(releases)
           df["date"]=pd.to_datetime(df["created_at"])
           
-          # Save all releases in loops to detailed CSV
-          loop_releases = df[df.groupby(["commit", "record_numbers"])["commit"].transform("count") > 1].sort_values(["commit", "created_at"])
-          if not loop_releases.empty:
-              loop_releases.to_csv("all_duplicate_releases.csv", index=False, quoting=1)
+          # Find exact duplicates (same creation time and identifiers)
+          df_with_ids = df[df["identifiers"].notna()]
+          exact_dupes = df_with_ids[df_with_ids.duplicated(["created_at", "identifiers"], keep=False)].sort_values(["created_at", "identifiers"])
           
-          # Create summary data
-          commit_groups = df.groupby(["commit", "record_numbers"])
-          loop_data = []
+          # Group by identifier to find all duplicates per record
+          identifier_groups = df_with_ids.groupby("identifiers")
+          duplicates_to_delete = []
+          kept_releases = []
           
-          for (commit, records), group in commit_groups:
+          for identifier, group in identifier_groups:
               if len(group) > 1:
-                  first_release = group.iloc[0]
-                  loop_data.append({
-                      "commit": commit,
-                      "record_numbers": records,
-                      "first_release": first_release["ct_release"],
-                      "first_time": first_release["created_at"],
-                      "morphosource_ref": first_release["morphosource_ref"],
-                      "repeat_count": len(group),
-                      "time_span_hours": (group["date"].max() - group["date"].min()).total_seconds() / 3600
-                  })
+                  # Sort by created_at to keep the first release
+                  sorted_group = group.sort_values("created_at")
+                  kept_release = sorted_group.iloc[0]
+                  kept_releases.append(kept_release)
+                  # Mark all others as duplicates to delete
+                  duplicates = sorted_group.iloc[1:]
+                  duplicates_to_delete.extend(duplicates.to_dict('records'))
           
-          if loop_data:
-              loops_df = pd.DataFrame(loop_data)
-              loops_df.to_csv("duplicate_releases_summary.csv", index=False)
-              print("\nFound workflow loops:")
-              print("\nCommits that triggered multiple releases:")
-              for _, row in loops_df.iterrows():
-                  print(f"\nCommit {row['commit']}:")
-                  print(f"  Record Numbers: {row['record_numbers']}")
-                  print(f"  Morphosource ref: {row['morphosource_ref']}")
-                  print(f"  First release: {row['first_release']}")
-                  print(f"  Number of repeats: {row['repeat_count']}")
-                  print(f"  Loop duration: {row['time_span_hours']:.1f} hours")
+          if duplicates_to_delete:
+              # Save list of releases to delete
+              dupes_df = pd.DataFrame(duplicates_to_delete)
+              dupes_df.to_csv("releases_to_delete.csv", index=False, quoting=1)
+              
+              # Save list of releases to keep
+              kept_df = pd.DataFrame(kept_releases)
+              kept_df.to_csv("releases_to_keep.csv", index=False, quoting=1)
+              
+              print("\nFound duplicate releases:")
+              print(f"\nTotal unique records with duplicates: {len(identifier_groups)}")
+              print(f"Total duplicate releases to delete: {len(duplicates_to_delete)}")
+              print(f"Releases to keep: {len(kept_releases)}")
+              
+              print("\nExample duplicates:")
+              for identifier, group in identifier_groups:
+                  if len(group) > 1:
+                      print(f"\nIdentifier: {identifier}")
+                      print(f"  Keeping: {group.iloc[0]['ct_release']} ({group.iloc[0]['created_at']})")
+                      print(f"  Deleting {len(group)-1} duplicates:")
+                      for _, dupe in group.iloc[1:].iterrows():
+                          print(f"    - {dupe['ct_release']} ({dupe['created_at']})")
           else:
-              print("\nNo workflow loops found")
+              print("\nNo exact duplicates found")
           EOF
 
       - name: Run Analysis
@@ -114,7 +125,7 @@ jobs:
           DAYS: ${{ inputs.days_to_check }}
         run: |
           python3 analyze_releases.py
-          if [ -f "duplicate_releases_summary.csv" ]; then
+          if [ -f "releases_to_delete.csv" ]; then
             echo "has_duplicates=true" >> "$GITHUB_OUTPUT"
           else
             echo "has_duplicates=false" >> "$GITHUB_OUTPUT"
@@ -126,8 +137,8 @@ jobs:
         with:
           name: duplicate-releases-report
           path: |
-            duplicate_releases_summary.csv
-            all_duplicate_releases.csv
+            releases_to_delete.csv
+            releases_to_keep.csv
           retention-days: 90
 
       - name: Display Summary
@@ -137,4 +148,4 @@ jobs:
           echo "Full details available in the artifacts section"
           echo ""
           echo "Preview of duplicates (showing time differences):"
-          head -n 5 duplicate_releases_summary.csv 
+          head -n 5 releases_to_delete.csv 
