@@ -4,8 +4,8 @@ on:
   workflow_run:
     workflows: 
       - "Parse MorphoSource Data"
-      - "CT to Text"
-      - "Combined CT Images to Text"
+      - "CT to Text Analysis"
+      - "MorphoSource Analysis Workflow"
     types: [completed]
   workflow_dispatch:  # Allow manual trigger
 
@@ -31,7 +31,7 @@ jobs:
           # Get the latest releases first
           latest_ms=$(gh release list --limit 1 | grep "morphosource-updates-" || echo "No updates found")
           latest_ct=$(gh release list --limit 10 | grep "ct_to_text_analysis-" | head -n 1 || echo "No analysis found")
-          latest_combined=$(gh release list --limit 10 | grep "combined_ct_analysis-" | head -n 1 || echo "No analysis found")
+          latest_combined=$(gh release list --limit 10 | grep "ct_slice_analysis-" | head -n 1 || echo "No analysis found")
           recent_activity=$(gh release list --limit 5 || echo "No recent activity")
 
           cat > README.md << EOL
@@ -79,7 +79,7 @@ jobs:
              - Analyzes CT metadata using AI
              - Generates detailed descriptions of specimens
 
-          3. **Combined CT Image Analysis** (\`combined_ct_images_to_text.yml\`)
+          3. **CT Slice Analysis** (\`combined_ct_images_to_text.yml\`)
              - Analyzes 2D slices and 3D reconstructions
              - Checks image URLs and captures screenshots
              - Provides comprehensive visual analysis
