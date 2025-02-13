@@ -27,8 +27,14 @@ jobs:
       - name: Create Python Script
         run: |
           cat > analyze_releases.py << 'EOF'
-          import json,sys,os,requests,pandas as pd
+          import json,sys,os,requests,pandas as pd,re
           from datetime import datetime,timedelta
+          
+          def extract_record_numbers(body):
+              # Find all Record #XXXXX mentions
+              records = re.findall(r'Record #(\d+)', body) if body else []
+              return ','.join(records) if records else 'N/A'
+          
           token=os.environ["GITHUB_TOKEN"]
           headers={"Authorization":f"Bearer {token}"}
           days=int(os.environ["DAYS"])
@@ -46,13 +52,14 @@ jobs:
                   if created < start_date:break
                   morpho_ref=next((line for line in rel["body"].split("\n") if "morphosource-updates-" in line),"No reference found")
                   commit_hash=next((line.split()[0] for line in rel["body"].split("\n") if len(line.split()) > 0 and all(c in "0123456789abcdef" for c in line.split()[0]) and len(line.split()[0])==7),"unknown")
-                  # Escape newlines in body for CSV
                   body_escaped = rel["body"].replace("\n", "\\n") if rel["body"] else ""
+                  record_numbers = extract_record_numbers(rel["body"])
                   batch.append({
                       "ct_release": rel["tag_name"],
                       "created_at": rel["created_at"],
                       "morphosource_ref": morpho_ref,
                       "commit": commit_hash,
+                      "record_numbers": record_numbers,
                       "release_body": body_escaped
                   })
               if not batch:break
@@ -63,19 +70,20 @@ jobs:
           df["date"]=pd.to_datetime(df["created_at"])
           
           # Save all releases in loops to detailed CSV
-          loop_releases = df[df.groupby("commit")["commit"].transform("count") > 1].sort_values(["commit", "created_at"])
+          loop_releases = df[df.groupby(["commit", "record_numbers"])["commit"].transform("count") > 1].sort_values(["commit", "created_at"])
           if not loop_releases.empty:
-              loop_releases.to_csv("all_duplicate_releases.csv", index=False, quoting=1)  # Force quotes around all fields
+              loop_releases.to_csv("all_duplicate_releases.csv", index=False, quoting=1)
           
           # Create summary data
-          commit_groups = df.groupby("commit")
+          commit_groups = df.groupby(["commit", "record_numbers"])
           loop_data = []
           
-          for commit, group in commit_groups:
+          for (commit, records), group in commit_groups:
               if len(group) > 1:
                   first_release = group.iloc[0]
                   loop_data.append({
                       "commit": commit,
+                      "record_numbers": records,
                       "first_release": first_release["ct_release"],
                       "first_time": first_release["created_at"],
                       "morphosource_ref": first_release["morphosource_ref"],
@@ -90,6 +98,7 @@ jobs:
               print("\nCommits that triggered multiple releases:")
               for _, row in loops_df.iterrows():
                   print(f"\nCommit {row['commit']}:")
+                  print(f"  Record Numbers: {row['record_numbers']}")
                   print(f"  Morphosource ref: {row['morphosource_ref']}")
                   print(f"  First release: {row['first_release']}")
                   print(f"  Number of repeats: {row['repeat_count']}")
