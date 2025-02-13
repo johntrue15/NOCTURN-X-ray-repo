@@ -81,14 +81,14 @@ jobs:
           
           # Find exact duplicates (same creation time and identifiers)
           df_with_ids = df[df["identifiers"].notna()]
-          exact_dupes = df_with_ids[df_with_ids.duplicated(["created_at", "identifiers"], keep=False)].sort_values(["created_at", "identifiers"])
+          exact_dupes = df_with_ids[df_with_ids.duplicated(["created_at", "identifiers", "commit"], keep=False)].sort_values(["created_at", "identifiers"])
           
-          # Group by identifier to find all duplicates per record
-          identifier_groups = df_with_ids.groupby("identifiers")
+          # Group by identifier and commit to find all duplicates per record
+          identifier_groups = df_with_ids.groupby(["identifiers", "commit"])
           duplicates_to_delete = []
           kept_releases = []
           
-          for identifier, group in identifier_groups:
+          for (identifier, commit), group in identifier_groups:
               if len(group) > 1:
                   # Sort by created_at to keep the first release
                   sorted_group = group.sort_values("created_at")
@@ -113,7 +113,7 @@ jobs:
               print(f"Releases to keep: {len(kept_releases)}")
               
               print("\nExample duplicates:")
-              for identifier, group in identifier_groups:
+              for (identifier, commit), group in identifier_groups:
                   if len(group) > 1:
                       print(f"\nIdentifier: {identifier}")
                       print(f"  Keeping: {group.iloc[0]['ct_release']} ({group.iloc[0]['created_at']})")
@@ -198,6 +198,9 @@ jobs:
             if [ "$batch_count" -eq "0" ]; then
               break
             fi
+            
+            # Debug: Show releases with their commit hashes
+            echo "$response" | jq -r '.[] | "\(.tag_name) - Commit: \(.body | capture("(?m)^[0-9a-f]{7}").string // "unknown")"'
             
             # Append to our releases file
             if [ "$page" -eq "1" ]; then
