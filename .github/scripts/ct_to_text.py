@@ -20,21 +20,10 @@ def parse_records_from_body(body: str):
     """
     Parses the release body, looking for lines like:
       New Record #XXXX Title: ...
-    Then captures subsequent lines of the form 'Key: Value', e.g.:
-      Detail Page URL: ...
-      Object: ...
-      Taxonomy: ...
-      etc.
-
-    Returns a list of dicts, each representing a record's data:
-      {
-        "record_number": "104236",
-        "title": "Endocast [Mesh] [CT]",
-        "detail_url": "...",
-        "Object": "...",
-        "Taxonomy": "...",
-        ...
-      }
+    Then captures subsequent lines of the form 'Key: Value'
+    
+    Returns a list of dicts, each representing a record's data.
+    Skips records with invalid record numbers.
     """
     records = []
     lines = body.splitlines()
@@ -49,16 +38,26 @@ def parse_records_from_body(body: str):
         # See if this line starts a new record
         match = RE_RECORD_HEADER.match(line)
         if match:
-            # If we already have a record in progress, finalize it
+            # If we already have a record in progress, validate and finalize it
             if current_record:
-                records.append(current_record)
-            current_record = {}
-            current_record["record_number"] = match.group(1)
-            current_record["title"] = match.group(2)
+                # Only add records that have valid record numbers (not N/A)
+                record_num = current_record.get("record_number", "")
+                if record_num.isdigit():  # Only add if record_number is a valid number
+                    records.append(current_record)
+            
+            # Start new record
+            record_num = match.group(1)
+            if record_num.lower() != "n/a" and record_num.isdigit():
+                current_record = {
+                    "record_number": record_num,
+                    "title": match.group(2)
+                }
+            else:
+                current_record = {}  # Skip invalid records
             continue
 
-        # Otherwise, if line looks like "SomeKey: SomeValue"
-        if ":" in line:
+        # Only process key-value pairs if we have a valid record
+        if current_record and ":" in line:
             parts = line.split(":", 1)
             key = parts[0].strip()
             val = parts[1].strip()
@@ -87,26 +86,27 @@ def parse_records_from_body(body: str):
             # Also store the raw key-value in case we need it
             current_record[key] = val
 
-    # After the loop, if there's a record in progress, append it
+    # After the loop, validate and add final record if needed
     if current_record:
-        records.append(current_record)
+        record_num = current_record.get("record_number", "")
+        if record_num.isdigit():
+            records.append(current_record)
 
     return records
 
 def generate_text_for_records(records):
     """
-    Calls the o1-mini model (via OpenAI-like usage) to generate a multi-paragraph,
-    ~200-word description for each record, focusing on species/taxonomy and object details.
+    Calls the o1-mini model to generate descriptions for valid records.
     """
     if not OPENAI_API_KEY:
         return "Error: OPENAI_API_KEY is missing."
 
+    # If no valid records found, provide clear message
+    if not records:
+        return "No valid records found to summarize. The release may contain malformed or incomplete data."
+
     # Initialize the client
     client = OpenAI(api_key=OPENAI_API_KEY)
-
-    # If no records found, bail out
-    if not records:
-        return "No new records to summarize."
 
     # Build a user prompt that includes each record's metadata
     user_content = ["Below are new CT records from a MorphoSource release:\n"]
@@ -135,10 +135,10 @@ def generate_text_for_records(records):
         "You are a scientific writer with expertise in analyzing morphological data. "
         "You have received metadata from X-ray computed tomography scans of various biological specimens. "
         "Please compose a multi-paragraph, one for each record/species, ~200-word plain-English description that "
-        "emphasizes each specimen’s species (taxonomy) and object details. Focus on identifying notable anatomical "
+        "emphasizes each specimen's species (taxonomy) and object details. Focus on identifying notable anatomical "
         "or morphological features that may be revealed by the CT scanning process. Avoid discussions of copyright "
         "or publication status. Make the final description readable for a broad audience, yet scientifically informed. "
-        "Highlight the significance of the scans for understanding the organism’s structure and potential insights "
+        "Highlight the significance of the scans for understanding the organism's structure and potential insights "
         "into its biology or evolution."
     )
 
