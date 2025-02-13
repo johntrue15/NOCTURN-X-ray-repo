@@ -160,6 +160,9 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ inputs.delete_duplicates }}
     steps:
+      - name: Install jq
+        run: sudo apt-get install jq
+
       - name: Download Previous Audit Results
         uses: dawidd6/action-download-artifact@v2
         with:
@@ -174,17 +177,22 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
           echo "Reading releases to delete from previous audit..."
+          
+          # First get all releases and their IDs
+          echo "Fetching all releases..."
+          curl -s \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100" \
+            > releases.json
+          
           while IFS=, read -r release_tag _rest; do
             if [[ $release_tag != "ct_release" ]]; then  # Skip header
               echo "Processing release $release_tag..."
-              # First get the release ID
-              release_id=$(curl -s \
-                -H "Authorization: Bearer $GITHUB_TOKEN" \
-                -H "Accept: application/vnd.github.v3+json" \
-                "https://api.github.com/repos/${{ github.repository }}/releases/tags/$release_tag" \
-                | jq -r '.id')
+              # Get release ID from our cached releases.json
+              release_id=$(cat releases.json | jq -r ".[] | select(.tag_name==\"$release_tag\") | .id")
               
-              if [[ $release_id != "null" && ! -z "$release_id" ]]; then
+              if [[ $release_id != "" ]]; then
                 echo "Deleting release $release_tag (ID: $release_id)..."
                 curl -X DELETE \
                   -H "Authorization: Bearer $GITHUB_TOKEN" \
