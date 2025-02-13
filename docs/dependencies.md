@@ -46,6 +46,13 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ---
 
+### Cleanup CT Error Releases (`cleanup_ct_error_releases.yml`)
+
+**Schedule:** Cron: 0 */6 * * *
+
+
+---
+
 ### Wiki Generation (`wiki-generation.yml`)
 
 **Schedule:** Weekly on Sunday at midnight
