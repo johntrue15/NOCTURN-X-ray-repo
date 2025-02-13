@@ -73,6 +73,9 @@ This document shows the relationships between GitHub Actions workflows and their
 **Required Scripts:**
 - `.github/scripts/analyze_dependencies.py`
 
+### Audit CT Text Releases (`audit_ct_releases.yml`)
+**Manual trigger available**
+
 ### Code Review and Analysis (`code_review_workflow.yml`)
 **Triggered by:**
 - `Auto Code Generation with Claude on Issue`
