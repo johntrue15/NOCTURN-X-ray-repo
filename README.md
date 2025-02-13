@@ -12,7 +12,7 @@ This repository automatically tracks and analyzes X-ray CT data from MorphoSourc
 
 ### MorphoSource Updates
 ```
-No updates found
+MorphoSource Updates #2025-02-13_02-04-52		morphosource-updates-2025-02-13_02-04-52	2025-02-13T02:04:53Z
 ```
 
 ### CT Analysis
@@ -20,7 +20,7 @@ No updates found
 CT to Text Analysis #2025-02-13_14-31-33	Latest	ct_to_text_analysis-2025-02-13_14-31-33	2025-02-13T14:31:44Z
 ```
 
-### CT Image Analysis
+### CT Slice Analysis
 ```
 CT Slice Analysis #2025-02-13_10-19-34		ct_slice_analysis-2025-02-13_10-19-34	2025-02-13T10:25:44Z
 ```
@@ -63,11 +63,11 @@ For detailed installation instructions:
 ## Recent Activity
 
 ```
-CT to Text Analysis #2025-02-13_14-31-33	Latest	ct_to_text_analysis-2025-02-13_14-31-33	2025-02-13T14:31:44Z
-CT Slice Analysis #2025-02-13_10-19-34		ct_slice_analysis-2025-02-13_10-19-34	2025-02-13T10:25:44Z
-CT Analysis Error #13298852187		ct_analysis_error-13298852187	2025-02-13T02:06:32Z
-MorphoSource Updates #2025-02-13_02-04-52		morphosource-updates-2025-02-13_02-04-52	2025-02-13T02:04:53Z
-Daily Check #2025-02-13_01-21-07		daily-2025-02-13_01-21-07	2025-02-13T01:21:19Z
+CT to Text Analysis #2025-02-13_14-31-33 (2025-02-13T14:31:44Z)
+CT Slice Analysis #2025-02-13_10-19-34 ()
+CT Analysis Error #13298852187 ()
+MorphoSource Updates #2025-02-13_02-04-52 ()
+Daily Check #2025-02-13_01-21-07 ()
 ```
 
 ## Contributing
@@ -75,4 +75,4 @@ Daily Check #2025-02-13_01-21-07		daily-2025-02-13_01-21-07	2025-02-13T01:21:19Z
 Please see our [Project Overview](docs/index.md#contributing) for guidelines on contributing to this project.
 
 ---
-Last updated: 2025-02-13 21:55:29 UTC
+Last updated: 2025-02-13 21:55:55 UTC
