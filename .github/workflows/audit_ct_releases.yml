@@ -1,0 +1,75 @@
+name: Audit CT Text Releases
+
+on:
+  workflow_dispatch:
+    inputs:
+      days_to_check:
+        description: 'Number of days to look back (max 100)'
+        required: true
+        default: '30'
+        type: string
+
+jobs:
+  audit_releases:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install Dependencies
+        run: pip install pandas requests
+
+      - name: Fetch and Analyze Releases
+        id: analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          echo "Fetching releases from the last ${{ inputs.days_to_check }} days..."
+          
+          # Create Python script inline to avoid YAML syntax issues
+          python3 -c 'import json,sys,os,requests,pandas as pd;from datetime import datetime,timedelta;token=os.environ["GITHUB_TOKEN"];headers={"Authorization":f"Bearer {token}"};days=int(os.environ["DAYS"]);end_date=datetime.now();start_date=end_date-timedelta(days=days);releases=[];page=1;while True:
+            r=requests.get(f"https://api.github.com/repos/{os.environ["GITHUB_REPOSITORY"]}/releases?per_page=100&page={page}",headers=headers);
+            if not r.ok or not r.json():break
+            batch=[];
+            for rel in r.json():
+              if not rel["tag_name"].startswith("ct_to_text_analysis-"):continue
+              created=datetime.strptime(rel["created_at"],"%Y-%m-%dT%H:%M:%SZ")
+              if created < start_date:break
+              morpho_ref=next((line for line in rel["body"].split("\n") if "morphosource-updates-" in line),"No reference found")
+              commit_hash=next((line.split()[0] for line in rel["body"].split("\n") if len(line.split()) > 0 and all(c in "0123456789abcdef" for c in line.split()[0]) and len(line.split()[0])==7),"unknown")
+              batch.append({"ct_release":rel["tag_name"],"created_at":rel["created_at"],"morphosource_ref":morpho_ref,"commit":commit_hash,"body":rel["body"]})
+            if not batch:break
+            releases.extend(batch)
+            page+=1
+          df=pd.DataFrame(releases);df["date"]=pd.to_datetime(df["created_at"]);df["hour"]=df["date"].dt.floor("H");df["morpho_date"]=df["morphosource_ref"].str.extract(r"morphosource-updates-(\d{4}-\d{2}-\d{2})");df=df.sort_values("created_at");duplicates=df[df.groupby(["morpho_date","commit"])["morpho_date"].transform("count")>1];duplicates["time_diff"]=duplicates.groupby("morpho_date")["date"].diff().dt.total_seconds();duplicates=duplicates[["ct_release","created_at","morphosource_ref","commit","time_diff"]];duplicates.to_csv("duplicate_releases.csv",index=False);print(f"\nFound {len(duplicates)} potentially duplicate releases");print("\nDuplicate releases by commit and date:");print(duplicates.groupby(["commit","morphosource_ref"]).size());print("\nTime differences between duplicates (seconds):");print(duplicates["time_diff"].describe())' \
+          env DAYS=${{ inputs.days_to_check }} GITHUB_REPOSITORY=${{ github.repository }}
+          
+          if [ -f "duplicate_releases.csv" ]; then
+            echo "Found duplicate releases. See attached CSV for details."
+            echo "has_duplicates=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No duplicate releases found."
+            echo "has_duplicates=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload Results
+        if: steps.analyze.outputs.has_duplicates == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: duplicate-releases-report
+          path: duplicate_releases.csv
+          retention-days: 90
+
+      - name: Display Summary
+        if: steps.analyze.outputs.has_duplicates == 'true'
+        run: |
+          echo "=== Duplicate Releases Report ==="
+          echo "Full details available in the artifacts section"
+          echo ""
+          echo "Preview of duplicates (showing time differences):"
+          head -n 5 duplicate_releases.csv 
