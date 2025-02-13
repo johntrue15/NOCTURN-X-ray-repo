@@ -8,10 +8,16 @@ on:
         required: true
         default: '30'
         type: string
+      delete_duplicates:
+        description: 'Delete duplicate releases (must run audit first)'
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   audit_releases:
     runs-on: ubuntu-latest
+    if: ${{ !inputs.delete_duplicates }}
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
@@ -148,4 +154,33 @@ jobs:
           echo "Full details available in the artifacts section"
           echo ""
           echo "Preview of duplicates (showing time differences):"
-          head -n 5 releases_to_delete.csv 
+          head -n 5 releases_to_delete.csv
+
+  delete_releases:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.delete_duplicates }}
+    steps:
+      - name: Download Previous Audit Results
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          name: duplicate-releases-report
+          workflow: audit_ct_releases.yml
+          path: ./audit
+          search_artifacts: true
+          if_no_artifact_found: error
+
+      - name: Delete Duplicate Releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          echo "Reading releases to delete from previous audit..."
+          while IFS=, read -r release_tag _rest; do
+            if [[ $release_tag != "ct_release" ]]; then  # Skip header
+              echo "Deleting release $release_tag..."
+              curl -X DELETE \
+                -H "Authorization: Bearer $GITHUB_TOKEN" \
+                -H "Accept: application/vnd.github.v3+json" \
+                "https://api.github.com/repos/${{ github.repository }}/releases/tags/$release_tag"
+              sleep 1  # Add small delay between deletions
+            fi
+          done < ./audit/releases_to_delete.csv 
