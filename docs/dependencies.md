@@ -23,6 +23,10 @@ This document shows the relationships between GitHub Actions workflows and their
 - `ct_to_text.yml`
   Scripts:
   - `.github/scripts/ct_to_text.py`
+  Triggers:
+  - `update_readme.yml`
+
+- `update_readme.yml`
 
 ---
 
@@ -183,6 +187,13 @@ This document shows the relationships between GitHub Actions workflows and their
 **Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/test_parquet_processor.py`
+
+### Update README (`update_readme.yml`)
+**Triggered by:**
+- `CT to Text`
+- `Combined CT Images to Text`
+- `Parse MorphoSource Data`
+**Manual trigger available**
 
 ### Workflow Monitor (`workflow-monitor.yml`)
 **Triggered by:**
