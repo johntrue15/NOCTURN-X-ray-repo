@@ -192,7 +192,7 @@ jobs:
         run: sudo apt-get install jq
 
       - name: Download Previous Audit Results
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v6
         with:
           name: duplicate-releases-report
           workflow: audit_ct_releases.yml
