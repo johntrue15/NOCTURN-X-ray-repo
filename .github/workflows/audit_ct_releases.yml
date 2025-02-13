@@ -188,12 +188,12 @@ jobs:
           
           while IFS=, read -r release_tag _rest; do
             if [[ $release_tag != "ct_release" ]]; then  # Skip header
-              echo "Processing release $release_tag..."
+              echo "Processing release '$release_tag'..."
               # Get release ID from our cached releases.json
-              release_id=$(cat releases.json | jq -r ".[] | select(.tag_name==\"$release_tag\") | .id")
+              release_id=$(jq -r --arg tag "$release_tag" '.[] | select(.tag_name==$tag) | .id' releases.json)
               
               if [[ $release_id != "" ]]; then
-                echo "Deleting release $release_tag (ID: $release_id)..."
+                echo "Deleting release '$release_tag' (ID: $release_id)..."
                 curl -X DELETE \
                   -H "Authorization: Bearer $GITHUB_TOKEN" \
                   -H "Accept: application/vnd.github.v3+json" \
@@ -201,7 +201,7 @@ jobs:
                 echo "Deleted."
                 sleep 1
               else
-                echo "Could not find release ID for $release_tag, skipping..."
+                echo "Could not find release ID for '$release_tag', skipping..."
               fi
             fi
           done < ./audit/releases_to_delete.csv 
