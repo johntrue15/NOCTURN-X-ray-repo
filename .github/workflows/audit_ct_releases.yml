@@ -54,7 +54,9 @@ jobs:
                   # Look for a line that contains just a 7-character hex string
                   line = line.strip()
                   if len(line) == 7 and all(c in "0123456789abcdef" for c in line):
+                      print(f"Found commit hash: {line}")  # Debug
                       return line
+              print(f"No commit hash found in body:\n{body}")  # Debug
               return "unknown"
           
           token=os.environ["GITHUB_TOKEN"]
@@ -72,14 +74,23 @@ jobs:
                   if not rel["tag_name"].startswith("ct_to_text_analysis-"):continue
                   created=datetime.strptime(rel["created_at"],"%Y-%m-%dT%H:%M:%SZ")
                   if created < start_date:break
+                  
+                  print(f"\nProcessing release: {rel['tag_name']}")  # Debug
+                  
                   morpho_ref=next((line for line in rel["body"].split("\n") if "morphosource-updates-" in line),"No reference found")
                   body_escaped = rel["body"].replace("\n", "\\n") if rel["body"] else ""
                   identifiers = extract_identifiers(rel["body"])
+                  commit = extract_commit_hash(rel["body"])
+                  
+                  print(f"Extracted data:")  # Debug
+                  print(f"  Commit: {commit}")
+                  print(f"  Identifiers: {identifiers}")
+                  
                   batch.append({
                       "ct_release": rel["tag_name"],
                       "created_at": rel["created_at"],
                       "morphosource_ref": morpho_ref,
-                      "commit": extract_commit_hash(rel["body"]),
+                      "commit": commit,
                       "identifiers": identifiers,
                       "release_body": body_escaped
                   })
@@ -133,6 +144,10 @@ jobs:
                           print(f"    - {dupe['ct_release']} ({dupe['created_at']})")
           else:
               print("\nNo exact duplicates found")
+          
+          # After creating dataframe
+          print("\nDataFrame contents:")  # Debug
+          print(df[["ct_release", "commit", "identifiers"]].to_string())
           EOF
 
       - name: Run Analysis
