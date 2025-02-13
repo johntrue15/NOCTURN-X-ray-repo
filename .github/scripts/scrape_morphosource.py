@@ -257,14 +257,14 @@ def main():
         new_records = current_count - old_count
         print(f"New records: {new_records}", file=sys.stderr)
 
-        if new_records > 0:
-            records_to_fetch = min(new_records, 3)
+        if new_records != 0:  # Handle both positive and negative changes
+            records_to_fetch = min(abs(new_records), 3)  # Use abs() to handle negative
             top_records = parse_top_records(n=records_to_fetch)
-            save_last_count(current_count)
+            save_last_count(current_count)  # Always save the current count
             message = format_release_message(new_records, old_count, top_records)
             write_github_output(True, message)
         else:
-            write_github_output(False, "No new records found.")
+            write_github_output(False, "No changes in record count.")
             
     except MorphoSourceTemporarilyUnavailable as e:
         print(f"Server Error: {str(e)}", file=sys.stderr)

@@ -1,0 +1,122 @@
+name: Update README
+
+on:
+  workflow_run:
+    workflows: 
+      - "Parse MorphoSource Data"
+      - "CT to Text"
+      - "Combined CT Images to Text"
+    types: [completed]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history for all releases
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Create README content
+        id: readme
+        run: |
+          cat > README.md << 'EOL'
+          # NOCTURN X-ray Repository
+
+          This repository automatically tracks and analyzes X-ray CT data from MorphoSource, providing multiple layers of analysis through automated workflows.
+
+          ## Documentation
+
+          - [Project Overview and Setup](docs/index.md) - Introduction, project structure, and getting started
+          - [Workflow Dependencies](docs/dependencies.md) - Detailed mapping of workflows and their associated scripts
+          - [Raspberry Pi Installation](docs/Raspi.md) - Guide for setting up NOCTURN on a Raspberry Pi
+
+          ## Latest Analysis Results
+
+          ### MorphoSource Updates
+          ```
+          # Get latest morphosource-updates release
+          latest_ms=$(gh release list --limit 1 | grep "morphosource-updates-" || echo "No updates found")
+          echo "$latest_ms"
+          ```
+
+          ### CT Analysis
+          ```
+          # Get latest ct_to_text release
+          latest_ct=$(gh release list --limit 10 | grep "ct_to_text_analysis-" | head -n 1 || echo "No analysis found")
+          echo "$latest_ct"
+          ```
+
+          ### CT Image Analysis
+          ```
+          # Get latest combined CT analysis
+          latest_combined=$(gh release list --limit 10 | grep "combined_ct_analysis-" | head -n 1 || echo "No analysis found")
+          echo "$latest_combined"
+          ```
+
+          ## Workflow Overview
+
+          This repository uses several automated workflows to analyze X-ray CT data. For a complete list of workflows and their dependencies, see our [Workflow Dependencies](docs/dependencies.md) documentation.
+
+          ### Main Workflows
+
+          1. **Parse MorphoSource Data** (`parse_morphosource.yml`)
+             - Runs every 5 minutes
+             - Scrapes MorphoSource for new X-ray CT records
+             - Creates releases with new record details
+             - Triggers subsequent analysis workflows
+
+          2. **CT to Text Analysis** (`ct_to_text.yml`)
+             - Triggered by MorphoSource updates
+             - Analyzes CT metadata using AI
+             - Generates detailed descriptions of specimens
+
+          3. **Combined CT Image Analysis** (`combined_ct_images_to_text.yml`)
+             - Analyzes 2D slices and 3D reconstructions
+             - Checks image URLs and captures screenshots
+             - Provides comprehensive visual analysis
+
+          ### Supporting Workflows
+
+          - **Daily Check** (`daily.yml`): Daily verification of data consistency
+          - **Monthly Collection** (`monthly.yml`): Monthly data aggregation
+          - **Error Cleanup** (`cleanup_ct_error_releases.yml`): Maintains release quality
+          - **Wiki Generation** (`wiki-generation.yml`): Updates documentation
+
+          ## Installation
+
+          For detailed installation instructions:
+          - Standard setup: See our [Project Overview](docs/index.md#installation)
+          - Raspberry Pi setup: Follow our [Raspberry Pi Guide](docs/Raspi.md#installation)
+
+          ## Recent Activity
+
+          ```
+          # Get last 5 releases of any type
+          gh release list --limit 5
+          ```
+
+          ## Contributing
+
+          Please see our [Project Overview](docs/index.md#contributing) for guidelines on contributing to this project.
+
+          ---
+          Last updated: $(date -u "+%Y-%m-%d %H:%M:%S UTC")
+          EOL
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit and push if changed
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update README with latest analysis results" && git push) 
