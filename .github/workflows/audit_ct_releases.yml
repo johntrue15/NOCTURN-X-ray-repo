@@ -77,10 +77,14 @@ jobs:
                   
                   print(f"\nProcessing release: {rel['tag_name']}")  # Debug
                   
+                  # Extract commit hash from target_commitish if available
+                  commit = rel.get("target_commitish", "unknown")
+                  if len(commit) > 7:  # If it's a full SHA, take first 7 chars
+                      commit = commit[:7]
+                  
                   morpho_ref=next((line for line in rel["body"].split("\n") if "morphosource-updates-" in line),"No reference found")
                   body_escaped = rel["body"].replace("\n", "\\n") if rel["body"] else ""
                   identifiers = extract_identifiers(rel["body"])
-                  commit = extract_commit_hash(rel["body"])
                   
                   print(f"Extracted data:")  # Debug
                   print(f"  Commit: {commit}")
