@@ -22,7 +22,7 @@ CT to Text Analysis #2025-02-13_14-31-33	Latest	ct_to_text_analysis-2025-02-13_1
 
 ### CT Image Analysis
 ```
-
+CT Slice Analysis #2025-02-13_10-19-34		ct_slice_analysis-2025-02-13_10-19-34	2025-02-13T10:25:44Z
 ```
 
 ## Workflow Overview
@@ -42,7 +42,7 @@ This repository uses several automated workflows to analyze X-ray CT data. For a
    - Analyzes CT metadata using AI
    - Generates detailed descriptions of specimens
 
-3. **Combined CT Image Analysis** (`combined_ct_images_to_text.yml`)
+3. **CT Slice Analysis** (`combined_ct_images_to_text.yml`)
    - Analyzes 2D slices and 3D reconstructions
    - Checks image URLs and captures screenshots
    - Provides comprehensive visual analysis
@@ -75,4 +75,4 @@ Daily Check #2025-02-13_01-21-07		daily-2025-02-13_01-21-07	2025-02-13T01:21:19Z
 Please see our [Project Overview](docs/index.md#contributing) for guidelines on contributing to this project.
 
 ---
-Last updated: 2025-02-13 21:49:07 UTC
+Last updated: 2025-02-13 21:55:29 UTC
