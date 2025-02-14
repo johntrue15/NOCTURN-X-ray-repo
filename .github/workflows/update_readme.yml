@@ -13,7 +13,7 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Download workflow artifact
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v6
         with:
           workflow: ${{ github.event.workflow.id }}
           run_id: ${{ github.event.workflow_run.id }}
