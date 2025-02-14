@@ -81,32 +81,34 @@ jobs:
         run: |
           # Get the morphosource release tag
           MS_TAG="${{ steps.fetch_release.outputs.release_tag }}"
-          # Extract just the date portion in YYYY-MM-DD format
-          MS_DATE=$(echo "$MS_TAG" | grep -o '[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}')
+          # Extract timestamp from the tag (assumes format morphosource-updates-YYYY-MM-DD_HH-MM-SS)
+          MS_TIMESTAMP=$(echo "$MS_TAG" | grep -o '[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}_[0-9]\{2\}-[0-9]\{2\}-[0-9]\{2\}')
+          # Convert to comparable format (remove underscores and dashes in time portion)
+          MS_COMPARE=$(echo "$MS_TIMESTAMP" | sed 's/_\([0-9]\{2\}\)-\([0-9]\{2\}\)-\([0-9]\{2\}\)/T\1:\2:\3Z/')
           
           echo "Checking for analysis of MorphoSource release: $MS_TAG"
-          echo "Date to check: $MS_DATE"
+          echo "Release timestamp: $MS_COMPARE"
           
           # Get releases and save response for debugging
           response=$(curl -sSL -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
           
           # Debug: Show all ct_to_text releases for today
-          echo "CT to Text releases found for today:"
-          echo "$response" | jq -r '.[] | 
+          echo "CT to Text releases found:"
+          echo "$response" | jq -r --arg ms_time "$MS_COMPARE" '.[] | 
             select(
               (.tag_name | startswith("ct_to_text_analysis-")) and
-              (.created_at | startswith("'"$MS_DATE"'"))
+              (.created_at >= $ms_time)
             ) | {tag_name, created_at}'
           
-          has_analysis=$(echo "$response" | jq -r "
+          has_analysis=$(echo "$response" | jq -r --arg ms_time "$MS_COMPARE" "
             [.[] | 
             select(
               (.tag_name | startswith(\"ct_to_text_analysis-\")) and
-              (.created_at | startswith(\"$MS_DATE\"))
+              (.created_at >= \$ms_time)
             )] | length")
             
-          echo "Number of matching analyses found: $has_analysis"
+          echo "Number of matching analyses found after $MS_COMPARE: $has_analysis"
           
           if [ "$has_analysis" -gt "0" ]; then
             echo "CT to Text analysis already exists for $MS_TAG"
