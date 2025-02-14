@@ -2,7 +2,6 @@ name: CT to Text
 
 on:
   workflow_run:
-    # Must match the 'name:' from your parse_morphosource_data.yml
     workflows: ["Parse MorphoSource Data"]
     types: [completed]
 
@@ -17,74 +16,70 @@ jobs:
       # -------------------------------------------------------
       - name: Check out repo
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 2  # Need at least 2 commits to check for changes
 
       # -------------------------------------------------------
-      # 2. Set up Python
+      # 2. Check for last_count.txt changes
+      # -------------------------------------------------------
+      - name: Check for MorphoSource updates
+        id: check_updates
+        run: |
+          # Get the commit SHA from the triggering workflow
+          COMMIT_SHA="${{ github.event.workflow_run.head_sha }}"
+          echo "Checking commit: $COMMIT_SHA"
+          
+          # Check if last_count.txt was modified in this commit
+          if git diff-tree --no-commit-id --name-only -r "$COMMIT_SHA" | grep -q "^last_count.txt$"; then
+            echo "last_count.txt was modified - new MorphoSource data detected"
+            echo "has_updates=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No changes to last_count.txt - skipping CT analysis"
+            echo "has_updates=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # -------------------------------------------------------
+      # 3. Set up Python (only if updates found)
       # -------------------------------------------------------
       - name: Set up Python
+        if: steps.check_updates.outputs.has_updates == 'true'
         uses: actions/setup-python@v4
         with:
           python-version: "3.9"
 
       # -------------------------------------------------------
-      # 3. Install Dependencies
+      # 4. Install Dependencies (only if updates found)
       # -------------------------------------------------------
       - name: Install Dependencies
+        if: steps.check_updates.outputs.has_updates == 'true'
         run: pip install requests beautifulsoup4 openai
 
       # -------------------------------------------------------
-      # 4. Download Previous Workflow Artifacts
+      # 5. Get Latest Release Info
       # -------------------------------------------------------
-      - name: Download workflow artifacts
-        uses: dawidd6/action-download-artifact@v6
-        id: download
-        continue-on-error: true    # Don't fail if no artifacts found
-        with:
-          workflow: "Parse MorphoSource Data"   # Use workflow name instead of ID
-          name: morphosource-data               # Specify the artifact name
-          path: ./workflow-data                 # Download to specific directory
-          
-      # -------------------------------------------------------
-      # 4b. Handle Missing Artifacts
-      # -------------------------------------------------------
-      - name: Check for downloaded artifacts
-        id: check_artifacts
-        run: |
-          if [ -d "./workflow-data" ] && [ "$(ls -A ./workflow-data)" ]; then
-            echo "artifacts_found=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "artifacts_found=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      # -------------------------------------------------------
-      # 4c. Fallback to API if no artifacts
-      # -------------------------------------------------------
-      - name: Fallback to API
-        if: steps.check_artifacts.outputs.artifacts_found != 'true'
+      - name: Get Latest Release
+        if: steps.check_updates.outputs.has_updates == 'true'
         id: fetch_release
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
           echo "Fetching the latest release from this repo..."
-          # First try to get the latest morphosource-updates release
           response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/releases?per_page=10" | \
             python3 -c 'import json,sys; releases=json.load(sys.stdin); morpho_releases=[r for r in releases if r["tag_name"].startswith("morphosource-updates-")]; print(json.dumps(morpho_releases[0] if morpho_releases else releases[0]))')
 
-          # Extract fields
           body=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['body'])")
           tag_name=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['tag_name'])")
 
           echo "Found release tag_name=$tag_name"
 
-          # Store them as outputs for subsequent steps
           echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
           echo "$body" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
           echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 5. Check if morphosource-updates
+      # 6. Check if morphosource-updates
       # -------------------------------------------------------
       - name: Check if morphosource-updates
         id: check_morpho
@@ -99,7 +94,7 @@ jobs:
           fi
 
       # -------------------------------------------------------
-      # 6. Check for existing analysis
+      # 7. Check for existing analysis
       # -------------------------------------------------------
       - name: Check for existing analysis
         id: check_analysis
@@ -144,7 +139,7 @@ jobs:
           fi
 
       # -------------------------------------------------------
-      # 7. Check Blacklist (Only if it's morphosource-updates)
+      # 8. Check Blacklist (Only if it's morphosource-updates)
       # -------------------------------------------------------
       - name: Check Blacklist
         id: check_blacklist
@@ -200,7 +195,7 @@ jobs:
           echo "is_blacklisted=false" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 8. Generate Timestamp (Only if it's morphosource-updates)
+      # 9. Generate Timestamp (Only if it's morphosource-updates)
       # -------------------------------------------------------
       - name: Generate Timestamp
         id: gen_ts
@@ -214,7 +209,7 @@ jobs:
           echo "timestamp=$TS" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 9. Run CT to Text (Only if it's morphosource-updates)
+      # 10. Run CT to Text (Only if it's morphosource-updates)
       # -------------------------------------------------------
       - name: Run CT to Text
         id: ct2text
@@ -237,7 +232,7 @@ jobs:
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 10. Create or Update Release with AI Summary
+      # 11. Create or Update Release with AI Summary
       # -------------------------------------------------------
       - name: Create or Update Release with AI Summary
         if: |
@@ -255,7 +250,7 @@ jobs:
           prerelease: false
 
       # -------------------------------------------------------
-      # 11. Log Blacklisted Release
+      # 12. Log Blacklisted Release
       # -------------------------------------------------------
       - name: Log Blacklisted Release
         if: steps.check_blacklist.outputs.is_blacklisted == 'true'
@@ -264,7 +259,7 @@ jobs:
           echo "Release tag: ${{ steps.fetch_release.outputs.release_tag }}"
 
       # -------------------------------------------------------
-      # 12. Fallback step if not morphosource-updates
+      # 13. Fallback step if not morphosource-updates
       # -------------------------------------------------------
       - name: No new morphosource release
         if: steps.check_morpho.outputs.is_morphosource == 'false'
