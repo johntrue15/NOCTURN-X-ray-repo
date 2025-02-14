@@ -80,11 +80,12 @@ jobs:
         id: check_analysis
         run: |
           # Get the morphosource release tag
-          MS_TAG="morphosource-updates-${{ github.event.workflow_run.head_commit.timestamp }}"
-          MS_DATE=$(echo "$MS_TAG" | cut -d'-' -f3-)
+          MS_TAG="${{ steps.fetch_release.outputs.release_tag }}"
+          # Extract just the date portion in YYYY-MM-DD format
+          MS_DATE=$(echo "$MS_TAG" | grep -o '[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}')
           
           echo "Checking for analysis of MorphoSource release: $MS_TAG"
-          echo "Date to check: ${MS_DATE%_*}"
+          echo "Date to check: $MS_DATE"
           
           # Get releases and save response for debugging
           response=$(curl -sSL -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
@@ -95,14 +96,14 @@ jobs:
           echo "$response" | jq -r '.[] | 
             select(
               (.tag_name | startswith("ct_to_text_analysis-")) and
-              (.created_at | startswith("${MS_DATE%_*}"))
+              (.created_at | startswith("'"$MS_DATE"'"))
             ) | {tag_name, created_at}'
           
           has_analysis=$(echo "$response" | jq -r "
             [.[] | 
             select(
               (.tag_name | startswith(\"ct_to_text_analysis-\")) and
-              (.created_at | startswith(\"${MS_DATE%_*}\"))
+              (.created_at | startswith(\"$MS_DATE\"))
             )] | length")
             
           echo "Number of matching analyses found: $has_analysis"
