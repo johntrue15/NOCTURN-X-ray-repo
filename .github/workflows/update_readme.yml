@@ -3,16 +3,17 @@ name: Update README
 on:
   workflow_run:
     workflows: 
-      - "Parse MorphoSource Data"
-      - "CT to Text Analysis"
-      - "MorphoSource Analysis Workflow"
+      - "Parse MorphoSource Data"  # Only trigger on MorphoSource updates
     types: [completed]
-  workflow_dispatch:  # Allow manual trigger
+  workflow_dispatch:  # Keep manual trigger for testing
 
 jobs:
   update-readme:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # Only run if the triggering workflow succeeded AND had new data
+    if: |
+      github.event.workflow_run.conclusion == 'success' && 
+      github.event.workflow_run.outputs.new_data == 'true'
 
     steps:
       - name: Check out repository
