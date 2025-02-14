@@ -24,8 +24,6 @@ This document shows the relationships between GitHub Actions workflows and their
   Scripts:
   - `.github/scripts/ct_to_text.py`
 
-- `update_readme.yml`
-
 ---
 
 ### Daily MorphoSource Check (`daily.yml`)
@@ -185,11 +183,6 @@ This document shows the relationships between GitHub Actions workflows and their
 **Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/test_parquet_processor.py`
-
-### Update README (`update_readme.yml`)
-**Triggered by:**
-- `Parse MorphoSource Data`
-**Manual trigger available**
 
 ### Workflow Monitor (`workflow-monitor.yml`)
 **Triggered by:**
