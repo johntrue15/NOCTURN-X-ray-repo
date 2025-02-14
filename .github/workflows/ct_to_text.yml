@@ -36,10 +36,11 @@ jobs:
           else
             echo "No changes to last_count.txt - skipping CT analysis"
             echo "has_updates=false" >> "$GITHUB_OUTPUT"
+            exit 0  # Exit early if no updates
           fi
 
       # -------------------------------------------------------
-      # 3. Set up Python (only if updates found)
+      # 3. Set up Python
       # -------------------------------------------------------
       - name: Set up Python
         if: steps.check_updates.outputs.has_updates == 'true'
@@ -48,14 +49,14 @@ jobs:
           python-version: "3.9"
 
       # -------------------------------------------------------
-      # 4. Install Dependencies (only if updates found)
+      # 4. Install Dependencies
       # -------------------------------------------------------
       - name: Install Dependencies
         if: steps.check_updates.outputs.has_updates == 'true'
         run: pip install requests beautifulsoup4 openai
 
       # -------------------------------------------------------
-      # 5. Get Latest Release Info
+      # 5. Get Latest Release
       # -------------------------------------------------------
       - name: Get Latest Release
         if: steps.check_updates.outputs.has_updates == 'true'
@@ -63,16 +64,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
-          echo "Fetching the latest release from this repo..."
+          # Get latest morphosource-updates release
           response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=10" | \
-            python3 -c 'import json,sys; releases=json.load(sys.stdin); morpho_releases=[r for r in releases if r["tag_name"].startswith("morphosource-updates-")]; print(json.dumps(morpho_releases[0] if morpho_releases else releases[0]))')
-
-          body=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['body'])")
-          tag_name=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['tag_name'])")
-
+            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=10")
+          
+          # Extract latest morphosource release
+          latest_release=$(echo "$response" | jq -r '[.[] | select(.tag_name | startswith("morphosource-updates-"))] | first')
+          
+          if [ "$latest_release" = "null" ]; then
+            echo "No morphosource-updates release found"
+            exit 1
+          fi
+          
+          # Extract body and tag
+          body=$(echo "$latest_release" | jq -r '.body')
+          tag_name=$(echo "$latest_release" | jq -r '.tag_name')
+          
           echo "Found release tag_name=$tag_name"
-
+          
+          # Store outputs
           echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
           echo "$body" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
