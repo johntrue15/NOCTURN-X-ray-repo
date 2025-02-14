@@ -242,11 +242,3 @@ jobs:
         if: steps.check_morpho.outputs.is_morphosource == 'false'
         run: echo "No 'morphosource-updates-*' release found. Skipping CT-to-text analysis."
 
-      # -------------------------------------------------------
-      # 13. Run CT to Text Analysis
-      # -------------------------------------------------------
-      - name: Run CT to Text Analysis
-        if: steps.check_analysis.outputs.has_analysis == 'false'
-        run: |
-          python .github/scripts/ct_to_text.py
-
