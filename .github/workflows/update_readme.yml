@@ -10,12 +10,29 @@ on:
 jobs:
   update-readme:
     runs-on: ubuntu-latest
-    # Only run if the triggering workflow succeeded AND had new data
-    if: |
-      github.event.workflow_run.conclusion == 'success' && 
-      github.event.workflow_run.outputs.new_data == 'true'
-
     steps:
+      - name: Download workflow artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          workflow: ${{ github.event.workflow.id }}
+          run_id: ${{ github.event.workflow_run.id }}
+          name: workflow-data
+
+      - name: Check workflow output
+        id: check-output
+        run: |
+          if [ -f "workflow-data/new_data" ]; then
+            new_data=$(cat workflow-data/new_data)
+            echo "new_data=${new_data}" >> $GITHUB_OUTPUT
+          else
+            echo "new_data=false" >> $GITHUB_OUTPUT
+          fi
+
+      # Only continue if there was new data or this is a manual trigger
+      if: |
+        github.event.workflow_run.conclusion == 'success' && 
+        (steps.check-output.outputs.new_data == 'true' || github.event_name == 'workflow_dispatch')
+
       - name: Check out repository
         uses: actions/checkout@v3
         with:
