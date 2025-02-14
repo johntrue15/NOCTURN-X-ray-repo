@@ -10,6 +10,7 @@ on:
 jobs:
   update-readme:
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Download workflow artifact
         uses: dawidd6/action-download-artifact@v2
@@ -28,15 +29,11 @@ jobs:
             echo "new_data=false" >> $GITHUB_OUTPUT
           fi
 
-      # Only continue if there was new data or this is a manual trigger
-      if: |
-        github.event.workflow_run.conclusion == 'success' && 
-        (steps.check-output.outputs.new_data == 'true' || github.event_name == 'workflow_dispatch')
-
       - name: Check out repository
+        if: steps.check-output.outputs.new_data == 'true' || github.event_name == 'workflow_dispatch'
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Fetch all history for all releases
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v4
