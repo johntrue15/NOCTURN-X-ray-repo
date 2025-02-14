@@ -33,9 +33,34 @@ jobs:
         run: pip install requests beautifulsoup4 openai
 
       # -------------------------------------------------------
-      # 4. Fetch Latest Release (multi-line safe)
+      # 4. Download Previous Workflow Artifacts
       # -------------------------------------------------------
-      - name: Fetch Latest Release
+      - name: Download workflow artifacts
+        uses: dawidd6/action-download-artifact@v6
+        id: download
+        continue-on-error: true    # Don't fail if no artifacts found
+        with:
+          workflow: "Parse MorphoSource Data"   # Use workflow name instead of ID
+          name: morphosource-data               # Specify the artifact name
+          path: ./workflow-data                 # Download to specific directory
+          
+      # -------------------------------------------------------
+      # 4b. Handle Missing Artifacts
+      # -------------------------------------------------------
+      - name: Check for downloaded artifacts
+        id: check_artifacts
+        run: |
+          if [ -d "./workflow-data" ] && [ "$(ls -A ./workflow-data)" ]; then
+            echo "artifacts_found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "artifacts_found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # -------------------------------------------------------
+      # 4c. Fallback to API if no artifacts
+      # -------------------------------------------------------
+      - name: Fallback to API
+        if: steps.check_artifacts.outputs.artifacts_found != 'true'
         id: fetch_release
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
