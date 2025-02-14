@@ -19,8 +19,6 @@ This document shows the relationships between GitHub Actions workflows and their
   - `.github/scripts/ct_image_to_text.py`
   - `.github/scripts/ct_slices_to_text.py`
   - `.github/scripts/url_screenshot_check.py`
-  Triggers:
-  - `update_readme.yml`
 
 - `ct_to_text.yml`
   Scripts:
@@ -190,8 +188,6 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ### Update README (`update_readme.yml`)
 **Triggered by:**
-- `CT to Text Analysis`
-- `MorphoSource Analysis Workflow`
 - `Parse MorphoSource Data`
 **Manual trigger available**
 
