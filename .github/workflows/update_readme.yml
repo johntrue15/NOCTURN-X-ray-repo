@@ -1,10 +1,10 @@
 name: Update README
 
 on:
-  workflow_run:
-    workflows: 
-      - "Parse MorphoSource Data"  # Only trigger on MorphoSource updates
-    types: [completed]
+  #workflow_run:
+    #workflows: 
+   #   - "Parse MorphoSource Data"  # Only trigger on MorphoSource updates
+    #types: [completed]
   workflow_dispatch:  # Keep manual trigger for testing
 
 jobs:
