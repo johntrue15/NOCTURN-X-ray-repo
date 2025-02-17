@@ -25,12 +25,13 @@ jobs:
       - name: Check for MorphoSource updates
         id: check_updates
         run: |
-          # Get the commit SHA from the triggering workflow
-          COMMIT_SHA="${{ github.event.workflow_run.head_sha }}"
-          echo "Checking commit: $COMMIT_SHA"
+          # Get the commit SHA from the completed workflow
+          HEAD_SHA="${{ github.event.workflow_run.head_sha }}"
+          BASE_SHA="${{ github.event.workflow_run.head_commit.before }}"
+          echo "Checking changes between $BASE_SHA and $HEAD_SHA"
           
-          # Check if last_count.txt was modified in this commit
-          if git diff-tree --no-commit-id --name-only -r "$COMMIT_SHA" | grep -q "^last_count.txt$"; then
+          # Check if last_count.txt was modified between these commits
+          if git fetch origin $HEAD_SHA && git diff --name-only $BASE_SHA..$HEAD_SHA | grep -q "^last_count.txt$"; then
             echo "last_count.txt was modified - new MorphoSource data detected"
             echo "has_updates=true" >> "$GITHUB_OUTPUT"
           else
