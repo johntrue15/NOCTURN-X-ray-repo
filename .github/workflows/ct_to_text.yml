@@ -42,7 +42,7 @@ jobs:
           git show --name-only $LATEST_COMMIT
           
           # Check if last_count.txt was modified in the latest commit
-          if git show --name-only $LATEST_COMMIT | grep -q "^last_count.txt$"; then
+          if git show --name-only $LATEST_COMMIT | grep -q "last_count.txt$"; then
             echo "last_count.txt was modified - new MorphoSource data detected"
             echo "has_updates=true" >> "$GITHUB_OUTPUT"
           else
