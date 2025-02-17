@@ -38,8 +38,11 @@ jobs:
           echo "Debug: Showing git log"
           git log --oneline -n 3 origin/main
           
-          # Check if last_count.txt was modified
-          if git diff --name-only $PARENT_COMMIT $LATEST_COMMIT | grep -q "^last_count.txt$"; then
+          echo "Debug: Showing changes in last commit"
+          git show --name-only $LATEST_COMMIT
+          
+          # Check if last_count.txt was modified in the latest commit
+          if git show --name-only $LATEST_COMMIT | grep -q "^last_count.txt$"; then
             echo "last_count.txt was modified - new MorphoSource data detected"
             echo "has_updates=true" >> "$GITHUB_OUTPUT"
           else
