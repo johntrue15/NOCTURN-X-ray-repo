@@ -17,7 +17,7 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@v3
         with:
-          fetch-depth: 2  # Need at least 2 commits to check for changes
+          fetch-depth: 0  # Fetch all history
 
       # -------------------------------------------------------
       # 2. Check for last_count.txt changes
@@ -25,23 +25,21 @@ jobs:
       - name: Check for MorphoSource updates
         id: check_updates
         run: |
-          # Get the commit SHA from the completed workflow
-          HEAD_SHA="${{ github.event.workflow_run.head_commit.id }}"
-          echo "Checking commit: $HEAD_SHA"
+          # Get the latest commit from the main branch
+          git fetch origin main
+          LATEST_COMMIT=$(git rev-parse origin/main)
+          echo "Latest commit on main: $LATEST_COMMIT"
           
-          # Fetch the commit and its history
-          git fetch --depth=2 origin $HEAD_SHA
-          
-          # Get the parent commit
-          PARENT_SHA=$(git rev-parse $HEAD_SHA^)
-          echo "Parent commit: $PARENT_SHA"
+          # Get its parent
+          PARENT_COMMIT=$(git rev-parse origin/main^)
+          echo "Parent commit: $PARENT_COMMIT"
           
           # Debug output
           echo "Debug: Showing git log"
-          git log --oneline -n 2
+          git log --oneline -n 3 origin/main
           
           # Check if last_count.txt was modified
-          if git diff --name-only $PARENT_SHA $HEAD_SHA | grep -q "^last_count.txt$"; then
+          if git diff --name-only $PARENT_COMMIT $LATEST_COMMIT | grep -q "^last_count.txt$"; then
             echo "last_count.txt was modified - new MorphoSource data detected"
             echo "has_updates=true" >> "$GITHUB_OUTPUT"
           else
