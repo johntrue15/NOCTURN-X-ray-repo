@@ -27,11 +27,17 @@ jobs:
         run: |
           # Get the commit SHA from the completed workflow
           HEAD_SHA="${{ github.event.workflow_run.head_sha }}"
-          BASE_SHA="${{ github.event.workflow_run.head_commit.before }}"
-          echo "Checking changes between $BASE_SHA and $HEAD_SHA"
+          echo "Checking commit: $HEAD_SHA"
           
-          # Check if last_count.txt was modified between these commits
-          if git fetch origin $HEAD_SHA && git diff --name-only $BASE_SHA..$HEAD_SHA | grep -q "^last_count.txt$"; then
+          # Fetch the commit and its history
+          git fetch --depth=2 origin $HEAD_SHA
+          
+          # Get the parent commit
+          PARENT_SHA=$(git rev-parse $HEAD_SHA^)
+          echo "Parent commit: $PARENT_SHA"
+          
+          # Check if last_count.txt was modified
+          if git diff --name-only $PARENT_SHA $HEAD_SHA | grep -q "^last_count.txt$"; then
             echo "last_count.txt was modified - new MorphoSource data detected"
             echo "has_updates=true" >> "$GITHUB_OUTPUT"
           else
