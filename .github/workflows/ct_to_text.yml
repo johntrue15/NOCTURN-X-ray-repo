@@ -151,6 +151,20 @@ jobs:
           response=$(curl -sSL -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
           
+          # Debug: Show all CT to Text releases
+          echo "=== All CT to Text releases ==="
+          echo "$response" | jq -r '.[] | select(.tag_name | startswith("ct_to_text_analysis-")) | {tag_name, created_at}'
+          echo "=============================="
+          
+          # Debug: Show releases after our timestamp
+          echo "=== CT to Text releases after $MS_COMPARE ==="
+          echo "$response" | jq -r --arg ms_time "$MS_COMPARE" '.[] | 
+            select(
+              (.tag_name | startswith("ct_to_text_analysis-")) and
+              (.created_at >= $ms_time)
+            ) | {tag_name, created_at}'
+          echo "=============================="
+          
           has_analysis=$(echo "$response" | jq -r --arg ms_time "$MS_COMPARE" "
             [.[] | 
             select(
@@ -159,6 +173,10 @@ jobs:
             )] | length")
             
           echo "Number of matching analyses found after $MS_COMPARE: $has_analysis"
+          
+          # Debug: Show the jq filter we're using
+          echo "JQ filter being used:"
+          echo '[.[] | select((.tag_name | startswith("ct_to_text_analysis-")) and (.created_at >= "'$MS_COMPARE'"))] | length'
           
           if [ "$has_analysis" -gt "0" ]; then
             echo "CT to Text analysis already exists for $MS_TAG"
