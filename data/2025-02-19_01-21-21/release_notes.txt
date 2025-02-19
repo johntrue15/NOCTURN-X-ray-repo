@@ -1,0 +1,30 @@
+# Daily Check Report
+
+## Record Changes
+Latest Record ID: 000711399
+Previous Record ID: 000710938
+
+Total Records: 105248
+Previous Records: 105235
+New Records Added: 14
+
+### New Record IDs:
+- 000711399: Postcranial [CTImageSeries] [CT]
+- 000711348: Intramandibublar Joint [Mesh] [CT]
+- 000711345: Intramandibublar Joint [CTImageSeries] [CT]
+- 000711341: Maxilla [Mesh] [CT]
+- 000711338: Maxilla [CTImageSeries] [CT]
+- 000711334: Maxilla [Mesh] [CT]
+- 000711325: Maxilla [CTImageSeries] [CT]
+- 000711236: Skeleton [CTImageSeries] [CT]
+- 000711231: Whole Body [CTImageSeries] [CT]
+- 000711227: Whole Body [CTImageSeries] [CT]
+... and 4 more
+
+## Data Comparison
+Previous records: 105235
+Current records: 105248
+Difference: 13
+
+## Attestation
+Daily Dataset: https://github.com/johntrue15/NOCTURN-X-ray-repo/attestations/5059079
