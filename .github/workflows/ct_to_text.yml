@@ -158,8 +158,17 @@ jobs:
             [.[] | 
             select(
               (.tag_name | startswith("ct_to_text_analysis-")) and
-              (.tag_name[21:] | split("_") | join("") | split("-") | join("")) >= 
-              ($ms_time | split("_") | join("") | split("-") | join(""))
+              (
+                (.tag_name[21:] | 
+                  split("_")[0] + 
+                  (split("_")[1] | split("-") | join(""))
+                ) >= 
+                (
+                  $ms_time | 
+                  split("_")[0] + 
+                  (split("_")[1] | split("-") | join(""))
+                )
+              )
             )] | length')
             
           echo "Number of matching analyses found after $MS_TIMESTAMP: $has_analysis"
@@ -169,9 +178,18 @@ jobs:
           echo "$response" | jq -r --arg ms_time "$MS_TIMESTAMP" '.[] | 
             select(
               (.tag_name | startswith("ct_to_text_analysis-")) and
-              (.tag_name[21:] | split("_") | join("") | split("-") | join("")) >= 
-              ($ms_time | split("_") | join("") | split("-") | join(""))
-            ) | {tag_name, created_at}'
+              (
+                (.tag_name[21:] | 
+                  split("_")[0] + 
+                  (split("_")[1] | split("-") | join(""))
+                ) >= 
+                (
+                  $ms_time | 
+                  split("_")[0] + 
+                  (split("_")[1] | split("-") | join(""))
+                )
+              )
+            ) | {tag_name, created_at, "converted_time": (.tag_name[21:] | split("_")[0] + (split("_")[1] | split("-") | join("")))}'
           echo "=============================="
           
           if [ "$has_analysis" -gt "0" ]; then
