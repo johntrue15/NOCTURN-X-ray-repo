@@ -162,7 +162,7 @@ jobs:
             select(
               (.tag_name | startswith("ct_to_text_analysis-")) and
               (
-                (.tag_name[21:] | gsub("[-_]"; "")) <= $ms_time
+                (.tag_name[21:] | gsub("[-_]"; "")) >= $ms_time
               )
             )] | length')
             
@@ -174,7 +174,7 @@ jobs:
             select(
               (.tag_name | startswith("ct_to_text_analysis-")) and
               (
-                (.tag_name[21:] | gsub("[-_]"; "")) <= $ms_time
+                (.tag_name[21:] | gsub("[-_]"; "")) >= $ms_time
               )
             ) | {tag_name, created_at, "converted_time": (.tag_name[21:] | gsub("[-_]"; ""))}'
           echo "=============================="
