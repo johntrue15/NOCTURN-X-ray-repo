@@ -153,17 +153,30 @@ jobs:
           echo "$response" | jq -r '.[] | select(.tag_name | startswith("ct_to_text_analysis-")) | {tag_name, created_at}'
           echo "=============================="
           
-          # Convert timestamp to comparable format (remove dashes and underscores)
+          # Convert morphosource timestamp to comparable format (remove dashes and underscores)
           MS_TIME_CLEAN=$(echo "$MS_TIMESTAMP" | tr -d '_-')
+          echo "Cleaned morphosource timestamp: $MS_TIME_CLEAN"
           
-          # Extract timestamp from tag name for comparison
+          # Debug each release's timestamp comparison
+          echo "=== Timestamp Comparisons ==="
+          echo "$response" | jq -r --arg ms_time "$MS_TIME_CLEAN" '
+            .[] | 
+            select(.tag_name | startswith("ct_to_text_analysis-")) |
+            . as $release |
+            {
+              "tag": .tag_name,
+              "timestamp": (.tag_name[21:] | gsub("[-_]"; "")),
+              "morphosource_time": $ms_time,
+              "is_after": ((.tag_name[21:] | gsub("[-_]"; "")) > $ms_time)
+            }'
+          echo "=============================="
+          
+          # Count matching analyses
           has_analysis=$(echo "$response" | jq -r --arg ms_time "$MS_TIME_CLEAN" '
             [.[] | 
             select(
               (.tag_name | startswith("ct_to_text_analysis-")) and
-              (
-                (.tag_name[21:] | gsub("[-_]"; "")) >= $ms_time
-              )
+              ((.tag_name[21:] | gsub("[-_]"; "")) > $ms_time)
             )] | length')
             
           echo "Number of matching analyses found: $has_analysis"
@@ -173,9 +186,7 @@ jobs:
           echo "$response" | jq -r --arg ms_time "$MS_TIME_CLEAN" '.[] | 
             select(
               (.tag_name | startswith("ct_to_text_analysis-")) and
-              (
-                (.tag_name[21:] | gsub("[-_]"; "")) >= $ms_time
-              )
+              ((.tag_name[21:] | gsub("[-_]"; "")) > $ms_time)
             ) | {tag_name, created_at, "converted_time": (.tag_name[21:] | gsub("[-_]"; ""))}'
           echo "=============================="
           
