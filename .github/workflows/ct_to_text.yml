@@ -1,161 +1,106 @@
-name: CT to Text
+name: CT to Text Analysis
 
 on:
-  workflow_run:
-    workflows: ["Parse MorphoSource Data"]
-    types: [completed]
+  release:
+    types: [published]
+  workflow_dispatch:
 
 jobs:
-  ct_text_job:
+  analyze_ct:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-
+    
     steps:
       # -------------------------------------------------------
-      # 1. Check out your repository
+      # 1. Checkout repository
       # -------------------------------------------------------
-      - name: Check out repo
+      - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # Fetch all history
 
       # -------------------------------------------------------
-      # 2. Check for last_count.txt changes
-      # -------------------------------------------------------
-      - name: Check for MorphoSource updates
-        id: check_updates
-        run: |
-          # Get the latest commit from the main branch
-          git fetch origin main
-          LATEST_COMMIT=$(git rev-parse origin/main)
-          echo "Latest commit on main: $LATEST_COMMIT"
-          
-          # Get its parent
-          PARENT_COMMIT=$(git rev-parse origin/main^)
-          echo "Parent commit: $PARENT_COMMIT"
-          
-          # Debug output
-          echo "Debug: Showing git log"
-          git log --oneline -n 3 origin/main
-          
-          echo "Debug: Showing changes in last commit"
-          git show --name-only $LATEST_COMMIT
-          
-          # Check if last_count.txt was modified in the latest commit
-          if git show --name-only $LATEST_COMMIT | grep -q "last_count.txt$"; then
-            echo "last_count.txt was modified - new MorphoSource data detected"
-            echo "has_updates=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "No changes to last_count.txt - skipping CT analysis"
-            echo "has_updates=false" >> "$GITHUB_OUTPUT"
-            exit 0  # Exit early if no updates
-          fi
-
-      # -------------------------------------------------------
-      # 3. Set up Python
+      # 2. Setup Python
       # -------------------------------------------------------
       - name: Set up Python
-        if: steps.check_updates.outputs.has_updates == 'true'
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: '3.10'
+          
+      # -------------------------------------------------------
+      # 3. Install Dependencies
+      # -------------------------------------------------------
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openai
 
       # -------------------------------------------------------
-      # 4. Install Dependencies
+      # 4. Get latest release
       # -------------------------------------------------------
-      - name: Install Dependencies
-        if: steps.check_updates.outputs.has_updates == 'true'
-        run: pip install requests beautifulsoup4 openai
-
-      # -------------------------------------------------------
-      # 5. Get Latest Release
-      # -------------------------------------------------------
-      - name: Get Latest Release
-        if: steps.check_updates.outputs.has_updates == 'true'
+      - name: Fetch latest release
         id: fetch_release
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Get latest morphosource-updates release
-          response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=10")
+          # Get the latest release
+          release=$(gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/releases/latest)
           
-          # Extract latest morphosource release
-          latest_release=$(echo "$response" | jq -r '[.[] | select(.tag_name | startswith("morphosource-updates-"))] | first')
-          
-          if [ "$latest_release" = "null" ]; then
-            echo "No morphosource-updates release found"
-            exit 1
-          fi
-          
-          # Extract body and tag
-          body=$(echo "$latest_release" | jq -r '.body')
-          tag_name=$(echo "$latest_release" | jq -r '.tag_name')
-          
-          echo "Found release tag_name=$tag_name"
-          
-          # Store outputs
+          # Extract and store release info
+          echo "release_tag=$(echo $release | jq -r .tag_name)" >> "$GITHUB_OUTPUT"
           echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$body" >> "$GITHUB_OUTPUT"
+          echo "$release" | jq -r .body >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
-          echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 6. Check if morphosource-updates
+      # 5. Check if it's a morphosource release
       # -------------------------------------------------------
-      - name: Check if morphosource-updates
-        if: steps.check_updates.outputs.has_updates == 'true'
+      - name: Check if morphosource release
         id: check_morpho
         run: |
-          TAG_NAME="${{ steps.fetch_release.outputs.release_tag }}"
-          echo "Found TAG_NAME=$TAG_NAME"
-
-          if [[ "$TAG_NAME" == morphosource-updates-* ]]; then
+          MS_TAG="${{ steps.fetch_release.outputs.release_tag }}"
+          if [[ "$MS_TAG" =~ ^morphosource-updates-[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}-[0-9]{2}-[0-9]{2}$ ]]; then
+            echo "Found MorphoSource release: $MS_TAG"
             echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
+            echo "ms_tag=$MS_TAG" >> "$GITHUB_OUTPUT"
           else
+            echo "Not a MorphoSource release: $MS_TAG"
             echo "is_morphosource=false" >> "$GITHUB_OUTPUT"
           fi
+
+      # -------------------------------------------------------
+      # 6. Extract timestamp if morphosource
+      # -------------------------------------------------------
+      - name: Extract morphosource timestamp
+        id: extract_ts
+        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        run: |
+          MS_TAG="${{ steps.check_morpho.outputs.ms_tag }}"
+          MS_TIME="${MS_TAG#morphosource-updates-}"
+          # Clean the timestamp to match CT analysis format
+          MS_TIME_CLEAN=$(echo "$MS_TIME" | sed 's/[-_]//g')
+          echo "MS_TIME=$MS_TIME" >> "$GITHUB_ENV"
+          echo "MS_TIME_CLEAN=$MS_TIME_CLEAN" >> "$GITHUB_ENV"
+          echo "timestamp=$MS_TIME" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
       # 7. Check for existing analysis
       # -------------------------------------------------------
       - name: Check for existing analysis
-        if: |
-          steps.check_updates.outputs.has_updates == 'true' &&
-          steps.check_morpho.outputs.is_morphosource == 'true'
         id: check_analysis
+        if: steps.check_morpho.outputs.is_morphosource == 'true'
         run: |
-          # Get the morphosource release tag
-          MS_TAG="${{ steps.fetch_release.outputs.release_tag }}"
-          if [ -z "$MS_TAG" ]; then
-            echo "No release tag found - skipping analysis check"
-            echo "has_analysis=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          # Extract timestamp from the tag
-          MS_TIMESTAMP=$(echo "$MS_TAG" | grep -o '[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}_[0-9]\{2\}-[0-9]\{2\}-[0-9]\{2\}')
-          if [ -z "$MS_TIMESTAMP" ]; then
-            echo "Invalid timestamp format in tag - skipping analysis check"
-            echo "has_analysis=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
+          # Log what we're checking for
+          echo "Checking for analysis of MorphoSource release: ${{ steps.check_morpho.outputs.ms_tag }}"
+          echo "Release timestamp: $MS_TIME"
           
-          echo "Checking for analysis of MorphoSource release: $MS_TAG"
-          echo "Release timestamp: $MS_TIMESTAMP"
-          
-          # Get releases and check for existing analysis
-          response=$(curl -sSL -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100")
-          
-          # Debug: Show all CT to Text releases
+          # Get all CT to Text releases
           echo "=== All CT to Text releases ==="
-          echo "$response" | jq -r '.[] | select(.tag_name | startswith("ct_to_text_analysis-")) | {tag_name, created_at}'
+          gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/releases | \
+          jq -r '.[] | select(.tag_name | startswith("ct_to_text_analysis-")) | { tag_name, created_at }'
           echo "=============================="
           
-          # Convert morphosource timestamp to comparable format (remove dashes and underscores)
-          MS_TIME_CLEAN=$(echo "$MS_TIMESTAMP" | tr -d '_-')
           echo "Cleaned morphosource timestamp: $MS_TIME_CLEAN"
+          
+          # Check for existing analyses after this timestamp
+          response=$(gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/releases)
           
           # Debug each release's timestamp comparison
           echo "=== Timestamp Comparisons ==="
@@ -165,24 +110,20 @@ jobs:
             . as $release |
             {
               "tag": .tag_name,
-              "timestamp": (.tag_name[21:] | if test("^\\d{4}-") then gsub("[-_]"; "") else "20" + (gsub("[-_]"; "")) end),
+              "timestamp": (.tag_name[21:] | gsub("[-_]"; "")),
               "morphosource_time": $ms_time,
-              "is_after": (
-                (.tag_name[21:] | if test("^\\d{4}-") then gsub("[-_]"; "") else "20" + (gsub("[-_]"; "")) end) > $ms_time
-              )
+              "is_after": ((.tag_name[21:] | gsub("[-_]"; "")) >= $ms_time)
             }'
           echo "=============================="
           
-          # Count matching analyses
+          # Count matching analyses with fixed comparison
           has_analysis=$(echo "$response" | jq -r --arg ms_time "$MS_TIME_CLEAN" '
             [.[] | 
             select(
               (.tag_name | startswith("ct_to_text_analysis-")) and
-              (
-                (.tag_name[21:] | if test("^\\d{4}-") then gsub("[-_]"; "") else "20" + (gsub("[-_]"; "")) end) > $ms_time
-              )
+              ((.tag_name[21:] | gsub("[-_]"; "")) >= $ms_time)
             )] | length')
-            
+          
           echo "Number of matching analyses found: $has_analysis"
           
           # Debug: Show matching releases
@@ -190,13 +131,11 @@ jobs:
           echo "$response" | jq -r --arg ms_time "$MS_TIME_CLEAN" '.[] | 
             select(
               (.tag_name | startswith("ct_to_text_analysis-")) and
-              (
-                (.tag_name[21:] | if test("^\\d{4}-") then gsub("[-_]"; "") else "20" + (gsub("[-_]"; "")) end) > $ms_time
-              )
+              ((.tag_name[21:] | gsub("[-_]"; "")) >= $ms_time)
             ) | {
               tag_name, 
-              created_at, 
-              "converted_time": (.tag_name[21:] | if test("^\\d{4}-") then gsub("[-_]"; "") else "20" + (gsub("[-_]"; "")) end)
+              created_at,
+              "timestamp": (.tag_name[21:] | gsub("[-_]"; ""))
             }'
           echo "=============================="
           
@@ -209,7 +148,7 @@ jobs:
           fi
 
       # -------------------------------------------------------
-      # 8. Check Blacklist (Only if it's morphosource-updates)
+      # 8. Check Blacklist
       # -------------------------------------------------------
       - name: Check Blacklist
         id: check_blacklist
@@ -265,7 +204,7 @@ jobs:
           echo "is_blacklisted=false" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 9. Generate Timestamp (Only if it's morphosource-updates)
+      # 9. Generate Timestamp
       # -------------------------------------------------------
       - name: Generate Timestamp
         id: gen_ts
@@ -279,7 +218,7 @@ jobs:
           echo "timestamp=$TS" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 10. Run CT to Text (Only if it's morphosource-updates)
+      # 10. Run CT to Text
       # -------------------------------------------------------
       - name: Run CT to Text
         id: ct2text
@@ -334,4 +273,3 @@ jobs:
       - name: No new morphosource release
         if: steps.check_morpho.outputs.is_morphosource == 'false'
         run: echo "No 'morphosource-updates-*' release found. Skipping CT-to-text analysis."
-
