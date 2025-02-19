@@ -165,10 +165,10 @@ jobs:
             . as $release |
             {
               "tag": .tag_name,
-              "timestamp": (.tag_name[21:] | gsub("[-_]"; "") | if test("^\\d{4}-") then . else "20" + . end),
+              "timestamp": (.tag_name[21:] | if test("^\\d{4}-") then gsub("[-_]"; "") else "20" + (gsub("[-_]"; "")) end),
               "morphosource_time": $ms_time,
               "is_after": (
-                (.tag_name[21:] | gsub("[-_]"; "") | if test("^\\d{4}-") then . else "20" + . end) > $ms_time
+                (.tag_name[21:] | if test("^\\d{4}-") then gsub("[-_]"; "") else "20" + (gsub("[-_]"; "")) end) > $ms_time
               )
             }'
           echo "=============================="
@@ -179,7 +179,7 @@ jobs:
             select(
               (.tag_name | startswith("ct_to_text_analysis-")) and
               (
-                (.tag_name[21:] | gsub("[-_]"; "") | if test("^\\d{4}-") then . else "20" + . end) > $ms_time
+                (.tag_name[21:] | if test("^\\d{4}-") then gsub("[-_]"; "") else "20" + (gsub("[-_]"; "")) end) > $ms_time
               )
             )] | length')
             
@@ -191,12 +191,12 @@ jobs:
             select(
               (.tag_name | startswith("ct_to_text_analysis-")) and
               (
-                (.tag_name[21:] | gsub("[-_]"; "") | if test("^\\d{4}-") then . else "20" + . end) > $ms_time
+                (.tag_name[21:] | if test("^\\d{4}-") then gsub("[-_]"; "") else "20" + (gsub("[-_]"; "")) end) > $ms_time
               )
             ) | {
               tag_name, 
               created_at, 
-              "converted_time": (.tag_name[21:] | gsub("[-_]"; "") | if test("^\\d{4}-") then . else "20" + . end)
+              "converted_time": (.tag_name[21:] | if test("^\\d{4}-") then gsub("[-_]"; "") else "20" + (gsub("[-_]"; "")) end)
             }'
           echo "=============================="
           
