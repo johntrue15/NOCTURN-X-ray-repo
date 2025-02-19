@@ -8,6 +8,8 @@ on:
 jobs:
   analyze_ct:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     
     steps:
       # -------------------------------------------------------
@@ -38,7 +40,7 @@ jobs:
       - name: Fetch latest release
         id: fetch_release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           # Get the latest release
           release=$(gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/releases/latest)
@@ -86,6 +88,8 @@ jobs:
       - name: Check for existing analysis
         id: check_analysis
         if: steps.check_morpho.outputs.is_morphosource == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           # Log what we're checking for
           echo "Checking for analysis of MorphoSource release: ${{ steps.check_morpho.outputs.ms_tag }}"
@@ -248,9 +252,9 @@ jobs:
           steps.check_morpho.outputs.is_morphosource == 'true' &&
           steps.check_analysis.outputs.has_analysis != 'true' &&
           steps.check_blacklist.outputs.is_blacklisted != 'true'
-        uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+        uses: actions/create-release@v1
         with:
           tag_name: "ct_to_text_analysis-${{ steps.gen_ts.outputs.timestamp }}"
           release_name: "CT to Text Analysis #${{ steps.gen_ts.outputs.timestamp }}"
