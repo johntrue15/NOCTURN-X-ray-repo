@@ -153,43 +153,30 @@ jobs:
           echo "$response" | jq -r '.[] | select(.tag_name | startswith("ct_to_text_analysis-")) | {tag_name, created_at}'
           echo "=============================="
           
+          # Convert timestamp to comparable format (remove dashes and underscores)
+          MS_TIME_CLEAN=$(echo "$MS_TIMESTAMP" | tr -d '_-')
+          
           # Extract timestamp from tag name for comparison
-          has_analysis=$(echo "$response" | jq -r --arg ms_time "$MS_TIMESTAMP" '
+          has_analysis=$(echo "$response" | jq -r --arg ms_time "$MS_TIME_CLEAN" '
             [.[] | 
             select(
               (.tag_name | startswith("ct_to_text_analysis-")) and
               (
-                (.tag_name[21:] | 
-                  split("_")[0] + 
-                  (split("_")[1] | split("-") | join(""))
-                ) >= 
-                (
-                  $ms_time | 
-                  split("_")[0] + 
-                  (split("_")[1] | split("-") | join(""))
-                )
+                (.tag_name[21:] | gsub("[-_]"; "")) <= $ms_time
               )
             )] | length')
             
-          echo "Number of matching analyses found after $MS_TIMESTAMP: $has_analysis"
+          echo "Number of matching analyses found: $has_analysis"
           
           # Debug: Show matching releases
           echo "=== Matching CT to Text releases ==="
-          echo "$response" | jq -r --arg ms_time "$MS_TIMESTAMP" '.[] | 
+          echo "$response" | jq -r --arg ms_time "$MS_TIME_CLEAN" '.[] | 
             select(
               (.tag_name | startswith("ct_to_text_analysis-")) and
               (
-                (.tag_name[21:] | 
-                  split("_")[0] + 
-                  (split("_")[1] | split("-") | join(""))
-                ) >= 
-                (
-                  $ms_time | 
-                  split("_")[0] + 
-                  (split("_")[1] | split("-") | join(""))
-                )
+                (.tag_name[21:] | gsub("[-_]"; "")) <= $ms_time
               )
-            ) | {tag_name, created_at, "converted_time": (.tag_name[21:] | split("_")[0] + (split("_")[1] | split("-") | join("")))}'
+            ) | {tag_name, created_at, "converted_time": (.tag_name[21:] | gsub("[-_]"; ""))}'
           echo "=============================="
           
           if [ "$has_analysis" -gt "0" ]; then
