@@ -165,11 +165,9 @@ jobs:
             . as $release |
             {
               "tag": .tag_name,
-              "timestamp": (.tag_name[21:] | gsub("[-_]"; "") | if startswith("02") then "20" + .[2:] else . end),
+              "timestamp": (.tag_name[21:] | gsub("[-_]"; "")),
               "morphosource_time": $ms_time,
-              "is_after": (
-                (.tag_name[21:] | gsub("[-_]"; "") | if startswith("02") then "20" + .[2:] else . end) > $ms_time
-              )
+              "is_after": ((.tag_name[21:] | gsub("[-_]"; "")) > $ms_time)
             }'
           echo "=============================="
           
@@ -178,9 +176,7 @@ jobs:
             [.[] | 
             select(
               (.tag_name | startswith("ct_to_text_analysis-")) and
-              (
-                (.tag_name[21:] | gsub("[-_]"; "") | if startswith("02") then "20" + .[2:] else . end) > $ms_time
-              )
+              ((.tag_name[21:] | gsub("[-_]"; "")) > $ms_time)
             )] | length')
             
           echo "Number of matching analyses found: $has_analysis"
