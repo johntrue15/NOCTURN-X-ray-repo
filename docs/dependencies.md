@@ -24,6 +24,16 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ---
 
+### Check Modified MorphoSource Records (`modified_morphosource.yml`)
+
+**Schedule:** Cron: */10 * * * *
+
+**Required Scripts:**
+- `.github/scripts/check_modified_morphosource.py`
+
+
+---
+
 ### Daily MorphoSource Check (`daily.yml`)
 
 **Schedule:** Daily at midnight
@@ -214,6 +224,10 @@ This section shows which workflows use each script:
 ### analyze_dependencies.py
 **Used in Workflows:**
 - `analyze_dependencies.yml`
+
+### check_modified_morphosource.py
+**Used in Workflows:**
+- `modified_morphosource.yml`
 
 ### ct_image_to_text.py
 **Used in Workflows:**
