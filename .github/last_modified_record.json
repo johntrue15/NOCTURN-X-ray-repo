@@ -1,12 +1,14 @@
 {
-  "title": "Mnhn Cu P3115",
-  "detail_url": "https://www.morphosource.org/concern/media/000713521?locale=en",
-  "id": "000713521",
-  "Object": "uf:uf",
-  "Taxonomy": "Crocodilia indet.",
-  "Element or Part": "tooth",
+  "title": "Humerus [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000661240?locale=en",
+  "id": "000661240",
+  "Object": "ouvc:12503",
+  "Taxonomy": "Meleagris gallopavo",
+  "Element or Part": "humerus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Mitchell Riegler",
-  "Date Uploaded": "02/26/2025",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Joseph Groenke",
+  "Date Uploaded": "09/06/2024",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC-ND Attribution-NonCommercial-NoDerivs 4.0 International"
 }
