@@ -1,8 +1,12 @@
 name: Check Modified MorphoSource Records
 
 on:
+  workflow_run:
+    workflows: 
+      - "Parse MorphoSource Data"  # Trigger after Parse MorphoSource completes
+    types: [completed]
   schedule:
-    # Runs every 10 minutes (adjust as needed)
+    # Also run on schedule as a backup
     - cron: "*/10 * * * *"
   workflow_dispatch:  # Allow manual triggering for testing
 
@@ -12,6 +16,7 @@ permissions:
 jobs:
   check_modified_records:
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Check out repository
@@ -29,12 +34,102 @@ jobs:
       - name: Install dependencies
         run: pip install requests beautifulsoup4
 
+      - name: Check for recent MorphoSource releases
+        id: check_recent
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if there was a recent MorphoSource release in the last 5 minutes
+          CURRENT_TIME=$(date +%s)
+          RECENT_RELEASE=$(gh release list --limit 5 | grep "morphosource-updates-" | head -n 1)
+          
+          if [ -n "$RECENT_RELEASE" ]; then
+            echo "Found recent MorphoSource release: $RECENT_RELEASE"
+            
+            # Extract the timestamp from the release tag
+            RELEASE_TAG=$(echo "$RECENT_RELEASE" | cut -f3)
+            RELEASE_TIME=$(echo "$RELEASE_TAG" | sed 's/morphosource-updates-//' | sed 's/_/-/g' | sed 's/-/:/5' | sed 's/-/:/4')
+            
+            # Convert to timestamp for comparison
+            RELEASE_TIMESTAMP=$(date -d "$RELEASE_TIME" +%s 2>/dev/null || echo "0")
+            
+            # Calculate time difference in seconds
+            TIME_DIFF=$((CURRENT_TIME - RELEASE_TIMESTAMP))
+            echo "Time difference: $TIME_DIFF seconds"
+            
+            # If release was within the last 5 minutes (300 seconds), we'll check if it's the same record
+            if [ $TIME_DIFF -lt 300 ]; then
+              echo "skip_check=true" >> $GITHUB_OUTPUT
+              echo "recent_release=$RELEASE_TAG" >> $GITHUB_OUTPUT
+              echo "Recent MorphoSource release detected, will check if it's the same record"
+            else
+              echo "skip_check=false" >> $GITHUB_OUTPUT
+              echo "No recent MorphoSource release detected within the last 5 minutes"
+            fi
+          else
+            echo "skip_check=false" >> $GITHUB_OUTPUT
+            echo "No recent MorphoSource releases found"
+          fi
+
       - name: Run Modified Records Checker
         id: checker
+        if: steps.check_recent.outputs.skip_check != 'true'
         run: python .github/scripts/check_modified_morphosource.py
 
+      - name: Compare with recent MorphoSource release
+        id: compare
+        if: steps.check_recent.outputs.skip_check == 'true' && steps.check_recent.outputs.recent_release != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the most recently modified record
+          python -c "
+          import sys, json, os
+          sys.path.append('.github/scripts')
+          from check_modified_morphosource import get_top_modified_record, load_last_modified_record, save_last_modified_record, format_release_message, write_github_output
+          
+          try:
+              # Get current record from MorphoSource
+              current_record = get_top_modified_record()
+              print(f'Current top modified record: {current_record.get(\"title\")}', file=sys.stderr)
+              
+              # Load previous record
+              last_record = load_last_modified_record()
+              
+              # Get recent release info
+              import subprocess
+              recent_tag = '${{ steps.check_recent.outputs.recent_release }}'
+              release_info = subprocess.check_output(['gh', 'release', 'view', recent_tag, '--json', 'body'], text=True)
+              import json
+              release_body = json.loads(release_info)['body']
+              
+              # Check if the current modified record is in the recent release
+              record_id = current_record.get('id', '')
+              record_title = current_record.get('title', '')
+              
+              if record_id in release_body or record_title in release_body:
+                  print('The modified record is the same as in the recent release, skipping', file=sys.stderr)
+                  write_github_output(False, 'The modified record is the same as in the recent release')
+                  
+                  # Still update our last_modified_record.json if needed
+                  if last_record is None or current_record.get('id') != last_record.get('id'):
+                      save_last_modified_record(current_record)
+              elif last_record is None or current_record.get('id') != last_record.get('id'):
+                  print('New modified record detected that is different from the recent release', file=sys.stderr)
+                  save_last_modified_record(current_record)
+                  message = format_release_message(current_record, is_new=True)
+                  write_github_output(True, message)
+              else:
+                  print('No changes in the most recently modified record', file=sys.stderr)
+                  write_github_output(False, 'No changes in the most recently modified record')
+                  
+          except Exception as e:
+              print(f'Error in comparison: {str(e)}', file=sys.stderr)
+              write_github_output(False, f'Error: {str(e)}')
+          "
+
       - name: Commit updated last_modified_record.json
-        if: steps.checker.outputs.is_modified == 'true'
+        if: (steps.checker.outputs.is_modified == 'true' || steps.compare.outputs.is_modified == 'true')
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
@@ -49,20 +144,20 @@ jobs:
 
       - name: Generate Timestamp
         id: gen_ts
-        if: steps.checker.outputs.is_modified == 'true'
+        if: (steps.checker.outputs.is_modified == 'true' || steps.compare.outputs.is_modified == 'true')
         run: |
           # Format: YYYY-MM-DD_HH-MM-SS
           TS=$(date +'%Y-%m-%d_%H-%M-%S')
           echo "timestamp=$TS" >> $GITHUB_OUTPUT
 
       - name: Create Release for Modified Record
-        if: steps.checker.outputs.is_modified == 'true'
+        if: (steps.checker.outputs.is_modified == 'true' || steps.compare.outputs.is_modified == 'true')
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: morphosource-modified-${{ steps.gen_ts.outputs.timestamp }}
           release_name: "MorphoSource Modified Record #${{ steps.gen_ts.outputs.timestamp }}"
-          body: ${{ steps.checker.outputs.details }}
+          body: ${{ steps.checker.outputs.details || steps.compare.outputs.details }}
           draft: false
           prerelease: false 
