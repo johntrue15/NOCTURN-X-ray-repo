@@ -221,6 +221,12 @@ jobs:
         with:
           name: ms-tag
 
+      - name: Debug MorphoSource tag
+        run: |
+          echo "Content of ms_tag.txt:"
+          cat ms_tag.txt || echo "File not found"
+          ls -la
+
       - name: Wait for CT analysis
         run: |
           # Wait for CT analysis to complete (30-60 seconds)
@@ -261,8 +267,81 @@ jobs:
           ms_info=$(get_release_info "$ms_tag")
           ct_info=$(get_release_info "$latest_ct_tag")
           
-          # Update README with CT analysis
-          sed -i '/### CT Analysis/,/### CT Slice Analysis/c\### CT Analysis\n'"$ct_info"'\n\n### CT Slice Analysis\n```\nWaiting for CT slice analysis to complete...\n```' README.md
+          # Instead of using sed, recreate the entire README
+          cat > README.md << EOL
+          # NOCTURN X-ray Repository
+
+          This repository automatically tracks and analyzes X-ray CT data from MorphoSource, providing multiple layers of analysis through automated workflows.
+
+          ## Documentation
+
+          - [Project Overview and Setup](docs/index.md) - Introduction, project structure, and getting started
+          - [Workflow Dependencies](docs/dependencies.md) - Detailed mapping of workflows and their associated scripts
+          - [Raspberry Pi Installation](docs/Raspi.md) - Guide for setting up NOCTURN on a Raspberry Pi
+
+          ## Latest Analysis Results
+
+          ### MorphoSource Updates
+          ${ms_info}
+
+          ### CT Analysis
+          ${ct_info}
+
+          ### CT Slice Analysis
+          \`\`\`
+          Waiting for CT slice analysis to complete...
+          \`\`\`
+
+          ## Workflow Overview
+
+          This repository uses several automated workflows to analyze X-ray CT data. For a complete list of workflows and their dependencies, see our [Workflow Dependencies](docs/dependencies.md) documentation.
+
+          ### Main Workflows
+
+          1. **Parse MorphoSource Data** (\`parse_morphosource.yml\`)
+             - Runs every 5 minutes
+             - Scrapes MorphoSource for new X-ray CT records
+             - Creates releases with new record details
+             - Triggers subsequent analysis workflows
+
+          2. **CT to Text Analysis** (\`ct_to_text.yml\`)
+             - Triggered by MorphoSource updates
+             - Analyzes CT metadata using AI
+             - Generates detailed descriptions of specimens
+
+          3. **CT Slice Analysis** (\`combined_ct_images_to_text.yml\`)
+             - Analyzes 2D slices and 3D reconstructions
+             - Checks image URLs and captures screenshots
+             - Provides comprehensive visual analysis
+
+          ### Supporting Workflows
+
+          - **Daily Check** (\`daily.yml\`): Daily verification of data consistency
+          - **Monthly Collection** (\`monthly.yml\`): Monthly data aggregation
+          - **Error Cleanup** (\`cleanup_ct_error_releases.yml\`): Maintains release quality
+          - **Wiki Generation** (\`wiki-generation.yml\`): Updates documentation
+
+          ## Installation
+
+          For detailed installation instructions:
+          - Standard setup: See our [Project Overview](docs/index.md#installation)
+          - Raspberry Pi setup: Follow our [Raspberry Pi Guide](docs/Raspi.md#installation)
+
+          ## Recent Activity
+
+          \`\`\`
+          $(gh release list --limit 5 | while IFS=$'\t' read -r title status tag date; do
+            printf "%s (%s)\\n" "$title" "$date"
+          done || echo "No recent activity")
+          \`\`\`
+
+          ## Contributing
+
+          Please see our [Project Overview](docs/index.md#contributing) for guidelines on contributing to this project.
+
+          ---
+          Last updated: $(date -u "+%Y-%m-%d %H:%M:%S UTC")
+          EOL
           
           # Commit and push changes
           git config --local user.email "action@github.com"
@@ -290,6 +369,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ms-tag
+
+      - name: Debug MorphoSource tag
+        run: |
+          echo "Content of ms_tag.txt:"
+          cat ms_tag.txt || echo "File not found"
+          ls -la
 
       - name: Wait for CT slice analysis
         run: |
