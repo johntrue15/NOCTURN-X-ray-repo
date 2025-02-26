@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
     outputs:
-      should_update: ${{ steps.check-update.outputs.last_count_updated }}
+      should_update: ${{ steps.check-update.outputs.last_count_updated || steps.manual-trigger.outputs.last_count_updated }}
       ms_tag: ${{ steps.get-latest-tags.outputs.ms_tag }}
     steps:
       - name: Check out repository
@@ -40,13 +40,14 @@ jobs:
           fi
       
       - name: Set update flag for manual trigger
+        id: manual-trigger
         if: github.event_name == 'workflow_dispatch'
         run: |
           echo "last_count_updated=true" >> $GITHUB_OUTPUT
+          echo "Manual trigger detected, setting update flag to true"
       
       - name: Get latest MorphoSource tag
         id: get-latest-tags
-        if: github.event_name == 'workflow_dispatch' || steps.check-update.outputs.last_count_updated == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -54,12 +55,21 @@ jobs:
           latest_ms_tag=$(gh release list --limit 10 | grep "morphosource-updates-" | head -n 1 | cut -f3 || echo "")
           echo "ms_tag=$latest_ms_tag" >> $GITHUB_OUTPUT
           echo "Latest MorphoSource tag: $latest_ms_tag"
+      
+      - name: Debug outputs
+        run: |
+          echo "Should update: ${{ steps.check-update.outputs.last_count_updated || steps.manual-trigger.outputs.last_count_updated }}"
+          echo "MS tag: ${{ steps.get-latest-tags.outputs.ms_tag }}"
 
   update-readme-morphosource:
     needs: check-updates
     if: needs.check-updates.outputs.should_update == 'true'
     runs-on: ubuntu-latest
     steps:
+      - name: Debug inputs
+        run: |
+          echo "Should update from previous job: ${{ needs.check-updates.outputs.should_update }}"
+          echo "MS tag from previous job: ${{ needs.check-updates.outputs.ms_tag }}"
       - name: Check out repository
         uses: actions/checkout@v3
         with:
@@ -193,8 +203,14 @@ jobs:
 
   update-readme-ct-analysis:
     needs: [check-updates, update-readme-morphosource]
+    if: needs.check-updates.outputs.should_update == 'true'
     runs-on: ubuntu-latest
     steps:
+      - name: Debug inputs
+        run: |
+          echo "Should update from check-updates job: ${{ needs.check-updates.outputs.should_update }}"
+          echo "MS tag from check-updates job: ${{ needs.check-updates.outputs.ms_tag }}"
+
       - name: Check out repository
         uses: actions/checkout@v3
         with:
@@ -257,8 +273,14 @@ jobs:
 
   update-readme-ct-slice-analysis:
     needs: [check-updates, update-readme-morphosource, update-readme-ct-analysis]
+    if: needs.check-updates.outputs.should_update == 'true'
     runs-on: ubuntu-latest
     steps:
+      - name: Debug inputs
+        run: |
+          echo "Should update from check-updates job: ${{ needs.check-updates.outputs.should_update }}"
+          echo "MS tag from check-updates job: ${{ needs.check-updates.outputs.ms_tag }}"
+
       - name: Check out repository
         uses: actions/checkout@v3
         with:
