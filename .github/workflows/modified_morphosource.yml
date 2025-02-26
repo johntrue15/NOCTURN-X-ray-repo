@@ -43,19 +43,55 @@ jobs:
           if [ -n "$RECENT_RELEASE" ]; then
             echo "Found recent MorphoSource release: $RECENT_RELEASE"
             
-            # Extract the timestamp from the release tag
-            RELEASE_TAG=$(echo "$RECENT_RELEASE" | cut -f3)
-            RELEASE_TIME=$(echo "$RELEASE_TAG" | sed 's/morphosource-updates-//' | sed 's/_/-/g' | sed 's/-/:/5' | sed 's/-/:/4')
+            # Extract the release date directly from the GitHub CLI output
+            # The format is typically: title status tag date
+            RELEASE_DATE=$(echo "$RECENT_RELEASE" | awk '{print $NF}')
+            echo "Release date from GitHub: $RELEASE_DATE"
             
-            # Convert to timestamp for comparison
-            RELEASE_TIMESTAMP=$(date -d "$RELEASE_TIME" +%s 2>/dev/null || echo "0")
+            # Extract the tag from the release info
+            RELEASE_TAG=$(echo "$RECENT_RELEASE" | awk '{print $3}')
+            echo "Release tag: $RELEASE_TAG"
+            
+            # Convert the ISO 8601 date to timestamp
+            if [[ "$OSTYPE" == "darwin"* ]]; then
+              # macOS date command
+              RELEASE_TIMESTAMP=$(date -j -f "%Y-%m-%dT%H:%M:%SZ" "$RELEASE_DATE" +%s 2>/dev/null || echo "0")
+            else
+              # Linux date command
+              RELEASE_TIMESTAMP=$(date -d "$RELEASE_DATE" +%s 2>/dev/null || echo "0")
+            fi
+            
+            # If the timestamp conversion failed, try to extract it from the tag
+            if [ "$RELEASE_TIMESTAMP" = "0" ]; then
+              echo "Date conversion failed, trying to extract from tag..."
+              # Extract timestamp from tag (format: morphosource-updates-YYYY-MM-DD_HH-MM-SS)
+              TAG_DATE=$(echo "$RELEASE_TAG" | sed 's/morphosource-updates-//')
+              # Convert to a format that date can understand
+              FORMATTED_DATE=$(echo "$TAG_DATE" | sed 's/_/ /' | sed 's/-/:/5' | sed 's/-/:/4')
+              
+              if [[ "$OSTYPE" == "darwin"* ]]; then
+                # macOS date command
+                RELEASE_TIMESTAMP=$(date -j -f "%Y-%m-%d %H:%M:%S" "$FORMATTED_DATE" +%s 2>/dev/null || echo "0")
+              else
+                # Linux date command
+                RELEASE_TIMESTAMP=$(date -d "$FORMATTED_DATE" +%s 2>/dev/null || echo "0")
+              fi
+              echo "Timestamp from tag: $RELEASE_TIMESTAMP"
+            fi
+            
+            echo "Current timestamp: $CURRENT_TIME"
+            echo "Release timestamp: $RELEASE_TIMESTAMP"
             
             # Calculate time difference in seconds
             TIME_DIFF=$((CURRENT_TIME - RELEASE_TIMESTAMP))
             echo "Time difference: $TIME_DIFF seconds"
             
             # If release was within the last 5 minutes (300 seconds), we'll check if it's the same record
-            if [ $TIME_DIFF -lt 300 ]; then
+            if [ $TIME_DIFF -lt 300 ] || [ "$RELEASE_TIMESTAMP" = "0" ]; then
+              # If timestamp is 0, both methods failed, so we'll assume it's recent as a safety measure
+              if [ "$RELEASE_TIMESTAMP" = "0" ]; then
+                echo "WARNING: Could not determine release timestamp. Assuming it's recent as a precaution."
+              fi
               echo "skip_check=true" >> $GITHUB_OUTPUT
               echo "recent_release=$RELEASE_TAG" >> $GITHUB_OUTPUT
               echo "Recent MorphoSource release detected, will check if it's the same record"
