@@ -244,10 +244,16 @@ jobs:
           ls -la
 
       - name: Wait for CT analysis
+        if: github.event_name != 'workflow_dispatch'
         run: |
           # Wait for CT analysis to complete (30-60 seconds)
           echo "Waiting 60 seconds for CT analysis to complete..."
           sleep 60
+      
+      - name: Skip waiting (manual trigger)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "Manual trigger detected, skipping wait period"
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -393,10 +399,16 @@ jobs:
           ls -la
 
       - name: Wait for CT slice analysis
+        if: github.event_name != 'workflow_dispatch'
         run: |
           # Wait for CT slice analysis to complete (may take longer)
           echo "Waiting 2 minutes for CT slice analysis to complete..."
           sleep 120
+      
+      - name: Skip waiting (manual trigger)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "Manual trigger detected, skipping wait period"
 
       - name: Set up Python
         uses: actions/setup-python@v4
