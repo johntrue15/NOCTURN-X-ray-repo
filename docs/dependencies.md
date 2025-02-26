@@ -20,10 +20,6 @@ This document shows the relationships between GitHub Actions workflows and their
   - `.github/scripts/ct_slices_to_text.py`
   - `.github/scripts/url_screenshot_check.py`
 
-- `ct_to_text.yml`
-  Scripts:
-  - `.github/scripts/ct_to_text.py`
-
 ---
 
 ### Daily MorphoSource Check (`daily.yml`)
@@ -100,9 +96,8 @@ This document shows the relationships between GitHub Actions workflows and their
 - `.github/scripts/ct_slices_to_text.py`
 - `.github/scripts/url_screenshot_check.py`
 
-### CT to Text (`ct_to_text.yml`)
-**Triggered by:**
-- `Parse MorphoSource Data`
+### CT to Text Analysis (`ct_to_text.yml`)
+**Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/ct_to_text.py`
 
