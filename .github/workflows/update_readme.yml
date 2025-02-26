@@ -19,7 +19,29 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          
+          ref: main  # Explicitly checkout the main branch
+      
+      - name: List files to verify checkout
+        run: |
+          echo "Listing repository files:"
+          ls -la
+          echo "Checking for last_count.txt:"
+          if [ -f "last_count.txt" ]; then
+            echo "last_count.txt exists"
+            cat last_count.txt
+          else
+            echo "last_count.txt does not exist"
+            # Try to fetch the latest changes
+            git fetch origin main
+            git checkout origin/main -- last_count.txt || true
+            if [ -f "last_count.txt" ]; then
+              echo "Successfully retrieved last_count.txt from origin/main"
+              cat last_count.txt
+            else
+              echo "Could not retrieve last_count.txt"
+            fi
+          fi
+      
       - name: Check if last_count.txt was updated
         id: check-update
         if: github.event_name == 'workflow_run'
