@@ -2,10 +2,10 @@ name: Analyze Workflow Dependencies
 
 on:
   workflow_dispatch:  # Manual trigger
-  #push:
-    #paths:
-    #  - '.github/workflows/**'
-    #  - '.github/scripts/**'
+  push:
+    paths:
+      - '.github/workflows/**'
+      - '.github/scripts/**'
 
 jobs:
   analyze:
