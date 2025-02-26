@@ -205,7 +205,12 @@ jobs:
           git config --local user.name "GitHub Action"
           git add README.md
           git commit -m "Update README with MorphoSource analysis results" || true
-          git pull --rebase origin main || true
+          
+          # Instead of rebasing (which can cause conflicts), fetch and reset to origin/main first
+          git fetch origin main
+          git reset --soft origin/main
+          git add README.md
+          git commit -m "Update README with MorphoSource analysis results" || true
           git push || true
           
           # Store the MorphoSource tag for subsequent jobs
@@ -371,7 +376,12 @@ jobs:
           git config --local user.name "GitHub Action"
           git add README.md
           git commit -m "Update README with CT analysis results" || true
-          git pull --rebase origin main || true
+          
+          # Instead of rebasing (which can cause conflicts), fetch and reset to origin/main first
+          git fetch origin main
+          git reset --soft origin/main
+          git add README.md
+          git commit -m "Update README with CT analysis results" || true
           git push || true
 
   update-readme-ct-slice-analysis:
@@ -536,4 +546,13 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add README.md
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Update README with all analysis results" && git pull --rebase origin main && git push || (git pull --rebase origin main && git push))
+          
+          # Only commit if there are changes
+          if ! git diff --quiet || ! git diff --staged --quiet; then
+            # Instead of rebasing (which can cause conflicts), fetch and reset to origin/main first
+            git fetch origin main
+            git reset --soft origin/main
+            git add README.md
+            git commit -m "Update README with all analysis results" || true
+            git push || true
+          fi
