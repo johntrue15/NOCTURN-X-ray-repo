@@ -1,14 +1,12 @@
 {
-  "title": "Humerus [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000661240?locale=en",
-  "id": "000661240",
-  "Object": "ouvc:12503",
-  "Taxonomy": "Meleagris gallopavo",
-  "Element or Part": "humerus",
+  "title": "Mnhnsd Fos 23.1323",
+  "detail_url": "https://www.morphosource.org/concern/media/000713502?locale=en",
+  "id": "000713502",
+  "Object": "uf:uf",
+  "Taxonomy": "Crocodilia indet.",
+  "Element or Part": "Cervical vertebra",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Joseph Groenke",
-  "Date Uploaded": "09/06/2024",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC-ND Attribution-NonCommercial-NoDerivs 4.0 International"
+  "Data Manager": "Mitchell Riegler",
+  "Date Uploaded": "02/26/2025",
+  "Publication Status": "Restricted Download"
 }
