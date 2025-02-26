@@ -1,12 +1,12 @@
 {
-  "title": "Mnhnsd Fos 23.1323",
-  "detail_url": "https://www.morphosource.org/concern/media/000713502?locale=en",
-  "id": "000713502",
-  "Object": "uf:uf",
+  "title": "Mnhncu P3035",
+  "detail_url": "https://www.morphosource.org/concern/media/000713515?locale=en",
+  "id": "000713515",
+  "Object": "uf:uf/tro",
   "Taxonomy": "Crocodilia indet.",
-  "Element or Part": "Cervical vertebra",
+  "Element or Part": "tooth",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Mitchell Riegler",
   "Date Uploaded": "02/26/2025",
-  "Publication Status": "Restricted Download"
+  "Publication Status": "Open Download"
 }
