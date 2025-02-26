@@ -1,0 +1,68 @@
+name: Check Modified MorphoSource Records
+
+on:
+  schedule:
+    # Runs every 10 minutes (adjust as needed)
+    - cron: "*/10 * * * *"
+  workflow_dispatch:  # Allow manual triggering for testing
+
+permissions:
+  contents: write
+
+jobs:
+  check_modified_records:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+          ref: main  # Explicitly checkout the main branch
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run Modified Records Checker
+        id: checker
+        run: python .github/scripts/check_modified_morphosource.py
+
+      - name: Commit updated last_modified_record.json
+        if: steps.checker.outputs.is_modified == 'true'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .github/last_modified_record.json
+          git commit -m "Update last_modified_record.json for modified record"
+          
+          # Pull latest changes with rebase to avoid merge commits
+          git pull --rebase origin main
+          
+          # Push with force-with-lease for safety (prevents overwriting others' changes)
+          git push --force-with-lease
+
+      - name: Generate Timestamp
+        id: gen_ts
+        if: steps.checker.outputs.is_modified == 'true'
+        run: |
+          # Format: YYYY-MM-DD_HH-MM-SS
+          TS=$(date +'%Y-%m-%d_%H-%M-%S')
+          echo "timestamp=$TS" >> $GITHUB_OUTPUT
+
+      - name: Create Release for Modified Record
+        if: steps.checker.outputs.is_modified == 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: morphosource-modified-${{ steps.gen_ts.outputs.timestamp }}
+          release_name: "MorphoSource Modified Record #${{ steps.gen_ts.outputs.timestamp }}"
+          body: ${{ steps.checker.outputs.details }}
+          draft: false
+          prerelease: false 

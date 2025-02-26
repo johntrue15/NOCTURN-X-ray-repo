@@ -90,6 +90,7 @@ This repository uses several automated workflows to analyze X-ray CT data. For a
 - **Monthly Collection** (`monthly.yml`): Monthly data aggregation
 - **Error Cleanup** (`cleanup_ct_error_releases.yml`): Maintains release quality
 - **Wiki Generation** (`wiki-generation.yml`): Updates documentation
+- **Modified Records Check** (`modified_morphosource.yml`): Monitors for modified X-ray CT records on MorphoSource
 
 ## Installation
 
