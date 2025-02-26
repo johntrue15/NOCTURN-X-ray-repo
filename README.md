@@ -11,17 +11,18 @@ This repository automatically tracks and analyzes X-ray CT data from MorphoSourc
 ## Latest Analysis Results
 
 ### MorphoSource Updates
-[View MorphoSource Updates #2025-02-26_17-29-09 on GitHub](https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-02-26_17-29-09)
+[View MorphoSource Updates #2025-02-26_17-45-06 on GitHub](https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-02-26_17-45-06)
 
 ```
 A new increase in X-ray Computed Tomography records was found on MorphoSource.
 
-We found 1 new record(s) (old record value: 105253).
+We found 1 new record(s) (old record value: 105254).
 
-New Record #105254 Title: Sebecid Cervical
-Detail Page URL: https://www.morphosource.org/concern/media/000713502?locale=en
-Object: uf:uf
+New Record #105255 Title: P3035
+Detail Page URL: https://www.morphosource.org/concern/media/000713515?locale=en
+Object: uf:uf/tro
 Taxonomy: Crocodilia indet.
+Element or Part: tooth
 Data Manager: Mitchell Riegler
 Date Uploaded: 02/26/2025
 Publication Status: Restricted Download
@@ -75,11 +76,11 @@ For detailed installation instructions:
 ## Recent Activity
 
 ```
-CT Slice Analysis #2025-02-26_17-32-15 (2025-02-26T17:37:51Z)
+CT Analysis Error #13550093604 (2025-02-26T17:46:52Z)
+CT to Text Analysis #2025-02-26_17-45-30 ()
+MorphoSource Updates #2025-02-26_17-45-06 ()
+CT Slice Analysis #2025-02-26_17-32-15 ()
 CT to Text Analysis #2025-02-26_17-29-12 ()
-MorphoSource Updates #2025-02-26_17-29-09 ()
-MorphoSource Updates #2025-02-26_17-28-41 ()
-CT Slice Analysis #2025-02-26_16-53-39 ()
 ```
 
 ## Contributing
@@ -87,4 +88,4 @@ CT Slice Analysis #2025-02-26_16-53-39 ()
 Please see our [Project Overview](docs/index.md#contributing) for guidelines on contributing to this project.
 
 ---
-Last updated: 2025-02-26 17:44:18 UTC
+Last updated: 2025-02-26 17:52:46 UTC
