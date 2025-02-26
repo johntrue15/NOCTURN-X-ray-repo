@@ -42,8 +42,24 @@ Moreover, the scan allows scientists to compare this tooth with those of both mo
 ```
 
 ### CT Slice Analysis
+[View CT Slice Analysis #2025-02-26_17-32-15 on GitHub](https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_slice_analysis-2025-02-26_17-32-15)
+
 ```
-Waiting for CT slice analysis to complete...
+Analysis for MorphoSource release: morphosource-updates-2025-02-26_17-29-09
+
+
+CT Slice Analysis:
+=================
+The provided sequence of CT slice images showcases several views of a structure, possibly a fossil or a specimen, as observed in a 3D format. 
+
+1. **Initial Slices**: The first few images depict a solid mass with irregular shapes, suggesting contours of an object with varying density and texture, indicative of organic structures.
+
+2. **Middle Sections**: As you progress through the slices, the shapes become more defined, possibly illustrating distinctive features or appendages of the specimen, with a notable increase in detail in areas of interest.
+
+3. **Final Slices**: The latter images display a more fragmented appearance, with clear separations between parts of the structure, reflecting unique morphological traits. The variations in the intensity of gray scales emphasize differences in materials or densities.
+
+Overall, the slices provide valuable insight into the 3D composition and intricate details of the specimen, which may be used for further analysis or study.
+--------------------------------------------------------------------------------
 ```
 
 ## Workflow Overview
@@ -96,4 +112,4 @@ CT to Text Analysis #2025-02-26_17-29-12 ()
 Please see our [Project Overview](docs/index.md#contributing) for guidelines on contributing to this project.
 
 ---
-Last updated: 2025-02-26 18:07:50 UTC
+Last updated: 2025-02-26 18:08:20 UTC
