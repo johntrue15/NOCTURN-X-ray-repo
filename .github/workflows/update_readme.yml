@@ -24,19 +24,35 @@ jobs:
         id: check-update
         if: github.event_name == 'workflow_run'
         run: |
-          # Get the commit hash of the last commit that modified last_count.txt
-          LAST_COMMIT=$(git log -n 1 --pretty=format:%H -- last_count.txt)
-          
-          # Get the commit hash of the workflow run that triggered this workflow
+          # Get the workflow commit hash
           WORKFLOW_COMMIT="${{ github.event.workflow_run.head_sha }}"
+          echo "Workflow commit: $WORKFLOW_COMMIT"
           
-          # Check if the last commit that modified last_count.txt is the same as the workflow commit
-          if [ "$LAST_COMMIT" = "$WORKFLOW_COMMIT" ]; then
+          # Fetch the commit to ensure we have it locally
+          git fetch origin $WORKFLOW_COMMIT
+          
+          # Check if last_count.txt was modified in the commit
+          if git show --name-only $WORKFLOW_COMMIT | grep -q "last_count.txt"; then
             echo "last_count_updated=true" >> $GITHUB_OUTPUT
-            echo "Last count file was updated in the triggering workflow run"
+            echo "last_count.txt was updated in the triggering workflow run"
           else
-            echo "last_count_updated=false" >> $GITHUB_OUTPUT
-            echo "Last count file was not updated in the triggering workflow run"
+            # Alternative check: look at the most recent commit that modified last_count.txt
+            LAST_COMMIT=$(git log -n 1 --pretty=format:%H -- last_count.txt)
+            echo "Last commit that modified last_count.txt: $LAST_COMMIT"
+            
+            # Check if this is a recent commit (within the last hour)
+            COMMIT_TIME=$(git show -s --format=%ct $LAST_COMMIT)
+            CURRENT_TIME=$(date +%s)
+            TIME_DIFF=$((CURRENT_TIME - COMMIT_TIME))
+            
+            # If the last commit was within the last hour (3600 seconds), consider it updated
+            if [ $TIME_DIFF -lt 3600 ]; then
+              echo "last_count_updated=true" >> $GITHUB_OUTPUT
+              echo "last_count.txt was updated recently (within the last hour)"
+            else
+              echo "last_count_updated=false" >> $GITHUB_OUTPUT
+              echo "last_count.txt was not updated in the triggering workflow run"
+            fi
           fi
       
       - name: Set update flag for manual trigger
