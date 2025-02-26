@@ -20,17 +20,11 @@ This document shows the relationships between GitHub Actions workflows and their
   - `.github/scripts/ct_slices_to_text.py`
   - `.github/scripts/url_screenshot_check.py`
 
+- `modified_morphosource.yml`
+  Scripts:
+  - `.github/scripts/check_modified_morphosource.py`
+
 - `update_readme.yml`
-
----
-
-### Check Modified MorphoSource Records (`modified_morphosource.yml`)
-
-**Schedule:** Cron: */10 * * * *
-
-**Required Scripts:**
-- `.github/scripts/check_modified_morphosource.py`
-
 
 ---
 
@@ -125,6 +119,13 @@ This document shows the relationships between GitHub Actions workflows and their
 **Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/metadata_record_extract.py`
+
+### Check Modified MorphoSource Records (`modified_morphosource.yml`)
+**Triggered by:**
+- `Parse MorphoSource Data`
+**Manual trigger available**
+**Required Scripts:**
+- `.github/scripts/check_modified_morphosource.py`
 
 ### Parquet Data Grapher (`parquet_grapher.yml`)
 **Manual trigger available**
