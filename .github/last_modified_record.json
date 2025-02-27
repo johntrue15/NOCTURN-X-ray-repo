@@ -1,12 +1,12 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000713806?locale=en",
-  "id": "000713806",
-  "Object": "USNM:HERP:USNM 314201",
+  "title": "Head, Pectoral Girdle [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000713786?locale=en",
+  "id": "000713786",
+  "Object": "USNM:HERP:USNM 314196",
   "Taxonomy": "Anolis alfaroi",
-  "Element or Part": "Skull",
+  "Element or Part": "Head, pectoral girdle",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Carmen Urban",
+  "Data Manager": "Collection Manager",
   "Date Uploaded": "02/27/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "Copyright Undetermined"
