@@ -1,13 +1,12 @@
 {
-  "title": "Femoral Midshaft [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000713866?locale=en",
-  "id": "000713866",
-  "Object": "AMNH:FARB:4174",
-  "Taxonomy": "Varanosaurus acutirostris",
-  "Element or Part": "femoral midshaft",
+  "title": "Pallasina Barbata Armor",
+  "detail_url": "https://www.morphosource.org/concern/media/000713874?locale=en",
+  "id": "000713874",
+  "Object": "uwfc:adult collection:28500",
+  "Taxonomy": "Pallasina barbata",
+  "Element or Part": "section of trunk of fish behind first dorsal fin",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Zoe Kulik",
+  "Data Manager": "Megan Vandenberg",
   "Date Uploaded": "02/27/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Publication Status": "Open Download"
 }
