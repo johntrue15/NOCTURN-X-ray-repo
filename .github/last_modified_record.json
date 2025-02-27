@@ -1,13 +1,13 @@
 {
-  "title": "Skull And Lower Jaw [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000415953?locale=en",
-  "id": "000415953",
-  "Object": "uwbm:vp:117466",
-  "Taxonomy": "Notictoides absens",
-  "Element or Part": "Skull and lower jaw",
+  "title": "Head [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000713798?locale=en",
+  "id": "000713798",
+  "Object": "USNM:HERP:USNM 314201",
+  "Taxonomy": "Anolis alfaroi",
+  "Element or Part": "Head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Zoe Kulik",
-  "Date Uploaded": "01/24/2022",
+  "Data Manager": "Carmen Urban",
+  "Date Uploaded": "02/27/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "Copyright Undetermined"
 }
