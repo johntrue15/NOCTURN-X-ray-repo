@@ -1,13 +1,13 @@
 {
-  "title": "Head, Pectoral Girdle [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000713786?locale=en",
-  "id": "000713786",
-  "Object": "USNM:HERP:USNM 314196",
-  "Taxonomy": "Anolis alfaroi",
-  "Element or Part": "Head, pectoral girdle",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000713824?locale=en",
+  "id": "000713824",
+  "Object": "UMMZ:mammals:166659",
+  "Taxonomy": "Dipodomys agilis AGILISDipodomys agilis agilis",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Collection Manager",
+  "Data Manager": "Leila Siciliano-Martina",
   "Date Uploaded": "02/27/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC-SA Attribution-NonCommercial-ShareAlike 4.0 International"
 }
