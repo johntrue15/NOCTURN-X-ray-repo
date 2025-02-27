@@ -1,12 +1,13 @@
 {
-  "title": "Reticulate Nummulites From Tdp 12/16/3 43 57 Cm (Specimen 1)",
-  "detail_url": "https://www.morphosource.org/concern/media/000710600?locale=en",
-  "id": "000710600",
-  "Object": "NHMD:MP:1811518",
-  "Taxonomy": "Nummulites sp.",
-  "Element or Part": "3D reconstructions of internal chamber spaces",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000713931?locale=en",
+  "id": "000713931",
+  "Object": "UMMZ:mammals:166660",
+  "Taxonomy": "Dipodomys agilis AGILISDipodomys agilis agilis",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Ravi Kiran Koorapati",
-  "Date Uploaded": "02/16/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "Leila Siciliano-Martina",
+  "Date Uploaded": "02/27/2025",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC-SA Attribution-NonCommercial-ShareAlike 4.0 International"
 }
