@@ -1,12 +1,13 @@
 {
-  "title": "Head, Pectoral Girdle [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000680810?locale=en",
-  "id": "000680810",
-  "Object": "UF:Herp:59909",
-  "Taxonomy": "Anolis barbouri",
-  "Element or Part": "Pectoral Girdle and Head",
+  "title": "Skull And Lower Jaw [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000415953?locale=en",
+  "id": "000415953",
+  "Object": "uwbm:vp:117466",
+  "Taxonomy": "Notictoides absens",
+  "Element or Part": "Skull and lower jaw",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Carmen Urban",
-  "Date Uploaded": "11/18/2024",
-  "Publication Status": "Open Download"
+  "Data Manager": "Zoe Kulik",
+  "Date Uploaded": "01/24/2022",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
