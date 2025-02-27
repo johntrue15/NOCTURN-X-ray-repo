@@ -1,12 +1,12 @@
 {
-  "title": "Mnhnsd Fos 23.1323",
-  "detail_url": "https://www.morphosource.org/concern/media/000713502?locale=en",
-  "id": "000713502",
-  "Object": "uf:uf",
-  "Taxonomy": "Crocodilia indet.",
-  "Element or Part": "Cervical vertebra",
+  "title": "Head, Pectoral Girdle [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000680810?locale=en",
+  "id": "000680810",
+  "Object": "UF:Herp:59909",
+  "Taxonomy": "Anolis barbouri",
+  "Element or Part": "Pectoral Girdle and Head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Mitchell Riegler",
-  "Date Uploaded": "02/26/2025",
+  "Data Manager": "Carmen Urban",
+  "Date Uploaded": "11/18/2024",
   "Publication Status": "Open Download"
 }
