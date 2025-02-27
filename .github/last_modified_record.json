@@ -1,13 +1,12 @@
 {
-  "title": "Intermediate Phalanx (Fragment) [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000713878?locale=en",
-  "id": "000713878",
-  "Object": "amnh:fm:131766",
-  "Taxonomy": "Notharctus tenebrosus",
-  "Element or Part": "intermediate phalanx (fragment)",
+  "title": "Reticulate Nummulites From Tdp 12/16/3 43 57 Cm (Specimen 1)",
+  "detail_url": "https://www.morphosource.org/concern/media/000710600?locale=en",
+  "id": "000710600",
+  "Object": "NHMD:MP:1811518",
+  "Taxonomy": "Nummulites sp.",
+  "Element or Part": "3D reconstructions of internal chamber spaces",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Doug Boyer",
-  "Date Uploaded": "02/27/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Ravi Kiran Koorapati",
+  "Date Uploaded": "02/16/2025",
+  "Publication Status": "Open Download"
 }
