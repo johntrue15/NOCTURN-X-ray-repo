@@ -1,13 +1,12 @@
 {
-  "title": "Reticulate Nummulites Tdp 12/20/1 41 50cm",
-  "detail_url": "https://www.morphosource.org/concern/media/000708445?locale=en",
-  "id": "000708445",
-  "Object": "NHMD:MP:1811534",
-  "Taxonomy": "Nummulites sp.",
-  "Element or Part": "complete test",
+  "title": "Element Unspecified [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000713958?locale=en",
+  "id": "000713958",
+  "Object": "AMNH:FARB:32111",
+  "Taxonomy": "Hesperornis regalis",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Laura Cotton",
-  "Date Uploaded": "02/10/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "Jingmai OConnor",
+  "Date Uploaded": "02/27/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
