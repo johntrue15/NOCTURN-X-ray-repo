@@ -1,12 +1,13 @@
 {
-  "title": "Pallasina Barbata Armor",
-  "detail_url": "https://www.morphosource.org/concern/media/000713874?locale=en",
-  "id": "000713874",
-  "Object": "uwfc:adult collection:28500",
-  "Taxonomy": "Pallasina barbata",
-  "Element or Part": "section of trunk of fish behind first dorsal fin",
+  "title": "Intermediate Phalanx (Fragment) [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000713878?locale=en",
+  "id": "000713878",
+  "Object": "amnh:fm:131766",
+  "Taxonomy": "Notharctus tenebrosus",
+  "Element or Part": "intermediate phalanx (fragment)",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Megan Vandenberg",
+  "Data Manager": "Doug Boyer",
   "Date Uploaded": "02/27/2025",
-  "Publication Status": "Open Download"
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
