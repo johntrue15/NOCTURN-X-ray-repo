@@ -1,13 +1,13 @@
 {
-  "title": "Intermediate Phalanx (Fragment) [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000713900?locale=en",
-  "id": "000713900",
-  "Object": "amnh:fm:131766",
-  "Taxonomy": "Notharctus tenebrosus",
-  "Element or Part": "intermediate phalanx (fragment)",
+  "title": "Body And Skeleton [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000712757?locale=en",
+  "id": "000712757",
+  "Object": "TCWC:Ichthyology:13069.01",
+  "Taxonomy": "Hippocampus erectus",
+  "Element or Part": "body and skeleton",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "AMNH VP Team",
-  "Date Uploaded": "02/27/2025",
+  "Data Manager": "Jaimi Gray",
+  "Date Uploaded": "02/24/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
