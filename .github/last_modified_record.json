@@ -1,13 +1,13 @@
 {
-  "title": "Body And Skeleton [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000712757?locale=en",
-  "id": "000712757",
-  "Object": "TCWC:Ichthyology:13069.01",
-  "Taxonomy": "Hippocampus erectus",
-  "Element or Part": "body and skeleton",
+  "title": "Reticulate Nummulites Tdp 12/19/1 22 34cm",
+  "detail_url": "https://www.morphosource.org/concern/media/000708524?locale=en",
+  "id": "000708524",
+  "Object": "NHMD:MP:1811528",
+  "Taxonomy": "Nummulites sp.",
+  "Element or Part": "complete test",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jaimi Gray",
-  "Date Uploaded": "02/24/2025",
-  "Publication Status": "Restricted Download",
+  "Data Manager": "Laura Cotton",
+  "Date Uploaded": "02/10/2025",
+  "Publication Status": "Open Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
