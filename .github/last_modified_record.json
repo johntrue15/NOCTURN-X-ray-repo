@@ -1,12 +1,13 @@
 {
-  "title": "Reticulate Nummulites From Tdp 12/14/1 14 22 Cm",
-  "detail_url": "https://www.morphosource.org/concern/media/000710585?locale=en",
-  "id": "000710585",
-  "Object": "NHMD:MP:1811518",
-  "Taxonomy": "Nummulites sp.",
-  "Element or Part": "3D reconstructions of internal chamber spaces",
+  "title": "Intermediate Phalanx (Fragment) [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000713900?locale=en",
+  "id": "000713900",
+  "Object": "amnh:fm:131766",
+  "Taxonomy": "Notharctus tenebrosus",
+  "Element or Part": "intermediate phalanx (fragment)",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Ravi Kiran Koorapati",
-  "Date Uploaded": "02/15/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "AMNH VP Team",
+  "Date Uploaded": "02/27/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
