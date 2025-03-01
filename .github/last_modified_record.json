@@ -1,11 +1,12 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000571004?locale=en",
-  "id": "000571004",
-  "Object": "L-EM:ES0033",
-  "Taxonomy": "Lepus europaeus",
+  "title": "Element Unspecified [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000048867?locale=en",
+  "id": "000048867",
+  "Object": "UF:Herp:92078",
+  "Taxonomy": "Mertensophryne lonnbergi",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Nuttakorn Taewcharoen",
-  "Date Uploaded": "10/12/2023",
-  "Publication Status": "Open Download"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "05/22/2018",
+  "Publication Status": "Open Download",
+  "Rights Statement": "No Known Copyright"
 }
