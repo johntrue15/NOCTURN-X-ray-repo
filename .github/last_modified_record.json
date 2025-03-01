@@ -1,12 +1,12 @@
 {
   "title": "Element Unspecified [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000048869?locale=en",
-  "id": "000048869",
-  "Object": "UF:Herp:92083",
-  "Taxonomy": "Mertensophryne taitana",
+  "detail_url": "https://www.morphosource.org/concern/media/000049887?locale=en",
+  "id": "000049887",
+  "Object": "CAS:HERP:125439",
+  "Taxonomy": "Nectophrynoides tornieri",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "05/22/2018",
+  "Data Manager": "Lauren Scheinberg",
+  "Date Uploaded": "06/11/2018",
   "Publication Status": "Open Download",
-  "Rights Statement": "No Known Copyright"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
