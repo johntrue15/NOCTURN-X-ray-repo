@@ -1,13 +1,12 @@
 {
-  "title": "Ct Scan Of Skeleton And Skull [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000025590?locale=en",
-  "id": "000025590",
-  "Object": "CAS:HERP:162553",
-  "Taxonomy": "Mertensophryne micranotis",
-  "Element or Part": "CT scan of skeleton and skull",
+  "title": "Element Unspecified [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000048869?locale=en",
+  "id": "000048869",
+  "Object": "UF:Herp:92083",
+  "Taxonomy": "Mertensophryne taitana",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "04/11/2017",
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "05/22/2018",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Rights Statement": "No Known Copyright"
 }
