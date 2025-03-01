@@ -1,13 +1,13 @@
 {
-  "title": "Ct Scan Of Skeleton And Skull [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000025587?locale=en",
-  "id": "000025587",
-  "Object": "CAS:HERP:227515",
-  "Taxonomy": "Sclerophrys dodsoniBufo dodsoniDuttaphrynus dodsoni",
-  "Element or Part": "CT scan of skeleton and skull",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000363989?locale=en",
+  "id": "000363989",
+  "Object": "UF:Herp:187273",
+  "Taxonomy": "Phrynomantis annectens",
+  "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "04/11/2017",
-  "Publication Status": "Open Download",
+  "Data Manager": "Edward Stanley",
+  "Date Uploaded": "05/18/2021",
+  "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
