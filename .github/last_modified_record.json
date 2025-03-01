@@ -1,12 +1,11 @@
 {
-  "title": "Reticulate Nummulites From Tdp 12/16/3 43 57 Cm",
-  "detail_url": "https://www.morphosource.org/concern/media/000710603?locale=en",
-  "id": "000710603",
-  "Object": "NHMD:MP:1811523",
-  "Taxonomy": "Nummulites sp.",
-  "Element or Part": "3D reconstructions of internal chamber spaces",
+  "title": "Element Unspecified [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000571004?locale=en",
+  "id": "000571004",
+  "Object": "L-EM:ES0033",
+  "Taxonomy": "Lepus europaeus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Ravi Kiran Koorapati",
-  "Date Uploaded": "02/16/2025",
+  "Data Manager": "Nuttakorn Taewcharoen",
+  "Date Uploaded": "10/12/2023",
   "Publication Status": "Open Download"
 }
