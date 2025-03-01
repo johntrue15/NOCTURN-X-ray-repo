@@ -1,12 +1,13 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000034353?locale=en",
-  "id": "000034353",
-  "Object": "CAS:HERP:196558",
-  "Taxonomy": "Schismaderma carens",
+  "title": "Ct Scan Of Skeleton And Skull [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000025587?locale=en",
+  "id": "000025587",
+  "Object": "CAS:HERP:227515",
+  "Taxonomy": "Sclerophrys dodsoniBufo dodsoniDuttaphrynus dodsoni",
+  "Element or Part": "CT scan of skeleton and skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "10/19/2017",
+  "Date Uploaded": "04/11/2017",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
