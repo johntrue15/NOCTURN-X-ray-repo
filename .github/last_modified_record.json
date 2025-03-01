@@ -1,13 +1,13 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000363989?locale=en",
-  "id": "000363989",
-  "Object": "UF:Herp:187273",
-  "Taxonomy": "Phrynomantis annectens",
-  "Element or Part": "whole body",
+  "title": "16 Bit Tiff Stack [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000046291?locale=en",
+  "id": "000046291",
+  "Object": "CAS:HERP:168679",
+  "Taxonomy": "Hoplophryne rogersi",
+  "Element or Part": "16 bit tiff stack",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Edward Stanley",
-  "Date Uploaded": "05/18/2021",
-  "Publication Status": "Restricted Download",
+  "Data Manager": "Lauren Scheinberg",
+  "Date Uploaded": "04/19/2018",
+  "Publication Status": "Open Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
