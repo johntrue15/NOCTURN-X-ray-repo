@@ -1,12 +1,13 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000049887?locale=en",
-  "id": "000049887",
-  "Object": "CAS:HERP:125439",
-  "Taxonomy": "Nectophrynoides tornieri",
+  "title": "Ct Scan Of Skeleton And Skull [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000025579?locale=en",
+  "id": "000025579",
+  "Object": "CAS:HERP:156126",
+  "Taxonomy": "Nothophryne broadleyi",
+  "Element or Part": "CT scan of skeleton and skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "06/11/2018",
+  "Date Uploaded": "04/10/2017",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
