@@ -1,13 +1,13 @@
 {
-  "title": "16bit Tiffs [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000037617?locale=en",
-  "id": "000037617",
-  "Object": "CAS:HERP:258174",
-  "Taxonomy": "Hoplobatrachus occipitalis",
-  "Element or Part": "16bit Tiffs",
+  "title": "Proximal Phalanx (Fragment Of Distal End) [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000714740?locale=en",
+  "id": "000714740",
+  "Object": "amnh:fm:131766",
+  "Taxonomy": "Notharctus tenebrosus",
+  "Element or Part": "proximal phalanx (fragment of distal end)",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "11/20/2017",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "Doug Boyer",
+  "Date Uploaded": "03/02/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
