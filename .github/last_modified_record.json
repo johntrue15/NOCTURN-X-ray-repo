@@ -1,13 +1,13 @@
 {
-  "title": "Manual Proximal Phalanx V [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000114235?locale=en",
-  "id": "000114235",
-  "Object": "pmae:42-35-50/N3942.0",
-  "Taxonomy": "Pan troglodytes",
-  "Element or Part": "Manual proximal phalanx V",
+  "title": "Mandible [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000715007?locale=en",
+  "id": "000715007",
+  "Object": "USNM:HERP:USNM 314199",
+  "Taxonomy": "Anolis alfaroi",
+  "Element or Part": "Mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Loring Burgess",
-  "Date Uploaded": "04/07/2020",
+  "Data Manager": "Carmen Urban",
+  "Date Uploaded": "03/03/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "Copyright Not Evaluated"
+  "Rights Statement": "Copyright Undetermined"
 }
