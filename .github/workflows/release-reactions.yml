@@ -2,10 +2,15 @@ name: Release Reactions Collector
 
 on:
   release:
-    types: [created, edited]
+    types: [created, edited, published]
   schedule:
-    - cron: '0 */6 * * *'  # Run every 6 hours
+    - cron: '*/30 * * * *'  # Run every 30 minutes
   workflow_dispatch:
+    inputs:
+      check_specific_release:
+        description: 'Check specific release ID (optional)'
+        required: false
+        type: string
 
 jobs:
   collect-reactions:
@@ -17,6 +22,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for proper git operations
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -32,6 +39,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
+          SPECIFIC_RELEASE: ${{ github.event.inputs.check_specific_release }}
         run: |
           python .github/scripts/collect_reactions.py
           
