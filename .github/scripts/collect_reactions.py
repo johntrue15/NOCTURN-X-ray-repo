@@ -5,6 +5,8 @@ import json
 import time
 import re
 import requests
+import shutil
+import zipfile
 from github import Github
 from datetime import datetime, timedelta
 import pytz
@@ -169,6 +171,75 @@ def get_release_reactions(release_id):
         
     return reactions
 
+def download_release_images(release, release_id):
+    """Download image assets from a release"""
+    print(f"Downloading images for release {release_id}")
+    
+    # Create directory for this release
+    release_dir = f"data/PNG/release-{release_id}"
+    os.makedirs(release_dir, exist_ok=True)
+    
+    # Get all assets for the release
+    assets = release.get_assets()
+    
+    # Only download PNG images
+    image_count = 0
+    for asset in assets:
+        if asset.name.lower().endswith('.png'):
+            print(f"Found image asset: {asset.name}")
+            download_url = asset.browser_download_url
+            
+            # Download the image
+            headers = {"Authorization": f"token {token}"}
+            response = requests.get(download_url, headers=headers, stream=True)
+            
+            if response.status_code == 200:
+                file_path = os.path.join(release_dir, asset.name)
+                with open(file_path, 'wb') as f:
+                    for chunk in response.iter_content(chunk_size=8192):
+                        f.write(chunk)
+                print(f"Downloaded {asset.name} to {file_path}")
+                image_count += 1
+            else:
+                print(f"Failed to download {asset.name}: {response.status_code}")
+    
+    print(f"Downloaded {image_count} images for release {release_id}")
+    return image_count > 0
+
+def create_image_archive():
+    """Create a ZIP archive of all downloaded images"""
+    png_dir = "data/PNG"
+    if not os.path.exists(png_dir):
+        print("No images to archive")
+        return None
+    
+    # Create a timestamp for the ZIP file
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    zip_file_path = f"data/ct_images_{timestamp}.zip"
+    
+    # Create ZIP file
+    print(f"Creating ZIP archive at {zip_file_path}")
+    with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for root, dirs, files in os.walk(png_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                arcname = os.path.relpath(file_path, start="data")
+                zipf.write(file_path, arcname=arcname)
+    
+    print(f"Created archive with {len(zipf.namelist())} files")
+    
+    # Create a manifest of the archive contents
+    manifest_path = f"data/ct_images_manifest_{timestamp}.json"
+    with open(manifest_path, 'w') as f:
+        json.dump({
+            "archive_name": zip_file_path,
+            "created_at": datetime.now().isoformat(),
+            "release_folders": os.listdir(png_dir),
+            "total_files": len(zipf.namelist())
+        }, f, indent=2)
+    
+    return zip_file_path
+
 # Set up our search criteria for releases
 if specific_release:
     print(f"Checking specific release: {specific_release}")
@@ -220,6 +291,9 @@ if specific_release:
     force_reprocess = True
     print("Forcing reprocessing of all reactions for specified release")
 
+# Create directory for image storage
+os.makedirs("data/PNG", exist_ok=True)
+
 # Process each release
 for release, release_type in ct_analysis_releases:
     release_id = release.id
@@ -233,10 +307,15 @@ for release, release_type in ct_analysis_releases:
         print(f"Skipping release {release_id} as it's not the specified release")
         continue
     
+    # Download images for 3D releases
+    if release_type == "3d":
+        print(f"Downloading images for 3D release: {release_title}")
+        download_release_images(release, release_id)
+    
     # Get reactions first - if there are none, we can skip further processing
     reactions = get_release_reactions(release_id)
     if not reactions:
-        print(f"No reactions found for release {release_id}, skipping...")
+        print(f"No reactions found for release {release_id}, skipping reaction processing...")
         continue
         
     print(f"Found {len(reactions)} reactions for release {release_id}")
@@ -307,6 +386,16 @@ for release, release_type in ct_analysis_releases:
         print(f"Processed {len(reaction_data)} reactions for release {release_id}")
     else:
         print(f"No new reactions for release {release_id}")
+
+# Create an archive of all downloaded images
+archive_path = create_image_archive()
+if archive_path:
+    print(f"Created image archive at {archive_path}")
+    
+    # Create artifacts directory for GitHub Actions
+    os.makedirs("artifacts", exist_ok=True)
+    shutil.copy(archive_path, "artifacts/")
+    print(f"Copied archive to artifacts directory for upload")
 
 # Save the updated processing status only if we made changes
 if changes_made:

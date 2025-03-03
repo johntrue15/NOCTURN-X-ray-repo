@@ -45,4 +45,11 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "Add reaction data for release"
-          file_pattern: "data/reactions/jsonl/*.jsonl" 
+          file_pattern: "data/reactions/jsonl/*.jsonl"
+          
+      - name: Upload CT image archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: ct-images-archive
+          path: artifacts/*.zip
+          retention-days: 90 
