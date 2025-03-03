@@ -1,13 +1,13 @@
 {
-  "title": "Cranium [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000100775?locale=en",
-  "id": "000100775",
-  "Object": "pmae:46-49-60/N7365.0",
-  "Taxonomy": "Homo sapiens",
-  "Element or Part": "Cranium",
+  "title": "Manual Proximal Phalanx Iv [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000114167?locale=en",
+  "id": "000114167",
+  "Object": "pmae:42-35-50/N3942.0",
+  "Taxonomy": "Pan troglodytes",
+  "Element or Part": "Manual proximal phalanx IV",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Loring Burgess",
-  "Date Uploaded": "02/11/2020",
+  "Date Uploaded": "04/06/2020",
   "Publication Status": "Restricted Download",
   "Rights Statement": "Copyright Not Evaluated"
 }
