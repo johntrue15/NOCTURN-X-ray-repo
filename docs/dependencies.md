@@ -48,9 +48,30 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ---
 
+### Release Reactions Collector (`release-reactions.yml`)
+
+**Schedule:** Cron: 0 */6 * * *
+
+**Required Scripts:**
+- `.github/scripts/collect_reactions.py`
+
+
+---
+
 ### Cleanup CT Error Releases (`cleanup_ct_error_releases.yml`)
 
 **Schedule:** Cron: 0 */6 * * *
+
+
+---
+
+### Fine-tune Model from Reactions (`finetune-model.yml`)
+
+**Schedule:** Weekly on Sunday at midnight
+
+**Required Scripts:**
+- `.github/scripts/finetune_model.py`
+- `.github/scripts/prepare_finetune_data.py`
 
 
 ---
@@ -230,6 +251,10 @@ This section shows which workflows use each script:
 **Used in Workflows:**
 - `modified_morphosource.yml`
 
+### collect_reactions.py
+**Used in Workflows:**
+- `release-reactions.yml`
+
 ### ct_image_to_text.py
 **Used in Workflows:**
 - `combined_ct_images_to_text.yml`
@@ -250,6 +275,10 @@ This section shows which workflows use each script:
 - `daily.yml`
 - `test_daily.yml`
 
+### finetune_model.py
+**Used in Workflows:**
+- `finetune-model.yml`
+
 ### generate_code.py
 **Used in Workflows:**
 - `Claude_issue_automation.yml`
@@ -269,6 +298,10 @@ This section shows which workflows use each script:
 ### parquet_processor.py
 **Used in Workflows:**
 - `parquet_processor.yml`
+
+### prepare_finetune_data.py
+**Used in Workflows:**
+- `finetune-model.yml`
 
 ### release_analysis.py
 **Used in Workflows:**
