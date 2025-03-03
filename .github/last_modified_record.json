@@ -1,13 +1,14 @@
 {
-  "title": "Mandible [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000715007?locale=en",
-  "id": "000715007",
-  "Object": "USNM:HERP:USNM 314199",
-  "Taxonomy": "Anolis alfaroi",
-  "Element or Part": "Mandible",
+  "title": "Amphiprion barberi skull",
+  "detail_url": "https://www.morphosource.org/concern/media/000715049?locale=en",
+  "id": "000715049",
+  "Object": "fmnh:fishes:121284",
+  "Taxonomy": "Amphiprion barberi",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Carmen Urban",
+  "Data Manager": "Keiffer Williams",
   "Date Uploaded": "03/03/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
 }
