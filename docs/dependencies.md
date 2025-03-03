@@ -28,6 +28,16 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ---
 
+### Release Reactions Collector (`release-reactions.yml`)
+
+**Schedule:** Cron: */30 * * * *
+
+**Required Scripts:**
+- `.github/scripts/collect_reactions.py`
+
+
+---
+
 ### Daily MorphoSource Check (`daily.yml`)
 
 **Schedule:** Daily at midnight
@@ -44,16 +54,6 @@ This document shows the relationships between GitHub Actions workflows and their
 
 **Required Scripts:**
 - `.github/scripts/monthly.py`
-
-
----
-
-### Release Reactions Collector (`release-reactions.yml`)
-
-**Schedule:** Cron: 0 */6 * * *
-
-**Required Scripts:**
-- `.github/scripts/collect_reactions.py`
 
 
 ---
