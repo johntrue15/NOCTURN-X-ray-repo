@@ -1,13 +1,13 @@
 {
-  "title": "Manual Proximal Phalanx Iv [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000114167?locale=en",
-  "id": "000114167",
-  "Object": "pmae:42-35-50/N3942.0",
-  "Taxonomy": "Pan troglodytes",
-  "Element or Part": "Manual proximal phalanx IV",
+  "title": "Head, Pectoral Girdle [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000715015?locale=en",
+  "id": "000715015",
+  "Object": "USNM:HERP:USNM 314195",
+  "Taxonomy": "Anolis alfaroi",
+  "Element or Part": "Head, pectoral girdle",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Loring Burgess",
-  "Date Uploaded": "04/06/2020",
+  "Data Manager": "Carmen Urban",
+  "Date Uploaded": "03/03/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "Copyright Not Evaluated"
+  "Rights Statement": "Copyright Undetermined"
 }
