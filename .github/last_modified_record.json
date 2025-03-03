@@ -1,13 +1,12 @@
 {
-  "title": "Proximal Phalanx (Fragment Of Distal End) [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000714740?locale=en",
-  "id": "000714740",
-  "Object": "amnh:fm:131766",
-  "Taxonomy": "Notharctus tenebrosus",
-  "Element or Part": "proximal phalanx (fragment of distal end)",
+  "title": "Element Unspecified [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000049899?locale=en",
+  "id": "000049899",
+  "Object": "CAS:HERP:168627",
+  "Taxonomy": "Arthroleptides martiensseniPetropedetes martiensseni",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Doug Boyer",
-  "Date Uploaded": "03/02/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Lauren Scheinberg",
+  "Date Uploaded": "06/11/2018",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
