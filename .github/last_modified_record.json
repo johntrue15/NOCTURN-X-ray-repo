@@ -1,12 +1,13 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000715339?locale=en",
-  "id": "000715339",
-  "Object": "umzc:vertebrates:GG35R1",
-  "Taxonomy": "Gallus gallus",
-  "Element or Part": "Skull",
+  "title": "Tadpole [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000715334?locale=en",
+  "id": "000715334",
+  "Object": "AMNH:Herpetology:A-80834",
+  "Taxonomy": "Litoria iris",
+  "Element or Part": "Tadpole",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Bassel Arnaout",
+  "Data Manager": "Jack Phillips",
   "Date Uploaded": "03/03/2025",
-  "Publication Status": "Open Download"
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
