@@ -1,0 +1,42 @@
+name: Release Reactions Collector
+
+on:
+  release:
+    types: [created, edited]
+  schedule:
+    - cron: '0 */6 * * *'  # Run every 6 hours
+  workflow_dispatch:
+
+jobs:
+  collect-reactions:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install PyGithub requests
+
+      - name: Collect and process reactions
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          python .github/scripts/collect_reactions.py
+          
+      - name: Commit and push reaction data
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Add reaction data for release"
+          file_pattern: "data/reactions/jsonl/*.jsonl" 
