@@ -7,7 +7,7 @@ import re
 import requests
 from github import Github
 from datetime import datetime, timedelta
-import pytz  # Add this import for timezone handling
+import pytz
 
 # Initialize GitHub client
 token = os.environ.get("GITHUB_TOKEN")
@@ -45,18 +45,30 @@ def extract_ct_analysis(release_body, release_type):
 
 def get_reaction_rating(reaction_content):
     """
-    Convert reaction emoji to rating scale:
-    👍 = 1, 😄 = 2, 🎉 = 3, ❤️ = 4, 🚀 = 5, 👀 = negative
+    Convert GitHub API reaction content to rating scale:
+    +1 = 1, laugh = 2, hooray = 3, heart = 4, rocket = 5, eyes = -1
     """
+    # Show the exact content for debugging
+    print(f"DEBUG: Raw reaction content: '{reaction_content}'")
+    
     rating_map = {
-        "👍": 1,
-        "😄": 2,
-        "🎉": 3,
-        "❤️": 4,
-        "🚀": 5,
-        "eyes": -1  # GitHub API returns "eyes" for 👀
+        "+1": 1,          # 👍
+        "laugh": 2,       # 😄
+        "hooray": 3,      # 🎉
+        "heart": 4,       # ❤️
+        "rocket": 5,      # 🚀
+        "eyes": -1,       # 👀
+        "-1": -1          # 👎
     }
-    return rating_map.get(reaction_content, 0)
+    
+    # Try to get rating, with debug info
+    rating = rating_map.get(reaction_content)
+    if rating is None:
+        print(f"WARNING: Unknown reaction content: '{reaction_content}', defaulting to rating 1")
+        rating = 1  # Default unknown reactions to positive but low rating
+    
+    print(f"DEBUG: Mapped '{reaction_content}' to rating {rating}")
+    return rating
 
 def create_fine_tuning_entry(morphosource_data, ct_analysis, rating):
     """Create a fine-tuning entry based on rating scale"""
@@ -86,9 +98,12 @@ def create_fine_tuning_entry(morphosource_data, ct_analysis, rating):
         "content": "This CT scan shows anatomical structures typical for this species."
     }
     
-    # Ratings 1-5 are positive, with 5 being the most positive
-    # Rating -1 (eyes) is negative
+    # Log what we're doing with the rating
+    print(f"DEBUG: Using rating {rating} to create fine-tuning entry")
+    
+    # Ensure we're using the right type comparison
     if rating > 0:
+        print("DEBUG: Using detailed output as preferred")
         # For positive ratings, use detailed output as preferred
         entry["preferred_output"] = [detailed_output]
         entry["non_preferred_output"] = [generic_output]
@@ -96,6 +111,7 @@ def create_fine_tuning_entry(morphosource_data, ct_analysis, rating):
         # Store the rating score for potential weighted training
         entry["rating"] = rating
     else:
+        print("DEBUG: Using generic output as preferred")
         # For negative rating (eyes), use generic output as preferred
         entry["preferred_output"] = [generic_output]
         entry["non_preferred_output"] = [detailed_output]
@@ -115,11 +131,19 @@ def save_reaction_data(release_id, reaction_data):
     # Write to JSONL file
     with open(output_file, 'w') as f:
         for user, entry in reaction_data.items():
+            # Double check that the rating is correctly set
+            rating = entry.get("rating", 0)
+            if "rating" in entry and isinstance(rating, int):
+                preferred = "detailed" if rating > 0 else "generic"
+                print(f"DEBUG: Writing entry for user {user} with rating {rating}, preferred={preferred}")
+            else:
+                print(f"WARNING: Rating issue in entry for user {user}, rating={rating}")
+                
             f.write(json.dumps(entry) + '\n')
     
     print(f"Saved {len(reaction_data)} reactions to {output_file}")
     
-    # Only write timestamp file if we actually saved reactions
+    # Write timestamp file
     with open("data/reactions/last_processed.txt", 'w') as f:
         f.write(datetime.now().isoformat())
 
@@ -136,8 +160,14 @@ def get_release_reactions(release_id):
     if response.status_code != 200:
         print(f"Error fetching reactions: {response.status_code} - {response.text}")
         return []
+    
+    reactions = response.json()
+    
+    # Debug: print out the exact structure of a reaction
+    if reactions:
+        print(f"DEBUG: Example reaction structure: {json.dumps(reactions[0], indent=2)}")
         
-    return response.json()
+    return reactions
 
 # Set up our search criteria for releases
 if specific_release:
@@ -184,6 +214,12 @@ if os.path.exists(status_file):
 # Track if we made any changes that need to be saved
 changes_made = False
 
+# Option to force reprocess all reactions
+force_reprocess = False
+if specific_release:
+    force_reprocess = True
+    print("Forcing reprocessing of all reactions for specified release")
+
 # Process each release
 for release, release_type in ct_analysis_releases:
     release_id = release.id
@@ -191,6 +227,11 @@ for release, release_type in ct_analysis_releases:
     release_body = release.body
     
     print(f"Processing reactions for {release_type} release: {release_title} (ID: {release_id})")
+    
+    # Skip if not the specified release when using specific_release
+    if specific_release and str(release_id) != specific_release:
+        print(f"Skipping release {release_id} as it's not the specified release")
+        continue
     
     # Get reactions first - if there are none, we can skip further processing
     reactions = get_release_reactions(release_id)
@@ -225,13 +266,14 @@ for release, release_type in ct_analysis_releases:
     for reaction in reactions:
         reaction_id = reaction["id"]
         
-        # Skip already processed reactions unless forced
-        if reaction_id in processed_reaction_ids and not specific_release:
+        # Skip already processed reactions unless forced to reprocess
+        if reaction_id in processed_reaction_ids and not force_reprocess:
+            print(f"Skipping already processed reaction {reaction_id}")
             continue
             
         new_reactions_found = True
         changes_made = True
-        content = reaction["content"]  # Could be 👍, 👎, 😄, etc.
+        content = reaction["content"]  # Will be "+1", "rocket", etc.
         user = reaction["user"]["login"]
         
         # Get rating based on reaction content
@@ -246,6 +288,7 @@ for release, release_type in ct_analysis_releases:
             reaction_data[user] = entry
         elif rating > reaction_data[user].get("rating", 0):
             # If user has multiple reactions, keep the highest rated one
+            print(f"Updating reaction for user {user} from {reaction_data[user].get('rating', 0)} to {rating}")
             reaction_data[user] = entry
             
         # Mark as processed
