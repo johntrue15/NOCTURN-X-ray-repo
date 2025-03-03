@@ -1,12 +1,13 @@
 {
-  "title": "Chromis Agilis Skull",
-  "detail_url": "https://www.morphosource.org/concern/media/000715200?locale=en",
-  "id": "000715200",
-  "Object": "111.78",
-  "Taxonomy": "Chromis agilis",
-  "Element or Part": "Skull",
+  "title": "Tadpole [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000715277?locale=en",
+  "id": "000715277",
+  "Object": "AMNH:Herpetology:A-80908",
+  "Taxonomy": "Nyctimystes cheesmani",
+  "Element or Part": "Tadpole",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Keiffer Williams",
+  "Data Manager": "Jack Phillips",
   "Date Uploaded": "03/03/2025",
-  "Publication Status": "Open Download"
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
