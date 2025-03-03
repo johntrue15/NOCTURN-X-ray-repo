@@ -1,12 +1,13 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000049899?locale=en",
-  "id": "000049899",
-  "Object": "CAS:HERP:168627",
-  "Taxonomy": "Arthroleptides martiensseniPetropedetes martiensseni",
+  "title": "Ct Scan Of Skeleton And Skull [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000040067?locale=en",
+  "id": "000040067",
+  "Object": "CAS:HERP:256862",
+  "Taxonomy": "Ptychadena oxyrhynchus",
+  "Element or Part": "CT scan of skeleton and skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "06/11/2018",
+  "Date Uploaded": "01/29/2018",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
