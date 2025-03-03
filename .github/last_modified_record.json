@@ -1,13 +1,14 @@
 {
-  "title": "Ct Scan Of Skeleton And Skull [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000025495?locale=en",
-  "id": "000025495",
-  "Object": "CAS:HERP:156975",
-  "Taxonomy": "Cacosternum namaquense",
-  "Element or Part": "CT scan of skeleton and skull",
+  "title": "Amphiprion barberi skull",
+  "detail_url": "https://www.morphosource.org/concern/media/000715049?locale=en",
+  "id": "000715049",
+  "Object": "fmnh:fishes:121284",
+  "Taxonomy": "Amphiprion barberi",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "04/06/2017",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "Sharon Grant",
+  "Date Uploaded": "03/03/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
 }
