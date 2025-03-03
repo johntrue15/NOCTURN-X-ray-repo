@@ -1,13 +1,13 @@
 {
-  "title": "Ct Scan Of Skeleton And Skull [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000025086?locale=en",
-  "id": "000025086",
-  "Object": "CAS:HERP:157023",
-  "Taxonomy": "Arthroleptella lightfooti",
-  "Element or Part": "CT scan of skeleton and skull",
+  "title": "Skull [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000713806?locale=en",
+  "id": "000713806",
+  "Object": "USNM:HERP:USNM 314201",
+  "Taxonomy": "Anolis alfaroi",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "03/29/2017",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "Collection Manager",
+  "Date Uploaded": "02/27/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "Copyright Undetermined"
 }
