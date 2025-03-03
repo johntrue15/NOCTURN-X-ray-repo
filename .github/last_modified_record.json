@@ -1,13 +1,13 @@
 {
-  "title": "Mandible [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000715078?locale=en",
-  "id": "000715078",
-  "Object": "USNM:HERP:USNM 314200",
-  "Taxonomy": "Anolis alfaroi",
-  "Element or Part": "Mandible",
+  "title": "Tadpole [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000715277?locale=en",
+  "id": "000715277",
+  "Object": "AMNH:Herpetology:A-80908",
+  "Taxonomy": "Nyctimystes cheesmani",
+  "Element or Part": "Tadpole",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Collection Manager",
+  "Data Manager": "American Museum of Natural History",
   "Date Uploaded": "03/03/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Rights Statement": "In Copyright"
 }
