@@ -42,8 +42,24 @@ def extract_ct_analysis(release_body, release_type):
     
     return clean_body.strip()
 
-def create_fine_tuning_entry(morphosource_data, ct_analysis, is_preferred=True):
-    """Create a fine-tuning entry in the expected format"""
+def get_reaction_rating(reaction_content):
+    """
+    Convert reaction emoji to rating scale:
+    👍 = 1, 😄 = 2, 🎉 = 3, ❤️ = 4, 🚀 = 5, 👀 = negative
+    """
+    rating_map = {
+        "👍": 1,
+        "😄": 2,
+        "🎉": 3,
+        "❤️": 4,
+        "🚀": 5,
+        "eyes": -1  # GitHub API returns "eyes" for 👀
+    }
+    return rating_map.get(reaction_content, 0)
+
+def create_fine_tuning_entry(morphosource_data, ct_analysis, rating):
+    """Create a fine-tuning entry based on rating scale"""
+    # For input, use the MorphoSource release data
     entry = {
         "input": {
             "messages": [
@@ -57,24 +73,32 @@ def create_fine_tuning_entry(morphosource_data, ct_analysis, is_preferred=True):
         }
     }
     
-    # Create the preferred and non-preferred outputs
-    ct_output = {
+    # Create detailed and simple outputs
+    detailed_output = {
         "role": "assistant",
         "content": ct_analysis
     }
     
     # Create a simplified/generic version for the alternative output
-    simplified_output = {
+    generic_output = {
         "role": "assistant",
         "content": "This CT scan shows anatomical structures typical for this species."
     }
     
-    if is_preferred:
-        entry["preferred_output"] = [ct_output]
-        entry["non_preferred_output"] = [simplified_output]
+    # Ratings 1-5 are positive, with 5 being the most positive
+    # Rating -1 (eyes) is negative
+    if rating > 0:
+        # For positive ratings, use detailed output as preferred
+        entry["preferred_output"] = [detailed_output]
+        entry["non_preferred_output"] = [generic_output]
+        
+        # Store the rating score for potential weighted training
+        entry["rating"] = rating
     else:
-        entry["preferred_output"] = [simplified_output]
-        entry["non_preferred_output"] = [ct_output]
+        # For negative rating (eyes), use generic output as preferred
+        entry["preferred_output"] = [generic_output]
+        entry["non_preferred_output"] = [detailed_output]
+        entry["rating"] = -1
     
     return entry
 
@@ -95,9 +119,8 @@ def save_reaction_data(release_id, reaction_data):
     print(f"Saved {len(reaction_data)} reactions to {output_file}")
     
     # Only write timestamp file if we actually saved reactions
-    if reaction_data:
-        with open("data/reactions/last_processed.txt", 'w') as f:
-            f.write(datetime.now().isoformat())
+    with open("data/reactions/last_processed.txt", 'w') as f:
+        f.write(datetime.now().isoformat())
 
 def get_release_reactions(release_id):
     """Get reactions for a specific release using GitHub API"""
@@ -206,17 +229,21 @@ for release, release_type in ct_analysis_releases:
             
         new_reactions_found = True
         changes_made = True
-        content = reaction["content"]  # 👍, 👎, 😄, etc.
+        content = reaction["content"]  # Could be 👍, 👎, 😄, etc.
         user = reaction["user"]["login"]
         
-        # Classify based on reaction
-        is_positive = content in ["👍", "🎉", "❤️", "🚀", "😄"]
+        # Get rating based on reaction content
+        rating = get_reaction_rating(content)
+        print(f"User {user} reaction {content} mapped to rating {rating}")
         
-        # Create fine-tuning entry
-        entry = create_fine_tuning_entry(morphosource_data, ct_analysis, is_positive)
+        # Create fine-tuning entry with rating
+        entry = create_fine_tuning_entry(morphosource_data, ct_analysis, rating)
         
         # Add to our reaction data
         if user not in reaction_data:
+            reaction_data[user] = entry
+        elif rating > reaction_data[user].get("rating", 0):
+            # If user has multiple reactions, keep the highest rated one
             reaction_data[user] = entry
             
         # Mark as processed
