@@ -1,14 +1,13 @@
 {
-  "title": "Chromis alpha skull",
-  "detail_url": "https://www.morphosource.org/concern/media/000715066?locale=en",
-  "id": "000715066",
-  "Object": "FMNH:Fishes:118691",
-  "Taxonomy": "Chromis alpha",
-  "Element or Part": "Skull",
+  "title": "Fully Body [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000084514?locale=en",
+  "id": "000084514",
+  "Object": "CAS:HERP:211614",
+  "Taxonomy": "Strongylopus grayii",
+  "Element or Part": "Fully body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Keiffer Williams",
-  "Date Uploaded": "03/03/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Data Manager": "Lauren Scheinberg",
+  "Date Uploaded": "08/08/2019",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
