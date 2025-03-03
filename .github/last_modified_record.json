@@ -1,13 +1,12 @@
 {
-  "title": "Endocast [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000715143?locale=en",
-  "id": "000715143",
-  "Object": "USNM:MAMM:USNM 450054",
-  "Taxonomy": "Perodicticus potto pottoPerodicticus potto",
-  "Element or Part": "Endocast",
+  "title": "Amphiprion sandaracinos skull",
+  "detail_url": "https://www.morphosource.org/concern/media/000715177?locale=en",
+  "id": "000715177",
+  "Object": "111.83",
+  "Taxonomy": "Amphiprion sandaracinos",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Richard Kay",
+  "Data Manager": "Keiffer Williams",
   "Date Uploaded": "03/03/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Publication Status": "Open Download"
 }
