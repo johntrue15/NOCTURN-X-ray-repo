@@ -7,6 +7,7 @@ import re
 import requests
 from github import Github
 from datetime import datetime, timedelta
+import pytz  # Add this import for timezone handling
 
 # Initialize GitHub client
 token = os.environ.get("GITHUB_TOKEN")
@@ -147,8 +148,9 @@ if specific_release:
         print(f"Could not find release with ID: {specific_release}")
         releases_to_check = []
 else:
-    # Get releases from the last 30 days
-    cutoff_date = datetime.now() - timedelta(days=30)
+    # Get releases from the last 30 days with timezone awareness
+    # Make cutoff_date timezone-aware by using UTC
+    cutoff_date = datetime.now(pytz.UTC) - timedelta(days=30)
     all_releases = list(repo.get_releases())
     releases_to_check = [r for r in all_releases if r.created_at > cutoff_date]
     print(f"Found {len(releases_to_check)} releases within the last 30 days")
