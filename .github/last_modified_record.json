@@ -1,14 +1,13 @@
 {
-  "title": "Amphiprion barberi skull",
-  "detail_url": "https://www.morphosource.org/concern/media/000715049?locale=en",
-  "id": "000715049",
-  "Object": "fmnh:fishes:121284",
-  "Taxonomy": "Amphiprion barberi",
-  "Element or Part": "Skull",
+  "title": "Endocast [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000715143?locale=en",
+  "id": "000715143",
+  "Object": "USNM:MAMM:USNM 450054",
+  "Taxonomy": "Perodicticus potto pottoPerodicticus potto",
+  "Element or Part": "Endocast",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Sharon Grant",
+  "Data Manager": "Richard Kay",
   "Date Uploaded": "03/03/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined"
 }
