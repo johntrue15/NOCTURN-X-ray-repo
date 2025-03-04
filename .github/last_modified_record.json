@@ -1,13 +1,13 @@
 {
-  "title": "Endocast [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000715757?locale=en",
-  "id": "000715757",
-  "Object": "MCZ:Mamm:8039",
-  "Taxonomy": "Avahi laniger lanigerAvahi laniger",
-  "Element or Part": "Endocast",
+  "title": "Tadpole [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000715334?locale=en",
+  "id": "000715334",
+  "Object": "AMNH:Herpetology:A-80834",
+  "Taxonomy": "Litoria iris",
+  "Element or Part": "Tadpole",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Richard Kay",
-  "Date Uploaded": "03/04/2025",
+  "Data Manager": "American Museum of Natural History",
+  "Date Uploaded": "03/03/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
