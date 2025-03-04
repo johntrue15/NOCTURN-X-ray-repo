@@ -30,9 +30,38 @@ jobs:
           echo "timestamp=$TS" >> $GITHUB_OUTPUT
           echo "Generated timestamp: $TS"
       
-      # Format 1: Simplified SLSA format
-      - name: Test Attestation Format 1 - Simple
+      # Format 1: Absolute Minimal
+      - name: Test Attestation Format 1 - Absolute Minimal
         id: attestation_1
+        continue-on-error: true
+        uses: actions/attest@v2.1.0
+        with:
+          subject-path: test_data/test_subject.txt
+          predicate-type: 'https://slsa.dev/provenance/v1'
+          show-summary: true
+          predicate: |
+            {
+              "buildDefinition": {
+                "buildType": "https://slsa-framework.github.io/github-actions-buildtypes/workflow/v1",
+                "externalParameters": {
+                  "workflow": {
+                    "ref": "${{ github.ref }}",
+                    "repository": "${{ github.server_url }}/${{ github.repository }}",
+                    "path": ".github/workflows/test-attestation.yml"
+                  }
+                },
+                "internalParameters": {}
+              },
+              "runDetails": {
+                "builder": {
+                  "id": "${{ github.server_url }}/${{ github.repository }}/.github/workflows/test-attestation.yml@${{ github.ref }}"
+                }
+              }
+            }
+      
+      # Format 2: Official version from GitHub Docs
+      - name: Test Attestation Format 2 - GitHub Docs Example
+        id: attestation_2
         continue-on-error: true
         uses: actions/attest@v2.1.0
         with:
@@ -57,53 +86,13 @@ jobs:
                   "id": "${{ github.server_url }}/${{ github.repository }}/.github/workflows/test-attestation.yml@${{ github.ref }}"
                 },
                 "metadata": {
-                  "invocationId": "${{ github.server_url }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
+                  "invocationId": "${{ github.server_url }}/actions/runs/${{ github.run_id }}"
                 }
               }
             }
       
-      # Format 2: Proper URI format
-      - name: Test Attestation Format 2 - Fixed URI
-        id: attestation_2
-        continue-on-error: true
-        uses: actions/attest@v2.1.0
-        with:
-          subject-path: test_data/test_subject.txt
-          predicate-type: 'https://slsa.dev/provenance/v1'
-          show-summary: true
-          predicate: |
-            {
-              "buildDefinition": {
-                "buildType": "https://slsa-framework.github.io/github-actions-buildtypes/workflow/v1",
-                "externalParameters": {
-                  "workflow": {
-                    "ref": "${{ github.ref }}",
-                    "repository": "${{ github.server_url }}/${{ github.repository }}",
-                    "path": ".github/workflows/test-attestation.yml"
-                  }
-                },
-                "internalParameters": {},
-                "resolvedDependencies": [
-                  {
-                    "uri": "git+${{ github.server_url }}/${{ github.repository }}@${{ github.ref }}",
-                    "digest": {
-                      "sha1": "${{ github.sha }}"
-                    }
-                  }
-                ]
-              },
-              "runDetails": {
-                "builder": {
-                  "id": "${{ github.server_url }}/${{ github.repository }}/.github/workflows/test-attestation.yml@${{ github.ref }}"
-                },
-                "metadata": {
-                  "invocationId": "${{ github.server_url }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
-                }
-              }
-            }
-      
-      # Format 3: Complete format with additional fields
-      - name: Test Attestation Format 3 - Complete
+      # Format 3: Ultra-minimal
+      - name: Test Attestation Format 3 - Ultra-minimal 
         id: attestation_3
         continue-on-error: true
         uses: actions/attest@v2.1.0
@@ -120,33 +109,11 @@ jobs:
                     "ref": "${{ github.ref }}",
                     "repository": "${{ github.server_url }}/${{ github.repository }}",
                     "path": ".github/workflows/test-attestation.yml"
-                  },
-                  "vars": {
-                    "timestamp": "${{ steps.timestamp.outputs.timestamp }}"
                   }
                 },
-                "internalParameters": {
-                  "github": {
-                    "event_name": "${{ github.event_name }}"
-                  }
-                },
-                "resolvedDependencies": [
-                  {
-                    "uri": "git+${{ github.server_url }}/${{ github.repository }}@${{ github.ref }}",
-                    "digest": {
-                      "sha1": "${{ github.sha }}"
-                    }
-                  }
-                ]
+                "internalParameters": {}
               },
-              "runDetails": {
-                "builder": {
-                  "id": "${{ github.server_url }}/${{ github.repository }}/.github/workflows/test-attestation.yml@${{ github.ref }}"
-                },
-                "metadata": {
-                  "invocationId": "${{ github.server_url }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
-                }
-              }
+              "runDetails": {}
             }
       
       # Create a report of the results
@@ -157,7 +124,7 @@ jobs:
           echo "# Attestation Test Results - ${{ steps.timestamp.outputs.timestamp }}" > test_results/report.md
           echo "" >> test_results/report.md
           
-          echo "## Format 1 (Simple)" >> test_results/report.md
+          echo "## Format 1 (Absolute Minimal)" >> test_results/report.md
           echo "* Status: ${{ steps.attestation_1.outcome }}" >> test_results/report.md
           if [[ "${{ steps.attestation_1.outcome }}" == "success" ]]; then
             echo "* Attestation URL: ${{ steps.attestation_1.outputs.attestation-url }}" >> test_results/report.md
@@ -166,7 +133,7 @@ jobs:
           fi
           
           echo "" >> test_results/report.md
-          echo "## Format 2 (Fixed URI)" >> test_results/report.md
+          echo "## Format 2 (GitHub Docs Example)" >> test_results/report.md
           echo "* Status: ${{ steps.attestation_2.outcome }}" >> test_results/report.md
           if [[ "${{ steps.attestation_2.outcome }}" == "success" ]]; then
             echo "* Attestation URL: ${{ steps.attestation_2.outputs.attestation-url }}" >> test_results/report.md
@@ -175,7 +142,7 @@ jobs:
           fi
           
           echo "" >> test_results/report.md
-          echo "## Format 3 (Complete)" >> test_results/report.md
+          echo "## Format 3 (Ultra-minimal)" >> test_results/report.md
           echo "* Status: ${{ steps.attestation_3.outcome }}" >> test_results/report.md
           if [[ "${{ steps.attestation_3.outcome }}" == "success" ]]; then
             echo "* Attestation URL: ${{ steps.attestation_3.outputs.attestation-url }}" >> test_results/report.md

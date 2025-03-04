@@ -212,31 +212,16 @@ jobs:
                     "ref": "${{ github.ref }}",
                     "repository": "${{ github.server_url }}/${{ github.repository }}",
                     "path": ".github/workflows/daily.yml"
-                  },
-                  "vars": {
-                    "timestamp": "${{ steps.timestamp.outputs.timestamp }}"
                   }
                 },
-                "internalParameters": {
-                  "github": {
-                    "event_name": "${{ github.event_name }}"
-                  }
-                },
-                "resolvedDependencies": [
-                  {
-                    "uri": "git+${{ github.server_url }}/${{ github.repository }}@${{ github.ref }}",
-                    "digest": {
-                      "sha1": "${{ github.sha }}"
-                    }
-                  }
-                ]
+                "internalParameters": {}
               },
               "runDetails": {
                 "builder": {
                   "id": "${{ github.server_url }}/${{ github.repository }}/.github/workflows/daily.yml@${{ github.ref }}"
                 },
                 "metadata": {
-                  "invocationId": "${{ github.server_url }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
+                  "invocationId": "${{ github.server_url }}/actions/runs/${{ github.run_id }}"
                 }
               }
             }
