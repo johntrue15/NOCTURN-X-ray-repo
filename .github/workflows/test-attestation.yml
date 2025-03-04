@@ -29,34 +29,10 @@ jobs:
           TS=$(date +'%Y-%m-%d_%H-%M-%S')
           echo "timestamp=$TS" >> $GITHUB_OUTPUT
           echo "Generated timestamp: $TS"
-          
-      # Format 1: Minimal format
-      - name: Test Attestation Format 1
-        id: attestation_1
-        continue-on-error: true
-        uses: actions/attest@v2.1.0
-        with:
-          subject-path: test_data/test_subject.txt
-          predicate-type: 'https://slsa.dev/provenance/v1'
-          show-summary: true
-          predicate: |
-            {
-              "buildDefinition": {
-                "buildType": "https://github.com/Attestations/GitHubHostedActions"
-              },
-              "runDetails": {
-                "builder": {
-                  "id": "https://github.com/actions/runner"
-                },
-                "metadata": {
-                  "invocationId": "${{ github.run_id }}"
-                }
-              }
-            }
       
-      # Format 2: Different buildType
-      - name: Test Attestation Format 2
-        id: attestation_2
+      # Format 4: Official GitHub Actions Format
+      - name: Test Attestation Format 4
+        id: attestation_4
         continue-on-error: true
         uses: actions/attest@v2.1.0
         with:
@@ -66,7 +42,7 @@ jobs:
           predicate: |
             {
               "buildDefinition": {
-                "buildType": "https://github.com/actions/runner/workflow"
+                "buildType": "https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@refs/tags/v1.5.0"
               },
               "runDetails": {
                 "builder": {
@@ -78,9 +54,9 @@ jobs:
               }
             }
             
-      # Format 3: With externalParameters
-      - name: Test Attestation Format 3
-        id: attestation_3
+      # Format 5: Even more minimal
+      - name: Test Attestation Format 5
+        id: attestation_5
         continue-on-error: true
         uses: actions/attest@v2.1.0
         with:
@@ -90,12 +66,31 @@ jobs:
           predicate: |
             {
               "buildDefinition": {
-                "buildType": "https://github.com/actions/workflow",
-                "externalParameters": {
-                  "workflow": "${{ github.workflow }}",
-                  "repository": "${{ github.repository }}",
-                  "ref": "${{ github.ref }}" 
+                "buildType": "https://slsa.dev/github-hosted-runner"
+              },
+              "runDetails": {
+                "builder": {
+                  "id": "https://github.com/actions/runner"
+                },
+                "metadata": {
+                  "invocationId": "${{ github.run_id }}"
                 }
+              }
+            }
+            
+      # Format 6: Using the GitHub-hosted runner URI
+      - name: Test Attestation Format 6
+        id: attestation_6
+        continue-on-error: true
+        uses: actions/attest@v2.1.0
+        with:
+          subject-path: test_data/test_subject.txt
+          predicate-type: 'https://slsa.dev/provenance/v1'
+          show-summary: true
+          predicate: |
+            {
+              "buildDefinition": {
+                "buildType": "https://github.com/actions/runner/github-hosted"
               },
               "runDetails": {
                 "builder": {
@@ -114,28 +109,29 @@ jobs:
           
           echo "# Attestation Test Results - ${{ steps.timestamp.outputs.timestamp }}" > test_results/report.md
           echo "" >> test_results/report.md
-          echo "## Format 1 (Minimal)" >> test_results/report.md
-          echo "* Status: ${{ steps.attestation_1.outcome }}" >> test_results/report.md
-          if [[ "${{ steps.attestation_1.outcome }}" == "success" ]]; then
-            echo "* Attestation URL: ${{ steps.attestation_1.outputs.attestation-url }}" >> test_results/report.md
+          
+          echo "## Format 4 (Official GitHub Actions Format)" >> test_results/report.md
+          echo "* Status: ${{ steps.attestation_4.outcome }}" >> test_results/report.md
+          if [[ "${{ steps.attestation_4.outcome }}" == "success" ]]; then
+            echo "* Attestation URL: ${{ steps.attestation_4.outputs.attestation-url }}" >> test_results/report.md
           else
             echo "* Failed to generate attestation" >> test_results/report.md
           fi
           
           echo "" >> test_results/report.md
-          echo "## Format 2 (Different buildType)" >> test_results/report.md
-          echo "* Status: ${{ steps.attestation_2.outcome }}" >> test_results/report.md
-          if [[ "${{ steps.attestation_2.outcome }}" == "success" ]]; then
-            echo "* Attestation URL: ${{ steps.attestation_2.outputs.attestation-url }}" >> test_results/report.md
+          echo "## Format 5 (Even more minimal)" >> test_results/report.md
+          echo "* Status: ${{ steps.attestation_5.outcome }}" >> test_results/report.md
+          if [[ "${{ steps.attestation_5.outcome }}" == "success" ]]; then
+            echo "* Attestation URL: ${{ steps.attestation_5.outputs.attestation-url }}" >> test_results/report.md
           else
             echo "* Failed to generate attestation" >> test_results/report.md
           fi
           
           echo "" >> test_results/report.md
-          echo "## Format 3 (With externalParameters)" >> test_results/report.md
-          echo "* Status: ${{ steps.attestation_3.outcome }}" >> test_results/report.md
-          if [[ "${{ steps.attestation_3.outcome }}" == "success" ]]; then
-            echo "* Attestation URL: ${{ steps.attestation_3.outputs.attestation-url }}" >> test_results/report.md
+          echo "## Format 6 (GitHub-hosted runner URI)" >> test_results/report.md
+          echo "* Status: ${{ steps.attestation_6.outcome }}" >> test_results/report.md
+          if [[ "${{ steps.attestation_6.outcome }}" == "success" ]]; then
+            echo "* Attestation URL: ${{ steps.attestation_6.outputs.attestation-url }}" >> test_results/report.md
           else
             echo "* Failed to generate attestation" >> test_results/report.md
           fi
