@@ -1,13 +1,13 @@
 {
   "title": "Endocast [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000715737?locale=en",
-  "id": "000715737",
-  "Object": "USNM:MAMM:USNM 83651",
-  "Taxonomy": "Avahi laniger",
+  "detail_url": "https://www.morphosource.org/concern/media/000715757?locale=en",
+  "id": "000715757",
+  "Object": "MCZ:Mamm:8039",
+  "Taxonomy": "Avahi laniger lanigerAvahi laniger",
   "Element or Part": "Endocast",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Richard Kay",
   "Date Uploaded": "03/04/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
