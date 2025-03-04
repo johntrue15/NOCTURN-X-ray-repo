@@ -1,13 +1,13 @@
 {
-  "title": "Tadpole [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000715334?locale=en",
-  "id": "000715334",
-  "Object": "AMNH:Herpetology:A-80834",
-  "Taxonomy": "Litoria iris",
-  "Element or Part": "Tadpole",
+  "title": "Tadpole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000715840?locale=en",
+  "id": "000715840",
+  "Object": "AMNH:Herpetology:A-165143",
+  "Taxonomy": "Rhinella veraguensis",
+  "Element or Part": "Tadpole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "American Museum of Natural History",
-  "Date Uploaded": "03/03/2025",
+  "Data Manager": "Jack Phillips",
+  "Date Uploaded": "03/04/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
