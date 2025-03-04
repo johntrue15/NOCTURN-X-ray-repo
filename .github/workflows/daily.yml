@@ -13,7 +13,6 @@ permissions:
   attestations: write
 
 env:
-  ATTESTATION_TOKEN: ${{ secrets.ATTESTATION_TOKEN }}
   MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
   WORKFLOW_PAT: ${{ secrets.WORKFLOW_PAT }}
 
@@ -199,75 +198,79 @@ jobs:
           fi
           echo "has_data=true" >> $GITHUB_OUTPUT
 
-      # Add proper attestation for the dataset
+      # Create Attestation for Successful Run
       - name: Create Attestation for Dataset
         id: create_attestation
         if: steps.daily_check.outcome == 'success' && steps.check-data.outputs.has_data == 'true'
-        uses: actions/attest@v2.1.0
-        env:
-          GITHUB_TOKEN: ${{ env.MY_GITHUB_TOKEN }}
+        uses: actions/attest@v2
         with:
           subject-path: data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json
-          predicate-type: 'https://slsa.dev/provenance/v1'
-          show-summary: true
+          predicate-type: 'https://in-toto.io/Statement/v1'
           predicate: |
             {
-              "buildDefinition": {
-                "buildType": "https://slsa-framework.github.io/github-actions-buildtypes/workflow/v1",
-                "externalParameters": {
-                  "workflow": {
-                    "ref": "${{ github.ref }}",
-                    "repository": "${{ github.server_url }}/${{ github.repository }}",
-                    "path": ".github/workflows/daily.yml"
-                  }
-                },
-                "internalParameters": {}
-              },
-              "runDetails": {
-                "builder": {
-                  "id": "${{ github.server_url }}/${{ github.repository }}/.github/workflows/daily.yml@${{ github.ref }}"
-                },
+              "predicateType": "https://in-toto.io/attestation/release/v0.1",
+              "subject": [],
+              "predicate": {
+                "purl": "pkg:github/${{ github.repository }}",
+                "version": "${{ github.sha }}",
                 "metadata": {
-                  "invocationId": "${{ github.server_url }}/actions/runs/${{ github.run_id }}",
-                  "github": {
-                    "actor": "${{ github.actor }}",
-                    "repository": "${{ github.repository }}",
-                    "workflow": "${{ github.workflow }}"
+                  "buildInvocationId": "${{ github.run_id }}",
+                  "completeness": {
+                    "parameters": true,
+                    "environment": true,
+                    "materials": true
+                  },
+                  "daily_info": {
+                    "type": "daily_check",
+                    "timestamp": "${{ steps.timestamp.outputs.timestamp }}",
+                    "previous_data": "${{ steps.find-latest.outputs.dir }}",
+                    "current_data": "data/${{ steps.timestamp.outputs.timestamp }}"
                   }
                 }
               }
             }
-            
-      # Add in-toto attestation format
-      - name: Create In-toto Attestation for Dataset
-        id: create_intoto_attestation
-        if: steps.daily_check.outcome == 'success' && steps.check-data.outputs.has_data == 'true'
-        uses: actions/attest@v2.1.0
-        env:
-          GITHUB_TOKEN: ${{ env.WORKFLOW_PAT }}
+
+      # Create Attestation for Failed Run
+      - name: Generate Attestation for Failed Run
+        id: generate-attestation
+        if: steps.daily_check.outcome == 'failure' && steps.check-data.outputs.has_data == 'true'
+        uses: actions/attest@v2
         with:
           subject-path: data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json
-          predicate-type: 'https://in-toto.io/attestation/release/v0.1'
-          show-summary: true
+          predicate-type: 'https://in-toto.io/Statement/v1'
           predicate: |
             {
-              "purl": "pkg:github/${{ github.repository }}",
-              "version": "${{ github.sha }}",
-              "metadata": {
-                "buildInvocationId": "${{ github.run_id }}",
-                "completeness": {
-                  "parameters": true,
-                  "environment": true,
-                  "materials": true
-                },
-                "daily_info": {
-                  "type": "daily_check",
-                  "timestamp": "${{ steps.timestamp.outputs.timestamp }}",
-                  "previous_data": "${{ steps.find-latest.outputs.dir }}",
-                  "current_data": "data/${{ steps.timestamp.outputs.timestamp }}"
+              "predicateType": "https://in-toto.io/attestation/release/v0.1",
+              "subject": [],
+              "predicate": {
+                "purl": "pkg:github/${{ github.repository }}",
+                "version": "${{ github.sha }}",
+                "metadata": {
+                  "buildInvocationId": "${{ github.run_id }}",
+                  "completeness": {
+                    "parameters": true,
+                    "environment": true,
+                    "materials": true
+                  },
+                  "daily_info": {
+                    "type": "daily_check",
+                    "timestamp": "${{ steps.timestamp.outputs.timestamp }}",
+                    "previous_data": "${{ steps.find-latest.outputs.dir }}",
+                    "current_data": "data/${{ steps.timestamp.outputs.timestamp }}",
+                    "workflow_status": "failure"
+                  }
                 }
               }
             }
+
+      - name: Save Attestation and Update Release Notes
+        if: steps.daily_check.outcome == 'failure' && steps.generate-attestation.outcome == 'success' && steps.check-data.outputs.has_data == 'true'
+        run: |
+          ATT_URL="${{ steps.generate-attestation.outputs.attestation-url }}"
+          if [ -z "$ATT_URL" ]; then
+            echo "No attestation URL found"
+            exit 1
+          fi
 
       # Create metadata JSON for successful run
       - name: Create Daily Info JSON (Success)
@@ -351,18 +354,13 @@ jobs:
             "workflow": "${{ github.workflow }}",
             "trigger_type": "${{ env.MANUAL == 'true' && 'manual' || 'scheduled' }}",
             "actor": "${{ github.actor }}",
-            "artifacts_recovered": "${{ steps.check_failed_artifacts.outputs.found_artifacts }}"
+            "artifacts_recovered": "${{ steps.check_failed_artifacts.outputs.found_artifacts }}",
+            "attestation_url": "${{ steps.generate-attestation.outputs.attestation-url }}"
           }
           EOF
           
           echo "Created daily_info.json with metadata for failed run"
           echo "daily_info_path=data/${{ steps.timestamp.outputs.timestamp }}/daily_info.json" >> $GITHUB_OUTPUT
-          
-          # Create a fake attestation URL to maintain backward compatibility in release notes
-          REPO="${{ github.repository }}"
-          RUN_ID="${{ github.run_id }}"
-          ATTESTATION_ID=$(echo "$REPO-$RUN_ID-${{ steps.timestamp.outputs.timestamp }}" | md5sum | cut -d ' ' -f 1)
-          echo "attestation_url=https://github.com/$REPO/attestations/$ATTESTATION_ID" >> $GITHUB_OUTPUT
 
       - name: Save Release Notes (Failure Fallback)
         if: steps.daily_check.outcome == 'failure' && steps.check-data.outputs.has_data == 'true'
@@ -400,7 +398,7 @@ jobs:
             # Add attestation section
             echo ""
             echo "## Attestation"
-            echo "* Daily Dataset: ${{ steps.create-daily-info-fallback.outputs.attestation_url }}"
+            echo "* Daily Dataset: ${{ steps.generate-attestation.outputs.attestation-url }}"
           } > "data/${{ steps.timestamp.outputs.timestamp }}/release_notes.txt"
 
       - name: Commit and Push Changes
