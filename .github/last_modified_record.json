@@ -1,13 +1,13 @@
 {
-  "title": "Tadpole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000715362?locale=en",
-  "id": "000715362",
-  "Object": "AMNH:Herpetology:A-137451",
-  "Taxonomy": "Isthmohyla rivularis",
-  "Element or Part": "Tadpole body",
+  "title": "Head [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000098613?locale=en",
+  "id": "000098613",
+  "Object": "uta:uta-r:50569",
+  "Taxonomy": "Lithobates pipiensUngaliophis continentalis",
+  "Element or Part": "head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jack Phillips",
-  "Date Uploaded": "03/03/2025",
+  "Data Manager": "Jessie Maisano",
+  "Date Uploaded": "01/12/2020",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
