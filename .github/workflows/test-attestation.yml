@@ -30,6 +30,69 @@ jobs:
           echo "timestamp=$TS" >> $GITHUB_OUTPUT
           echo "Generated timestamp: $TS"
       
+      # Format 12: GitHub Runner (Exact Documentation Format)
+      - name: Test Attestation Format 12 - GitHub Runner
+        id: attestation_12
+        continue-on-error: true
+        uses: actions/attest@v2.1.0
+        with:
+          subject-path: test_data/test_subject.txt
+          predicate-type: 'https://slsa.dev/provenance/v1'
+          show-summary: true
+          predicate: |
+            {
+              "buildDefinition": {
+                "buildType": "https://github.com/actions/runner/github-workflow"
+              },
+              "runDetails": {
+                "builder": {
+                  "id": "https://github.com/actions/runner"
+                }
+              }
+            }
+      
+      # Format 10: GitHub Documentation Example (most accurate)
+      - name: Test Attestation Format 10 - GitHub Docs Example
+        id: attestation_10
+        continue-on-error: true
+        uses: actions/attest@v2.1.0
+        with:
+          subject-path: test_data/test_subject.txt
+          predicate-type: 'https://slsa.dev/provenance/v1'
+          show-summary: true
+          predicate: |
+            {
+              "buildDefinition": {
+                "buildType": "https://github.com/actions/runner"
+              },
+              "runDetails": {
+                "builder": {
+                  "id": "https://github.com/actions/runner"
+                }
+              }
+            }
+            
+      # Format 11: Absolute Minimal (GitHub Docs Style)
+      - name: Test Attestation Format 11 - Absolute Minimal
+        id: attestation_11
+        continue-on-error: true
+        uses: actions/attest@v2.1.0
+        with:
+          subject-path: test_data/test_subject.txt
+          predicate-type: 'https://slsa.dev/provenance/v1'
+          show-summary: true
+          predicate: |
+            {
+              "buildDefinition": {
+                "buildType": "https://github.com/actions"
+              },
+              "runDetails": {
+                "builder": {
+                  "id": "https://github.com/actions"
+                }
+              }
+            }
+      
       # Format 7: GitHub Simple - Just the essentials 
       - name: Test Attestation Format 7
         id: attestation_7
@@ -159,6 +222,33 @@ jobs:
           echo "# Attestation Test Results - ${{ steps.timestamp.outputs.timestamp }}" > test_results/report.md
           echo "" >> test_results/report.md
           
+          echo "## Format 12 (GitHub Runner)" >> test_results/report.md
+          echo "* Status: ${{ steps.attestation_12.outcome }}" >> test_results/report.md
+          if [[ "${{ steps.attestation_12.outcome }}" == "success" ]]; then
+            echo "* Attestation URL: ${{ steps.attestation_12.outputs.attestation-url }}" >> test_results/report.md
+          else
+            echo "* Failed to generate attestation" >> test_results/report.md
+          fi
+          
+          echo "" >> test_results/report.md
+          echo "## Format 10 (GitHub Docs Example)" >> test_results/report.md
+          echo "* Status: ${{ steps.attestation_10.outcome }}" >> test_results/report.md
+          if [[ "${{ steps.attestation_10.outcome }}" == "success" ]]; then
+            echo "* Attestation URL: ${{ steps.attestation_10.outputs.attestation-url }}" >> test_results/report.md
+          else
+            echo "* Failed to generate attestation" >> test_results/report.md
+          fi
+          
+          echo "" >> test_results/report.md
+          echo "## Format 11 (Absolute Minimal)" >> test_results/report.md
+          echo "* Status: ${{ steps.attestation_11.outcome }}" >> test_results/report.md
+          if [[ "${{ steps.attestation_11.outcome }}" == "success" ]]; then
+            echo "* Attestation URL: ${{ steps.attestation_11.outputs.attestation-url }}" >> test_results/report.md
+          else
+            echo "* Failed to generate attestation" >> test_results/report.md
+          fi
+          
+          echo "" >> test_results/report.md
           echo "## Format 7 (GitHub Simple)" >> test_results/report.md
           echo "* Status: ${{ steps.attestation_7.outcome }}" >> test_results/report.md
           if [[ "${{ steps.attestation_7.outcome }}" == "success" ]]; then
