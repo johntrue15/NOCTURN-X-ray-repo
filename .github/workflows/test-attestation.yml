@@ -9,6 +9,10 @@ permissions:
   actions: write
   attestations: write
 
+env:
+  MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+  WORKFLOW_PAT: ${{ secrets.WORKFLOW_PAT }}
+
 jobs:
   test-attestation:
     runs-on: ubuntu-latest
@@ -30,8 +34,8 @@ jobs:
           echo "timestamp=$TS" >> $GITHUB_OUTPUT
           echo "Generated timestamp: $TS"
       
-      # Format 1: Absolute Minimal
-      - name: Test Attestation Format 1 - Absolute Minimal
+      # Format 1: Default GitHub Token (built-in)
+      - name: Test Attestation Format 1 - Default Token
         id: attestation_1
         continue-on-error: true
         uses: actions/attest@v2.1.0
@@ -67,11 +71,13 @@ jobs:
               }
             }
       
-      # Format 2: Official version from GitHub Docs
-      - name: Test Attestation Format 2 - GitHub Docs Example
+      # Format 2: MY_GITHUB_TOKEN
+      - name: Test Attestation Format 2 - MY_GITHUB_TOKEN
         id: attestation_2
         continue-on-error: true
         uses: actions/attest@v2.1.0
+        env:
+          GITHUB_TOKEN: ${{ env.MY_GITHUB_TOKEN }}
         with:
           subject-path: test_data/test_subject.txt
           predicate-type: 'https://slsa.dev/provenance/v1'
@@ -104,11 +110,13 @@ jobs:
               }
             }
       
-      # Format 3: Ultra-minimal
-      - name: Test Attestation Format 3 - Ultra-minimal 
+      # Format 3: WORKFLOW_PAT
+      - name: Test Attestation Format 3 - WORKFLOW_PAT
         id: attestation_3
         continue-on-error: true
         uses: actions/attest@v2.1.0
+        env:
+          GITHUB_TOKEN: ${{ env.WORKFLOW_PAT }}
         with:
           subject-path: test_data/test_subject.txt
           predicate-type: 'https://slsa.dev/provenance/v1'
@@ -137,6 +145,36 @@ jobs:
               }
             }
       
+      # Format 4: Using in-toto format with WORKFLOW_PAT
+      - name: Test Attestation Format 4 - In-toto Release Format
+        id: attestation_4
+        continue-on-error: true
+        uses: actions/attest@v2.1.0
+        env:
+          GITHUB_TOKEN: ${{ env.WORKFLOW_PAT }}
+        with:
+          subject-path: test_data/test_subject.txt
+          predicate-type: 'https://in-toto.io/attestation/release/v0.1'
+          show-summary: true
+          predicate: |
+            {
+              "purl": "pkg:github/${{ github.repository }}",
+              "version": "${{ github.sha }}",
+              "metadata": {
+                "buildInvocationId": "${{ github.run_id }}",
+                "completeness": {
+                  "parameters": true,
+                  "environment": true,
+                  "materials": true
+                },
+                "test_info": {
+                  "type": "test_attestation",
+                  "timestamp": "${{ steps.timestamp.outputs.timestamp }}",
+                  "format": "in-toto-release"
+                }
+              }
+            }
+      
       # Create a report of the results
       - name: Generate Results Report
         run: |
@@ -145,7 +183,7 @@ jobs:
           echo "# Attestation Test Results - ${{ steps.timestamp.outputs.timestamp }}" > test_results/report.md
           echo "" >> test_results/report.md
           
-          echo "## Format 1 (Absolute Minimal)" >> test_results/report.md
+          echo "## Format 1 (Default Token)" >> test_results/report.md
           echo "* Status: ${{ steps.attestation_1.outcome }}" >> test_results/report.md
           if [[ "${{ steps.attestation_1.outcome }}" == "success" ]]; then
             echo "* Attestation URL: ${{ steps.attestation_1.outputs.attestation-url }}" >> test_results/report.md
@@ -154,7 +192,7 @@ jobs:
           fi
           
           echo "" >> test_results/report.md
-          echo "## Format 2 (GitHub Docs Example)" >> test_results/report.md
+          echo "## Format 2 (MY_GITHUB_TOKEN)" >> test_results/report.md
           echo "* Status: ${{ steps.attestation_2.outcome }}" >> test_results/report.md
           if [[ "${{ steps.attestation_2.outcome }}" == "success" ]]; then
             echo "* Attestation URL: ${{ steps.attestation_2.outputs.attestation-url }}" >> test_results/report.md
@@ -163,10 +201,19 @@ jobs:
           fi
           
           echo "" >> test_results/report.md
-          echo "## Format 3 (Ultra-minimal)" >> test_results/report.md
+          echo "## Format 3 (WORKFLOW_PAT)" >> test_results/report.md
           echo "* Status: ${{ steps.attestation_3.outcome }}" >> test_results/report.md
           if [[ "${{ steps.attestation_3.outcome }}" == "success" ]]; then
             echo "* Attestation URL: ${{ steps.attestation_3.outputs.attestation-url }}" >> test_results/report.md
+          else
+            echo "* Failed to generate attestation" >> test_results/report.md
+          fi
+          
+          echo "" >> test_results/report.md
+          echo "## Format 4 (In-toto Release Format with WORKFLOW_PAT)" >> test_results/report.md
+          echo "* Status: ${{ steps.attestation_4.outcome }}" >> test_results/report.md
+          if [[ "${{ steps.attestation_4.outcome }}" == "success" ]]; then
+            echo "* Attestation URL: ${{ steps.attestation_4.outputs.attestation-url }}" >> test_results/report.md
           else
             echo "* Failed to generate attestation" >> test_results/report.md
           fi

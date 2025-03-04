@@ -12,6 +12,11 @@ permissions:
   checks: write
   attestations: write
 
+env:
+  ATTESTATION_TOKEN: ${{ secrets.ATTESTATION_TOKEN }}
+  MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+  WORKFLOW_PAT: ${{ secrets.WORKFLOW_PAT }}
+
 jobs:
   daily-check:
     runs-on: ubuntu-latest
@@ -199,6 +204,8 @@ jobs:
         id: create_attestation
         if: steps.daily_check.outcome == 'success' && steps.check-data.outputs.has_data == 'true'
         uses: actions/attest@v2.1.0
+        env:
+          GITHUB_TOKEN: ${{ env.MY_GITHUB_TOKEN }}
         with:
           subject-path: data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json
           predicate-type: 'https://slsa.dev/provenance/v1'
@@ -227,6 +234,37 @@ jobs:
                     "repository": "${{ github.repository }}",
                     "workflow": "${{ github.workflow }}"
                   }
+                }
+              }
+            }
+            
+      # Add in-toto attestation format
+      - name: Create In-toto Attestation for Dataset
+        id: create_intoto_attestation
+        if: steps.daily_check.outcome == 'success' && steps.check-data.outputs.has_data == 'true'
+        uses: actions/attest@v2.1.0
+        env:
+          GITHUB_TOKEN: ${{ env.WORKFLOW_PAT }}
+        with:
+          subject-path: data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json
+          predicate-type: 'https://in-toto.io/attestation/release/v0.1'
+          show-summary: true
+          predicate: |
+            {
+              "purl": "pkg:github/${{ github.repository }}",
+              "version": "${{ github.sha }}",
+              "metadata": {
+                "buildInvocationId": "${{ github.run_id }}",
+                "completeness": {
+                  "parameters": true,
+                  "environment": true,
+                  "materials": true
+                },
+                "daily_info": {
+                  "type": "daily_check",
+                  "timestamp": "${{ steps.timestamp.outputs.timestamp }}",
+                  "previous_data": "${{ steps.find-latest.outputs.dir }}",
+                  "current_data": "data/${{ steps.timestamp.outputs.timestamp }}"
                 }
               }
             }
