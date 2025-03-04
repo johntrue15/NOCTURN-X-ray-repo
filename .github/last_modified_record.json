@@ -1,13 +1,13 @@
 {
-  "title": "Head [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000098613?locale=en",
-  "id": "000098613",
-  "Object": "uta:uta-r:50569",
-  "Taxonomy": "Lithobates pipiensUngaliophis continentalis",
-  "Element or Part": "head",
+  "title": "Endocast [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000715723?locale=en",
+  "id": "000715723",
+  "Object": "USNM:MAMM:USNM 511930",
+  "Taxonomy": "Arctocebus calabarensis",
+  "Element or Part": "Endocast",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jessie Maisano",
-  "Date Uploaded": "01/12/2020",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Richard Kay",
+  "Date Uploaded": "03/04/2025",
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined"
 }
