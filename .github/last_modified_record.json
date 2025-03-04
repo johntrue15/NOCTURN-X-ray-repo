@@ -1,13 +1,13 @@
 {
-  "title": "Theropod Maxilla, Main Part (Anterior Part Scanned Separately) [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000693391?locale=en",
-  "id": "000693391",
-  "Object": "AMNH:FARB:33850",
-  "Taxonomy": "Tyrannosauroidea indet.",
-  "Element or Part": "theropod maxilla, main part (anterior part scanned separately)",
+  "title": "Tadpole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000716101?locale=en",
+  "id": "000716101",
+  "Object": "CAS:HERP:177307",
+  "Taxonomy": "Scutiger boulengeri",
+  "Element or Part": "Tadpole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "AMNH VP Team",
-  "Date Uploaded": "12/12/2024",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Jack Phillips",
+  "Date Uploaded": "03/04/2025",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
