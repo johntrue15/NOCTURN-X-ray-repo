@@ -206,19 +206,39 @@ jobs:
           predicate: |
             {
               "buildDefinition": {
-                "buildType": "https://slsa.dev/provenance/v1",
+                "buildType": "https://slsa-framework.github.io/github-actions-buildtypes/workflow/v1",
                 "externalParameters": {
-                  "source": "${{ github.repository }}",
-                  "workflow": "${{ github.workflow }}",
-                  "runTimestamp": "${{ steps.timestamp.outputs.timestamp }}"
-                }
+                  "workflow": {
+                    "ref": "${{ github.ref }}",
+                    "repository": "${{ github.server_url }}/${{ github.repository }}",
+                    "path": ".github/workflows/daily.yml"
+                  },
+                  "vars": {
+                    "timestamp": "${{ steps.timestamp.outputs.timestamp }}"
+                  }
+                },
+                "internalParameters": {
+                  "github": {
+                    "actor_id": "${{ github.actor }}",
+                    "event_name": "${{ github.event_name }}",
+                    "repository_id": "${{ github.repository_id }}"
+                  }
+                },
+                "resolvedDependencies": [
+                  {
+                    "uri": "git+${{ github.server_url }}/${{ github.repository }}@${{ github.sha }}",
+                    "digest": {
+                      "sha1": "${{ github.sha }}"
+                    }
+                  }
+                ]
               },
               "runDetails": {
                 "builder": {
-                  "id": "https://github.com/Attestations/GitHubHostedActions@v1"
+                  "id": "${{ github.server_url }}/${{ github.repository }}/.github/workflows/daily.yml@${{ github.ref }}"
                 },
                 "metadata": {
-                  "invocationId": "${{ github.run_id }}"
+                  "invocationId": "${{ github.server_url }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
                 }
               }
             }
