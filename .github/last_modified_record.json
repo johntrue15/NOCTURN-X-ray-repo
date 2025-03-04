@@ -1,13 +1,13 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000716160?locale=en",
-  "id": "000716160",
-  "Object": "LACM:Fish:55946.003",
-  "Taxonomy": "Sicyases sanguineus",
-  "Element or Part": "Whole body",
+  "title": "Tadpole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000716173?locale=en",
+  "id": "000716173",
+  "Object": "KU:KUH:112307",
+  "Taxonomy": "Rhaebo caeruleostictus",
+  "Element or Part": "Tadpole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Natural History Museum of Los Angeles County",
+  "Data Manager": "Ana Motta",
   "Date Uploaded": "03/04/2025",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Rights Statement": "No Copyright - Other Known Legal Restrictions"
 }
