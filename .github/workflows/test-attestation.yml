@@ -55,6 +55,14 @@ jobs:
               "runDetails": {
                 "builder": {
                   "id": "${{ github.server_url }}/${{ github.repository }}/.github/workflows/test-attestation.yml@${{ github.ref }}"
+                },
+                "metadata": {
+                  "invocationId": "${{ github.server_url }}/actions/runs/${{ github.run_id }}",
+                  "github": {
+                    "actor": "${{ github.actor }}",
+                    "repository": "${{ github.repository }}",
+                    "workflow": "${{ github.workflow }}"
+                  }
                 }
               }
             }
@@ -86,7 +94,12 @@ jobs:
                   "id": "${{ github.server_url }}/${{ github.repository }}/.github/workflows/test-attestation.yml@${{ github.ref }}"
                 },
                 "metadata": {
-                  "invocationId": "${{ github.server_url }}/actions/runs/${{ github.run_id }}"
+                  "invocationId": "${{ github.server_url }}/actions/runs/${{ github.run_id }}",
+                  "github": {
+                    "actor": "${{ github.actor }}",
+                    "repository": "${{ github.repository }}",
+                    "workflow": "${{ github.workflow }}"
+                  }
                 }
               }
             }
@@ -113,7 +126,15 @@ jobs:
                 },
                 "internalParameters": {}
               },
-              "runDetails": {}
+              "runDetails": {
+                "metadata": {
+                  "github": {
+                    "actor": "${{ github.actor }}",
+                    "repository": "${{ github.repository }}",
+                    "workflow": "${{ github.workflow }}"
+                  }
+                }
+              }
             }
       
       # Create a report of the results

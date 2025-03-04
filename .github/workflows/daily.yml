@@ -221,7 +221,12 @@ jobs:
                   "id": "${{ github.server_url }}/${{ github.repository }}/.github/workflows/daily.yml@${{ github.ref }}"
                 },
                 "metadata": {
-                  "invocationId": "${{ github.server_url }}/actions/runs/${{ github.run_id }}"
+                  "invocationId": "${{ github.server_url }}/actions/runs/${{ github.run_id }}",
+                  "github": {
+                    "actor": "${{ github.actor }}",
+                    "repository": "${{ github.repository }}",
+                    "workflow": "${{ github.workflow }}"
+                  }
                 }
               }
             }
