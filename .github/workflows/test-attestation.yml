@@ -30,8 +30,8 @@ jobs:
           echo "timestamp=$TS" >> $GITHUB_OUTPUT
           echo "Generated timestamp: $TS"
       
-      # Format 1: Basic SLSA Workflow v1 format
-      - name: Test Attestation Format 1 - Basic
+      # Format 1: Simplified SLSA format
+      - name: Test Attestation Format 1 - Simple
         id: attestation_1
         continue-on-error: true
         uses: actions/attest@v2.1.0
@@ -49,7 +49,8 @@ jobs:
                     "repository": "${{ github.server_url }}/${{ github.repository }}",
                     "path": ".github/workflows/test-attestation.yml"
                   }
-                }
+                },
+                "internalParameters": {}
               },
               "runDetails": {
                 "builder": {
@@ -61,8 +62,8 @@ jobs:
               }
             }
       
-      # Format 2: With additional metadata
-      - name: Test Attestation Format 2 - With Metadata
+      # Format 2: Proper URI format
+      - name: Test Attestation Format 2 - Fixed URI
         id: attestation_2
         continue-on-error: true
         uses: actions/attest@v2.1.0
@@ -79,18 +80,17 @@ jobs:
                     "ref": "${{ github.ref }}",
                     "repository": "${{ github.server_url }}/${{ github.repository }}",
                     "path": ".github/workflows/test-attestation.yml"
-                  },
-                  "vars": {
-                    "timestamp": "${{ steps.timestamp.outputs.timestamp }}"
                   }
                 },
-                "internalParameters": {
-                  "github": {
-                    "actor_id": "${{ github.actor }}",
-                    "event_name": "${{ github.event_name }}",
-                    "repository_id": "${{ github.repository_id }}"
+                "internalParameters": {},
+                "resolvedDependencies": [
+                  {
+                    "uri": "git+${{ github.server_url }}/${{ github.repository }}@${{ github.ref }}",
+                    "digest": {
+                      "sha1": "${{ github.sha }}"
+                    }
                   }
-                }
+                ]
               },
               "runDetails": {
                 "builder": {
@@ -102,7 +102,7 @@ jobs:
               }
             }
       
-      # Format 3: Complete with resolved dependencies
+      # Format 3: Complete format with additional fields
       - name: Test Attestation Format 3 - Complete
         id: attestation_3
         continue-on-error: true
@@ -127,15 +127,12 @@ jobs:
                 },
                 "internalParameters": {
                   "github": {
-                    "actor_id": "${{ github.actor }}",
-                    "event_name": "${{ github.event_name }}",
-                    "repository_id": "${{ github.repository_id }}",
-                    "repository_owner_id": "${{ github.repository_owner_id }}"
+                    "event_name": "${{ github.event_name }}"
                   }
                 },
                 "resolvedDependencies": [
                   {
-                    "uri": "git+${{ github.server_url }}/${{ github.repository }}@${{ github.sha }}",
+                    "uri": "git+${{ github.server_url }}/${{ github.repository }}@${{ github.ref }}",
                     "digest": {
                       "sha1": "${{ github.sha }}"
                     }
@@ -160,7 +157,7 @@ jobs:
           echo "# Attestation Test Results - ${{ steps.timestamp.outputs.timestamp }}" > test_results/report.md
           echo "" >> test_results/report.md
           
-          echo "## Format 1 (Basic)" >> test_results/report.md
+          echo "## Format 1 (Simple)" >> test_results/report.md
           echo "* Status: ${{ steps.attestation_1.outcome }}" >> test_results/report.md
           if [[ "${{ steps.attestation_1.outcome }}" == "success" ]]; then
             echo "* Attestation URL: ${{ steps.attestation_1.outputs.attestation-url }}" >> test_results/report.md
@@ -169,7 +166,7 @@ jobs:
           fi
           
           echo "" >> test_results/report.md
-          echo "## Format 2 (With Metadata)" >> test_results/report.md
+          echo "## Format 2 (Fixed URI)" >> test_results/report.md
           echo "* Status: ${{ steps.attestation_2.outcome }}" >> test_results/report.md
           if [[ "${{ steps.attestation_2.outcome }}" == "success" ]]; then
             echo "* Attestation URL: ${{ steps.attestation_2.outputs.attestation-url }}" >> test_results/report.md

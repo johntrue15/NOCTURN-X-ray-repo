@@ -219,14 +219,12 @@ jobs:
                 },
                 "internalParameters": {
                   "github": {
-                    "actor_id": "${{ github.actor }}",
-                    "event_name": "${{ github.event_name }}",
-                    "repository_id": "${{ github.repository_id }}"
+                    "event_name": "${{ github.event_name }}"
                   }
                 },
                 "resolvedDependencies": [
                   {
-                    "uri": "git+${{ github.server_url }}/${{ github.repository }}@${{ github.sha }}",
+                    "uri": "git+${{ github.server_url }}/${{ github.repository }}@${{ github.ref }}",
                     "digest": {
                       "sha1": "${{ github.sha }}"
                     }
