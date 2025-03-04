@@ -1,0 +1,149 @@
+name: Test Attestation Generation
+
+on:
+  workflow_dispatch:  # Manual trigger only
+
+permissions:
+  contents: write
+  id-token: write
+  actions: write
+  attestations: write
+
+jobs:
+  test-attestation:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        
+      - name: Create test file
+        run: |
+          mkdir -p test_data
+          echo "This is a test file for attestation" > test_data/test_subject.txt
+          echo "Created test file at test_data/test_subject.txt"
+      
+      - name: Generate Timestamp
+        id: timestamp
+        run: |
+          TS=$(date +'%Y-%m-%d_%H-%M-%S')
+          echo "timestamp=$TS" >> $GITHUB_OUTPUT
+          echo "Generated timestamp: $TS"
+          
+      # Format 1: Minimal format
+      - name: Test Attestation Format 1
+        id: attestation_1
+        continue-on-error: true
+        uses: actions/attest@v2.1.0
+        with:
+          subject-path: test_data/test_subject.txt
+          predicate-type: 'https://slsa.dev/provenance/v1'
+          show-summary: true
+          predicate: |
+            {
+              "buildDefinition": {
+                "buildType": "https://github.com/Attestations/GitHubHostedActions"
+              },
+              "runDetails": {
+                "builder": {
+                  "id": "https://github.com/actions/runner"
+                },
+                "metadata": {
+                  "invocationId": "${{ github.run_id }}"
+                }
+              }
+            }
+      
+      # Format 2: Different buildType
+      - name: Test Attestation Format 2
+        id: attestation_2
+        continue-on-error: true
+        uses: actions/attest@v2.1.0
+        with:
+          subject-path: test_data/test_subject.txt
+          predicate-type: 'https://slsa.dev/provenance/v1'
+          show-summary: true
+          predicate: |
+            {
+              "buildDefinition": {
+                "buildType": "https://github.com/actions/runner/workflow"
+              },
+              "runDetails": {
+                "builder": {
+                  "id": "https://github.com/actions/runner"
+                },
+                "metadata": {
+                  "invocationId": "${{ github.run_id }}"
+                }
+              }
+            }
+            
+      # Format 3: With externalParameters
+      - name: Test Attestation Format 3
+        id: attestation_3
+        continue-on-error: true
+        uses: actions/attest@v2.1.0
+        with:
+          subject-path: test_data/test_subject.txt
+          predicate-type: 'https://slsa.dev/provenance/v1'
+          show-summary: true
+          predicate: |
+            {
+              "buildDefinition": {
+                "buildType": "https://github.com/actions/workflow",
+                "externalParameters": {
+                  "workflow": "${{ github.workflow }}",
+                  "repository": "${{ github.repository }}",
+                  "ref": "${{ github.ref }}" 
+                }
+              },
+              "runDetails": {
+                "builder": {
+                  "id": "https://github.com/actions/runner"
+                },
+                "metadata": {
+                  "invocationId": "${{ github.run_id }}"
+                }
+              }
+            }
+        
+      # Create a report of the results
+      - name: Generate Results Report
+        run: |
+          mkdir -p test_results
+          
+          echo "# Attestation Test Results - ${{ steps.timestamp.outputs.timestamp }}" > test_results/report.md
+          echo "" >> test_results/report.md
+          echo "## Format 1 (Minimal)" >> test_results/report.md
+          echo "* Status: ${{ steps.attestation_1.outcome }}" >> test_results/report.md
+          if [[ "${{ steps.attestation_1.outcome }}" == "success" ]]; then
+            echo "* Attestation URL: ${{ steps.attestation_1.outputs.attestation-url }}" >> test_results/report.md
+          else
+            echo "* Failed to generate attestation" >> test_results/report.md
+          fi
+          
+          echo "" >> test_results/report.md
+          echo "## Format 2 (Different buildType)" >> test_results/report.md
+          echo "* Status: ${{ steps.attestation_2.outcome }}" >> test_results/report.md
+          if [[ "${{ steps.attestation_2.outcome }}" == "success" ]]; then
+            echo "* Attestation URL: ${{ steps.attestation_2.outputs.attestation-url }}" >> test_results/report.md
+          else
+            echo "* Failed to generate attestation" >> test_results/report.md
+          fi
+          
+          echo "" >> test_results/report.md
+          echo "## Format 3 (With externalParameters)" >> test_results/report.md
+          echo "* Status: ${{ steps.attestation_3.outcome }}" >> test_results/report.md
+          if [[ "${{ steps.attestation_3.outcome }}" == "success" ]]; then
+            echo "* Attestation URL: ${{ steps.attestation_3.outputs.attestation-url }}" >> test_results/report.md
+          else
+            echo "* Failed to generate attestation" >> test_results/report.md
+          fi
+          
+          cat test_results/report.md
+          
+      - name: Upload Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: attestation-test-results-${{ steps.timestamp.outputs.timestamp }}
+          path: test_results/report.md 
