@@ -250,6 +250,15 @@ jobs:
               echo "* Artifacts were successfully recovered from previous failed workflow runs"
               echo "* To see which artifacts were recovered, check the workflow logs"
             fi
+            
+            # Add attestation section
+            echo ""
+            echo "## Attestation"
+            echo "* Daily Dataset metadata is included in the release assets (daily_info.json)"
+            # Include a direct link to the repo URL for the current release
+            REPO_URL="https://github.com/${{ github.repository }}"
+            TAG_NAME="daily-${{ steps.timestamp.outputs.timestamp }}"
+            echo "* Release Info: $REPO_URL/releases/tag/$TAG_NAME"
           } > "data/${{ steps.timestamp.outputs.timestamp }}/release_notes.txt"
 
       - name: Commit and Push Changes
