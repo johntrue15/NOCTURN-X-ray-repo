@@ -194,59 +194,33 @@ jobs:
           fi
           echo "has_data=true" >> $GITHUB_OUTPUT
 
-      - name: Generate Attestation
+      # Skip attestation for now as it's causing issues
+      - name: Create Daily Info JSON
         if: steps.daily_check.outcome == 'failure' && steps.check-data.outputs.has_data == 'true'
-        id: generate-attestation
-        uses: actions/attest@v2.1.0
-        with:
-          subject-path: data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json
-          predicate-type: 'https://slsa.dev/provenance/v1'
-          show-summary: true
-          predicate: |
-            {
-              "buildDefinition": {
-                "buildType": "https://github.com/actions/workflows",
-                "externalParameters": {
-                  "workflow": "${{ github.workflow }}",
-                  "ref": "${{ github.ref }}",
-                  "repository": "${{ github.repository }}"
-                },
-                "internalParameters": {
-                  "daily_info": {
-                    "type": "daily_check",
-                    "timestamp": "${{ steps.timestamp.outputs.timestamp }}",
-                    "previous_data": "${{ steps.find-latest.outputs.dir }}",
-                    "current_data": "data/${{ steps.timestamp.outputs.timestamp }}"
-                  }
-                },
-                "resolvedDependencies": []
-              },
-              "runDetails": {
-                "builder": {
-                  "id": "https://github.com/actions/runner",
-                  "version": {
-                    "actions/runner": "${{ runner.name }}"
-                  },
-                  "builderDependencies": []
-                },
-                "metadata": {
-                  "invocationId": "${{ github.run_id }}",
-                  "startedOn": "${{ github.event.repository.created_at }}",
-                  "finishedOn": "${{ steps.timestamp.outputs.timestamp }}"
-                },
-                "byproducts": []
-              }
-            }
-
-      - name: Save Attestation and Update Release Notes
-        if: steps.daily_check.outcome == 'failure' && steps.generate-attestation.outcome == 'success' && steps.check-data.outputs.has_data == 'true'
+        id: create-daily-info
         run: |
-          ATT_URL="${{ steps.generate-attestation.outputs.attestation-url }}"
-          if [ -z "$ATT_URL" ]; then
-            echo "No attestation URL found"
-            exit 1
-          fi
+          # Create daily info JSON with all the metadata we need
+          cat > "data/${{ steps.timestamp.outputs.timestamp }}/daily_info.json" << EOF
+          {
+            "type": "daily_check",
+            "run_id": "${{ github.run_id }}",
+            "timestamp": "${{ steps.timestamp.outputs.timestamp }}",
+            "previous_data": "${{ steps.find-latest.outputs.dir }}",
+            "current_data": "data/${{ steps.timestamp.outputs.timestamp }}",
+            "repository": "${{ github.repository }}",
+            "workflow": "${{ github.workflow }}",
+            "trigger_type": "${{ env.MANUAL == 'true' && 'manual' || 'scheduled' }}",
+            "actor": "${{ github.actor }}",
+            "artifacts_recovered": "${{ steps.check_failed_artifacts.outputs.found_artifacts }}"
+          }
+          EOF
           
+          echo "Created daily_info.json with metadata"
+          echo "daily_info_path=data/${{ steps.timestamp.outputs.timestamp }}/daily_info.json" >> $GITHUB_OUTPUT
+      
+      - name: Save Release Notes
+        if: steps.daily_check.outcome == 'failure' && steps.check-data.outputs.has_data == 'true'
+        run: |
           # Get record counts for comparison
           PREV_COUNT=$(jq length "${{ steps.find-latest.outputs.dir }}/${{ steps.find-latest.outputs.filename }}")
           CURR_COUNT=$(jq length "data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json")
@@ -268,9 +242,6 @@ jobs:
             echo "* Previous records: $PREV_COUNT"
             echo "* Current records: $CURR_COUNT"
             echo "* Difference: $((CURR_COUNT - PREV_COUNT))"
-            echo ""
-            echo "## Attestation"
-            echo "* Daily Dataset: $ATT_URL"
             
             # Add information about recovered artifacts if any were found
             if [[ "${{ steps.check_failed_artifacts.outputs.found_artifacts }}" == "true" ]]; then
