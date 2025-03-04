@@ -205,26 +205,36 @@ jobs:
           predicate: |
             {
               "buildDefinition": {
-                "buildType": "https://github.com/actions/runner-images/daily-check"
-              },
-              "runDetails": {
-                "builder": {
-                  "id": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                "buildType": "https://github.com/actions/workflows",
+                "externalParameters": {
+                  "workflow": "${{ github.workflow }}",
+                  "ref": "${{ github.ref }}",
+                  "repository": "${{ github.repository }}"
                 },
-                "metadata": {
-                  "invocationId": "${{ github.run_id }}",
-                  "completeness": {
-                    "parameters": true,
-                    "environment": true,
-                    "materials": true
-                  },
+                "internalParameters": {
                   "daily_info": {
                     "type": "daily_check",
                     "timestamp": "${{ steps.timestamp.outputs.timestamp }}",
                     "previous_data": "${{ steps.find-latest.outputs.dir }}",
                     "current_data": "data/${{ steps.timestamp.outputs.timestamp }}"
                   }
-                }
+                },
+                "resolvedDependencies": []
+              },
+              "runDetails": {
+                "builder": {
+                  "id": "https://github.com/actions/runner",
+                  "version": {
+                    "actions/runner": "${{ runner.name }}"
+                  },
+                  "builderDependencies": []
+                },
+                "metadata": {
+                  "invocationId": "${{ github.run_id }}",
+                  "startedOn": "${{ github.event.repository.created_at }}",
+                  "finishedOn": "${{ steps.timestamp.outputs.timestamp }}"
+                },
+                "byproducts": []
               }
             }
 
