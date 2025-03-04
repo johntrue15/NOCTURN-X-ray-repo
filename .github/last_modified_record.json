@@ -1,13 +1,13 @@
 {
-  "title": "Tadpole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000716173?locale=en",
-  "id": "000716173",
-  "Object": "KU:KUH:112307",
-  "Taxonomy": "Rhaebo caeruleostictus",
-  "Element or Part": "Tadpole body",
+  "title": "Full Body [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000085206?locale=en",
+  "id": "000085206",
+  "Object": "AMNH:Mammals:M-272391",
+  "Taxonomy": "Tupaia belangeri",
+  "Element or Part": "Full Body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Ana Motta",
-  "Date Uploaded": "03/04/2025",
+  "Data Manager": "AMNH Mammalogy Department",
+  "Date Uploaded": "08/23/2019",
   "Publication Status": "Open Download",
-  "Rights Statement": "No Copyright - Other Known Legal Restrictions"
+  "Rights Statement": "Copyright Undetermined"
 }
