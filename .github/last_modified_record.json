@@ -1,13 +1,13 @@
 {
-  "title": "Full Body [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000085206?locale=en",
-  "id": "000085206",
-  "Object": "AMNH:Mammals:M-272391",
-  "Taxonomy": "Tupaia belangeri",
-  "Element or Part": "Full Body",
+  "title": "Postcranial [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000716203?locale=en",
+  "id": "000716203",
+  "Object": "IGM:100/3640",
+  "Taxonomy": "Shuvuuia deserti",
+  "Element or Part": "postcranial",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "AMNH Mammalogy Department",
-  "Date Uploaded": "08/23/2019",
-  "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Data Manager": "AMNH VP Team",
+  "Date Uploaded": "03/04/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
