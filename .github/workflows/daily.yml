@@ -199,9 +199,9 @@ jobs:
           echo "has_data=true" >> $GITHUB_OUTPUT
 
       # Create Attestation for Successful Run
-      - name: Create Attestation for Dataset
-        id: create_attestation
-        if: steps.daily_check.outcome == 'success' && steps.check-data.outputs.has_data == 'true'
+      - name: Create Attestation for Dataset (Success)
+        id: create_attestation_success
+        if: steps.check-data.outputs.has_data == 'true' && steps.daily_check.outcome == 'success'
         uses: actions/attest@v2
         with:
           subject-path: data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json
@@ -224,7 +224,8 @@ jobs:
                     "type": "daily_check",
                     "timestamp": "${{ steps.timestamp.outputs.timestamp }}",
                     "previous_data": "${{ steps.find-latest.outputs.dir }}",
-                    "current_data": "data/${{ steps.timestamp.outputs.timestamp }}"
+                    "current_data": "data/${{ steps.timestamp.outputs.timestamp }}",
+                    "workflow_status": "success"
                   }
                 }
               }
@@ -232,8 +233,8 @@ jobs:
 
       # Create Attestation for Failed Run
       - name: Generate Attestation for Failed Run
-        id: generate-attestation
-        if: steps.daily_check.outcome == 'failure' && steps.check-data.outputs.has_data == 'true'
+        id: create_attestation_failure
+        if: steps.check-data.outputs.has_data == 'true' && steps.daily_check.outcome != 'success'
         uses: actions/attest@v2
         with:
           subject-path: data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json
@@ -263,15 +264,6 @@ jobs:
               }
             }
 
-      - name: Save Attestation and Update Release Notes
-        if: steps.daily_check.outcome == 'failure' && steps.generate-attestation.outcome == 'success' && steps.check-data.outputs.has_data == 'true'
-        run: |
-          ATT_URL="${{ steps.generate-attestation.outputs.attestation-url }}"
-          if [ -z "$ATT_URL" ]; then
-            echo "No attestation URL found"
-            exit 1
-          fi
-
       # Create metadata JSON for successful run
       - name: Create Daily Info JSON (Success)
         if: steps.daily_check.outcome == 'success' && steps.check-data.outputs.has_data == 'true'
@@ -290,7 +282,7 @@ jobs:
             "trigger_type": "${{ env.MANUAL == 'true' && 'manual' || 'scheduled' }}",
             "actor": "${{ github.actor }}",
             "artifacts_recovered": "${{ steps.check_failed_artifacts.outputs.found_artifacts }}",
-            "attestation_url": "${{ steps.create_attestation.outputs.attestation-url }}"
+            "attestation_url": "${{ steps.create_attestation_success.outputs.attestation-url }}"
           }
           EOF
           
@@ -334,12 +326,12 @@ jobs:
             # Add attestation section
             echo ""
             echo "## Attestation"
-            echo "* Daily Dataset: ${{ steps.create_attestation.outputs.attestation-url }}"
+            echo "* Daily Dataset: ${{ steps.create_attestation_success.outputs.attestation-url }}"
           } > "data/${{ steps.timestamp.outputs.timestamp }}/release_notes.txt"
 
       # Fallback for failed workflow but with data
       - name: Create Daily Info JSON (Failure Fallback)
-        if: steps.daily_check.outcome == 'failure' && steps.check-data.outputs.has_data == 'true'
+        if: steps.daily_check.outcome != 'success' && steps.check-data.outputs.has_data == 'true'
         id: create-daily-info-fallback
         run: |
           # Create daily info JSON with all the metadata we need
@@ -355,7 +347,7 @@ jobs:
             "trigger_type": "${{ env.MANUAL == 'true' && 'manual' || 'scheduled' }}",
             "actor": "${{ github.actor }}",
             "artifacts_recovered": "${{ steps.check_failed_artifacts.outputs.found_artifacts }}",
-            "attestation_url": "${{ steps.generate-attestation.outputs.attestation-url }}"
+            "attestation_url": "${{ steps.create_attestation_failure.outputs.attestation-url }}"
           }
           EOF
           
@@ -363,7 +355,7 @@ jobs:
           echo "daily_info_path=data/${{ steps.timestamp.outputs.timestamp }}/daily_info.json" >> $GITHUB_OUTPUT
 
       - name: Save Release Notes (Failure Fallback)
-        if: steps.daily_check.outcome == 'failure' && steps.check-data.outputs.has_data == 'true'
+        if: steps.daily_check.outcome != 'success' && steps.check-data.outputs.has_data == 'true'
         run: |
           # Get record counts for comparison
           PREV_COUNT=$(jq length "${{ steps.find-latest.outputs.dir }}/${{ steps.find-latest.outputs.filename }}")
@@ -381,6 +373,7 @@ jobs:
             fi
             echo "* Run ID: ${{ github.run_id }}"
             echo "* Workflow Run: [View on GitHub](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+            echo "* Status: Failed but data was collected successfully"
             echo ""
             echo "## Data Comparison"
             echo "* Previous records: $PREV_COUNT"
@@ -398,7 +391,7 @@ jobs:
             # Add attestation section
             echo ""
             echo "## Attestation"
-            echo "* Daily Dataset: ${{ steps.generate-attestation.outputs.attestation-url }}"
+            echo "* Daily Dataset: ${{ steps.create_attestation_failure.outputs.attestation-url }}"
           } > "data/${{ steps.timestamp.outputs.timestamp }}/release_notes.txt"
 
       - name: Commit and Push Changes
