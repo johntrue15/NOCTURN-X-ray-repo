@@ -217,13 +217,46 @@ jobs:
           
           echo "Created daily_info.json with metadata"
           echo "daily_info_path=data/${{ steps.timestamp.outputs.timestamp }}/daily_info.json" >> $GITHUB_OUTPUT
-      
+
+      - name: Generate Attestation
+        if: steps.daily_check.outcome == 'failure' && steps.check-data.outputs.has_data == 'true'
+        id: generate-attestation
+        uses: actions/attest@v2.1.0
+        with:
+          subject-path: data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json
+          predicate-type: 'https://slsa.dev/provenance/v1'
+          show-summary: true
+          predicate: |
+            {
+              "buildDefinition": {
+                "buildType": "https://github.com/actions/build-type/workflow"
+              },
+              "runDetails": {
+                "builder": {
+                  "id": "https://github.com/actions/runner"
+                },
+                "metadata": {
+                  "invocationId": "${{ github.run_id }}"
+                }
+              }
+            }
+
       - name: Save Release Notes
         if: steps.daily_check.outcome == 'failure' && steps.check-data.outputs.has_data == 'true'
         run: |
           # Get record counts for comparison
           PREV_COUNT=$(jq length "${{ steps.find-latest.outputs.dir }}/${{ steps.find-latest.outputs.filename }}")
           CURR_COUNT=$(jq length "data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json")
+          
+          # Check if we have an attestation URL
+          ATT_URL="${{ steps.generate-attestation.outputs.attestation-url }}"
+          ATT_AVAILABLE="false"
+          if [ ! -z "$ATT_URL" ]; then
+            ATT_AVAILABLE="true"
+            echo "Found attestation URL: $ATT_URL"
+          else
+            echo "No attestation URL available"
+          fi
           
           # Create release notes with counts
           {
@@ -254,11 +287,15 @@ jobs:
             # Add attestation section
             echo ""
             echo "## Attestation"
-            echo "* Daily Dataset metadata is included in the release assets (daily_info.json)"
-            # Include a direct link to the repo URL for the current release
-            REPO_URL="https://github.com/${{ github.repository }}"
-            TAG_NAME="daily-${{ steps.timestamp.outputs.timestamp }}"
-            echo "* Release Info: $REPO_URL/releases/tag/$TAG_NAME"
+            if [ "$ATT_AVAILABLE" == "true" ]; then
+              echo "* Daily Dataset: $ATT_URL"
+            else
+              echo "* Daily Dataset metadata is included in the release assets (daily_info.json)"
+              # Include a direct link to the repo URL for the current release
+              REPO_URL="https://github.com/${{ github.repository }}"
+              TAG_NAME="daily-${{ steps.timestamp.outputs.timestamp }}"
+              echo "* Release Info: $REPO_URL/releases/tag/$TAG_NAME"
+            fi
           } > "data/${{ steps.timestamp.outputs.timestamp }}/release_notes.txt"
 
       - name: Commit and Push Changes
