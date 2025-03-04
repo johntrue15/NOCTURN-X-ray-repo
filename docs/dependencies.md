@@ -164,6 +164,9 @@ This document shows the relationships between GitHub Actions workflows and their
 - `.github/scripts/release_analysis.py`
 - `.github/scripts/release_analyzer.py`
 
+### Test Attestation Generation (`test-attestation.yml`)
+**Manual trigger available**
+
 ### Test URL Processing Workflow (`test-run-run.yml`)
 **Manual trigger available**
 **Required Scripts:**
