@@ -30,8 +30,8 @@ jobs:
           echo "timestamp=$TS" >> $GITHUB_OUTPUT
           echo "Generated timestamp: $TS"
       
-      # Updated Format 1: Standard GitHub Actions (Official)
-      - name: Test Attestation Format 1 - Standard
+      # Format 1: SLSA v1 format with minimal required fields
+      - name: Test Attestation Format 1 - SLSA v1 Basic
         id: attestation_1
         continue-on-error: true
         uses: actions/attest@v2.1.0
@@ -42,20 +42,17 @@ jobs:
           predicate: |
             {
               "buildDefinition": {
-                "buildType": "https://github.com/actions/runner/github-workflow"
+                "buildType": "https://slsa.dev/provenance/v1"
               },
               "runDetails": {
                 "builder": {
-                  "id": "https://github.com/actions/runner"
-                },
-                "metadata": {
-                  "invocationId": "${{ github.run_id }}"
+                  "id": "https://github.com/Attestations/GitHubHostedActions@v1"
                 }
               }
             }
       
-      # Updated Format 2: Minimal (GitHub Documentation Example)
-      - name: Test Attestation Format 2 - Minimal
+      # Format 2: SLSA v1 with additional metadata
+      - name: Test Attestation Format 2 - With Metadata
         id: attestation_2
         continue-on-error: true
         uses: actions/attest@v2.1.0
@@ -66,17 +63,24 @@ jobs:
           predicate: |
             {
               "buildDefinition": {
-                "buildType": "https://github.com/actions/runner"
+                "buildType": "https://slsa.dev/provenance/v1",
+                "externalParameters": {
+                  "source": "${{ github.repository }}",
+                  "workflow": "${{ github.workflow }}"
+                }
               },
               "runDetails": {
                 "builder": {
-                  "id": "https://github.com/actions/runner"
+                  "id": "https://github.com/Attestations/GitHubHostedActions@v1"
+                },
+                "metadata": {
+                  "invocationId": "${{ github.run_id }}"
                 }
               }
             }
       
-      # Updated Format 3: With Additional Metadata
-      - name: Test Attestation Format 3 - With Metadata
+      # Format 3: Complete SLSA v1 with all fields
+      - name: Test Attestation Format 3 - Complete
         id: attestation_3
         continue-on-error: true
         uses: actions/attest@v2.1.0
@@ -87,15 +91,22 @@ jobs:
           predicate: |
             {
               "buildDefinition": {
-                "buildType": "https://github.com/actions/runner/github-workflow",
+                "buildType": "https://slsa.dev/provenance/v1",
                 "externalParameters": {
-                  "repository": "${{ github.repository }}",
-                  "workflow": "${{ github.workflow }}"
-                }
+                  "source": "${{ github.repository }}",
+                  "workflow": "${{ github.workflow }}",
+                  "runTimestamp": "${{ steps.timestamp.outputs.timestamp }}"
+                },
+                "resolvedDependencies": [],
+                "internalParameters": {}
               },
               "runDetails": {
                 "builder": {
-                  "id": "https://github.com/actions/runner"
+                  "id": "https://github.com/Attestations/GitHubHostedActions@v1",
+                  "version": {
+                    "actions": "${{ github.action_ref }}"
+                  },
+                  "builderDependencies": []
                 },
                 "metadata": {
                   "invocationId": "${{ github.run_id }}",
@@ -112,7 +123,7 @@ jobs:
           echo "# Attestation Test Results - ${{ steps.timestamp.outputs.timestamp }}" > test_results/report.md
           echo "" >> test_results/report.md
           
-          echo "## Format 1 (Standard GitHub Actions)" >> test_results/report.md
+          echo "## Format 1 (SLSA v1 Basic)" >> test_results/report.md
           echo "* Status: ${{ steps.attestation_1.outcome }}" >> test_results/report.md
           if [[ "${{ steps.attestation_1.outcome }}" == "success" ]]; then
             echo "* Attestation URL: ${{ steps.attestation_1.outputs.attestation-url }}" >> test_results/report.md
@@ -121,7 +132,7 @@ jobs:
           fi
           
           echo "" >> test_results/report.md
-          echo "## Format 2 (Minimal Format)" >> test_results/report.md
+          echo "## Format 2 (With Metadata)" >> test_results/report.md
           echo "* Status: ${{ steps.attestation_2.outcome }}" >> test_results/report.md
           if [[ "${{ steps.attestation_2.outcome }}" == "success" ]]; then
             echo "* Attestation URL: ${{ steps.attestation_2.outputs.attestation-url }}" >> test_results/report.md
@@ -130,7 +141,7 @@ jobs:
           fi
           
           echo "" >> test_results/report.md
-          echo "## Format 3 (With Additional Metadata)" >> test_results/report.md
+          echo "## Format 3 (Complete)" >> test_results/report.md
           echo "* Status: ${{ steps.attestation_3.outcome }}" >> test_results/report.md
           if [[ "${{ steps.attestation_3.outcome }}" == "success" ]]; then
             echo "* Attestation URL: ${{ steps.attestation_3.outputs.attestation-url }}" >> test_results/report.md

@@ -194,10 +194,104 @@ jobs:
           fi
           echo "has_data=true" >> $GITHUB_OUTPUT
 
-      # Skip attestation for now as it's causing issues
-      - name: Create Daily Info JSON
+      # Add proper attestation for the dataset
+      - name: Create Attestation for Dataset
+        id: create_attestation
+        if: steps.daily_check.outcome == 'success' && steps.check-data.outputs.has_data == 'true'
+        uses: actions/attest@v2.1.0
+        with:
+          subject-path: data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json
+          predicate-type: 'https://slsa.dev/provenance/v1'
+          show-summary: true
+          predicate: |
+            {
+              "buildDefinition": {
+                "buildType": "https://slsa.dev/provenance/v1",
+                "externalParameters": {
+                  "source": "${{ github.repository }}",
+                  "workflow": "${{ github.workflow }}",
+                  "runTimestamp": "${{ steps.timestamp.outputs.timestamp }}"
+                }
+              },
+              "runDetails": {
+                "builder": {
+                  "id": "https://github.com/Attestations/GitHubHostedActions@v1"
+                },
+                "metadata": {
+                  "invocationId": "${{ github.run_id }}"
+                }
+              }
+            }
+
+      # Create metadata JSON for successful run
+      - name: Create Daily Info JSON (Success)
+        if: steps.daily_check.outcome == 'success' && steps.check-data.outputs.has_data == 'true'
+        id: create-daily-info-success
+        run: |
+          # Create daily info JSON with all the metadata we need
+          cat > "data/${{ steps.timestamp.outputs.timestamp }}/daily_info.json" << EOF
+          {
+            "type": "daily_check",
+            "run_id": "${{ github.run_id }}",
+            "timestamp": "${{ steps.timestamp.outputs.timestamp }}",
+            "previous_data": "${{ steps.find-latest.outputs.dir }}",
+            "current_data": "data/${{ steps.timestamp.outputs.timestamp }}",
+            "repository": "${{ github.repository }}",
+            "workflow": "${{ github.workflow }}",
+            "trigger_type": "${{ env.MANUAL == 'true' && 'manual' || 'scheduled' }}",
+            "actor": "${{ github.actor }}",
+            "artifacts_recovered": "${{ steps.check_failed_artifacts.outputs.found_artifacts }}",
+            "attestation_url": "${{ steps.create_attestation.outputs.attestation-url }}"
+          }
+          EOF
+          
+          echo "Created daily_info.json with metadata for successful run"
+          echo "daily_info_path=data/${{ steps.timestamp.outputs.timestamp }}/daily_info.json" >> $GITHUB_OUTPUT
+
+      # Save release notes for successful run
+      - name: Save Release Notes (Success)
+        if: steps.daily_check.outcome == 'success' && steps.check-data.outputs.has_data == 'true'
+        run: |
+          # Get record counts for comparison
+          PREV_COUNT=$(jq length "${{ steps.find-latest.outputs.dir }}/${{ steps.find-latest.outputs.filename }}")
+          CURR_COUNT=$(jq length "data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json")
+          
+          # Create release notes with counts
+          {
+            echo "# Daily MorphoSource Check - ${{ steps.timestamp.outputs.timestamp }}"
+            echo ""
+            echo "## Run Information"
+            if [[ "$MANUAL" == "true" ]]; then
+              echo "* Trigger: Manual (triggered by ${{ github.actor }})"
+            else
+              echo "* Trigger: Scheduled"
+            fi
+            echo "* Run ID: ${{ github.run_id }}"
+            echo "* Workflow Run: [View on GitHub](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+            echo ""
+            echo "## Data Comparison"
+            echo "* Previous records: $PREV_COUNT"
+            echo "* Current records: $CURR_COUNT"
+            echo "* Difference: $((CURR_COUNT - PREV_COUNT))"
+            
+            # Add information about recovered artifacts if any were found
+            if [[ "${{ steps.check_failed_artifacts.outputs.found_artifacts }}" == "true" ]]; then
+              echo ""
+              echo "## Recovered Artifacts"
+              echo "* Artifacts were successfully recovered from previous failed workflow runs"
+              echo "* To see which artifacts were recovered, check the workflow logs"
+            fi
+            
+            # Add attestation section
+            echo ""
+            echo "## Attestation"
+            echo "* Daily Dataset: ${{ steps.create_attestation.outputs.attestation-url }}"
+          } > "data/${{ steps.timestamp.outputs.timestamp }}/release_notes.txt"
+
+      # Fallback for failed workflow but with data
+      - name: Create Daily Info JSON (Failure Fallback)
         if: steps.daily_check.outcome == 'failure' && steps.check-data.outputs.has_data == 'true'
-        id: create-daily-info
+        id: create-daily-info-fallback
         run: |
           # Create daily info JSON with all the metadata we need
           cat > "data/${{ steps.timestamp.outputs.timestamp }}/daily_info.json" << EOF
@@ -215,7 +309,7 @@ jobs:
           }
           EOF
           
-          echo "Created daily_info.json with metadata"
+          echo "Created daily_info.json with metadata for failed run"
           echo "daily_info_path=data/${{ steps.timestamp.outputs.timestamp }}/daily_info.json" >> $GITHUB_OUTPUT
           
           # Create a fake attestation URL to maintain backward compatibility in release notes
@@ -224,7 +318,7 @@ jobs:
           ATTESTATION_ID=$(echo "$REPO-$RUN_ID-${{ steps.timestamp.outputs.timestamp }}" | md5sum | cut -d ' ' -f 1)
           echo "attestation_url=https://github.com/$REPO/attestations/$ATTESTATION_ID" >> $GITHUB_OUTPUT
 
-      - name: Save Release Notes
+      - name: Save Release Notes (Failure Fallback)
         if: steps.daily_check.outcome == 'failure' && steps.check-data.outputs.has_data == 'true'
         run: |
           # Get record counts for comparison
@@ -260,7 +354,7 @@ jobs:
             # Add attestation section
             echo ""
             echo "## Attestation"
-            echo "* Daily Dataset: ${{ steps.create-daily-info.outputs.attestation_url }}"
+            echo "* Daily Dataset: ${{ steps.create-daily-info-fallback.outputs.attestation_url }}"
           } > "data/${{ steps.timestamp.outputs.timestamp }}/release_notes.txt"
 
       - name: Commit and Push Changes
