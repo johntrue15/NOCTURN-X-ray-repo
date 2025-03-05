@@ -1,12 +1,12 @@
 {
-  "title": "Vertebra [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000572783?locale=en",
-  "id": "000572783",
-  "Object": "UF:VP:111741",
-  "Taxonomy": "Batrachosauroides dissimulans",
-  "Element or Part": "Vertebra",
+  "title": "Premaxilla [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000065611?locale=en",
+  "id": "000065611",
+  "Object": "UF:VP:11277",
+  "Taxonomy": "Plestiodon laticepsEumeces laticeps",
+  "Element or Part": "Premaxilla",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "10/24/2023",
+  "Date Uploaded": "12/14/2018",
   "Publication Status": "Restricted Download"
 }
