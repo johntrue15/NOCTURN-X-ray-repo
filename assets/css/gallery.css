@@ -66,9 +66,24 @@
 }
 
 .description-text {
-  white-space: pre-line;
-  line-height: 1.5;
+  white-space: pre-wrap;
+  line-height: 1.6;
   overflow-wrap: break-word;
+  font-size: 14px;
+  padding: 0 10px;
+  max-height: none;
+  color: #333;
+}
+
+.description-text h1, .description-text h2, .description-text h3 {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  border-bottom: none;
+}
+
+.description-text ul, .description-text ol {
+  padding-left: 20px;
+  margin: 8px 0;
 }
 
 .timeline-separator {

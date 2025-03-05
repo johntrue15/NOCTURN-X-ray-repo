@@ -2,7 +2,7 @@
 
 This page displays information about the latest data releases for the NOCTURN X-ray project.
 
-**Last Updated:** 2025-03-05 16:14:48 UTC
+**Last Updated:** 2025-03-05 16:25:23 UTC
 
 ## Summary Statistics
 
@@ -518,35 +518,60 @@ This page displays information about the latest data releases for the NOCTURN X-
     <h4>2025/03/03 18:46:56 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-03_18-46-56">ct_image_analysis-2025-03-03_18-46-56</a></h4>
     
     ```
-    fixing archiving
+    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-03_17-39-53</p>
+<p>To perform a detailed analysis of 3D X-ray CT scan data from Morphosource.org, several structural characteristics, material compositions, and notable features can be considered across different orientations of the specimen.</p>
+<h3>1. Structural Characteristics</h3>
+<ul>
+<li><strong>Overall Shape</strong>: The specimen appears to have a rounded and somewhat irregular shape, suggesting a complex internal structu... (truncated)
     ```
 </div>
 <div class="release-card">
     <h4>2025/03/03 15:22:22 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-03_15-22-22">ct_image_analysis-2025-03-03_15-22-22</a></h4>
     
     ```
-    Update last_modified_record.json for modified record
+    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-03_14-58-39</p>
+<p>Analyzing the provided 3D X-ray CT scan data reveals a number of structural characteristics and material compositions of the specimen, likely a skull based on the visual features:</p>
+<h3>Structural Characteristics:</h3>
+<ol>
+<li><strong>External Morphology</strong>:</li>
+<li>The scanned specimens exhibit a complex skull structure with elongated forms, indicative of species adapted for specific ecological niche... (truncated)
     ```
 </div>
 <div class="release-card">
     <h4>2025/03/03 14:20:53 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-03_14-20-53">ct_image_analysis-2025-03-03_14-20-53</a></h4>
     
     ```
-    Update last_count.txt for new records
+    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-03_14-16-52</p>
+<p>To analyze the 3D X-ray CT scan data of the specimen from Morphosource.org, let’s consider the structural characteristics, material composition, and notable features visible across the provided images:</p>
+<h3>Structural Characteristics:</h3>
+<ol>
+<li><strong>Overall Geometry</strong>:</li>
+<li>
+<p>The images show a long, slender structure, indicative of a mandible, likely from a fish or similar aquatic organis... (truncated)
     ```
 </div>
 <div class="release-card">
     <h4>2025/03/02 20:32:06 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-02_20-32-06">ct_image_analysis-2025-03-02_20-32-06</a></h4>
     
     ```
-    Update last_modified_record.json for modified record
+    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-02_20-14-24</p>
+<p>To analyze the 3D X-ray CT scan data of the provided specimen, we can focus on several key aspects including structural characteristics, material composition, and notable features visible across different orientations:</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li><strong>General Shape and Proportions:</strong></li>
+<li>The specimen appears elongated, indicative of a phalanx. The proximal end is notably wide... (truncated)
     ```
 </div>
 <div class="release-card">
     <h4>2025/02/27 23:13:09 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-27_23-13-09">ct_image_analysis-2025-02-27_23-13-09</a></h4>
     
     ```
-    Update last_modified_record.json for modified record
+    <p>Analysis for MorphoSource release: morphosource-updates-2025-02-27_22-54-52</p>
+<p>To analyze the 3D X-ray CT scan data of the specimen, we can focus on several key aspects: structural characteristics, material composition, and notable features or anomalies observed across different orientations.</p>
+<h3>Structural Characteristics:</h3>
+<ol>
+<li><strong>Overall Morphology:</strong></li>
+<li>The specimen appears to be a vertebrate, characterized by a skeletal structure that includes a distinct... (truncated)
     ```
 </div>
 </div>
