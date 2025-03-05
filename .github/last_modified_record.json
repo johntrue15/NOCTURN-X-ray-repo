@@ -1,12 +1,12 @@
 {
-  "title": "Whole Body R API D [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000649733?locale=en",
-  "id": "000649733",
-  "Object": "UF:Herp:192444",
-  "Taxonomy": "Typhlonectes natans",
-  "Element or Part": "Whole body RAPID",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000624832?locale=en",
+  "id": "000624832",
+  "Object": "UF:Herp:10362",
+  "Taxonomy": "Dermochelys coriacea",
+  "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jaimi Gray",
-  "Date Uploaded": "07/19/2024",
+  "Data Manager": "Jessie Maisano",
+  "Date Uploaded": "04/30/2024",
   "Publication Status": "Open Download"
 }
