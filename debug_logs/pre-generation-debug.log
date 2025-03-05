@@ -1,0 +1,177 @@
+2025-03-05 15:34:15,038 - pages-debug - INFO - Starting GitHub Pages debug session at 2025-03-05T15:34:15.038285
+2025-03-05 15:34:15,038 - pages-debug - INFO - Environment Information:
+2025-03-05 15:34:15,038 - pages-debug - INFO - Python Version: 3.10.16 (main, Dec 12 2024, 19:07:59) [GCC 13.2.0]
+2025-03-05 15:34:15,038 - pages-debug - INFO - Current Working Directory: /home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo
+2025-03-05 15:34:15,038 - pages-debug - INFO - GitHub Environment Variables:
+2025-03-05 15:34:15,038 - pages-debug - INFO -   GITHUB_WORKSPACE: /home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo
+2025-03-05 15:34:15,038 - pages-debug - INFO -   GITHUB_PATH: /home/runner/work/_temp/_runner_file_commands/add_path_7f1d76e8-d3d0-4e2f-b8a9-5fca0d39b584
+2025-03-05 15:34:15,038 - pages-debug - INFO -   GITHUB_ACTION: __run_4
+2025-03-05 15:34:15,038 - pages-debug - INFO -   GITHUB_RUN_NUMBER: 7
+2025-03-05 15:34:15,038 - pages-debug - INFO -   GITHUB_REPOSITORY_OWNER_ID: 65981672
+2025-03-05 15:34:15,038 - pages-debug - INFO -   GITHUB_TRIGGERING_ACTOR: johntrue15
+2025-03-05 15:34:15,039 - pages-debug - INFO -   GITHUB_REF_TYPE: branch
+2025-03-05 15:34:15,039 - pages-debug - INFO -   GITHUB_REPOSITORY_ID: 909409870
+2025-03-05 15:34:15,039 - pages-debug - INFO -   GITHUB_ACTIONS: true
+2025-03-05 15:34:15,039 - pages-debug - INFO -   GITHUB_SHA: 6d497f6247ffff959069b10d1c6d0323428e8c60
+2025-03-05 15:34:15,039 - pages-debug - INFO -   GITHUB_WORKFLOW_REF: johntrue15/NOCTURN-X-ray-repo/.github/workflows/github-pages.yml@refs/heads/main
+2025-03-05 15:34:15,039 - pages-debug - INFO -   GITHUB_REF: refs/heads/main
+2025-03-05 15:34:15,039 - pages-debug - INFO -   GITHUB_REF_PROTECTED: true
+2025-03-05 15:34:15,039 - pages-debug - INFO -   GITHUB_API_URL: https://api.github.com
+2025-03-05 15:34:15,039 - pages-debug - INFO -   GITHUB_PAGES_UPDATE_TIMESTAMP: 2025-03-05 15:34:05 UTC
+2025-03-05 15:34:15,039 - pages-debug - INFO -   GITHUB_STATE: /home/runner/work/_temp/_runner_file_commands/save_state_7f1d76e8-d3d0-4e2f-b8a9-5fca0d39b584
+2025-03-05 15:34:15,039 - pages-debug - INFO -   GITHUB_ENV: /home/runner/work/_temp/_runner_file_commands/set_env_7f1d76e8-d3d0-4e2f-b8a9-5fca0d39b584
+2025-03-05 15:34:15,039 - pages-debug - INFO -   GITHUB_EVENT_PATH: /home/runner/work/_temp/_github_workflow/event.json
+2025-03-05 15:34:15,039 - pages-debug - INFO -   GITHUB_EVENT_NAME: workflow_dispatch
+2025-03-05 15:34:15,039 - pages-debug - INFO -   GITHUB_RUN_ID: 13679628290
+2025-03-05 15:34:15,039 - pages-debug - INFO -   GITHUB_STEP_SUMMARY: /home/runner/work/_temp/_runner_file_commands/step_summary_7f1d76e8-d3d0-4e2f-b8a9-5fca0d39b584
+2025-03-05 15:34:15,039 - pages-debug - INFO -   GITHUB_ACTOR: johntrue15
+2025-03-05 15:34:15,039 - pages-debug - INFO -   GITHUB_RUN_ATTEMPT: 1
+2025-03-05 15:34:15,040 - pages-debug - INFO -   GITHUB_GRAPHQL_URL: https://api.github.com/graphql
+2025-03-05 15:34:15,040 - pages-debug - INFO -   GITHUB_SERVER_URL: https://github.com
+2025-03-05 15:34:15,040 - pages-debug - INFO -   GITHUB_ACTOR_ID: 65981672
+2025-03-05 15:34:15,040 - pages-debug - INFO -   GITHUB_WORKFLOW_SHA: 6d497f6247ffff959069b10d1c6d0323428e8c60
+2025-03-05 15:34:15,040 - pages-debug - INFO -   GITHUB_REF_NAME: main
+2025-03-05 15:34:15,040 - pages-debug - INFO -   GITHUB_JOB: build
+2025-03-05 15:34:15,040 - pages-debug - INFO -   GITHUB_REPOSITORY: johntrue15/NOCTURN-X-ray-repo
+2025-03-05 15:34:15,040 - pages-debug - INFO -   GITHUB_RETENTION_DAYS: 90
+2025-03-05 15:34:15,040 - pages-debug - INFO -   GITHUB_ACTION_REPOSITORY: 
+2025-03-05 15:34:15,040 - pages-debug - INFO -   GITHUB_BASE_REF: 
+2025-03-05 15:34:15,040 - pages-debug - INFO -   GITHUB_REPOSITORY_OWNER: johntrue15
+2025-03-05 15:34:15,040 - pages-debug - INFO -   GITHUB_HEAD_REF: 
+2025-03-05 15:34:15,040 - pages-debug - INFO -   GITHUB_ACTION_REF: 
+2025-03-05 15:34:15,040 - pages-debug - INFO -   GITHUB_WORKFLOW: GitHub Pages Deployment
+2025-03-05 15:34:15,040 - pages-debug - INFO -   GITHUB_OUTPUT: /home/runner/work/_temp/_runner_file_commands/set_output_7f1d76e8-d3d0-4e2f-b8a9-5fca0d39b584
+2025-03-05 15:34:15,042 - pages-debug - INFO - Current Git Branch: main
+2025-03-05 15:34:15,044 - pages-debug - INFO - Git Remote URL: https://github.com/johntrue15/NOCTURN-X-ray-repo
+2025-03-05 15:34:15,046 - pages-debug - INFO - Last Commit: 6d497f6 Update github-pages.yml
+2025-03-05 15:34:15,046 - pages-debug - INFO - Checking GitHub Branch Information:
+2025-03-05 15:34:15,065 - pages-debug - INFO - Available Branches:
+* main
+  remotes/origin/American-Museum-of-Natural-History
+  remotes/origin/Copy-of-Main-Before-Clean-Up-1-26-25
+  remotes/origin/HEAD -> origin/main
+  remotes/origin/The-University-of-Texas-High-Resolution-X-ray-Computed-Tomography-Facility
+  remotes/origin/University-of-Florida-Nanoscale-Research-Facility
+  remotes/origin/claude-pr/issue-12
+  remotes/origin/claude-pr/issue-16
+  remotes/origin/claude-pr/issue-18
+  remotes/origin/claude-pr/issue-20
+  remotes/origin/claude-pr/issue-23
+  remotes/origin/claude-pr/issue-3
+  remotes/origin/claude-pr/issue-44
+  remotes/origin/claude-pr/issue-8
+  remotes/origin/dev
+  remotes/origin/main
+  remotes/origin/test
+  remotes/origin/testing/issue-20
+  remotes/origin/testing/issue-20.1
+  remotes/origin/testing/issue-20.2
+  remotes/origin/testing/issue-20.3
+  remotes/origin/testing/issue-23
+  remotes/origin/testing/issue-3
+2025-03-05 15:34:15,066 - pages-debug - INFO - gh-pages Branch Exists Locally: False
+2025-03-05 15:34:15,237 - pages-debug - INFO - Remote Branches:
+f5850dda84f63e6c0ea10bec4e868fc44dcfa198	refs/heads/American-Museum-of-Natural-History
+71ec6bc9e35da3f2307cbef7eacdb9f38bd68dc4	refs/heads/Copy-of-Main-Before-Clean-Up-1-26-25
+8891bbcfd032297e8788e646c4898117c360662f	refs/heads/The-University-of-Texas-High-Resolution-X-ray-Computed-Tomography-Facility
+04860542bb2bed26b282787c449444323d67aadc	refs/heads/University-of-Florida-Nanoscale-Research-Facility
+bde650b4f3a730c750509a1e7dd6b90617d5aa0b	refs/heads/claude-pr/issue-12
+d76164e6550ef4e3c2da263da6d04eae8ad8cbd1	refs/heads/claude-pr/issue-16
+9f13ace917ab7d9b9fcb4350b11557fd7565f71b	refs/heads/claude-pr/issue-18
+e7cf389507316968fea9027325b388bb84d641da	refs/heads/claude-pr/issue-20
+22df581abc267ccf3fedc064f8b215afb8d75be0	refs/heads/claude-pr/issue-23
+6c6ed22c1bcf64156f240448c9eff1d464cbb0f1	refs/heads/claude-pr/issue-3
+f7f34b2bd67bd8d874581255a59ffcc3cf9200a2	refs/heads/claude-pr/issue-44
+f27525df13b020baad8845ddb3932d7413470e25	refs/heads/claude-pr/issue-8
+82d8647b872965adb4b34ce59bd09228184d9ce0	refs/heads/dev
+6d497f6247ffff959069b10d1c6d0323428e8c60	refs/heads/main
+d27885a0be1f3323eefa0ca4a62ef7f82be44162	refs/heads/test
+e597345867a3a24ae3527f8d1ea745a271736f65	refs/heads/testing/issue-20
+1a1746c27e9590c07e36791c79b6903a30574971	refs/heads/testing/issue-20.1
+71c0667203ee71ab9e2bdf07940ef62593c9b1ea	refs/heads/testing/issue-20.2
+3bd8b7c3135cff8f65bb2861f064cc7a833cc496	refs/heads/testing/issue-20.3
+cc492f19f8118966a422ea241edd569b2e2763ce	refs/heads/testing/issue-23
+1c12c188fc107b4d5a2816f810db0179e15044a0	refs/heads/testing/issue-3
+2025-03-05 15:34:15,237 - pages-debug - INFO - gh-pages Branch Exists Remotely: False
+2025-03-05 15:34:15,238 - pages-debug - INFO - Analyzing data directory: data
+2025-03-05 15:34:15,238 - pages-debug - INFO - Total release directories found: 36
+2025-03-05 15:34:15,238 - pages-debug - INFO - Most recent release directory: data/2025-03-05_01-24-27
+2025-03-05 15:34:15,239 - pages-debug - INFO - Files in most recent directory: ['daily_info.json', 'release_notes.txt', 'morphosource_data_complete.json', 'daily_extractor.log']
+2025-03-05 15:34:15,239 - pages-debug - INFO - Release notes content:
+# Daily MorphoSource Check - 2025-03-05_01-24-27
+
+## Run Information
+* Trigger: Scheduled
+* Run ID: 13666417930
+* Workflow Run: [View on GitHub](https://github.com/johntrue15/NOCTURN-X-ray-repo/actions/runs/13666417930)
+* Status: Failed but data was collected successfully
+
+## Data Comparison
+* Previous records: 105338
+* Current records: 105346
+* Difference: 8
+
+## Attestation
+* Daily Dataset: https://github.com/johntrue15/NOCTURN-X-ray-repo/attestations/5359673
+
+2025-03-05 15:34:15,239 - pages-debug - INFO - Checking GitHub Pages setup in: docs
+2025-03-05 15:34:15,239 - pages-debug - INFO - Found index.md (1312 bytes)
+2025-03-05 15:34:15,239 - pages-debug - INFO - index.md content:
+# NSF NOCTURN Metadata Project Documentation
+
+Welcome to the **NOCTURN Xray** documentation! This overview will help you get started with the repository and understand the core components.
+
+## Table of Contents
+
+1. [Introduction](#introduction)
+2. [Project Structure](#project-structure)
+3. [Installation](#installation)
+4. [Usage](#usage)
+5. [Branch Strategy](#branch-strategy)
+6. [Contributing](#contributing)
+7. [License](#license)
+
+---
+
+## Introduction
+
+**NOCTURN** is a project designed to streamline non-clinical tomographic imaging workflows across various facilities. Each facility may require its own custom scripts or configuration, which is why we have multiple branches for separate facility requirements.
+
+---
+
+## Project Structure
+
+```plaintext
+my-nocturn-xray-repo/
+├─ README.md                 # High-level project overview
+├─ docs/                     # Documentation files (you are here!)
+├─ agent/                    # Core agent code
+│   └─ main_agent.py
+├─ .github/workflows/        # GitHub Actions workflows
+│   └─ agent_actions.yml
+├─ facility-1-branch         # (Branch in GitHub, not a folder in main)
+├─ facility-2-branch         # (Branch in GitHub, not a folder in main)
+└─ facility-n-branch         # (Branch in GitHub, not a folder in main)
+
+2025-03-05 15:34:15,239 - pages-debug - WARNING - Missing essential file: _config.yml
+2025-03-05 15:34:15,239 - pages-debug - WARNING - Missing asset directory: assets
+2025-03-05 15:34:15,239 - pages-debug - WARNING - Missing asset directory: assets/css
+2025-03-05 15:34:15,239 - pages-debug - WARNING - Missing asset directory: assets/js
+2025-03-05 15:34:15,239 - pages-debug - INFO - Found GitHub Pages configuration file: .github/pages.yml
+2025-03-05 15:34:15,239 - pages-debug - INFO - GitHub Pages configuration content:
+build:
+  # Use the gh-pages branch for GitHub Pages
+  source: gh-pages
+  # Builds from the gh-pages branch
+
+# Production URL for GitHub Pages
+url: https://johntrue15.github.io/NOCTURN-X-ray-repo/
+
+# Configuration settings
+settings:
+  # Set to use custom domain if needed
+  # domain: example.com
+  
+  # Enhanced security setting
+  https_only: true 
+2025-03-05 15:34:15,240 - pages-debug - INFO - GitHub Pages debug session completed at 2025-03-05T15:34:15.240060
