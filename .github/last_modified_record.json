@@ -1,13 +1,13 @@
 {
-  "title": "Postcranial [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000716203?locale=en",
-  "id": "000716203",
-  "Object": "IGM:100/3640",
-  "Taxonomy": "Shuvuuia deserti",
-  "Element or Part": "postcranial",
+  "title": "Carpometacarpus [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000080827?locale=en",
+  "id": "000080827",
+  "Object": "uf:o:42125",
+  "Taxonomy": "Melanerpes carolinus",
+  "Element or Part": "Carpometacarpus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "AMNH VP Team",
-  "Date Uploaded": "03/04/2025",
+  "Data Manager": "Edward Stanley",
+  "Date Uploaded": "06/15/2019",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
