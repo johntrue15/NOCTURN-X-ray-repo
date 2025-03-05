@@ -1,11 +1,12 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000051208?locale=en",
-  "id": "000051208",
-  "Object": "UF:Fish:172923",
-  "Taxonomy": "Homalopteroides smithi",
+  "title": "Element Unspecified [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000716387?locale=en",
+  "id": "000716387",
+  "Object": "MCZ:Ich:29017",
+  "Taxonomy": "Amblychaeturichthys hexanernus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "06/23/2018",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Meaghan Sorce",
+  "Date Uploaded": "03/05/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
