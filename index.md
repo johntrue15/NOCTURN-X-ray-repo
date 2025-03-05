@@ -2,7 +2,7 @@
 
 This page displays information about the latest data releases for the NOCTURN X-ray project.
 
-**Last Updated:** 2025-03-05 16:05:58 UTC
+**Last Updated:** 2025-03-05 16:14:48 UTC
 
 ## Summary Statistics
 
@@ -656,6 +656,11 @@ This page displays information about the latest data releases for the NOCTURN X-
     ```
 </div>
 </div>
+
+## Specialized Views
+
+- [CT Image Analysis Gallery](/image_analysis.html) - View CT scan images in an Instagram-style timeline
+
 
 ## About NOCTURN X-ray
 
