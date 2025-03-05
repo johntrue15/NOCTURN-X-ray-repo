@@ -441,6 +441,9 @@ jobs:
           
           # Save the current commit SHA for reference
           CURRENT_COMMIT=$(git rev-parse HEAD)
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          
+          echo "::notice title=Branch Info::Current branch is ${CURRENT_BRANCH}, commit ${CURRENT_COMMIT}"
           
           # Check if gh-pages branch exists locally
           if git show-ref --verify --quiet refs/heads/gh-pages; then
@@ -465,8 +468,14 @@ jobs:
           echo "::notice title=Pushing Changes::Pushing content to gh-pages branch"
           git push origin gh-pages
           
-          # Return to the previous branch
-          git checkout -
+          # Return to the previous branch - this is the part that's failing
+          # Instead of using the shorthand '-', use the branch name we saved earlier
+          if [ "${CURRENT_BRANCH}" != "HEAD" ]; then
+            echo "::notice title=Branch Return::Returning to ${CURRENT_BRANCH} branch"
+            git checkout ${CURRENT_BRANCH} || echo "::warning::Could not return to ${CURRENT_BRANCH}, but gh-pages was updated successfully"
+          else
+            echo "::notice title=Branch Return::Was in detached HEAD state, not returning to a branch"
+          fi
           
           echo "::notice title=Deployment Success::Content deployed to gh-pages branch"
       
@@ -486,6 +495,16 @@ jobs:
         run: |
           echo "::notice title=Deployment Success::GitHub Pages deployed successfully from gh-pages branch"
           echo "::notice title=Deployment URL::View the site at ${{ steps.deployment.outputs.page_url }}"
+          
+          # Check if GitHub Pages is already configured
+          if [[ -z "${{ steps.deployment.outputs.page_url }}" ]]; then
+            echo "::warning title=GitHub Pages Configuration::It appears GitHub Pages might not be fully configured yet."
+            echo "::warning::Please ensure you've configured GitHub Pages in your repository settings:"
+            echo "::warning::1. Go to your repository on GitHub"
+            echo "::warning::2. Navigate to Settings > Pages"
+            echo "::warning::3. Under 'Build and deployment', set Source to 'GitHub Actions'"
+            echo "::warning::4. Save the settings"
+          fi
           
           # Save deployment info to debug logs
           echo "Deployment URL: ${{ steps.deployment.outputs.page_url }}" > debug_logs/deployment_info.txt
