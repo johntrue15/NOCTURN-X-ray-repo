@@ -1,12 +1,12 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000716387?locale=en",
-  "id": "000716387",
-  "Object": "MCZ:Ich:29017",
-  "Taxonomy": "Amblychaeturichthys hexanernus",
+  "title": "Whole Body R API D [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000649733?locale=en",
+  "id": "000649733",
+  "Object": "UF:Herp:192444",
+  "Taxonomy": "Typhlonectes natans",
+  "Element or Part": "Whole body RAPID",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Meaghan Sorce",
-  "Date Uploaded": "03/05/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Jaimi Gray",
+  "Date Uploaded": "07/19/2024",
+  "Publication Status": "Open Download"
 }
