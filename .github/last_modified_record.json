@@ -1,12 +1,12 @@
 {
-  "title": "Entire Specimen [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000486167?locale=en",
-  "id": "000486167",
-  "Object": "UF:Fish:146334",
-  "Taxonomy": "Plectropomus maculatus",
-  "Element or Part": "entire specimen",
+  "title": "Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000067354?locale=en",
+  "id": "000067354",
+  "Object": "UF:Mammals:23229",
+  "Taxonomy": "Erethizon dorsatum",
+  "Element or Part": "Mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "11/30/2022",
+  "Date Uploaded": "01/23/2019",
   "Publication Status": "Open Download"
 }
