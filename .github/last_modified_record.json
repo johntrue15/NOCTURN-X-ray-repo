@@ -1,11 +1,13 @@
 {
-  "title": "Element Unspecified [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000072572?locale=en",
-  "id": "000072572",
-  "Object": "uf:paleobotany:69709",
-  "Taxonomy": "Sahniocarpon harrisii",
+  "title": "Ulna [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000077165?locale=en",
+  "id": "000077165",
+  "Object": "uf:o:39806",
+  "Taxonomy": "Gavia immer",
+  "Element or Part": "Ulna",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Steven Manchester",
-  "Date Uploaded": "03/25/2019",
-  "Publication Status": "Open Download"
+  "Data Manager": "Edward Stanley",
+  "Date Uploaded": "05/09/2019",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
