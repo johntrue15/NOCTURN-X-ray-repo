@@ -180,6 +180,230 @@ jobs:
           }
           EOL
           
+          # Create gallery CSS file
+          cat > docs/assets/css/gallery.css << 'EOL'
+          /* Gallery page styles */
+          .gallery-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 0;
+          }
+          
+          .gallery-item {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 40px;
+            overflow: hidden;
+          }
+          
+          .gallery-header {
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+          }
+          
+          .gallery-header h2 {
+            margin: 0;
+            font-size: 18px;
+            border-bottom: none;
+          }
+          
+          .gallery-header h3 {
+            margin: 4px 0 0;
+            font-size: 14px;
+            font-weight: normal;
+            color: #666;
+            border-bottom: none;
+          }
+          
+          .image-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 4px;
+            background-color: #f8f8f8;
+          }
+          
+          .image-item {
+            position: relative;
+            padding-bottom: 100%;
+            overflow: hidden;
+          }
+          
+          .image-item img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+          }
+          
+          .image-item img:hover {
+            transform: scale(1.05);
+          }
+          
+          .release-description {
+            padding: 16px;
+            background-color: #fff;
+            border-top: 1px solid #eee;
+          }
+          
+          .description-text {
+            white-space: pre-wrap;
+            line-height: 1.6;
+            overflow-wrap: break-word;
+            font-size: 14px;
+            padding: 0 10px;
+            max-height: none;
+            color: #333;
+          }
+          
+          .description-text h1, .description-text h2, .description-text h3 {
+            margin-top: 16px;
+            margin-bottom: 8px;
+            border-bottom: none;
+          }
+          
+          .description-text ul, .description-text ol {
+            padding-left: 20px;
+            margin: 8px 0;
+          }
+          
+          .timeline-separator {
+            height: 60px;
+            position: relative;
+          }
+          
+          .timeline-separator:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            height: 100%;
+            width: 2px;
+            background-color: #ddd;
+            transform: translateX(-50%);
+          }
+          
+          /* Pagination styles */
+          .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+          }
+          
+          .pagination-button, .pagination-page {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 0 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #0366d6;
+            background-color: #fff;
+            transition: background-color 0.3s, color 0.3s;
+          }
+          
+          .pagination-button:hover, .pagination-page:hover {
+            background-color: #f1f8ff;
+            border-color: #0366d6;
+          }
+          
+          .pagination-page.current {
+            background-color: #0366d6;
+            color: white;
+            border-color: #0366d6;
+            font-weight: bold;
+          }
+          
+          .pagination-button.disabled {
+            color: #ccc;
+            border-color: #eee;
+            background-color: #f8f8f8;
+            cursor: not-allowed;
+          }
+          
+          /* Responsive adjustments */
+          @media (max-width: 640px) {
+            .image-grid {
+              grid-template-columns: 1fr;
+            }
+            
+            .pagination-container {
+              gap: 8px;
+              padding: 0 10px;
+            }
+            
+            .pagination-button, .pagination-page {
+              padding: 6px 12px;
+              margin: 0 2px;
+            }
+          }
+          EOL
+          
+          # Create gallery JS file for interactive features
+          cat > docs/assets/js/gallery.js << 'EOL'
+          document.addEventListener('DOMContentLoaded', function() {
+            // Add image click handler for lightbox effect
+            const images = document.querySelectorAll('.image-item img');
+            
+            images.forEach(img => {
+              img.addEventListener('click', function() {
+                // Create lightbox
+                const lightbox = document.createElement('div');
+                lightbox.className = 'lightbox';
+                lightbox.style.position = 'fixed';
+                lightbox.style.top = '0';
+                lightbox.style.left = '0';
+                lightbox.style.width = '100%';
+                lightbox.style.height = '100%';
+                lightbox.style.backgroundColor = 'rgba(0,0,0,0.9)';
+                lightbox.style.display = 'flex';
+                lightbox.style.alignItems = 'center';
+                lightbox.style.justifyContent = 'center';
+                lightbox.style.zIndex = '1000';
+                
+                // Create image element
+                const fullImg = document.createElement('img');
+                fullImg.src = this.src;
+                fullImg.style.maxHeight = '90%';
+                fullImg.style.maxWidth = '90%';
+                fullImg.style.objectFit = 'contain';
+                
+                // Add close on click
+                lightbox.addEventListener('click', function() {
+                  document.body.removeChild(lightbox);
+                });
+                
+                // Append to lightbox and body
+                lightbox.appendChild(fullImg);
+                document.body.appendChild(lightbox);
+              });
+            });
+            
+            // Lazy loading for images
+            if ('IntersectionObserver' in window) {
+              const lazyImages = document.querySelectorAll('img[loading="lazy"]');
+              const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                  if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src || img.src;
+                    imageObserver.unobserve(img);
+                  }
+                });
+              });
+              
+              lazyImages.forEach(img => {
+                imageObserver.observe(img);
+              });
+            }
+          });
+          EOL
+          
           # Create JS file for interactive features
           cat > docs/assets/js/main.js << 'EOL'
           document.addEventListener('DOMContentLoaded', function() {
@@ -606,8 +830,24 @@ jobs:
               # Get the timestamp from environment variable
               update_timestamp = os.environ.get('GITHUB_PAGES_UPDATE_TIMESTAMP', datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC'))
               
-              # Start building the content
-              content = f"""# CT Image Analysis Gallery
+              # Define pagination settings
+              items_per_page = 5  # Number of gallery items per page
+              total_items = len(ct_image_releases)
+              total_pages = max(1, (total_items + items_per_page - 1) // items_per_page)  # Ceiling division
+              
+              logger.info(f"Creating {total_pages} pages for {total_items} CT Image Analysis releases")
+              
+              # Generate content for each page
+              all_pages_content = []
+              
+              for page_num in range(1, total_pages + 1):
+                  # Calculate item range for this page
+                  start_idx = (page_num - 1) * items_per_page
+                  end_idx = min(start_idx + items_per_page, total_items)
+                  page_items = ct_image_releases[start_idx:end_idx]
+                  
+                  # Start building the content for this page
+                  content = f"""# CT Image Analysis Gallery (Page {page_num} of {total_pages})
 
           This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
@@ -617,10 +857,10 @@ jobs:
 
           <div class="gallery-container">
           """
-              
-              # Add each release as a timeline entry
-              for release in ct_image_releases:
-                  content += f"""
+                  
+                  # Add each release as a timeline entry for this page
+                  for release in page_items:
+                      content += f"""
           <div class="gallery-item">
               <div class="gallery-header">
                   <h2>{release['display_date']}</h2>
@@ -629,35 +869,67 @@ jobs:
               
               <div class="image-grid">
               """
-                  
-                  # Add images in a grid
-                  for idx, img_url in enumerate(release['image_urls'][:4]):  # Limit to 4 images
-                      content += f"""          <div class="image-item">
+                      
+                      # Add images in a grid
+                      for idx, img_url in enumerate(release['image_urls'][:4]):  # Limit to 4 images
+                          content += f"""          <div class="image-item">
                       <img src="{img_url}" alt="CT Image {idx+1}" loading="lazy">
                   </div>
               """
-                  
-                  # Close the image grid
-                  content += """        </div>
+                      
+                      # Close the image grid
+                      content += """        </div>
               
               <div class="release-description">
               """
-                  
-                  # Add the release description with improved formatting
-                  content += f"""          <div class="description-text">
+                      
+                      # Add the release description with improved formatting
+                      content += f"""          <div class="description-text">
                       {release['description']}
                   </div>
               """
-                  
-                  # Close the release description and gallery item
-                  content += """        </div>
+                      
+                      # Close the release description and gallery item
+                      content += """        </div>
           </div>
 
           <div class="timeline-separator"></div>
           """
-              
-              # Close the gallery container
-              content += """      </div>
+                  
+                  # Add pagination navigation
+                  content += """
+          <div class="pagination-container">
+          """
+                  
+                  # Add Previous button - disabled if on first page
+                  if page_num == 1:
+                      content += """    <span class="pagination-button disabled">Previous</span>"""
+                  else:
+                      prev_page_url = "image_analysis.html" if page_num == 2 else f"image_analysis_page{page_num-1}.html"
+                      content += f"""    <a href="{prev_page_url}" class="pagination-button">Previous</a>"""
+                  
+                  # Add numbered page links
+                  for i in range(1, total_pages + 1):
+                      if i == page_num:
+                          content += f"""    <span class="pagination-page current">{i}</span>"""
+                      else:
+                          page_url = "image_analysis.html" if i == 1 else f"image_analysis_page{i}.html"
+                          content += f"""    <a href="{page_url}" class="pagination-page">{i}</a>"""
+                  
+                  # Add Next button - disabled if on last page
+                  if page_num == total_pages:
+                      content += """    <span class="pagination-button disabled">Next</span>"""
+                  else:
+                      next_page_url = f"image_analysis_page{page_num+1}.html"
+                      content += f"""    <a href="{next_page_url}" class="pagination-button">Next</a>"""
+                  
+                  # Close pagination container
+                  content += """
+          </div>
+          """
+                  
+                  # Close the gallery container
+                  content += """      </div>
 
           <script src="assets/js/gallery.js"></script>
 
@@ -666,9 +938,43 @@ jobs:
             <p>Return to <a href="index.html">main dashboard</a>.</p>
           </div>
           """
+                  
+                  # Save the content for this page
+                  all_pages_content.append((page_num, content))
+                  logger.info(f"Generated content for page {page_num}")
               
-              logger.info(f"Generated image_analysis.md content ({len(content)} characters)")
-              return content
+              # Return the first page's content and save the rest
+              for page_num, content in all_pages_content:
+                  if page_num == 1:
+                      # First page goes to the main file
+                      with open('docs/image_analysis.md', 'w') as f:
+                          f.write(content)
+                      
+                      # Create a separate HTML file with Jekyll front matter
+                      with open('docs/image_analysis.html', 'w') as f:
+                          f.write("---\n")
+                          f.write("layout: default\n")
+                          f.write("title: CT Image Analysis Gallery\n")
+                          f.write("---\n\n")
+                          f.write(content)
+                      
+                      logger.info("Created main gallery page (image_analysis.html)")
+                  else:
+                      # Subsequent pages go to separate files
+                      with open(f'docs/image_analysis_page{page_num}.md', 'w') as f:
+                          f.write(content)
+                      
+                      # Create a separate HTML file with Jekyll front matter
+                      with open(f'docs/image_analysis_page{page_num}.html', 'w') as f:
+                          f.write("---\n")
+                          f.write("layout: default\n")
+                          f.write(f"title: CT Image Analysis Gallery - Page {page_num}\n")
+                          f.write("---\n\n")
+                          f.write(content)
+                      
+                      logger.info(f"Created gallery page {page_num} (image_analysis_page{page_num}.html)")
+              
+              return all_pages_content[0][1] if all_pages_content else None
           
           # Main execution
           try:
@@ -706,189 +1012,6 @@ jobs:
                               f.write(image_analysis_content)
                           
                           logger.info("Successfully wrote image_analysis.md and image_analysis.html")
-                          
-                          # Create CSS and JS for the gallery by writing files separately
-                          os.makedirs('docs/assets/css', exist_ok=True)
-                          os.makedirs('docs/assets/js', exist_ok=True)
-                          
-                          # Write gallery CSS content
-                          gallery_css_content = "/* Gallery page styles */\n"
-                          gallery_css_content += ".gallery-container {\n"
-                          gallery_css_content += "  max-width: 900px;\n"
-                          gallery_css_content += "  margin: 0 auto;\n"
-                          gallery_css_content += "  padding: 20px 0;\n"
-                          gallery_css_content += "}\n\n"
-                          
-                          gallery_css_content += ".gallery-item {\n"
-                          gallery_css_content += "  background-color: #fff;\n"
-                          gallery_css_content += "  border-radius: 8px;\n"
-                          gallery_css_content += "  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);\n"
-                          gallery_css_content += "  margin-bottom: 40px;\n"
-                          gallery_css_content += "  overflow: hidden;\n"
-                          gallery_css_content += "}\n\n"
-                          
-                          gallery_css_content += ".gallery-header {\n"
-                          gallery_css_content += "  padding: 16px;\n"
-                          gallery_css_content += "  border-bottom: 1px solid #eee;\n"
-                          gallery_css_content += "}\n\n"
-                          
-                          gallery_css_content += ".gallery-header h2 {\n"
-                          gallery_css_content += "  margin: 0;\n"
-                          gallery_css_content += "  font-size: 18px;\n"
-                          gallery_css_content += "  border-bottom: none;\n"
-                          gallery_css_content += "}\n\n"
-                          
-                          gallery_css_content += ".gallery-header h3 {\n"
-                          gallery_css_content += "  margin: 4px 0 0;\n"
-                          gallery_css_content += "  font-size: 14px;\n"
-                          gallery_css_content += "  font-weight: normal;\n"
-                          gallery_css_content += "  color: #666;\n"
-                          gallery_css_content += "  border-bottom: none;\n"
-                          gallery_css_content += "}\n\n"
-                          
-                          gallery_css_content += ".image-grid {\n"
-                          gallery_css_content += "  display: grid;\n"
-                          gallery_css_content += "  grid-template-columns: repeat(2, 1fr);\n"
-                          gallery_css_content += "  grid-gap: 4px;\n"
-                          gallery_css_content += "  background-color: #f8f8f8;\n"
-                          gallery_css_content += "}\n\n"
-                          
-                          gallery_css_content += ".image-item {\n"
-                          gallery_css_content += "  position: relative;\n"
-                          gallery_css_content += "  padding-bottom: 100%;\n"
-                          gallery_css_content += "  overflow: hidden;\n"
-                          gallery_css_content += "}\n\n"
-                          
-                          gallery_css_content += ".image-item img {\n"
-                          gallery_css_content += "  position: absolute;\n"
-                          gallery_css_content += "  top: 0;\n"
-                          gallery_css_content += "  left: 0;\n"
-                          gallery_css_content += "  width: 100%;\n"
-                          gallery_css_content += "  height: 100%;\n"
-                          gallery_css_content += "  object-fit: cover;\n"
-                          gallery_css_content += "  transition: transform 0.3s ease;\n"
-                          gallery_css_content += "}\n\n"
-                          
-                          gallery_css_content += ".image-item img:hover {\n"
-                          gallery_css_content += "  transform: scale(1.05);\n"
-                          gallery_css_content += "}\n\n"
-                          
-                          gallery_css_content += ".release-description {\n"
-                          gallery_css_content += "  padding: 16px;\n"
-                          gallery_css_content += "  background-color: #fff;\n"
-                          gallery_css_content += "  border-top: 1px solid #eee;\n"
-                          gallery_css_content += "}\n\n"
-                          
-                          gallery_css_content += ".description-text {\n"
-                          gallery_css_content += "  white-space: pre-wrap;\n"
-                          gallery_css_content += "  line-height: 1.6;\n"
-                          gallery_css_content += "  overflow-wrap: break-word;\n"
-                          gallery_css_content += "  font-size: 14px;\n"
-                          gallery_css_content += "  padding: 0 10px;\n"
-                          gallery_css_content += "  max-height: none;\n"
-                          gallery_css_content += "  color: #333;\n"
-                          gallery_css_content += "}\n\n"
-                          
-                          gallery_css_content += ".description-text h1, .description-text h2, .description-text h3 {\n"
-                          gallery_css_content += "  margin-top: 16px;\n"
-                          gallery_css_content += "  margin-bottom: 8px;\n"
-                          gallery_css_content += "  border-bottom: none;\n"
-                          gallery_css_content += "}\n\n"
-                          
-                          gallery_css_content += ".description-text ul, .description-text ol {\n"
-                          gallery_css_content += "  padding-left: 20px;\n"
-                          gallery_css_content += "  margin: 8px 0;\n"
-                          gallery_css_content += "}\n\n"
-                          
-                          gallery_css_content += ".timeline-separator {\n"
-                          gallery_css_content += "  height: 60px;\n"
-                          gallery_css_content += "  position: relative;\n"
-                          gallery_css_content += "}\n\n"
-                          
-                          gallery_css_content += ".timeline-separator:after {\n"
-                          gallery_css_content += "  content: '';\n"
-                          gallery_css_content += "  position: absolute;\n"
-                          gallery_css_content += "  top: 0;\n"
-                          gallery_css_content += "  left: 50%;\n"
-                          gallery_css_content += "  height: 100%;\n"
-                          gallery_css_content += "  width: 2px;\n"
-                          gallery_css_content += "  background-color: #ddd;\n"
-                          gallery_css_content += "  transform: translateX(-50%);\n"
-                          gallery_css_content += "}\n\n"
-                          
-                          gallery_css_content += "/* Responsive adjustments */\n"
-                          gallery_css_content += "@media (max-width: 640px) {\n"
-                          gallery_css_content += "  .image-grid {\n"
-                          gallery_css_content += "    grid-template-columns: 1fr;\n"
-                          gallery_css_content += "  }\n"
-                          gallery_css_content += "}"
-                          
-                          with open('docs/assets/css/gallery.css', 'w') as f:
-                              f.write(gallery_css_content)
-                          
-                          # Write gallery JS content
-                          gallery_js_content = "document.addEventListener('DOMContentLoaded', function() {\n"
-                          gallery_js_content += "  // Add image click handler for lightbox effect\n"
-                          gallery_js_content += "  const images = document.querySelectorAll('.image-item img');\n"
-                          gallery_js_content += "  \n"
-                          gallery_js_content += "  images.forEach(img => {\n"
-                          gallery_js_content += "    img.addEventListener('click', function() {\n"
-                          gallery_js_content += "      // Create lightbox\n"
-                          gallery_js_content += "      const lightbox = document.createElement('div');\n"
-                          gallery_js_content += "      lightbox.className = 'lightbox';\n"
-                          gallery_js_content += "      lightbox.style.position = 'fixed';\n"
-                          gallery_js_content += "      lightbox.style.top = '0';\n"
-                          gallery_js_content += "      lightbox.style.left = '0';\n"
-                          gallery_js_content += "      lightbox.style.width = '100%';\n"
-                          gallery_js_content += "      lightbox.style.height = '100%';\n"
-                          gallery_js_content += "      lightbox.style.backgroundColor = 'rgba(0,0,0,0.9)';\n"
-                          gallery_js_content += "      lightbox.style.display = 'flex';\n"
-                          gallery_js_content += "      lightbox.style.alignItems = 'center';\n"
-                          gallery_js_content += "      lightbox.style.justifyContent = 'center';\n"
-                          gallery_js_content += "      lightbox.style.zIndex = '1000';\n"
-                          gallery_js_content += "      \n"
-                          gallery_js_content += "      // Create image element\n"
-                          gallery_js_content += "      const fullImg = document.createElement('img');\n"
-                          gallery_js_content += "      fullImg.src = this.src;\n"
-                          gallery_js_content += "      fullImg.style.maxHeight = '90%';\n"
-                          gallery_js_content += "      fullImg.style.maxWidth = '90%';\n"
-                          gallery_js_content += "      fullImg.style.objectFit = 'contain';\n"
-                          gallery_js_content += "      \n"
-                          gallery_js_content += "      // Add close on click\n"
-                          gallery_js_content += "      lightbox.addEventListener('click', function() {\n"
-                          gallery_js_content += "        document.body.removeChild(lightbox);\n"
-                          gallery_js_content += "      });\n"
-                          gallery_js_content += "      \n"
-                          gallery_js_content += "      // Append to lightbox and body\n"
-                          gallery_js_content += "      lightbox.appendChild(fullImg);\n"
-                          gallery_js_content += "      document.body.appendChild(lightbox);\n"
-                          gallery_js_content += "    });\n"
-                          gallery_js_content += "  });\n"
-                          gallery_js_content += "  \n"
-                          gallery_js_content += "  // Lazy loading for images\n"
-                          gallery_js_content += "  if ('IntersectionObserver' in window) {\n"
-                          gallery_js_content += "    const lazyImages = document.querySelectorAll('img[loading=\"lazy\"]');\n"
-                          gallery_js_content += "    const imageObserver = new IntersectionObserver((entries, observer) => {\n"
-                          gallery_js_content += "      entries.forEach(entry => {\n"
-                          gallery_js_content += "        if (entry.isIntersecting) {\n"
-                          gallery_js_content += "          const img = entry.target;\n"
-                          gallery_js_content += "          img.src = img.dataset.src || img.src;\n"
-                          gallery_js_content += "          imageObserver.unobserve(img);\n"
-                          gallery_js_content += "        }\n"
-                          gallery_js_content += "      });\n"
-                          gallery_js_content += "    });\n"
-                          gallery_js_content += "    \n"
-                          gallery_js_content += "    lazyImages.forEach(img => {\n"
-                          gallery_js_content += "      imageObserver.observe(img);\n"
-                          gallery_js_content += "    });\n"
-                          gallery_js_content += "  }\n"
-                          gallery_js_content += "});"
-                          
-                          with open('docs/assets/js/gallery.js', 'w') as f:
-                              f.write(gallery_js_content)
-                          
-                          logger.info("Successfully created gallery CSS and JS")
-                  
               elif legacy_releases:
                   # Fallback to legacy releases if no GitHub releases
                   logger.warning("No GitHub releases found, falling back to legacy releases")
