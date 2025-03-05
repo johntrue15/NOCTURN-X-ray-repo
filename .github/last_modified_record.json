@@ -1,12 +1,12 @@
 {
-  "title": "16bit Tiff [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000048545?locale=en",
-  "id": "000048545",
-  "Object": "UF:Herp:153063",
-  "Taxonomy": "Eleutherodactylus cochranae",
-  "Element or Part": "16bit tiff",
+  "title": "Entire Specimen [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000486167?locale=en",
+  "id": "000486167",
+  "Object": "UF:Fish:146334",
+  "Taxonomy": "Plectropomus maculatus",
+  "Element or Part": "entire specimen",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "David Blackburn",
-  "Date Uploaded": "05/15/2018",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "11/30/2022",
+  "Publication Status": "Open Download"
 }
