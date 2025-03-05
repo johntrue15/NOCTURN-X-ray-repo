@@ -2,6 +2,10 @@
 
 This repository automatically tracks and analyzes X-ray CT data from MorphoSource, providing multiple layers of analysis through automated workflows.
 
+## GitHub Pages
+
+📊 [View Release Dashboard](https://jt.github.io/NOCTURN-X-ray-repo/) - Interactive dashboard showing the latest release information, updated hourly.
+
 ## Documentation
 
 - [Project Overview and Setup](docs/index.md) - Introduction, project structure, and getting started
@@ -50,7 +54,7 @@ CT Slice Analysis:
 =================
 The CT slice images you provided appear to depict specific specimens, possibly teeth or tooth-like structures, as suggested by their shape and outlines. Each slice shows varying levels of detail, with the object prominently displayed in the center against a black background, which aids in visualization.
 
-1. **First Image**: The object at the center is somewhat pointed, indicating it may be a tooth’s crown. There is a smooth contour toward the tip.
+1. **First Image**: The object at the center is somewhat pointed, indicating it may be a tooth's crown. There is a smooth contour toward the tip.
 
 2. **Subsequent Images**: As you progress through the images, the shape and position of the object gradually change, possibly illustrating the three-dimensional structure of the specimen from different angles. The consistency in color and textural details hints at a solid material, likely indicative of dental anatomy.
 
