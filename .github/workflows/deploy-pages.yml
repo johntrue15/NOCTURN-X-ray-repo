@@ -1,0 +1,45 @@
+name: Deploy GitHub Pages
+
+on:
+  # Runs when content is pushed to the gh-pages branch
+  push:
+    branches:
+      - gh-pages
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Upload the entire repository content
+          path: '.'
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+      
+      - name: Deployment summary
+        run: |
+          echo "::notice title=Deployment Success::GitHub Pages deployed successfully"
+          echo "::notice title=Deployment URL::View the site at ${{ steps.deployment.outputs.page_url }}" 

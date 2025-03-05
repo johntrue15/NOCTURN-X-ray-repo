@@ -1,4 +1,4 @@
-name: GitHub Pages Deployment
+name: GitHub Pages Content Generation
 
 on:
   schedule:
@@ -7,12 +7,10 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
-# Allow only one concurrent deployment
+# Allow only one concurrent content generation
 concurrency:
-  group: "pages"
+  group: "content-gen"
   cancel-in-progress: false
 
 env:
@@ -23,9 +21,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -45,7 +40,7 @@ jobs:
             echo "::notice title=Scheduled Trigger::GitHub Pages update triggered by schedule"
           fi
           echo "GITHUB_PAGES_UPDATE_TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_ENV
-          echo "::notice title=Deployment Start::GitHub Pages update started at $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "::notice title=Generation Start::GitHub Pages content generation started at $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
       
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -711,37 +706,5 @@ jobs:
             done
           fi
           
-          echo "::notice title=Deployment Success::Content deployed to gh-pages branch"
-      
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v4
-        
-      - name: Upload GitHub Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs
-          
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-        
-      - name: Deployment summary
-        run: |
-          echo "::notice title=Deployment Success::GitHub Pages deployed successfully from gh-pages branch"
-          echo "::notice title=Deployment URL::View the site at ${{ steps.deployment.outputs.page_url }}"
-          
-          # Check if GitHub Pages is already configured
-          if [[ -z "${{ steps.deployment.outputs.page_url }}" ]]; then
-            echo "::warning title=GitHub Pages Configuration::It appears GitHub Pages might not be fully configured yet."
-            echo "::warning::Please ensure you've configured GitHub Pages in your repository settings:"
-            echo "::warning::1. Go to your repository on GitHub"
-            echo "::warning::2. Navigate to Settings > Pages"
-            echo "::warning::3. Under 'Build and deployment', set Source to 'GitHub Actions'"
-            echo "::warning::4. Save the settings"
-          fi
-          
-          # Save deployment info to debug logs
-          echo "Deployment URL: ${{ steps.deployment.outputs.page_url }}" > debug_logs/deployment_info.txt
-          echo "Expected URL: https://johntrue15.github.io/NOCTURN-X-ray-repo/" >> debug_logs/deployment_info.txt
-          echo "Deployed at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> debug_logs/deployment_info.txt
-          echo "Deployed from branch: gh-pages" >> debug_logs/deployment_info.txt 
+          echo "::notice title=Content Deployment Success::Content successfully pushed to gh-pages branch"
+          echo "::notice title=Next Steps::The deployment workflow on gh-pages branch will now handle the GitHub Pages deployment" 
