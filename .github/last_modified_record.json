@@ -1,12 +1,12 @@
 {
-  "title": "Mandible [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000067354?locale=en",
-  "id": "000067354",
-  "Object": "UF:Mammals:23229",
-  "Taxonomy": "Erethizon dorsatum",
-  "Element or Part": "Mandible",
+  "title": "Element Unspecified [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000168466?locale=en",
+  "id": "000168466",
+  "Object": "UF:Herp:124572",
+  "Taxonomy": "Basiliscus vittatus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "01/23/2019",
-  "Publication Status": "Open Download"
+  "Data Manager": "Nathalie Feiner",
+  "Date Uploaded": "12/14/2020",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
