@@ -1,12 +1,12 @@
 {
-  "title": "Head [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000483559?locale=en",
-  "id": "000483559",
-  "Object": "UF:Fish:227135",
-  "Taxonomy": "Paranthias furcifer",
-  "Element or Part": "Head",
+  "title": "Whole Body [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000028392?locale=en",
+  "id": "000028392",
+  "Object": "UF:Herp:71742",
+  "Taxonomy": "Phyllobates bicolor",
+  "Element or Part": "Whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "11/22/2022",
+  "Data Manager": "David Blackburn",
+  "Date Uploaded": "07/12/2017",
   "Publication Status": "Open Download"
 }
