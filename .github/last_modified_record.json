@@ -1,11 +1,11 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000080804?locale=en",
-  "id": "000080804",
-  "Object": "uf:o:41545",
+  "title": "Element Unspecified [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000034474?locale=en",
+  "id": "000034474",
+  "Object": "uf:herp:9283-19",
+  "Taxonomy": "Hemidactylus turcicus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Edward Stanley",
-  "Date Uploaded": "06/15/2019",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Daniel Paluh",
+  "Date Uploaded": "10/23/2017",
+  "Publication Status": "Restricted Download"
 }
