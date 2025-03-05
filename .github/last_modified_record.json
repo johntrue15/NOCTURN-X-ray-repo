@@ -1,12 +1,12 @@
 {
-  "title": "Associated [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000071035?locale=en",
-  "id": "000071035",
-  "Object": "UF:VP:425446",
-  "Taxonomy": "Podicipedidae indet.",
-  "Element or Part": "associated",
+  "title": "Vertebra [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000066705?locale=en",
+  "id": "000066705",
+  "Object": "UF:VP:420498",
+  "Taxonomy": "Coluber sp.",
+  "Element or Part": "Vertebra",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "03/01/2019",
+  "Date Uploaded": "01/17/2019",
   "Publication Status": "Restricted Download"
 }
