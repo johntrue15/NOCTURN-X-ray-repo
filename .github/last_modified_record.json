@@ -1,12 +1,12 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000624832?locale=en",
-  "id": "000624832",
-  "Object": "UF:Herp:10362",
-  "Taxonomy": "Dermochelys coriacea",
-  "Element or Part": "whole body",
+  "title": "Associated [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000071035?locale=en",
+  "id": "000071035",
+  "Object": "UF:VP:425446",
+  "Taxonomy": "Podicipedidae indet.",
+  "Element or Part": "associated",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jessie Maisano",
-  "Date Uploaded": "04/30/2024",
-  "Publication Status": "Open Download"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "03/01/2019",
+  "Publication Status": "Restricted Download"
 }
