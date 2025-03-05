@@ -1,13 +1,13 @@
 {
-  "title": "Ulna [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000077165?locale=en",
-  "id": "000077165",
-  "Object": "uf:o:39806",
-  "Taxonomy": "Gavia immer",
-  "Element or Part": "Ulna",
+  "title": "Tarsometatarsus [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000080773?locale=en",
+  "id": "000080773",
+  "Object": "uf:o:35403",
+  "Taxonomy": "Passer domesticus",
+  "Element or Part": "Tarsometatarsus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Edward Stanley",
-  "Date Uploaded": "05/09/2019",
+  "Date Uploaded": "06/15/2019",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
