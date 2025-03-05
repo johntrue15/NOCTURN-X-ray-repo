@@ -1,12 +1,12 @@
 {
-  "title": "Ilium [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000065828?locale=en",
-  "id": "000065828",
-  "Object": "UF:VP:419696",
-  "Taxonomy": "Ranidae indet.",
-  "Element or Part": "Ilium",
+  "title": "Vertebra [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000572783?locale=en",
+  "id": "000572783",
+  "Object": "UF:VP:111741",
+  "Taxonomy": "Batrachosauroides dissimulans",
+  "Element or Part": "Vertebra",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "12/20/2018",
+  "Date Uploaded": "10/24/2023",
   "Publication Status": "Restricted Download"
 }
