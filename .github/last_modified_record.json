@@ -1,13 +1,12 @@
 {
-  "title": "Humerus [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000099379?locale=en",
-  "id": "000099379",
-  "Object": "UF:Herp:124269",
-  "Taxonomy": "Anaxyrus quercicus",
-  "Element or Part": "Humerus",
+  "title": "16bit Tiff [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000048545?locale=en",
+  "id": "000048545",
+  "Object": "UF:Herp:153063",
+  "Taxonomy": "Eleutherodactylus cochranae",
+  "Element or Part": "16bit tiff",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Rachel Keeffe",
-  "Date Uploaded": "01/22/2020",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "David Blackburn",
+  "Date Uploaded": "05/15/2018",
+  "Publication Status": "Restricted Download"
 }
