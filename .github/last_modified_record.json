@@ -1,12 +1,12 @@
 {
-  "title": "Scapula [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000073015?locale=en",
-  "id": "000073015",
-  "Object": "uf:uf:49926",
-  "Taxonomy": "Dendrocygna autumnalis",
-  "Element or Part": "Scapula",
+  "title": "Head [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000483559?locale=en",
+  "id": "000483559",
+  "Object": "UF:Fish:227135",
+  "Taxonomy": "Paranthias furcifer",
+  "Element or Part": "Head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "04/01/2019",
-  "Publication Status": "Restricted Download"
+  "Date Uploaded": "11/22/2022",
+  "Publication Status": "Open Download"
 }
