@@ -1,12 +1,11 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000168982?locale=en",
-  "id": "000168982",
-  "Object": "uf:herp:178490",
-  "Taxonomy": "Anolis crassulus",
+  "title": "Element Unspecified [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000072572?locale=en",
+  "id": "000072572",
+  "Object": "uf:paleobotany:69709",
+  "Taxonomy": "Sahniocarpon harrisii",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Nathalie Feiner",
-  "Date Uploaded": "12/15/2020",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Steven Manchester",
+  "Date Uploaded": "03/25/2019",
+  "Publication Status": "Open Download"
 }
