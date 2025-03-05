@@ -4,7 +4,7 @@ This repository automatically tracks and analyzes X-ray CT data from MorphoSourc
 
 ## GitHub Pages
 
-📊 [View Release Dashboard](https://jt.github.io/NOCTURN-X-ray-repo/) - Interactive dashboard showing the latest release information, updated hourly.
+📊 [View Release Dashboard](https://johntrue15.github.io/NOCTURN-X-ray-repo/) - Interactive dashboard showing the latest release information, updated hourly.
 
 ## Documentation
 

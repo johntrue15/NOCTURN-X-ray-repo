@@ -11,6 +11,7 @@ import sys
 import json
 import glob
 import logging
+import subprocess
 from datetime import datetime
 import argparse
 
@@ -32,6 +33,7 @@ def setup_arg_parser():
     parser.add_argument('--data-dir', default='data', help='Directory containing release data')
     parser.add_argument('--output-dir', default='docs', help='Directory for GitHub Pages output')
     parser.add_argument('--verbose', action='store_true', help='Enable verbose logging')
+    parser.add_argument('--check-branches', action='store_true', help='Check GitHub branch information')
     return parser
 
 def log_environment_info():
@@ -50,6 +52,47 @@ def log_environment_info():
                 logger.info(f"  {var}: [REDACTED]")
             else:
                 logger.info(f"  {var}: {os.environ.get(var)}")
+    
+    # Log Git information if available
+    try:
+        current_branch = subprocess.check_output(["git", "rev-parse", "--abbrev-ref", "HEAD"]).decode().strip()
+        logger.info(f"Current Git Branch: {current_branch}")
+        
+        remote_url = subprocess.check_output(["git", "config", "--get", "remote.origin.url"]).decode().strip()
+        logger.info(f"Git Remote URL: {remote_url}")
+        
+        last_commit = subprocess.check_output(["git", "log", "-1", "--oneline"]).decode().strip()
+        logger.info(f"Last Commit: {last_commit}")
+    except (subprocess.SubprocessError, FileNotFoundError):
+        logger.warning("Unable to retrieve Git information")
+
+def check_github_branches():
+    """Check GitHub branch information and log it."""
+    logger.info("Checking GitHub Branch Information:")
+    
+    try:
+        # List all branches
+        branches = subprocess.check_output(["git", "branch", "-a"]).decode().strip()
+        logger.info(f"Available Branches:\n{branches}")
+        
+        # Check if gh-pages branch exists
+        try:
+            gh_pages_exists = subprocess.call(["git", "show-ref", "--verify", "--quiet", "refs/heads/gh-pages"]) == 0
+            logger.info(f"gh-pages Branch Exists Locally: {gh_pages_exists}")
+        except subprocess.SubprocessError:
+            logger.warning("Unable to check if gh-pages branch exists locally")
+        
+        # Check remote branches
+        try:
+            remote_branches = subprocess.check_output(["git", "ls-remote", "--heads", "origin"]).decode().strip()
+            logger.info(f"Remote Branches:\n{remote_branches}")
+            gh_pages_exists_remote = "refs/heads/gh-pages" in remote_branches
+            logger.info(f"gh-pages Branch Exists Remotely: {gh_pages_exists_remote}")
+        except subprocess.SubprocessError:
+            logger.warning("Unable to check remote branches")
+            
+    except (subprocess.SubprocessError, FileNotFoundError):
+        logger.warning("Unable to retrieve branch information")
 
 def analyze_data_directory(data_dir):
     """Analyze the data directory structure and log information."""
@@ -112,6 +155,16 @@ def check_github_pages_setup(output_dir):
             logger.info(f"Files in {asset_dir}: {os.listdir(dir_path)}")
         else:
             logger.warning(f"Missing asset directory: {asset_dir}")
+    
+    # Check GitHub Pages Configuration
+    pages_config_path = os.path.join('.github', 'pages.yml')
+    if os.path.exists(pages_config_path):
+        logger.info(f"Found GitHub Pages configuration file: {pages_config_path}")
+        with open(pages_config_path, 'r') as f:
+            content = f.read()
+        logger.info(f"GitHub Pages configuration content:\n{content}")
+    else:
+        logger.warning("No GitHub Pages configuration file found at .github/pages.yml")
 
 def main():
     """Main function to run the GitHub Pages debug utility."""
@@ -129,6 +182,10 @@ def main():
     
     # Log environment information
     log_environment_info()
+    
+    # Check GitHub branch information if requested
+    if args.check_branches:
+        check_github_branches()
     
     # Analyze data directory
     analyze_data_directory(args.data_dir)
