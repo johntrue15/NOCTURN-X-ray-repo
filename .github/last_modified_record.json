@@ -1,12 +1,11 @@
 {
-  "title": "Dice Ct Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000594152?locale=en",
-  "id": "000594152",
-  "Object": "UF:Fish:138560",
-  "Taxonomy": "Chaunax pictus",
-  "Element or Part": "diceCT whole body",
+  "title": "Element Unspecified [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000051208?locale=en",
+  "id": "000051208",
+  "Object": "UF:Fish:172923",
+  "Taxonomy": "Homalopteroides smithi",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "01/04/2024",
-  "Publication Status": "Open Download"
+  "Date Uploaded": "06/23/2018",
+  "Publication Status": "Restricted Download"
 }
