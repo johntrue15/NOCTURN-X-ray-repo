@@ -1,12 +1,13 @@
 {
-  "title": "Endosseous Labyrinth [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000373560?locale=en",
-  "id": "000373560",
-  "Object": "UF:Herp:45035",
-  "Taxonomy": "Kinosternon hirtipesKinosternon hirtipes magdalense",
-  "Element or Part": "Endosseous labyrinth",
+  "title": "Humerus [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000077198?locale=en",
+  "id": "000077198",
+  "Object": "uf:o:47939",
+  "Taxonomy": "Gallinago delicata",
+  "Element or Part": "Humerus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Serjoscha Evers",
-  "Date Uploaded": "08/02/2021",
-  "Publication Status": "Open Download"
+  "Data Manager": "Edward Stanley",
+  "Date Uploaded": "05/09/2019",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
