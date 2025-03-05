@@ -1,13 +1,13 @@
 {
-  "title": "Quadrate [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000576028?locale=en",
-  "id": "000576028",
-  "Object": "UF:Fish:120791",
-  "Taxonomy": "Neoglyphidodon melas",
-  "Element or Part": "quadrate",
+  "title": "Humerus [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000099379?locale=en",
+  "id": "000099379",
+  "Object": "UF:Herp:124269",
+  "Taxonomy": "Anaxyrus quercicus",
+  "Element or Part": "Humerus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jorgo Ristevski",
-  "Date Uploaded": "10/31/2023",
+  "Data Manager": "Rachel Keeffe",
+  "Date Uploaded": "01/22/2020",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
