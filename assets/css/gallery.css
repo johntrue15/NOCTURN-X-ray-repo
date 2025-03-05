@@ -102,9 +102,59 @@
   transform: translateX(-50%);
 }
 
+/* Pagination styles */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 30px 0;
+  flex-wrap: wrap;
+}
+
+.pagination-button, .pagination-page {
+  display: inline-block;
+  padding: 8px 16px;
+  margin: 0 4px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #0366d6;
+  background-color: #fff;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination-button:hover, .pagination-page:hover {
+  background-color: #f1f8ff;
+  border-color: #0366d6;
+}
+
+.pagination-page.current {
+  background-color: #0366d6;
+  color: white;
+  border-color: #0366d6;
+  font-weight: bold;
+}
+
+.pagination-button.disabled {
+  color: #ccc;
+  border-color: #eee;
+  background-color: #f8f8f8;
+  cursor: not-allowed;
+}
+
 /* Responsive adjustments */
 @media (max-width: 640px) {
   .image-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .pagination-container {
+    gap: 8px;
+    padding: 0 10px;
+  }
+  
+  .pagination-button, .pagination-page {
+    padding: 6px 12px;
+    margin: 0 2px;
   }
 }
