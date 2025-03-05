@@ -1,13 +1,13 @@
 {
-  "title": "Humerus [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000077198?locale=en",
-  "id": "000077198",
-  "Object": "uf:o:47939",
-  "Taxonomy": "Gallinago delicata",
-  "Element or Part": "Humerus",
+  "title": "Femur [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000080737?locale=en",
+  "id": "000080737",
+  "Object": "uf:o:26047",
+  "Taxonomy": "Nandayus nenday",
+  "Element or Part": "Femur",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Edward Stanley",
-  "Date Uploaded": "05/09/2019",
+  "Date Uploaded": "06/15/2019",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
