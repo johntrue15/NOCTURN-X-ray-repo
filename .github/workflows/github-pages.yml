@@ -297,7 +297,10 @@ jobs:
                       # Format date for display (if it's a date-based tag)
                       display_date = date
                       if re.match(r'\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}', date):
-                          display_date = date.replace('_', ' ').replace('-', '/')
+                          # Split into date and time parts
+                          date_part, time_part = date.split('_')
+                          # Format date as YYYY/MM/DD and time as HH:MM:SS UTC
+                          display_date = date_part.replace('-', '/') + ' ' + time_part.replace('-', ':') + ' UTC'
                       
                       release_info = {
                           'tag': tag,
@@ -427,7 +430,7 @@ jobs:
           <table class="releases-table">
               <tr>
                   <th>Type</th>
-                  <th>Date</th>
+                  <th>Date & Time</th>
                   <th>Tag</th>
               </tr>
           """
