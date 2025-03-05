@@ -28,6 +28,13 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ---
 
+### GitHub Pages Deployment (`github-pages.yml`)
+
+**Schedule:** Cron: 0 * * * *
+
+
+---
+
 ### Daily MorphoSource Check (`daily.yml`)
 
 **Schedule:** Daily at midnight
