@@ -1,12 +1,13 @@
 {
-  "title": "Sacrum [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000079395?locale=en",
-  "id": "000079395",
-  "Object": "UF:UF/FGS:6068",
-  "Taxonomy": "Rana miocenicaRana sp.Lithobates miocenica",
-  "Element or Part": "sacrum",
+  "title": "Quadrate [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000576028?locale=en",
+  "id": "000576028",
+  "Object": "UF:Fish:120791",
+  "Taxonomy": "Neoglyphidodon melas",
+  "Element or Part": "quadrate",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "05/30/2019",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Jorgo Ristevski",
+  "Date Uploaded": "10/31/2023",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
