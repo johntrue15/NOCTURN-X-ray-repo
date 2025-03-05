@@ -302,12 +302,93 @@ jobs:
                           # Format date as YYYY/MM/DD and time as HH:MM:SS UTC
                           display_date = date_part.replace('-', '/') + ' ' + time_part.replace('-', ':') + ' UTC'
                       
+                      # Extract image URLs for CT Image Analysis releases
+                      image_urls = []
+                      if release_type == 'CT Image Analysis':
+                          # For CT Image Analysis releases, try to extract images from release assets
+                          # Get release assets using GitHub API
+                          try:
+                              if os.environ.get('MY_GITHUB_TOKEN'):
+                                  import requests
+                                  
+                                  # Use GitHub API to get release by tag
+                                  headers = {"Authorization": f"token {os.environ.get('MY_GITHUB_TOKEN')}"}
+                                  repo = os.environ.get('GITHUB_REPOSITORY', 'johntrue15/NOCTURN-X-ray-repo')
+                                  api_url = f"https://api.github.com/repos/{repo}/releases/tags/{tag}"
+                                  
+                                  logger.info(f"Fetching assets for release {tag} from {api_url}")
+                                  response = requests.get(api_url, headers=headers)
+                                  
+                                  if response.status_code == 200:
+                                      release_data = response.json()
+                                      
+                                      # Get assets
+                                      if 'assets' in release_data and release_data['assets']:
+                                          logger.info(f"Found {len(release_data['assets'])} assets for release {tag}")
+                                          
+                                          # Priority order for orientation view images
+                                          orientation_images = [
+                                              "Default_Yplus_Up.png",
+                                              "Upside_Down_Y-_Up.png", 
+                                              "Forward_90_Z-_Up.png",
+                                              "Back_90_Zplus_Up.png"
+                                          ]
+                                          
+                                          # Find orientation view images first
+                                          found_images = {}
+                                          for asset in release_data['assets']:
+                                              asset_name = asset.get('name', '')
+                                              if asset_name in orientation_images:
+                                                  found_images[asset_name] = asset.get('browser_download_url')
+                                          
+                                          # Add orientation images in specific order
+                                          for img_name in orientation_images:
+                                              if img_name in found_images:
+                                                  image_urls.append(found_images[img_name])
+                                          
+                                          # If we don't have enough orientation images, look for any other PNG files
+                                          if len(image_urls) < 4:
+                                              for asset in release_data['assets']:
+                                                  asset_name = asset.get('name', '')
+                                                  if asset_name.lower().endswith('.png') and asset_name not in orientation_images:
+                                                      image_urls.append(asset.get('browser_download_url'))
+                                                      if len(image_urls) >= 4:
+                                                          break
+                              else:
+                                  logger.warning("GitHub token not available, cannot fetch release assets")
+                          except Exception as e:
+                              logger.error(f"Error fetching release assets: {str(e)}")
+                          
+                          # If no images found from assets, try searching in the description
+                          if not image_urls:
+                              # Look for image links in the description
+                              img_matches = re.findall(r'!\[.*?\]\((.*?)\)', description)
+                              for img_url in img_matches:
+                                  image_urls.append(img_url)
+                              
+                              # If no images found with markdown syntax, try searching for URLs that look like images
+                              if not image_urls:
+                                  url_matches = re.findall(r'https?://\S+\.(jpg|jpeg|png|gif|webp)', description, re.IGNORECASE)
+                                  for url in url_matches:
+                                      image_urls.append(url)
+                          
+                          # If still no images found, add placeholder URLs for demo
+                          if not image_urls:
+                              # Add placeholder images for demonstration
+                              image_urls = [
+                                  f"https://via.placeholder.com/800x600.png?text=Default+(Y%2B+Up)",
+                                  f"https://via.placeholder.com/800x600.png?text=Upside+Down+(Y-+Up)",
+                                  f"https://via.placeholder.com/800x600.png?text=Forward+90°+(Z-+Up)",
+                                  f"https://via.placeholder.com/800x600.png?text=Back+90°+(Z%2B+Up)"
+                              ]
+                      
                       release_info = {
                           'tag': tag,
                           'type': release_type,
                           'date': date,
                           'display_date': display_date,
                           'description': description,
+                          'image_urls': image_urls
                       }
                       
                       releases.append(release_info)
@@ -476,6 +557,15 @@ jobs:
                   content += """</div>
           """
               
+              # Add link to image analysis page if CT Image Analysis releases exist
+              if 'CT Image Analysis' in release_types and release_types['CT Image Analysis'] > 0:
+                  content += """
+          ## Specialized Views
+
+          - [CT Image Analysis Gallery](/image_analysis.html) - View CT scan images in an Instagram-style timeline
+
+          """
+              
               # Add footer
               content += """
           ## About NOCTURN X-ray
@@ -489,6 +579,84 @@ jobs:
           """
               
               logger.info(f"Generated index.md content ({len(content)} characters)")
+              return content
+          
+          def generate_image_analysis_page(github_releases):
+              """Generate a dedicated page for CT Image Analysis releases with Instagram-style layout"""
+              logger.info("Generating image_analysis.md content")
+              
+              # Get CT Image Analysis releases only
+              ct_image_releases = [r for r in github_releases if r['type'] == 'CT Image Analysis']
+              
+              if not ct_image_releases:
+                  logger.warning("No CT Image Analysis releases found for gallery page")
+                  return None
+              
+              # Get the timestamp from environment variable
+              update_timestamp = os.environ.get('GITHUB_PAGES_UPDATE_TIMESTAMP', datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC'))
+              
+              # Start building the content
+              content = f"""# CT Image Analysis Gallery
+
+          This page displays CT scan images from analysis releases in an Instagram-style timeline.
+
+          **Last Updated:** {update_timestamp}
+
+          <link rel="stylesheet" href="assets/css/gallery.css">
+
+          <div class="gallery-container">
+          """
+              
+              # Add each release as a timeline entry
+              for release in ct_image_releases:
+                  content += f"""
+          <div class="gallery-item">
+              <div class="gallery-header">
+                  <h2>{release['display_date']}</h2>
+                  <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/{release['tag']}">{release['tag']}</a></h3>
+              </div>
+              
+              <div class="image-grid">
+              """
+                  
+                  # Add images in a grid
+                  for idx, img_url in enumerate(release['image_urls'][:4]):  # Limit to 4 images
+                      content += f"""          <div class="image-item">
+                      <img src="{img_url}" alt="CT Image {idx+1}" loading="lazy">
+                  </div>
+              """
+                  
+                  # Close the image grid
+                  content += """        </div>
+              
+              <div class="release-description">
+              """
+                  
+                  # Add the release description
+                  content += f"""          <div class="description-text">
+                      {release['description']}
+                  </div>
+              """
+                  
+                  # Close the release description and gallery item
+                  content += """        </div>
+          </div>
+
+          <div class="timeline-separator"></div>
+          """
+              
+              # Close the gallery container
+              content += """      </div>
+
+          <script src="assets/js/gallery.js"></script>
+
+          <div class="footer">
+            <p>© NOCTURN X-ray Project. Deployed via GitHub Pages.</p>
+            <p>Return to <a href="index.html">main dashboard</a>.</p>
+          </div>
+          """
+              
+              logger.info(f"Generated image_analysis.md content ({len(content)} characters)")
               return content
           
           # Main execution
@@ -509,6 +677,183 @@ jobs:
                       f.write(index_content)
                   
                   logger.info("Successfully wrote index.md")
+                  
+                  # Generate the image analysis page if there are CT Image Analysis releases
+                  if 'CT Image Analysis' in release_types and release_types['CT Image Analysis'] > 0:
+                      image_analysis_content = generate_image_analysis_page(github_releases)
+                      
+                      if image_analysis_content:
+                          with open('docs/image_analysis.md', 'w') as f:
+                              f.write(image_analysis_content)
+                          logger.info("Successfully wrote image_analysis.md")
+                          
+                          # Create CSS and JS for the gallery by writing files separately
+                          os.makedirs('docs/assets/css', exist_ok=True)
+                          os.makedirs('docs/assets/js', exist_ok=True)
+                          
+                          # Write gallery CSS content
+                          gallery_css_content = "/* Gallery page styles */\n"
+                          gallery_css_content += ".gallery-container {\n"
+                          gallery_css_content += "  max-width: 900px;\n"
+                          gallery_css_content += "  margin: 0 auto;\n"
+                          gallery_css_content += "  padding: 20px 0;\n"
+                          gallery_css_content += "}\n\n"
+                          
+                          gallery_css_content += ".gallery-item {\n"
+                          gallery_css_content += "  background-color: #fff;\n"
+                          gallery_css_content += "  border-radius: 8px;\n"
+                          gallery_css_content += "  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);\n"
+                          gallery_css_content += "  margin-bottom: 40px;\n"
+                          gallery_css_content += "  overflow: hidden;\n"
+                          gallery_css_content += "}\n\n"
+                          
+                          gallery_css_content += ".gallery-header {\n"
+                          gallery_css_content += "  padding: 16px;\n"
+                          gallery_css_content += "  border-bottom: 1px solid #eee;\n"
+                          gallery_css_content += "}\n\n"
+                          
+                          gallery_css_content += ".gallery-header h2 {\n"
+                          gallery_css_content += "  margin: 0;\n"
+                          gallery_css_content += "  font-size: 18px;\n"
+                          gallery_css_content += "  border-bottom: none;\n"
+                          gallery_css_content += "}\n\n"
+                          
+                          gallery_css_content += ".gallery-header h3 {\n"
+                          gallery_css_content += "  margin: 4px 0 0;\n"
+                          gallery_css_content += "  font-size: 14px;\n"
+                          gallery_css_content += "  font-weight: normal;\n"
+                          gallery_css_content += "  color: #666;\n"
+                          gallery_css_content += "  border-bottom: none;\n"
+                          gallery_css_content += "}\n\n"
+                          
+                          gallery_css_content += ".image-grid {\n"
+                          gallery_css_content += "  display: grid;\n"
+                          gallery_css_content += "  grid-template-columns: repeat(2, 1fr);\n"
+                          gallery_css_content += "  grid-gap: 4px;\n"
+                          gallery_css_content += "  background-color: #f8f8f8;\n"
+                          gallery_css_content += "}\n\n"
+                          
+                          gallery_css_content += ".image-item {\n"
+                          gallery_css_content += "  position: relative;\n"
+                          gallery_css_content += "  padding-bottom: 100%;\n"
+                          gallery_css_content += "  overflow: hidden;\n"
+                          gallery_css_content += "}\n\n"
+                          
+                          gallery_css_content += ".image-item img {\n"
+                          gallery_css_content += "  position: absolute;\n"
+                          gallery_css_content += "  top: 0;\n"
+                          gallery_css_content += "  left: 0;\n"
+                          gallery_css_content += "  width: 100%;\n"
+                          gallery_css_content += "  height: 100%;\n"
+                          gallery_css_content += "  object-fit: cover;\n"
+                          gallery_css_content += "  transition: transform 0.3s ease;\n"
+                          gallery_css_content += "}\n\n"
+                          
+                          gallery_css_content += ".image-item img:hover {\n"
+                          gallery_css_content += "  transform: scale(1.05);\n"
+                          gallery_css_content += "}\n\n"
+                          
+                          gallery_css_content += ".release-description {\n"
+                          gallery_css_content += "  padding: 16px;\n"
+                          gallery_css_content += "  background-color: #fff;\n"
+                          gallery_css_content += "  border-top: 1px solid #eee;\n"
+                          gallery_css_content += "}\n\n"
+                          
+                          gallery_css_content += ".description-text {\n"
+                          gallery_css_content += "  white-space: pre-line;\n"
+                          gallery_css_content += "  line-height: 1.5;\n"
+                          gallery_css_content += "  overflow-wrap: break-word;\n"
+                          gallery_css_content += "}\n\n"
+                          
+                          gallery_css_content += ".timeline-separator {\n"
+                          gallery_css_content += "  height: 60px;\n"
+                          gallery_css_content += "  position: relative;\n"
+                          gallery_css_content += "}\n\n"
+                          
+                          gallery_css_content += ".timeline-separator:after {\n"
+                          gallery_css_content += "  content: '';\n"
+                          gallery_css_content += "  position: absolute;\n"
+                          gallery_css_content += "  top: 0;\n"
+                          gallery_css_content += "  left: 50%;\n"
+                          gallery_css_content += "  height: 100%;\n"
+                          gallery_css_content += "  width: 2px;\n"
+                          gallery_css_content += "  background-color: #ddd;\n"
+                          gallery_css_content += "  transform: translateX(-50%);\n"
+                          gallery_css_content += "}\n\n"
+                          
+                          gallery_css_content += "/* Responsive adjustments */\n"
+                          gallery_css_content += "@media (max-width: 640px) {\n"
+                          gallery_css_content += "  .image-grid {\n"
+                          gallery_css_content += "    grid-template-columns: 1fr;\n"
+                          gallery_css_content += "  }\n"
+                          gallery_css_content += "}"
+                          
+                          with open('docs/assets/css/gallery.css', 'w') as f:
+                              f.write(gallery_css_content)
+                          
+                          # Write gallery JS content
+                          gallery_js_content = "document.addEventListener('DOMContentLoaded', function() {\n"
+                          gallery_js_content += "  // Add image click handler for lightbox effect\n"
+                          gallery_js_content += "  const images = document.querySelectorAll('.image-item img');\n"
+                          gallery_js_content += "  \n"
+                          gallery_js_content += "  images.forEach(img => {\n"
+                          gallery_js_content += "    img.addEventListener('click', function() {\n"
+                          gallery_js_content += "      // Create lightbox\n"
+                          gallery_js_content += "      const lightbox = document.createElement('div');\n"
+                          gallery_js_content += "      lightbox.className = 'lightbox';\n"
+                          gallery_js_content += "      lightbox.style.position = 'fixed';\n"
+                          gallery_js_content += "      lightbox.style.top = '0';\n"
+                          gallery_js_content += "      lightbox.style.left = '0';\n"
+                          gallery_js_content += "      lightbox.style.width = '100%';\n"
+                          gallery_js_content += "      lightbox.style.height = '100%';\n"
+                          gallery_js_content += "      lightbox.style.backgroundColor = 'rgba(0,0,0,0.9)';\n"
+                          gallery_js_content += "      lightbox.style.display = 'flex';\n"
+                          gallery_js_content += "      lightbox.style.alignItems = 'center';\n"
+                          gallery_js_content += "      lightbox.style.justifyContent = 'center';\n"
+                          gallery_js_content += "      lightbox.style.zIndex = '1000';\n"
+                          gallery_js_content += "      \n"
+                          gallery_js_content += "      // Create image element\n"
+                          gallery_js_content += "      const fullImg = document.createElement('img');\n"
+                          gallery_js_content += "      fullImg.src = this.src;\n"
+                          gallery_js_content += "      fullImg.style.maxHeight = '90%';\n"
+                          gallery_js_content += "      fullImg.style.maxWidth = '90%';\n"
+                          gallery_js_content += "      fullImg.style.objectFit = 'contain';\n"
+                          gallery_js_content += "      \n"
+                          gallery_js_content += "      // Add close on click\n"
+                          gallery_js_content += "      lightbox.addEventListener('click', function() {\n"
+                          gallery_js_content += "        document.body.removeChild(lightbox);\n"
+                          gallery_js_content += "      });\n"
+                          gallery_js_content += "      \n"
+                          gallery_js_content += "      // Append to lightbox and body\n"
+                          gallery_js_content += "      lightbox.appendChild(fullImg);\n"
+                          gallery_js_content += "      document.body.appendChild(lightbox);\n"
+                          gallery_js_content += "    });\n"
+                          gallery_js_content += "  });\n"
+                          gallery_js_content += "  \n"
+                          gallery_js_content += "  // Lazy loading for images\n"
+                          gallery_js_content += "  if ('IntersectionObserver' in window) {\n"
+                          gallery_js_content += "    const lazyImages = document.querySelectorAll('img[loading=\"lazy\"]');\n"
+                          gallery_js_content += "    const imageObserver = new IntersectionObserver((entries, observer) => {\n"
+                          gallery_js_content += "      entries.forEach(entry => {\n"
+                          gallery_js_content += "        if (entry.isIntersecting) {\n"
+                          gallery_js_content += "          const img = entry.target;\n"
+                          gallery_js_content += "          img.src = img.dataset.src || img.src;\n"
+                          gallery_js_content += "          imageObserver.unobserve(img);\n"
+                          gallery_js_content += "        }\n"
+                          gallery_js_content += "      });\n"
+                          gallery_js_content += "    });\n"
+                          gallery_js_content += "    \n"
+                          gallery_js_content += "    lazyImages.forEach(img => {\n"
+                          gallery_js_content += "      imageObserver.observe(img);\n"
+                          gallery_js_content += "    });\n"
+                          gallery_js_content += "  }\n"
+                          gallery_js_content += "});"
+                          
+                          with open('docs/assets/js/gallery.js', 'w') as f:
+                              f.write(gallery_js_content)
+                          
+                          logger.info("Successfully created gallery CSS and JS")
+                  
               elif legacy_releases:
                   # Fallback to legacy releases if no GitHub releases
                   logger.warning("No GitHub releases found, falling back to legacy releases")
