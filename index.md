@@ -2,7 +2,7 @@
 
 This page displays information about the latest data releases for the NOCTURN X-ray project.
 
-**Last Updated:** 2025-03-05 16:43:34 UTC
+**Last Updated:** 2025-03-05 16:49:32 UTC
 
 ## Summary Statistics
 
@@ -48,6 +48,21 @@ This page displays information about the latest data releases for the NOCTURN X-
         <div class="stat-value">101</div>
     </div>
 </div>
+
+## MorphoSource Updates Over Time
+
+<div class="contribution-graph">
+    <h3>Update Activity</h3>
+    <div id="contribution-graph" class="graph-container">
+        <!-- The heatmap will be generated here by JavaScript -->
+        <p>Loading contribution data...</p>
+    </div>
+</div>
+
+<!-- Hidden element containing heatmap data -->
+<script id="heatmap-data" type="application/json">
+{"2025-03-04": 27, "2025-03-03": 40, "2025-03-02": 2, "2025-03-01": 11, "2025-02-28": 17, "2025-02-27": 39, "2025-02-26": 20, "2025-02-25": 8, "2025-02-24": 7, "2025-02-21": 1, "2025-02-19": 14, "2025-02-18": 9, "2025-02-17": 14, "2025-02-16": 5, "2025-02-15": 14, "2025-02-14": 9, "2025-02-13": 2, "2025-02-12": 12, "2025-02-11": 19, "2025-02-10": 54, "2025-02-09": 1, "2025-02-08": 1, "2025-02-07": 21, "2025-02-06": 14, "2025-02-05": 22, "2025-02-04": 34, "2025-02-03": 18, "2025-02-02": 1, "2025-02-01": 3, "2025-01-31": 7, "2025-01-30": 11, "2025-01-29": 12, "2025-01-28": 15, "2025-01-27": 14, "2025-01-26": 3, "2025-01-25": 8, "2025-01-24": 6, "2025-01-23": 6, "2025-01-22": 3, "2025-01-21": 3, "2025-01-20": 7, "2025-01-19": 10, "2025-01-17": 5, "2025-01-16": 5, "2025-01-15": 13, "2025-01-14": 3, "2025-01-13": 4, "2025-01-10": 4, "2025-01-09": 5, "2025-01-08": 20, "2025-01-07": 21, "2025-01-06": 1, "2025-01-04": 1, "2025-01-03": 1, "2025-01-02": 43, "2025-01-01": 9}
+</script>
 
 ## Releases by Type
 

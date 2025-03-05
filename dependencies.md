@@ -173,6 +173,8 @@ This document shows the relationships between GitHub Actions workflows and their
 - `.github/scripts/release_analysis.py`
 - `.github/scripts/release_analyzer.py`
 
+### Save User Ratings (`save-ratings.yml`)
+
 ### Test Attestation Generation (`test-attestation.yml`)
 **Manual trigger available**
 
