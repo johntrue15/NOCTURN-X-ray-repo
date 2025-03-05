@@ -1,12 +1,12 @@
 {
-  "title": "Whole Body [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000028392?locale=en",
-  "id": "000028392",
-  "Object": "UF:Herp:71742",
-  "Taxonomy": "Phyllobates bicolor",
-  "Element or Part": "Whole body",
+  "title": "Sacrum [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000079395?locale=en",
+  "id": "000079395",
+  "Object": "UF:UF/FGS:6068",
+  "Taxonomy": "Rana miocenicaRana sp.Lithobates miocenica",
+  "Element or Part": "sacrum",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "David Blackburn",
-  "Date Uploaded": "07/12/2017",
-  "Publication Status": "Open Download"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "05/30/2019",
+  "Publication Status": "Restricted Download"
 }
