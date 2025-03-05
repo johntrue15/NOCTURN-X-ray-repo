@@ -208,6 +208,7 @@ jobs:
           import subprocess
           from datetime import datetime
           from collections import defaultdict
+          import markdown
           
           # Setup logging
           logging.basicConfig(
@@ -354,8 +355,18 @@ jobs:
                                                       image_urls.append(asset.get('browser_download_url'))
                                                       if len(image_urls) >= 4:
                                                           break
-                              else:
-                                  logger.warning("GitHub token not available, cannot fetch release assets")
+                                          
+                                          # Use the full release body text from the API response instead of git tag description
+                                          if 'body' in release_data and release_data['body']:
+                                              # Replace the git tag description with the actual release body
+                                              description = release_data['body']
+                                              # Process the description to handle Markdown formatting
+                                              try:
+                                                  # Convert Markdown to HTML for better rendering
+                                                  description = markdown.markdown(description)
+                                              except Exception as e:
+                                                  logger.warning(f"Error converting markdown to HTML: {str(e)}")
+                                              logger.info(f"Using full release body from GitHub API for {tag}")
                           except Exception as e:
                               logger.error(f"Error fetching release assets: {str(e)}")
                           
@@ -632,7 +643,7 @@ jobs:
               <div class="release-description">
               """
                   
-                  # Add the release description
+                  # Add the release description with improved formatting
                   content += f"""          <div class="description-text">
                       {release['description']}
                   </div>
@@ -685,7 +696,16 @@ jobs:
                       if image_analysis_content:
                           with open('docs/image_analysis.md', 'w') as f:
                               f.write(image_analysis_content)
-                          logger.info("Successfully wrote image_analysis.md")
+                          
+                          # Create a separate HTML file with Jekyll front matter
+                          with open('docs/image_analysis.html', 'w') as f:
+                              f.write("---\n")
+                              f.write("layout: default\n")
+                              f.write("title: CT Image Analysis Gallery\n")
+                              f.write("---\n\n")
+                              f.write(image_analysis_content)
+                          
+                          logger.info("Successfully wrote image_analysis.md and image_analysis.html")
                           
                           # Create CSS and JS for the gallery by writing files separately
                           os.makedirs('docs/assets/css', exist_ok=True)
@@ -760,9 +780,24 @@ jobs:
                           gallery_css_content += "}\n\n"
                           
                           gallery_css_content += ".description-text {\n"
-                          gallery_css_content += "  white-space: pre-line;\n"
-                          gallery_css_content += "  line-height: 1.5;\n"
+                          gallery_css_content += "  white-space: pre-wrap;\n"
+                          gallery_css_content += "  line-height: 1.6;\n"
                           gallery_css_content += "  overflow-wrap: break-word;\n"
+                          gallery_css_content += "  font-size: 14px;\n"
+                          gallery_css_content += "  padding: 0 10px;\n"
+                          gallery_css_content += "  max-height: none;\n"
+                          gallery_css_content += "  color: #333;\n"
+                          gallery_css_content += "}\n\n"
+                          
+                          gallery_css_content += ".description-text h1, .description-text h2, .description-text h3 {\n"
+                          gallery_css_content += "  margin-top: 16px;\n"
+                          gallery_css_content += "  margin-bottom: 8px;\n"
+                          gallery_css_content += "  border-bottom: none;\n"
+                          gallery_css_content += "}\n\n"
+                          
+                          gallery_css_content += ".description-text ul, .description-text ol {\n"
+                          gallery_css_content += "  padding-left: 20px;\n"
+                          gallery_css_content += "  margin: 8px 0;\n"
                           gallery_css_content += "}\n\n"
                           
                           gallery_css_content += ".timeline-separator {\n"
