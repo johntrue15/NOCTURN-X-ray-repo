@@ -1,12 +1,12 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000168466?locale=en",
-  "id": "000168466",
-  "Object": "UF:Herp:124572",
-  "Taxonomy": "Basiliscus vittatus",
+  "title": "Dice Ct Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000594152?locale=en",
+  "id": "000594152",
+  "Object": "UF:Fish:138560",
+  "Taxonomy": "Chaunax pictus",
+  "Element or Part": "diceCT whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Nathalie Feiner",
-  "Date Uploaded": "12/14/2020",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "01/04/2024",
+  "Publication Status": "Open Download"
 }
