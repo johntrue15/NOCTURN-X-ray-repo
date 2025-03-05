@@ -1,12 +1,12 @@
 {
-  "title": "Vertebra [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000066705?locale=en",
-  "id": "000066705",
-  "Object": "UF:VP:420498",
-  "Taxonomy": "Coluber sp.",
-  "Element or Part": "Vertebra",
+  "title": "Ilium [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000065828?locale=en",
+  "id": "000065828",
+  "Object": "UF:VP:419696",
+  "Taxonomy": "Ranidae indet.",
+  "Element or Part": "Ilium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "01/17/2019",
+  "Date Uploaded": "12/20/2018",
   "Publication Status": "Restricted Download"
 }
