@@ -259,10 +259,14 @@ jobs:
                       patterns = [
                           (r'(ct_to_text_analysis|ct-to-text-analysis)-(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})', 'CT to Text Analysis'),
                           (r'(daily-check|daily_check)-(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})', 'Daily Check'),
+                          (r'(daily)-(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})', 'Daily'),
                           (r'(morphosource-updates|morphosource_updates)-(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})', 'MorphoSource Updates'),
                           (r'(morphosource-modified|morphosource_modified)-(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})', 'MorphoSource Modified'),
+                          (r'(morphosource-check)-(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})', 'MorphoSource Check'),
                           (r'(ct-image-analysis|ct_image_analysis)-(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})', 'CT Image Analysis'),
                           (r'(ct-slice-analysis|ct_slice_analysis)-(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})', 'CT Slice Analysis'),
+                          (r'(monthly-collection)-(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})', 'Monthly Collection'),
+                          (r'(ct_analysis_error)-(\d+)', 'CT Analysis Error'),
                       ]
                       
                       for pattern, type_name in patterns:
@@ -292,8 +296,10 @@ jobs:
                       except subprocess.CalledProcessError:
                           description = "No description available"
                       
-                      # Format date for display
-                      display_date = date.replace('_', ' ').replace('-', '/')
+                      # Format date for display (if it's a date-based tag)
+                      display_date = date
+                      if re.match(r'\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}', date):
+                          display_date = date.replace('_', ' ').replace('-', '/')
                       
                       release_info = {
                           'tag': tag,
@@ -306,8 +312,20 @@ jobs:
                       releases.append(release_info)
                       release_types[release_type] += 1
                       
-                  # Sort releases by date (newest first)
-                  releases.sort(key=lambda x: x['date'], reverse=True)
+                  # Define a custom sorting function to handle different tag formats
+                  def sort_key(x):
+                      if re.match(r'\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}', x['date']):
+                          # For date-based tags, convert to a timestamp for sorting
+                          return x['date']
+                      elif x['date'].isdigit():
+                          # For numeric ID tags, pad with zeros for proper sorting
+                          return f"{int(x['date']):020d}"
+                      else:
+                          # Default fallback
+                          return x['date']
+                          
+                  # Sort releases (newest first)
+                  releases.sort(key=sort_key, reverse=True)
                   logger.info(f"Processed {len(releases)} releases")
                   
                   return releases, release_types
@@ -594,6 +612,21 @@ jobs:
           # Copy the docs directory to the temporary directory
           cp -r docs/* $GH_PAGES_DIR/
           
+          # Also create a temporary directory for log files
+          LOG_BACKUP_DIR=$(mktemp -d)
+          
+          # Move log files to the backup directory to prevent conflicts
+          if [ -f "content_generation.log" ]; then
+            mv content_generation.log $LOG_BACKUP_DIR/
+          fi
+          if [ -f "github-pages-debug.log" ]; then
+            mv github-pages-debug.log $LOG_BACKUP_DIR/
+          fi
+          if [ -d "debug_logs" ]; then
+            cp -r debug_logs/* $LOG_BACKUP_DIR/ || true
+            rm -rf debug_logs
+          fi
+          
           # Save the current commit SHA for reference
           CURRENT_COMMIT=$(git rev-parse HEAD)
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -603,6 +636,8 @@ jobs:
           # Check if gh-pages branch exists locally
           if git show-ref --verify --quiet refs/heads/gh-pages; then
             # Branch exists locally, checkout
+            # First, clean up any untracked files that might prevent checkout
+            git clean -fd
             git checkout gh-pages
           else
             # Branch doesn't exist locally, create and checkout
@@ -623,6 +658,8 @@ jobs:
               git reset --hard origin/gh-pages
             else
               # Create a new branch tracking the remote
+              # First, clean up any untracked files that might prevent checkout
+              git clean -fd
               git checkout -b gh-pages origin/gh-pages
               git rm -rf . || true
             fi
@@ -630,6 +667,9 @@ jobs:
           
           # Copy the content from the temporary directory
           cp -r $GH_PAGES_DIR/* .
+          
+          # Clean up any potential untracked files from previous runs
+          find . -type f -not -path "./.git/*" -not -path "./_site/*" | grep -v -E '\.html$|\.css$|\.js$|\.md$|\.yml$|\.json$|\.svg$|\.png$|\.jpg$|\.jpeg$|\.gif$|\.ico$' | xargs rm -f || true
           
           # Add all files
           git add .
@@ -648,6 +688,24 @@ jobs:
             git checkout ${CURRENT_BRANCH} || echo "::warning::Could not return to ${CURRENT_BRANCH}, but gh-pages was updated successfully"
           else
             echo "::notice title=Branch Return::Was in detached HEAD state, not returning to a branch"
+          fi
+          
+          # Restore log files from backup
+          mkdir -p debug_logs
+          if [ -d "$LOG_BACKUP_DIR" ]; then
+            cp -r $LOG_BACKUP_DIR/* . || true
+            if [ -f "$LOG_BACKUP_DIR/content_generation.log" ]; then
+              cp $LOG_BACKUP_DIR/content_generation.log .
+            fi
+            if [ -f "$LOG_BACKUP_DIR/github-pages-debug.log" ]; then
+              cp $LOG_BACKUP_DIR/github-pages-debug.log .
+            fi
+            # Move non-file specific logs to debug_logs
+            for f in $LOG_BACKUP_DIR/*; do
+              if [ -f "$f" ] && [ "$(basename "$f")" != "content_generation.log" ] && [ "$(basename "$f")" != "github-pages-debug.log" ]; then
+                cp "$f" debug_logs/
+              fi
+            done
           fi
           
           echo "::notice title=Deployment Success::Content deployed to gh-pages branch"
