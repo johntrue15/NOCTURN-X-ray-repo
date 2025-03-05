@@ -1,13 +1,12 @@
 {
-  "title": "Tarsometatarsus [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000080773?locale=en",
-  "id": "000080773",
-  "Object": "uf:o:35403",
-  "Taxonomy": "Passer domesticus",
-  "Element or Part": "Tarsometatarsus",
+  "title": "Scapula [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000073015?locale=en",
+  "id": "000073015",
+  "Object": "uf:uf:49926",
+  "Taxonomy": "Dendrocygna autumnalis",
+  "Element or Part": "Scapula",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Edward Stanley",
-  "Date Uploaded": "06/15/2019",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "04/01/2019",
+  "Publication Status": "Restricted Download"
 }
