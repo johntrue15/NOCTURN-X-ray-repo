@@ -2,13 +2,13 @@
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-03-05 16:31:35 UTC
+**Last Updated:** 2025-03-05 16:43:34 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
 
-<div class="gallery-item">
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-04-13-36-21" data-release-tag="ct_image_analysis-2025-02-04_13-36-21">
     <div class="gallery-header">
         <h2>2025/02/04 13:36:21 UTC</h2>
         <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-04_13-36-21">ct_image_analysis-2025-02-04_13-36-21</a></h3>
@@ -87,11 +87,38 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 <p>See attached images for details.</p>
         </div>
             </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="timeline-separator"></div>
 
-<div class="gallery-item">
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-04-13-24-06" data-release-tag="ct_image_analysis-2025-02-04_13-24-06">
     <div class="gallery-header">
         <h2>2025/02/04 13:24:06 UTC</h2>
         <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-04_13-24-06">ct_image_analysis-2025-02-04_13-24-06</a></h3>
@@ -151,11 +178,38 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 <p>See attached images for details.</p>
         </div>
             </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="timeline-separator"></div>
 
-<div class="gallery-item">
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-04-13-01-04" data-release-tag="ct_image_analysis-2025-02-04_13-01-04">
     <div class="gallery-header">
         <h2>2025/02/04 13:01:04 UTC</h2>
         <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-04_13-01-04">ct_image_analysis-2025-02-04_13-01-04</a></h3>
@@ -233,11 +287,38 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 <p>See attached images for details.</p>
         </div>
             </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="timeline-separator"></div>
 
-<div class="gallery-item">
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-04-10-46-08" data-release-tag="ct_image_analysis-2025-02-04_10-46-08">
     <div class="gallery-header">
         <h2>2025/02/04 10:46:08 UTC</h2>
         <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-04_10-46-08">ct_image_analysis-2025-02-04_10-46-08</a></h3>
@@ -323,11 +404,38 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 <p>See attached images for details.</p>
         </div>
             </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="timeline-separator"></div>
 
-<div class="gallery-item">
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-04-10-37-04" data-release-tag="ct_image_analysis-2025-02-04_10-37-04">
     <div class="gallery-header">
         <h2>2025/02/04 10:37:04 UTC</h2>
         <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-04_10-37-04">ct_image_analysis-2025-02-04_10-37-04</a></h3>
@@ -407,6 +515,33 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 <p>See attached images for details.</p>
         </div>
             </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="timeline-separator"></div>
