@@ -38,17 +38,23 @@ jobs:
           COMMENT="${{ github.event.client_payload.comment }}"
           TIMESTAMP="${{ github.event.client_payload.timestamp }}"
           
-          # Convert to JSON format
-          NEW_RATING=$(cat <<EOF
-          {
-            "releaseId": "$RELEASE_ID",
-            "releaseTag": "$RELEASE_TAG",
-            "rating": $RATING,
-            "comment": "$COMMENT",
-            "timestamp": "$TIMESTAMP"
-          }
-          EOF
-          )
+          # Safely escape the comment to avoid JSON parsing issues
+          COMMENT_ESCAPED=$(echo -n "$COMMENT" | jq -aRs .)
+          
+          # Create the new rating JSON object using jq
+          NEW_RATING=$(jq -n \
+            --arg id "$RELEASE_ID" \
+            --arg tag "$RELEASE_TAG" \
+            --argjson rating "$RATING" \
+            --arg comment "$COMMENT" \
+            --arg timestamp "$TIMESTAMP" \
+            '{
+              "releaseId": $id,
+              "releaseTag": $tag,
+              "rating": $rating,
+              "comment": $comment,
+              "timestamp": $timestamp
+            }')
           
           # Use jq to append to the ratings array
           jq --argjson newRating "$NEW_RATING" '.ratings += [$newRating]' assets/data/ratings.json > temp.json

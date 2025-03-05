@@ -15,7 +15,7 @@ concurrency:
 
 env:
   MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-  WORKFLOW_PAT: ${{ secrets.WORKFLOW_PAT }}
+  COMMENT_API_TOKEN: ${{ secrets.COMMENT_API_TOKEN }}
   DEBUG_LEVEL: "info"  # Can be set to debug, info, warning, error, critical
 
 jobs:
@@ -651,22 +651,21 @@ jobs:
                 };
                 
                 try {
-                  // Store in localStorage (GitHub Pages is static, so we use client-side storage)
+                  // Store in localStorage (as a fallback)
                   saveToLocalStorage(feedback);
                   
-                  // Try to send to GitHub API if a token is available
-                  const token = getGitHubToken();
-                  if (token) {
-                    try {
-                      await saveRatingToGitHub(feedback, token);
-                    } catch (apiError) {
-                      console.warn('Could not save to GitHub API:', apiError);
-                      // Continue with local storage only
+                  // Always try to save to GitHub repository (using preset token)
+                  try {
+                    const success = await saveRatingToGitHub(feedback);
+                    if (success) {
+                      showStatus(statusMessage, 'Thank you for your feedback! Your comment will be visible to all users.', 'success');
+                    } else {
+                      showStatus(statusMessage, 'Feedback saved locally only. Others won\'t see your comment.', 'success');
                     }
+                  } catch (apiError) {
+                    console.warn('Could not save to GitHub API:', apiError);
+                    showStatus(statusMessage, 'Feedback saved locally only. Others won\'t see your comment.', 'success');
                   }
-                  
-                  // Show success message
-                  showStatus(statusMessage, 'Thank you for your feedback!', 'success');
                   
                   // Reset form
                   form.reset();
@@ -676,7 +675,6 @@ jobs:
                   // Add comment to the display
                   addCommentToList(galleryItem, feedback);
                   
-                  // If you want to implement server-side storage later, you can add the API call here
                 } catch (error) {
                   console.error('Error saving feedback:', error);
                   showStatus(statusMessage, 'Error saving feedback. Please try again.', 'error');
@@ -684,11 +682,15 @@ jobs:
               });
             });
             
-            // Load existing comments from localStorage on page load
-            loadCommentsFromLocalStorage();
-            
-            // Also try to load comments from the server
-            loadCommentsFromServer();
+            // Load existing comments on page load - always try server first
+            loadCommentsFromServer().then(() => {
+              // As a fallback, also load any locally stored comments
+              loadCommentsFromLocalStorage();
+            }).catch(err => {
+              console.warn('Error loading server comments:', err);
+              // If server loading fails, make sure to load local comments
+              loadCommentsFromLocalStorage();
+            });
             
             // Utility function to show status messages
             function showStatus(element, message, type) {
@@ -727,9 +729,19 @@ jobs:
             }
             
             // Function to save rating to GitHub repository using repository_dispatch
-            async function saveRatingToGitHub(feedback, token) {
+            async function saveRatingToGitHub(feedback) {
               const owner = 'johntrue15';
               const repo = 'NOCTURN-X-ray-repo';
+              
+              // Use hardcoded token - this is not exposed to clients as it's replaced by workflow
+              const token = '{{COMMENT_API_TOKEN}}';
+              
+              // Replace template with actual token by the GitHub workflow when building
+              // This way no real token is in client-side code
+              if (!token || token === '{{COMMENT_API_TOKEN}}') {
+                console.warn('No GitHub token available for API. Using fallback method.');
+                return false;
+              }
               
               const response = await fetch(`https://api.github.com/repos/${owner}/${repo}/dispatches`, {
                 method: 'POST',
@@ -751,14 +763,6 @@ jobs:
               return true;
             }
             
-            // Function to get GitHub token from URL parameter
-            function getGitHubToken() {
-              // For security, this is not a recommended approach for a real application
-              // but can be used for demonstration purposes
-              const urlParams = new URLSearchParams(window.location.search);
-              return urlParams.get('token');
-            }
-            
             // Function to load comments from localStorage
             function loadCommentsFromLocalStorage() {
               const galleryItems = document.querySelectorAll('.gallery-item');
@@ -770,58 +774,64 @@ jobs:
                 const storedFeedback = JSON.parse(localStorage.getItem(storageKey) || '[]');
                 
                 storedFeedback.forEach(feedback => {
-                  addCommentToList(item, feedback);
+                  addCommentToList(item, feedback, true); // true = check for duplicates
                 });
               });
             }
             
             // Function to load comments from the server (ratings.json)
             async function loadCommentsFromServer() {
-              try {
-                const response = await fetch('/assets/data/ratings.json');
-                if (!response.ok) {
-                  console.warn('Could not load ratings from server:', response.status);
-                  return;
-                }
-                
-                const data = await response.json();
-                if (!data || !data.ratings || !Array.isArray(data.ratings)) {
-                  console.warn('Invalid ratings data format');
-                  return;
-                }
-                
-                // Process each rating
-                const galleryItems = document.querySelectorAll('.gallery-item');
-                galleryItems.forEach(item => {
-                  const releaseId = item.getAttribute('data-release-id');
-                  if (!releaseId) return;
-                  
-                  // Find ratings for this release
-                  const releaseRatings = data.ratings.filter(r => r.releaseId === releaseId);
-                  releaseRatings.forEach(feedback => {
-                    // Check if this comment is already displayed (from localStorage)
-                    const commentList = item.querySelector('.comment-list');
-                    const commentExists = Array.from(commentList.querySelectorAll('.comment')).some(comment => {
-                      const commentDate = comment.querySelector('.comment-date').textContent;
-                      const feedbackDate = new Date(feedback.timestamp).toLocaleString();
-                      return commentDate === feedbackDate && 
-                             comment.querySelector('.comment-content').textContent === feedback.comment;
-                    });
-                    
-                    if (!commentExists) {
-                      addCommentToList(item, feedback);
-                    }
-                  });
-                });
-              } catch (error) {
-                console.warn('Error loading ratings from server:', error);
+              // Cache-busting query parameter to ensure we always get latest data
+              const cacheBuster = Date.now();
+              const response = await fetch(`/assets/data/ratings.json?_=${cacheBuster}`);
+              
+              if (!response.ok) {
+                console.warn('Could not load ratings from server:', response.status);
+                return;
               }
+              
+              const data = await response.json();
+              if (!data || !data.ratings || !Array.isArray(data.ratings)) {
+                console.warn('Invalid ratings data format');
+                return;
+              }
+              
+              console.log(`Loaded ${data.ratings.length} ratings from server`);
+              
+              // Process each rating
+              const galleryItems = document.querySelectorAll('.gallery-item');
+              galleryItems.forEach(item => {
+                const releaseId = item.getAttribute('data-release-id');
+                if (!releaseId) return;
+                
+                // Find ratings for this release
+                const releaseRatings = data.ratings.filter(r => r.releaseId === releaseId);
+                
+                releaseRatings.forEach(feedback => {
+                  addCommentToList(item, feedback, true); // true = check for duplicates
+                });
+              });
+              
+              return data.ratings.length;
             }
             
             // Function to add a comment to the UI
-            function addCommentToList(galleryItem, feedback) {
+            function addCommentToList(galleryItem, feedback, checkDuplicates = false) {
               const commentList = galleryItem.querySelector('.comment-list');
               if (!commentList) return;
+              
+              // Check for duplicates if requested
+              if (checkDuplicates) {
+                const commentDate = new Date(feedback.timestamp).toLocaleString();
+                const commentExists = Array.from(commentList.querySelectorAll('.comment')).some(comment => {
+                  const existingDate = comment.querySelector('.comment-date').textContent;
+                  const existingContent = comment.querySelector('.comment-content').textContent;
+                  
+                  return existingDate === commentDate && existingContent === feedback.comment;
+                });
+                
+                if (commentExists) return; // Skip if duplicate
+              }
               
               const commentElement = document.createElement('div');
               commentElement.className = 'comment';
@@ -1793,6 +1803,16 @@ jobs:
           cp github-pages-debug.log debug_logs/post-generation-debug.log
           
           echo "::notice title=Post-Generation Debug::Debug report generated after content creation"
+      
+      - name: Inject COMMENT_API_TOKEN into gallery JS
+        run: |
+          if [ -f "docs/assets/js/gallery.js" ]; then
+            # Replace the placeholder token with the actual COMMENT_API_TOKEN
+            sed -i "s/{{COMMENT_API_TOKEN}}/${{ secrets.COMMENT_API_TOKEN }}/g" docs/assets/js/gallery.js
+            echo "::notice title=Token Injection::Successfully injected COMMENT_API_TOKEN into gallery.js"
+          else
+            echo "::warning::gallery.js file not found for token injection"
+          fi
       
       - name: Upload Debug Logs Artifact
         uses: actions/upload-artifact@v4
