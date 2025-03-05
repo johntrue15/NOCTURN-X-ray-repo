@@ -1,12 +1,13 @@
 {
-  "title": "Premaxilla [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000065611?locale=en",
-  "id": "000065611",
-  "Object": "UF:VP:11277",
-  "Taxonomy": "Plestiodon laticepsEumeces laticeps",
-  "Element or Part": "Premaxilla",
+  "title": "Dicect Scan Of Body [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000022469?locale=en",
+  "id": "000022469",
+  "Object": "UF:Herp:80664",
+  "Taxonomy": "Ascaphus truei",
+  "Element or Part": "DICECT scan of body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "12/14/2018",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "David Blackburn",
+  "Date Uploaded": "02/10/2017",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
