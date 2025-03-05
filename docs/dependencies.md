@@ -28,7 +28,7 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ---
 
-### GitHub Pages Deployment (`github-pages.yml`)
+### GitHub Pages Content Generation (`github-pages.yml`)
 
 **Schedule:** Cron: 0 * * * *
 
@@ -134,6 +134,8 @@ This document shows the relationships between GitHub Actions workflows and their
 **Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/ct_to_text.py`
+
+### Deploy GitHub Pages (`deploy-pages.yml`)
 
 ### 2D or 3D Selenium Fullscreen Test (`dimension_test.yml`)
 **Manual trigger available**
