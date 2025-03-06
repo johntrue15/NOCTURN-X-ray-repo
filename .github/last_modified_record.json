@@ -1,12 +1,12 @@
 {
-  "title": "Head [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000649675?locale=en",
-  "id": "000649675",
-  "Object": "UF:Herp:192402",
-  "Taxonomy": "Typhlonectes natans",
-  "Element or Part": "head",
+  "title": "Mnhnsd Fos 23.1325",
+  "detail_url": "https://www.morphosource.org/concern/media/000713490?locale=en",
+  "id": "000713490",
+  "Object": "uf:field#",
+  "Taxonomy": "Crocodilia indet.",
+  "Element or Part": "Tooth",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jaimi Gray",
-  "Date Uploaded": "07/19/2024",
+  "Data Manager": "Mitchell Riegler",
+  "Date Uploaded": "02/26/2025",
   "Publication Status": "Open Download"
 }
