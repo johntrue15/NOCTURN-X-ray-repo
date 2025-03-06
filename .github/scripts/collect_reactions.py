@@ -182,14 +182,17 @@ def download_release_images(release, release_id):
     # Get all assets for the release
     assets = release.get_assets()
     
-    # Only download PNG images
+    # Download PNG images and process.log
     image_count = 0
+    log_downloaded = False
+    
     for asset in assets:
-        if asset.name.lower().endswith('.png'):
-            print(f"Found image asset: {asset.name}")
+        # Download PNG images and process.log file
+        if asset.name.lower().endswith('.png') or asset.name.lower() == 'process.log':
+            print(f"Found asset to download: {asset.name}")
             download_url = asset.browser_download_url
             
-            # Download the image
+            # Download the file
             headers = {"Authorization": f"token {token}"}
             response = requests.get(download_url, headers=headers, stream=True)
             
@@ -199,10 +202,20 @@ def download_release_images(release, release_id):
                     for chunk in response.iter_content(chunk_size=8192):
                         f.write(chunk)
                 print(f"Downloaded {asset.name} to {file_path}")
-                image_count += 1
+                
+                # Count only images for stats
+                if asset.name.lower().endswith('.png'):
+                    image_count += 1
+                elif asset.name.lower() == 'process.log':
+                    log_downloaded = True
             else:
                 print(f"Failed to download {asset.name}: {response.status_code}")
     
+    if log_downloaded:
+        print(f"Process log was included in the download")
+    else:
+        print(f"No process.log file found for this release")
+        
     print(f"Downloaded {image_count} images for release {release_id}")
     return image_count > 0
 
