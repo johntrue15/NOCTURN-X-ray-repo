@@ -1,12 +1,13 @@
 {
-  "title": "Entire Specimen [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000663701?locale=en",
-  "id": "000663701",
-  "Object": "UF:Fish:154968",
-  "Taxonomy": "Narcine brasiliensis",
-  "Element or Part": "entire specimen",
+  "title": "Skull [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000083057?locale=en",
+  "id": "000083057",
+  "Object": "UF:Herp:159097",
+  "Taxonomy": "Rana capitoLithobates capito",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "09/16/2024",
-  "Publication Status": "Open Download"
+  "Date Uploaded": "07/16/2019",
+  "Publication Status": "Open Download",
+  "Rights Statement": "No Known Copyright"
 }
