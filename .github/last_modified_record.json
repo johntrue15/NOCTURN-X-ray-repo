@@ -1,12 +1,13 @@
 {
-  "title": "Element Unspecified [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000057239?locale=en",
-  "id": "000057239",
-  "Object": "UMMZ:mammals:175795",
-  "Taxonomy": "Noctilio albiventris",
+  "title": "Whole Body In Spirit [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000569167?locale=en",
+  "id": "000569167",
+  "Object": "UMMZ:mammals:165514",
+  "Taxonomy": "Monodelphis domestica",
+  "Element or Part": "whole body in spirit",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "09/02/2018",
+  "Date Uploaded": "10/07/2023",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
