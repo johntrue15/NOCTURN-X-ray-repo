@@ -1,11 +1,12 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000051292?locale=en",
-  "id": "000051292",
-  "Object": "UF:Fish:189007",
-  "Taxonomy": "Osteoglossum bicirrhosumOsteoglossum bicirrhosum NULL",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000170162?locale=en",
+  "id": "000170162",
+  "Object": "UF:Fish:129478",
+  "Taxonomy": "Channa aurolineataChanna marulius",
+  "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "06/24/2018",
+  "Date Uploaded": "12/22/2020",
   "Publication Status": "Open Download"
 }
