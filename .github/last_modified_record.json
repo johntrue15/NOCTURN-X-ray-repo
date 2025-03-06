@@ -1,12 +1,11 @@
 {
-  "title": "Lower First Incisor [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000008385?locale=en",
-  "id": "000008385",
-  "Object": "UF:VP:280130",
-  "Taxonomy": "Panamacebus transitus",
-  "Element or Part": "lower first incisor",
+  "title": "Element Unspecified [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000005378?locale=en",
+  "id": "000005378",
+  "Object": "UF:UF/IGM:4",
+  "Taxonomy": "Titanoboa cerrejonensis",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "01/15/2016",
+  "Date Uploaded": "04/23/2015",
   "Publication Status": "Restricted Download"
 }
