@@ -1,13 +1,13 @@
 {
-  "title": "Cranium [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000034765?locale=en",
-  "id": "000034765",
-  "Object": "UMMZ:mammals:164872",
-  "Taxonomy": "Carollia castanea",
-  "Element or Part": "cranium",
+  "title": "Mandibles [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000035572?locale=en",
+  "id": "000035572",
+  "Object": "UMMZ:mammals:124419",
+  "Taxonomy": "Promops centralis occultusPromops centralis",
+  "Element or Part": "mandibles",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "10/26/2017",
+  "Date Uploaded": "10/31/2017",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
