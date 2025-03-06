@@ -1,11 +1,13 @@
 {
-  "title": "Element Unspecified [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000035300?locale=en",
-  "id": "000035300",
-  "Object": "uf:herp:9283-26",
-  "Taxonomy": "Hemidactylus turcicus",
+  "title": "Ct Scan Of Skeleton And Skull [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000013643?locale=en",
+  "id": "000013643",
+  "Object": "UF:Herp:43204",
+  "Taxonomy": "Hemiphractus proboscideus",
+  "Element or Part": "CT scan of skeleton and skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Daniel Paluh",
-  "Date Uploaded": "10/27/2017",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "David Blackburn",
+  "Date Uploaded": "06/09/2016",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
