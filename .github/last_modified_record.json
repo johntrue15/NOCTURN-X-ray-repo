@@ -1,12 +1,12 @@
 {
-  "title": "Dice Ct Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000596673?locale=en",
-  "id": "000596673",
-  "Object": "UF:Fish:236194",
-  "Taxonomy": "Amia calva NULLAmia calva",
-  "Element or Part": "diceCT whole body",
+  "title": "Cranium, Skull [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000459581?locale=en",
+  "id": "000459581",
+  "Object": "UF:Mammals:7773",
+  "Taxonomy": "Macropus rufusOsphranter rufus",
+  "Element or Part": "skull and cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "01/10/2024",
+  "Date Uploaded": "09/07/2022",
   "Publication Status": "Open Download"
 }
