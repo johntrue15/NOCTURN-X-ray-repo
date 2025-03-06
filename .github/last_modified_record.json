@@ -1,13 +1,12 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000716756?locale=en",
-  "id": "000716756",
-  "Object": "UMMZ:mammals:87031",
-  "Taxonomy": "Dipodomys spectabilis spectabilis",
+  "title": "M/1 Or M/2 [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000020473?locale=en",
+  "id": "000020473",
+  "Object": "UF:VP:330176",
+  "Taxonomy": "Macrocranion junnei",
+  "Element or Part": "M/1 or M/2",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Leila Siciliano-Martina",
-  "Date Uploaded": "03/06/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC-SA Attribution-NonCommercial-ShareAlike 4.0 International"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "12/09/2016",
+  "Publication Status": "Restricted Download"
 }
