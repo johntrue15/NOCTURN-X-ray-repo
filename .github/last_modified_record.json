@@ -1,13 +1,13 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000716651?locale=en",
-  "id": "000716651",
-  "Object": "UMMZ:mammals:75545",
-  "Taxonomy": "Dipodomys ordii luteolusDipodomys ordii LUTEOLUS",
+  "title": "Canfam Scottish Deerhound Skull",
+  "detail_url": "https://www.morphosource.org/concern/media/000666915?locale=en",
+  "id": "000666915",
+  "Object": "YPM:VZ:YPM MAM 007987",
+  "Taxonomy": "Canis familiaris",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Sarah Klyn",
-  "Date Uploaded": "03/06/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC-SA Attribution-NonCommercial-ShareAlike 4.0 International"
+  "Data Manager": "Nelson Rios",
+  "Date Uploaded": "09/30/2024",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
