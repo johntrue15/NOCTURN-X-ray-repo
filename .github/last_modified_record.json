@@ -1,13 +1,13 @@
 {
-  "title": "Canfam Siberian Bloodhound Skull",
-  "detail_url": "https://www.morphosource.org/concern/media/000666888?locale=en",
-  "id": "000666888",
-  "Object": "YPM:VZ:YPM MAM 006940",
-  "Taxonomy": "Canis familiaris",
-  "Element or Part": "skull",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000716651?locale=en",
+  "id": "000716651",
+  "Object": "UMMZ:mammals:75545",
+  "Taxonomy": "Dipodomys ordii luteolusDipodomys ordii LUTEOLUS",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Nelson Rios",
-  "Date Uploaded": "09/30/2024",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Sarah Klyn",
+  "Date Uploaded": "03/06/2025",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC-SA Attribution-NonCommercial-ShareAlike 4.0 International"
 }
