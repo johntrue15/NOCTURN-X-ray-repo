@@ -1,12 +1,12 @@
 {
-  "title": "Head [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000081788?locale=en",
-  "id": "000081788",
-  "Object": "UF:Fish:19240",
-  "Taxonomy": "Anarchopterus criniger",
-  "Element or Part": "head",
+  "title": "Whole Body [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000101186?locale=en",
+  "id": "000101186",
+  "Object": "UF:Herp:156400",
+  "Taxonomy": "Tlalocohyla loquax",
+  "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "06/20/2019",
+  "Data Manager": "David Blackburn",
+  "Date Uploaded": "02/19/2020",
   "Publication Status": "Open Download"
 }
