@@ -1,12 +1,12 @@
 {
-  "title": "M1, Lower [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000068402?locale=en",
-  "id": "000068402",
-  "Object": "UF:VP:60930",
-  "Taxonomy": "Nototamias hulberti",
-  "Element or Part": "M1, Lower",
+  "title": "16 Bit Tiff [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000043655?locale=en",
+  "id": "000043655",
+  "Object": "UF:Fish:7869",
+  "Taxonomy": "Mylopharodon conocephalus",
+  "Element or Part": "16 bit tiff",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "02/04/2019",
-  "Publication Status": "Restricted Download"
+  "Date Uploaded": "03/14/2018",
+  "Publication Status": "Open Download"
 }
