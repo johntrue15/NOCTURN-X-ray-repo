@@ -1,12 +1,12 @@
 {
-  "title": "Entire Specimen [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000533121?locale=en",
-  "id": "000533121",
-  "Object": "UF:VP:494602",
-  "Taxonomy": "Eleutherodactylus sp.",
-  "Element or Part": "entire specimen",
+  "title": "Mandible, Partial With P4 [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000068406?locale=en",
+  "id": "000068406",
+  "Object": "UF:VP:121262",
+  "Taxonomy": "Proheteromys floridanus",
+  "Element or Part": "Mandible, partial with P4",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "06/27/2023",
-  "Publication Status": "Open Download"
+  "Date Uploaded": "02/04/2019",
+  "Publication Status": "Restricted Download"
 }
