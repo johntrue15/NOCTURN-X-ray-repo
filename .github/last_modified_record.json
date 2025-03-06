@@ -1,12 +1,12 @@
 {
-  "title": "Whole Body [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000101186?locale=en",
-  "id": "000101186",
-  "Object": "UF:Herp:156400",
-  "Taxonomy": "Tlalocohyla loquax",
-  "Element or Part": "whole body",
+  "title": "Shell Valve [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000485874?locale=en",
+  "id": "000485874",
+  "Object": "uf:iz:196165",
+  "Taxonomy": "Lajonkairia substriata",
+  "Element or Part": "shell valve",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "David Blackburn",
-  "Date Uploaded": "02/19/2020",
-  "Publication Status": "Open Download"
+  "Data Manager": "Katie Collins",
+  "Date Uploaded": "11/30/2022",
+  "Publication Status": "Restricted Download"
 }
