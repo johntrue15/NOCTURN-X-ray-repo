@@ -1,12 +1,13 @@
 {
-  "title": "Whole Alchohol Preserved Specimen [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000049174?locale=en",
-  "id": "000049174",
-  "Object": "UF:Fish:190669",
-  "Taxonomy": "Luciosoma setigerum",
-  "Element or Part": "Whole alchohol preserved specimen",
+  "title": "Whole Body [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000070173?locale=en",
+  "id": "000070173",
+  "Object": "UMMZ:mammals:156344",
+  "Taxonomy": "Phyllotis sp.",
+  "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "05/28/2018",
-  "Publication Status": "Open Download"
+  "Data Manager": "UMMZ Division of Mammals",
+  "Date Uploaded": "02/16/2019",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
