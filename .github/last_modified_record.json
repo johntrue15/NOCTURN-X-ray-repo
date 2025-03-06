@@ -1,11 +1,12 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000043559?locale=en",
-  "id": "000043559",
-  "Object": "uf:paleobotany:19442.70248",
-  "Taxonomy": "Viracarpon elongatum",
+  "title": "Element Unspecified [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000057239?locale=en",
+  "id": "000057239",
+  "Object": "UMMZ:mammals:175795",
+  "Taxonomy": "Noctilio albiventris",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Selena Smith",
-  "Date Uploaded": "03/13/2018",
-  "Publication Status": "Open Download"
+  "Data Manager": "UMMZ Division of Mammals",
+  "Date Uploaded": "09/02/2018",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
