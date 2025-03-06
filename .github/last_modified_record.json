@@ -1,12 +1,12 @@
 {
-  "title": "Carapace [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000691459?locale=en",
-  "id": "000691459",
-  "Object": "UF:Herp:52515",
-  "Taxonomy": "Vijayachelys silvatica",
-  "Element or Part": "Carapace",
+  "title": "Etheostoma sagitta diceCT head",
+  "detail_url": "https://www.morphosource.org/concern/media/000671074?locale=en",
+  "id": "000671074",
+  "Object": "UMMZ:ummz_fish:144492",
+  "Taxonomy": "Etheostoma sagitta",
+  "Element or Part": "Head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Guilhereme Hermanson",
-  "Date Uploaded": "12/05/2024",
+  "Data Manager": "Jessica Arbour",
+  "Date Uploaded": "10/12/2024",
   "Publication Status": "Open Download"
 }
