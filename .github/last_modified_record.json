@@ -1,12 +1,13 @@
 {
-  "title": "Entire Specimen [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000533158?locale=en",
-  "id": "000533158",
-  "Object": "UF:VP:499755",
-  "Taxonomy": "Eleutherodactylus sp.",
-  "Element or Part": "entire specimen",
+  "title": "Dicect Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000408246?locale=en",
+  "id": "000408246",
+  "Object": "uf:herp:191369",
+  "Taxonomy": "Chamaeleo calyptratus",
+  "Element or Part": "DICECT-whole-body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "06/27/2023",
-  "Publication Status": "Open Download"
+  "Date Uploaded": "12/17/2021",
+  "Publication Status": "Open Download",
+  "Rights Statement": "No Known Copyright"
 }
