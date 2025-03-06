@@ -1,12 +1,12 @@
 {
-  "title": "Head [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000159146?locale=en",
-  "id": "000159146",
-  "Object": "UF:Fish:9937",
-  "Taxonomy": "Anampses caeruleopunctatus",
-  "Element or Part": "head",
+  "title": "Dice Ct [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000445064?locale=en",
+  "id": "000445064",
+  "Object": "UF:Fish:22214",
+  "Taxonomy": "Etheostoma sagitta",
+  "Element or Part": "diceCT",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "09/03/2020",
+  "Date Uploaded": "05/29/2022",
   "Publication Status": "Open Download"
 }
