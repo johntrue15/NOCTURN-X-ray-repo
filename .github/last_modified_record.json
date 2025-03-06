@@ -1,12 +1,12 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000170162?locale=en",
-  "id": "000170162",
-  "Object": "UF:Fish:129478",
-  "Taxonomy": "Channa aurolineataChanna marulius",
-  "Element or Part": "whole body",
+  "title": "Entire Specimen [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000533158?locale=en",
+  "id": "000533158",
+  "Object": "UF:VP:499755",
+  "Taxonomy": "Eleutherodactylus sp.",
+  "Element or Part": "entire specimen",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "12/22/2020",
+  "Date Uploaded": "06/27/2023",
   "Publication Status": "Open Download"
 }
