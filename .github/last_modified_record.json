@@ -1,11 +1,12 @@
 {
-  "title": "Element Unspecified [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000005221?locale=en",
-  "id": "000005221",
-  "Object": "UF:VP:60323",
-  "Taxonomy": "Calippus cerasinus",
+  "title": "Carapace [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000691459?locale=en",
+  "id": "000691459",
+  "Object": "UF:Herp:52515",
+  "Taxonomy": "Vijayachelys silvatica",
+  "Element or Part": "Carapace",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "03/12/2015",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Guilhereme Hermanson",
+  "Date Uploaded": "12/05/2024",
+  "Publication Status": "Open Download"
 }
