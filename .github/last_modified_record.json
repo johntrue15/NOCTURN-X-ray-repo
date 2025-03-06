@@ -1,12 +1,12 @@
 {
-  "title": "Cranium, Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000459581?locale=en",
-  "id": "000459581",
-  "Object": "UF:Mammals:7773",
-  "Taxonomy": "Macropus rufusOsphranter rufus",
-  "Element or Part": "skull and cranium",
+  "title": "Head [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000649675?locale=en",
+  "id": "000649675",
+  "Object": "UF:Herp:192402",
+  "Taxonomy": "Typhlonectes natans",
+  "Element or Part": "head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "09/07/2022",
+  "Data Manager": "Jaimi Gray",
+  "Date Uploaded": "07/19/2024",
   "Publication Status": "Open Download"
 }
