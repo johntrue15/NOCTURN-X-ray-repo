@@ -1,13 +1,11 @@
 {
-  "title": "Whole Body [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000064396?locale=en",
-  "id": "000064396",
-  "Object": "UMMZ:mammals:114492",
-  "Taxonomy": "Heteromys nelsoni",
-  "Element or Part": "whole body",
+  "title": "Element Unspecified [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000051292?locale=en",
+  "id": "000051292",
+  "Object": "UF:Fish:189007",
+  "Taxonomy": "Osteoglossum bicirrhosumOsteoglossum bicirrhosum NULL",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "11/19/2018",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "06/24/2018",
+  "Publication Status": "Open Download"
 }
