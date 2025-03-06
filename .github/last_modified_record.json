@@ -1,12 +1,13 @@
 {
-  "title": "Whole Alchohol Preserved Specimen [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000049187?locale=en",
-  "id": "000049187",
-  "Object": "UF:Fish:236246",
-  "Taxonomy": "Notemigonus crysoleucas",
-  "Element or Part": "Whole alchohol preserved specimen",
+  "title": "Whole Body [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000064396?locale=en",
+  "id": "000064396",
+  "Object": "UMMZ:mammals:114492",
+  "Taxonomy": "Heteromys nelsoni",
+  "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "05/28/2018",
-  "Publication Status": "Open Download"
+  "Data Manager": "UMMZ Division of Mammals",
+  "Date Uploaded": "11/19/2018",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
