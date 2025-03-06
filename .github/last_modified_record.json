@@ -1,12 +1,13 @@
 {
   "title": "Whole Body [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000159091?locale=en",
-  "id": "000159091",
-  "Object": "UF:Fish:134497",
-  "Taxonomy": "Bathytroctes macrolepis",
+  "detail_url": "https://www.morphosource.org/concern/media/000064392?locale=en",
+  "id": "000064392",
+  "Object": "UMMZ:mammals:103438",
+  "Taxonomy": "Muscardinus avellanarius avellanariusMuscardinus avellanarius",
   "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "09/03/2020",
-  "Publication Status": "Open Download"
+  "Data Manager": "UMMZ Division of Mammals",
+  "Date Uploaded": "11/19/2018",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
