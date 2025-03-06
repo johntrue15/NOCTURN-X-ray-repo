@@ -1,13 +1,13 @@
 {
-  "title": "Tuatara Skull [Video] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000011005?locale=en",
-  "id": "000011005",
-  "Object": "UF:Herp:11978",
-  "Taxonomy": "Sphenodon punctatus",
-  "Element or Part": "Tuatara Skull",
+  "title": "Head [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000438484?locale=en",
+  "id": "000438484",
+  "Object": "UF:Fish:35384",
+  "Taxonomy": "Lucayablennius zingaro",
+  "Element or Part": "head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "04/04/2016",
+  "Date Uploaded": "04/29/2022",
   "Publication Status": "Open Download",
-  "Rights Statement": "No Known Copyright"
+  "Rights Statement": "In Copyright"
 }
