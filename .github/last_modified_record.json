@@ -1,13 +1,12 @@
 {
-  "title": "Mandibles [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000035163?locale=en",
-  "id": "000035163",
-  "Object": "UMMZ:mammals:110524",
-  "Taxonomy": "Musonycteris harrisoni",
-  "Element or Part": "mandibles",
+  "title": "Head [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000663861?locale=en",
+  "id": "000663861",
+  "Object": "UF:Fish:191422",
+  "Taxonomy": "Anabas testudineus",
+  "Element or Part": "Head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "10/27/2017",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "09/16/2024",
+  "Publication Status": "Open Download"
 }
