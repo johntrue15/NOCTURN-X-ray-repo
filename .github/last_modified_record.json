@@ -1,12 +1,13 @@
 {
-  "title": "Dice Ct [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000445064?locale=en",
-  "id": "000445064",
-  "Object": "UF:Fish:22214",
-  "Taxonomy": "Etheostoma sagitta",
-  "Element or Part": "diceCT",
+  "title": "Ct Scan Of Skeleton And Skull [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000020039?locale=en",
+  "id": "000020039",
+  "Object": "UF:Herp:111075",
+  "Taxonomy": "Probreviceps macrodactylus",
+  "Element or Part": "CT scan of skeleton and skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "05/29/2022",
-  "Publication Status": "Open Download"
+  "Date Uploaded": "11/30/2016",
+  "Publication Status": "Open Download",
+  "Rights Statement": "No Known Copyright"
 }
