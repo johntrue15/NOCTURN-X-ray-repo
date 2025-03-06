@@ -1,13 +1,13 @@
 {
-  "title": "Tibia [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000141245?locale=en",
-  "id": "000141245",
-  "Object": "UMMZ:mammals:110401",
-  "Taxonomy": "Myospalax myospalax",
-  "Element or Part": "tibia",
+  "title": "Cervical 6 [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000162470?locale=en",
+  "id": "000162470",
+  "Object": "UMMZ:mammals:165514",
+  "Taxonomy": "Monodelphis domestica",
+  "Element or Part": "cervical 6",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "07/28/2020",
+  "Date Uploaded": "09/30/2020",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
