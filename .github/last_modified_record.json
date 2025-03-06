@@ -1,11 +1,12 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000051265?locale=en",
-  "id": "000051265",
-  "Object": "UF:Fish:166819",
-  "Taxonomy": "Alfaro cultratus",
+  "title": "Ilium [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000548436?locale=en",
+  "id": "000548436",
+  "Object": "UF:VP:499755",
+  "Taxonomy": "Eleutherodactylus sp.",
+  "Element or Part": "Ilium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "06/24/2018",
+  "Date Uploaded": "08/11/2023",
   "Publication Status": "Open Download"
 }
