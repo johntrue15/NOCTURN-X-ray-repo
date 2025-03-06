@@ -1,12 +1,12 @@
 {
   "title": "Whole Body [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000075481?locale=en",
-  "id": "000075481",
-  "Object": "UF:Fish:79884",
-  "Taxonomy": "Isistius labialisIsistius brasiliensis",
+  "detail_url": "https://www.morphosource.org/concern/media/000095624?locale=en",
+  "id": "000095624",
+  "Object": "UF:Fish:79821",
+  "Taxonomy": "Atherinopsis californiensis",
   "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "04/17/2019",
+  "Date Uploaded": "11/08/2019",
   "Publication Status": "Open Download"
 }
