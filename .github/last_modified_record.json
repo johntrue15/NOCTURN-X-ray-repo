@@ -1,12 +1,13 @@
 {
-  "title": "Cranium, Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000460211?locale=en",
-  "id": "000460211",
-  "Object": "UF:Mammals:28959",
-  "Taxonomy": "Dendrolagus inustus",
-  "Element or Part": "skull and cranium",
+  "title": "Macrotus Waterhousii Skull",
+  "detail_url": "https://www.morphosource.org/concern/media/000666975?locale=en",
+  "id": "000666975",
+  "Object": "YPM:VZ:YPM MAM 003136",
+  "Taxonomy": "Macrotus waterhousii",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "09/12/2022",
-  "Publication Status": "Open Download"
+  "Data Manager": "Nelson Rios",
+  "Date Uploaded": "09/30/2024",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
