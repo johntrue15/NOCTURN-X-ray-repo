@@ -1,13 +1,14 @@
 {
-  "title": "Cervical 6 [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000162470?locale=en",
-  "id": "000162470",
-  "Object": "UMMZ:mammals:165514",
-  "Taxonomy": "Monodelphis domestica",
-  "Element or Part": "cervical 6",
+  "title": "Tibiofibula [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000708820?locale=en",
+  "id": "000708820",
+  "Object": "UMMZ:mammals:123068",
+  "Taxonomy": "Alticola ARGENTATUSAlticola argentatus",
+  "Element or Part": "tibiofibula",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "09/30/2020",
+  "Data Manager": "Iris Men\u00e9ndez",
+  "Date Uploaded": "02/10/2025",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC-SA Attribution-NonCommercial-ShareAlike 4.0 International"
 }
