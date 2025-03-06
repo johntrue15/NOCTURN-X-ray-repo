@@ -1,13 +1,11 @@
 {
-  "title": "Anterior Lumbar [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000162464?locale=en",
-  "id": "000162464",
-  "Object": "UMMZ:mammals:168477",
-  "Taxonomy": "Microgale drouhardi",
-  "Element or Part": "anterior lumbar",
+  "title": "Element Unspecified [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000043559?locale=en",
+  "id": "000043559",
+  "Object": "uf:paleobotany:19442.70248",
+  "Taxonomy": "Viracarpon elongatum",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "09/30/2020",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Selena Smith",
+  "Date Uploaded": "03/13/2018",
+  "Publication Status": "Open Download"
 }
