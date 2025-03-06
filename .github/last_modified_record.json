@@ -1,13 +1,12 @@
 {
-  "title": "Sikukia [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000386105?locale=en",
-  "id": "000386105",
-  "Object": "UMMZ:ummz_fish:236721",
-  "Taxonomy": "Sikukia stejnegeri",
-  "Element or Part": "sikukia",
+  "title": "Element Unspecified [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000049098?locale=en",
+  "id": "000049098",
+  "Object": "UF:Herp:91683",
+  "Taxonomy": "Mannophryne olmonae",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Randy Singer",
-  "Date Uploaded": "09/27/2021",
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "05/27/2018",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "No Known Copyright"
 }
