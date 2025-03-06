@@ -1,13 +1,13 @@
 {
-  "title": "Cranium [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000035209?locale=en",
-  "id": "000035209",
-  "Object": "UMMZ:mammals:157003",
-  "Taxonomy": "Myotis horsfieldii jeannei",
-  "Element or Part": "cranium",
+  "title": "Mandibles [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000035727?locale=en",
+  "id": "000035727",
+  "Object": "UMMZ:mammals:90486",
+  "Taxonomy": "Tadarida brasiliensis mexicana",
+  "Element or Part": "mandibles",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "10/27/2017",
+  "Date Uploaded": "11/01/2017",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
