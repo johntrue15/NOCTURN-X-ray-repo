@@ -1,12 +1,12 @@
 {
-  "title": "Isolated Vertebra, Entire Specimen  [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000600663?locale=en",
-  "id": "000600663",
-  "Object": "UF:VP:546657",
-  "Taxonomy": "Amphisbaenia indet.Squamata sp.Squamata indet.",
-  "Element or Part": "Isolated vertebra and entire specimen",
+  "title": "Entire Specimen [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000663701?locale=en",
+  "id": "000663701",
+  "Object": "UF:Fish:154968",
+  "Taxonomy": "Narcine brasiliensis",
+  "Element or Part": "entire specimen",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "01/30/2024",
+  "Date Uploaded": "09/16/2024",
   "Publication Status": "Open Download"
 }
