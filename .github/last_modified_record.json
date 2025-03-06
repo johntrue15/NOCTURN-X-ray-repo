@@ -1,13 +1,13 @@
 {
-  "title": "Mid Thoratic [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000162392?locale=en",
-  "id": "000162392",
-  "Object": "UMMZ:mammals:80270",
-  "Taxonomy": "Condylura cristata cristata",
-  "Element or Part": "mid thoratic",
+  "title": "Second Mandibular Molar [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000000504?locale=en",
+  "id": "000000504",
+  "Object": "ummz:mammals:58979",
+  "Taxonomy": "Tupaia sp. (cf. glis)",
+  "Element or Part": "second mandibular molar",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "09/30/2020",
+  "Date Uploaded": "07/01/2013",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
