@@ -1,13 +1,13 @@
 {
-  "title": "Mandibles [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000035586?locale=en",
-  "id": "000035586",
-  "Object": "UMMZ:mammals:162262",
-  "Taxonomy": "Ptenochirus jagori",
-  "Element or Part": "mandibles",
+  "title": "Cranium [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000035209?locale=en",
+  "id": "000035209",
+  "Object": "UMMZ:mammals:157003",
+  "Taxonomy": "Myotis horsfieldii jeannei",
+  "Element or Part": "cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "10/31/2017",
+  "Date Uploaded": "10/27/2017",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
