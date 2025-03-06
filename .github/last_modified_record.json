@@ -1,13 +1,13 @@
 {
-  "title": "Mandibles [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000035572?locale=en",
-  "id": "000035572",
-  "Object": "UMMZ:mammals:124419",
-  "Taxonomy": "Promops centralis occultusPromops centralis",
-  "Element or Part": "mandibles",
+  "title": "Cranium [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000034946?locale=en",
+  "id": "000034946",
+  "Object": "UMMZ:mammals:68205",
+  "Taxonomy": "Erophylla bombifrons",
+  "Element or Part": "cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "10/31/2017",
+  "Date Uploaded": "10/27/2017",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
