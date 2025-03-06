@@ -1,13 +1,12 @@
 {
-  "title": "Body [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000072229?locale=en",
-  "id": "000072229",
-  "Object": "UF:Herp:90825",
-  "Taxonomy": "Oreosaurus luctuosus",
-  "Element or Part": "body",
+  "title": "Close Up [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000167690?locale=en",
+  "id": "000167690",
+  "Object": "uf:fish:246746",
+  "Taxonomy": "Carcharhinus leucas",
+  "Element or Part": "close-up",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "03/21/2019",
-  "Publication Status": "Open Download",
-  "Rights Statement": "No Known Copyright"
+  "Date Uploaded": "12/01/2020",
+  "Publication Status": "Open Download"
 }
