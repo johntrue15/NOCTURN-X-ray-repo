@@ -1,13 +1,13 @@
 {
-  "title": "Cranium, Mandible [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000026169?locale=en",
-  "id": "000026169",
-  "Object": "amnh:anth:99.1-2056",
-  "Taxonomy": "Mandrillus sphinx",
-  "Element or Part": "Cranium, mandible",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000716638?locale=en",
+  "id": "000716638",
+  "Object": "LACM:Fish:45592.016",
+  "Taxonomy": "Lepidonectes corallicola",
+  "Element or Part": "Whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "American Museum of Natural History - AMNH Anthropology Non-Human Primates and Casts",
-  "Date Uploaded": "05/02/2017",
+  "Data Manager": "Natural History Museum of Los Angeles County",
+  "Date Uploaded": "03/06/2025",
   "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
