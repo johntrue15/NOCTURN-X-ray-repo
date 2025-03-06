@@ -1,13 +1,13 @@
 {
-  "title": "Whole Body In Spirit [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000569167?locale=en",
-  "id": "000569167",
-  "Object": "UMMZ:mammals:165514",
-  "Taxonomy": "Monodelphis domestica",
-  "Element or Part": "whole body in spirit",
+  "title": "Tibia [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000141245?locale=en",
+  "id": "000141245",
+  "Object": "UMMZ:mammals:110401",
+  "Taxonomy": "Myospalax myospalax",
+  "Element or Part": "tibia",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "10/07/2023",
+  "Date Uploaded": "07/28/2020",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
