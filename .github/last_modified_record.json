@@ -1,11 +1,13 @@
 {
-  "title": "Gosner Stage 40 Tadpole",
-  "detail_url": "https://www.morphosource.org/concern/media/000706057?locale=en",
-  "id": "000706057",
-  "Object": "UF:Herp:184921",
-  "Taxonomy": "Osteopilus sepentrionalis",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000674774?locale=en",
+  "id": "000674774",
+  "Object": "ummz:mammals:114841",
+  "Taxonomy": "Ailurus fulgens",
+  "Element or Part": "WholeBody",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Daniel Paluh",
-  "Date Uploaded": "02/03/2025",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "UMMZ Division of Mammals",
+  "Date Uploaded": "10/24/2024",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
