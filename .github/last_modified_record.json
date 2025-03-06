@@ -1,12 +1,12 @@
 {
-  "title": "Shell Valve [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000485874?locale=en",
-  "id": "000485874",
-  "Object": "uf:iz:196165",
-  "Taxonomy": "Lajonkairia substriata",
-  "Element or Part": "shell valve",
+  "title": "Isolated Vertebra, Entire Specimen  [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000600663?locale=en",
+  "id": "000600663",
+  "Object": "UF:VP:546657",
+  "Taxonomy": "Amphisbaenia indet.Squamata sp.Squamata indet.",
+  "Element or Part": "Isolated vertebra and entire specimen",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Katie Collins",
-  "Date Uploaded": "11/30/2022",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "01/30/2024",
+  "Publication Status": "Open Download"
 }
