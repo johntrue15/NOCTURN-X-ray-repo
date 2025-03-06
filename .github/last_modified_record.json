@@ -1,13 +1,12 @@
 {
-  "title": "Ct Scan Of Skeleton And Skull [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000013643?locale=en",
-  "id": "000013643",
-  "Object": "UF:Herp:43204",
-  "Taxonomy": "Hemiphractus proboscideus",
-  "Element or Part": "CT scan of skeleton and skull",
+  "title": "Dice Ct Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000596673?locale=en",
+  "id": "000596673",
+  "Object": "UF:Fish:236194",
+  "Taxonomy": "Amia calva NULLAmia calva",
+  "Element or Part": "diceCT whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "David Blackburn",
-  "Date Uploaded": "06/09/2016",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "01/10/2024",
+  "Publication Status": "Open Download"
 }
