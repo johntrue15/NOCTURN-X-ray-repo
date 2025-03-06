@@ -1,13 +1,11 @@
 {
-  "title": "Ct Scan Of Skeleton And Skull [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000016300?locale=en",
-  "id": "000016300",
-  "Object": "UF:Herp:140640",
-  "Taxonomy": "Hyalinobatrachium fleischmanni",
-  "Element or Part": "CT scan of skeleton and skull",
+  "title": "Flower [Video] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000167779?locale=en",
+  "id": "000167779",
+  "Object": "uf:paleobotany:62141",
+  "Element or Part": "Flower",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "08/31/2016",
-  "Publication Status": "Open Download",
-  "Rights Statement": "No Known Copyright"
+  "Data Manager": "Steven Manchester",
+  "Date Uploaded": "12/04/2020",
+  "Publication Status": "Open Download"
 }
