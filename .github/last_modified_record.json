@@ -1,12 +1,13 @@
 {
-  "title": "Element Unspecified [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000162002?locale=en",
-  "id": "000162002",
-  "Object": "UF:Herp:82421",
-  "Taxonomy": "Nanorana hazarensisAllopaa hazarensis",
+  "title": "Cranium, Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000026161?locale=en",
+  "id": "000026161",
+  "Object": "amnh:anth:99.1-1292",
+  "Taxonomy": "Mandrillus sphinx",
+  "Element or Part": "Cranium, mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "09/28/2020",
+  "Data Manager": "American Museum of Natural History - AMNH Anthropology Non-Human Primates and Casts",
+  "Date Uploaded": "05/02/2017",
   "Publication Status": "Open Download",
-  "Rights Statement": "No Known Copyright"
+  "Rights Statement": "Copyright Undetermined"
 }
