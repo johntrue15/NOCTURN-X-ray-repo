@@ -1,12 +1,13 @@
 {
-  "title": "Mnhnsd Fos 23.1325",
-  "detail_url": "https://www.morphosource.org/concern/media/000713490?locale=en",
-  "id": "000713490",
-  "Object": "uf:field#",
-  "Taxonomy": "Crocodilia indet.",
-  "Element or Part": "Tooth",
+  "title": "Cranium [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000034765?locale=en",
+  "id": "000034765",
+  "Object": "UMMZ:mammals:164872",
+  "Taxonomy": "Carollia castanea",
+  "Element or Part": "cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Mitchell Riegler",
-  "Date Uploaded": "02/26/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "UMMZ Division of Mammals",
+  "Date Uploaded": "10/26/2017",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
