@@ -1,13 +1,12 @@
 {
-  "title": "Second Mandibular Molar [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000000504?locale=en",
-  "id": "000000504",
-  "Object": "ummz:mammals:58979",
-  "Taxonomy": "Tupaia sp. (cf. glis)",
-  "Element or Part": "second mandibular molar",
+  "title": "Head [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000159146?locale=en",
+  "id": "000159146",
+  "Object": "UF:Fish:9937",
+  "Taxonomy": "Anampses caeruleopunctatus",
+  "Element or Part": "head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "07/01/2013",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "09/03/2020",
+  "Publication Status": "Open Download"
 }
