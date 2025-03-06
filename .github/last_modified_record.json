@@ -1,12 +1,13 @@
 {
-  "title": "Head [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000663861?locale=en",
-  "id": "000663861",
-  "Object": "UF:Fish:191422",
-  "Taxonomy": "Anabas testudineus",
-  "Element or Part": "Head",
+  "title": "Femur [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000068228?locale=en",
+  "id": "000068228",
+  "Object": "UMMZ:mammals:126289",
+  "Taxonomy": "Chironectes minimus minimus",
+  "Element or Part": "femur",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "09/16/2024",
-  "Publication Status": "Open Download"
+  "Data Manager": "UMMZ Division of Mammals",
+  "Date Uploaded": "02/01/2019",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
