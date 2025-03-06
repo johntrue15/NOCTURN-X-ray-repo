@@ -1,12 +1,11 @@
 {
-  "title": "Etheostoma sagitta diceCT head",
-  "detail_url": "https://www.morphosource.org/concern/media/000671074?locale=en",
-  "id": "000671074",
-  "Object": "UMMZ:ummz_fish:144492",
-  "Taxonomy": "Etheostoma sagitta",
-  "Element or Part": "Head",
+  "title": "Gosner Stage 40 Tadpole",
+  "detail_url": "https://www.morphosource.org/concern/media/000706057?locale=en",
+  "id": "000706057",
+  "Object": "UF:Herp:184921",
+  "Taxonomy": "Osteopilus sepentrionalis",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jessica Arbour",
-  "Date Uploaded": "10/12/2024",
-  "Publication Status": "Open Download"
+  "Data Manager": "Daniel Paluh",
+  "Date Uploaded": "02/03/2025",
+  "Publication Status": "Restricted Download"
 }
