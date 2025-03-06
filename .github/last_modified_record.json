@@ -1,13 +1,13 @@
 {
-  "title": "Block B [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000716715?locale=en",
-  "id": "000716715",
-  "Object": "amnh:farb:9526",
-  "Taxonomy": "Prolacerta broomi",
-  "Element or Part": "block b",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000716725?locale=en",
+  "id": "000716725",
+  "Object": "UMMZ:mammals:79440",
+  "Taxonomy": "Dipodomys spectabilis baileyi",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "AMNH VP Team",
+  "Data Manager": "Leila Siciliano-Martina",
   "Date Uploaded": "03/06/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC-SA Attribution-NonCommercial-ShareAlike 4.0 International"
 }
