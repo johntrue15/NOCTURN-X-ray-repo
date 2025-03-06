@@ -1,12 +1,12 @@
 {
-  "title": "Close Up [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000167690?locale=en",
-  "id": "000167690",
-  "Object": "uf:fish:246746",
-  "Taxonomy": "Carcharhinus leucas",
-  "Element or Part": "close-up",
+  "title": "Head [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000496689?locale=en",
+  "id": "000496689",
+  "Object": "UF:Fish:153194",
+  "Taxonomy": "Pristipomoides aquilonaris",
+  "Element or Part": "Head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "12/01/2020",
+  "Date Uploaded": "02/14/2023",
   "Publication Status": "Open Download"
 }
