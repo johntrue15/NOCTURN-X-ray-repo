@@ -1,12 +1,13 @@
 {
-  "title": "Ilium [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000548436?locale=en",
-  "id": "000548436",
-  "Object": "UF:VP:499755",
-  "Taxonomy": "Eleutherodactylus sp.",
-  "Element or Part": "Ilium",
+  "title": "Ct Scan Of Skeleton And Skull [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000016300?locale=en",
+  "id": "000016300",
+  "Object": "UF:Herp:140640",
+  "Taxonomy": "Hyalinobatrachium fleischmanni",
+  "Element or Part": "CT scan of skeleton and skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "08/11/2023",
-  "Publication Status": "Open Download"
+  "Date Uploaded": "08/31/2016",
+  "Publication Status": "Open Download",
+  "Rights Statement": "No Known Copyright"
 }
