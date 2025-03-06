@@ -1,13 +1,11 @@
 {
-  "title": "Dicect Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000408246?locale=en",
-  "id": "000408246",
-  "Object": "uf:herp:191369",
-  "Taxonomy": "Chamaeleo calyptratus",
-  "Element or Part": "DICECT-whole-body",
+  "title": "Element Unspecified [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000051265?locale=en",
+  "id": "000051265",
+  "Object": "UF:Fish:166819",
+  "Taxonomy": "Alfaro cultratus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "12/17/2021",
-  "Publication Status": "Open Download",
-  "Rights Statement": "No Known Copyright"
+  "Date Uploaded": "06/24/2018",
+  "Publication Status": "Open Download"
 }
