@@ -1,13 +1,13 @@
 {
-  "title": "Cranium [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000034946?locale=en",
-  "id": "000034946",
-  "Object": "UMMZ:mammals:68205",
-  "Taxonomy": "Erophylla bombifrons",
-  "Element or Part": "cranium",
+  "title": "Mandibles [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000034784?locale=en",
+  "id": "000034784",
+  "Object": "UMMZ:mammals:81125",
+  "Taxonomy": "Chaerephon jobensis",
+  "Element or Part": "mandibles",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "10/27/2017",
+  "Date Uploaded": "10/26/2017",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
