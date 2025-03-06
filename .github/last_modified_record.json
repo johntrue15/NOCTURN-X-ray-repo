@@ -1,12 +1,12 @@
 {
-  "title": "M/1 Or M/2 [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000020473?locale=en",
-  "id": "000020473",
-  "Object": "UF:VP:330176",
-  "Taxonomy": "Macrocranion junnei",
-  "Element or Part": "M/1 or M/2",
+  "title": "M/2 Or M/3 [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000014002?locale=en",
+  "id": "000014002",
+  "Object": "UF:VP:330188",
+  "Taxonomy": "Mimoperadectes labrus",
+  "Element or Part": "M/2 or M/3",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "12/09/2016",
+  "Date Uploaded": "06/16/2016",
   "Publication Status": "Restricted Download"
 }
