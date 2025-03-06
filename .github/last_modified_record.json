@@ -1,13 +1,13 @@
 {
-  "title": "Cranium [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000035303?locale=en",
-  "id": "000035303",
-  "Object": "UMMZ:mammals:106018",
-  "Taxonomy": "Myotis volans interior",
-  "Element or Part": "cranium",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000713954?locale=en",
+  "id": "000713954",
+  "Object": "UMMZ:mammals:78942",
+  "Taxonomy": "Dipodomys merriami merriami",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "10/27/2017",
+  "Data Manager": "Leila Siciliano-Martina",
+  "Date Uploaded": "02/27/2025",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC-SA Attribution-NonCommercial-ShareAlike 4.0 International"
 }
