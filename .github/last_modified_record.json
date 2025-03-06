@@ -1,13 +1,13 @@
 {
-  "title": "Postcranial [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000716203?locale=en",
-  "id": "000716203",
-  "Object": "IGM:100/3640",
-  "Taxonomy": "Shuvuuia deserti",
-  "Element or Part": "postcranial",
+  "title": "Skull Mesh [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000404473?locale=en",
+  "id": "000404473",
+  "Object": "UMMZ:mammals:120123",
+  "Taxonomy": "Salpingotus crassicauda",
+  "Element or Part": "skull mesh",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "AMNH VP Team",
-  "Date Uploaded": "03/04/2025",
-  "Publication Status": "Restricted Download",
+  "Data Manager": "UMMZ Division of Mammals",
+  "Date Uploaded": "12/03/2021",
+  "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
