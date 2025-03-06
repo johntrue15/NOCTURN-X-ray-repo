@@ -1,12 +1,12 @@
 {
-  "title": "M/1 Or M/2 [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000009092?locale=en",
-  "id": "000009092",
-  "Object": "UF:VP:283309",
-  "Taxonomy": "Macrocranion junnei",
-  "Element or Part": "M/1 or M/2",
+  "title": "Lower First Incisor [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000008385?locale=en",
+  "id": "000008385",
+  "Object": "UF:VP:280130",
+  "Taxonomy": "Panamacebus transitus",
+  "Element or Part": "lower first incisor",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "02/09/2016",
+  "Date Uploaded": "01/15/2016",
   "Publication Status": "Restricted Download"
 }
