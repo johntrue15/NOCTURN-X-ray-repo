@@ -1,12 +1,13 @@
 {
-  "title": "Entire Specimen [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000469089?locale=en",
-  "id": "000469089",
-  "Object": "UF:Fish:42427",
-  "Taxonomy": "Trimma caesiura",
-  "Element or Part": "entire specimen",
+  "title": "Whole Body [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000058306?locale=en",
+  "id": "000058306",
+  "Object": "UF:Herp:185685",
+  "Taxonomy": "Hyperolius quinquevittatus",
+  "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "09/23/2022",
-  "Publication Status": "Open Download"
+  "Date Uploaded": "09/24/2018",
+  "Publication Status": "Open Download",
+  "Rights Statement": "No Known Copyright"
 }
