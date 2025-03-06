@@ -1,12 +1,13 @@
 {
-  "title": "Whole Body [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000095624?locale=en",
-  "id": "000095624",
-  "Object": "UF:Fish:79821",
-  "Taxonomy": "Atherinopsis californiensis",
-  "Element or Part": "whole body",
+  "title": "Body [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000072229?locale=en",
+  "id": "000072229",
+  "Object": "UF:Herp:90825",
+  "Taxonomy": "Oreosaurus luctuosus",
+  "Element or Part": "body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "11/08/2019",
-  "Publication Status": "Open Download"
+  "Date Uploaded": "03/21/2019",
+  "Publication Status": "Open Download",
+  "Rights Statement": "No Known Copyright"
 }
