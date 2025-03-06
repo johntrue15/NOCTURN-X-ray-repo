@@ -1,12 +1,13 @@
 {
-  "title": "16 Bit Tiff [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000043655?locale=en",
-  "id": "000043655",
-  "Object": "UF:Fish:7869",
-  "Taxonomy": "Mylopharodon conocephalus",
-  "Element or Part": "16 bit tiff",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000064409?locale=en",
+  "id": "000064409",
+  "Object": "UMMZ:mammals:175520",
+  "Taxonomy": "Sorex cinereus cinereus",
+  "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "03/14/2018",
-  "Publication Status": "Open Download"
+  "Data Manager": "UMMZ Division of Mammals",
+  "Date Uploaded": "11/19/2018",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
