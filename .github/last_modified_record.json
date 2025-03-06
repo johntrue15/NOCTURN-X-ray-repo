@@ -1,11 +1,13 @@
 {
-  "title": "Flower [Video] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000167779?locale=en",
-  "id": "000167779",
-  "Object": "uf:paleobotany:62141",
-  "Element or Part": "Flower",
+  "title": "Head [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000437880?locale=en",
+  "id": "000437880",
+  "Object": "UF:Fish:118150",
+  "Taxonomy": "Pseudotothyris obtusa",
+  "Element or Part": "head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Steven Manchester",
-  "Date Uploaded": "12/04/2020",
-  "Publication Status": "Open Download"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "04/29/2022",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
