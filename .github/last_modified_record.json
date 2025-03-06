@@ -1,13 +1,13 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000141118?locale=en",
-  "id": "000141118",
-  "Object": "UMMZ:mammals:120621",
-  "Taxonomy": "Abrocoma cinerea",
-  "Element or Part": "whole body",
+  "title": "Mid Thoratic [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000162392?locale=en",
+  "id": "000162392",
+  "Object": "UMMZ:mammals:80270",
+  "Taxonomy": "Condylura cristata cristata",
+  "Element or Part": "mid thoratic",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "07/28/2020",
+  "Date Uploaded": "09/30/2020",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
