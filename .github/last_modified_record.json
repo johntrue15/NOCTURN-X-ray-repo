@@ -1,12 +1,13 @@
 {
-  "title": "M/1 Or M/2 [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000009367?locale=en",
-  "id": "000009367",
-  "Object": "UF:VP:284215",
-  "Taxonomy": "Macrocranion junnei",
-  "Element or Part": "M/1 or M/2",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000716793?locale=en",
+  "id": "000716793",
+  "Object": "UMMZ:mammals:120483",
+  "Taxonomy": "Dipodomys ordii ordii",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "02/16/2016",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Leila Siciliano-Martina",
+  "Date Uploaded": "03/06/2025",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC-SA Attribution-NonCommercial-ShareAlike 4.0 International"
 }
