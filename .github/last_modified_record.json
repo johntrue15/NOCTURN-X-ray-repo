@@ -1,13 +1,13 @@
 {
-  "title": "Skull [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000083057?locale=en",
-  "id": "000083057",
-  "Object": "UF:Herp:159097",
-  "Taxonomy": "Rana capitoLithobates capito",
-  "Element or Part": "Skull",
+  "title": "Skull Mesh [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000404473?locale=en",
+  "id": "000404473",
+  "Object": "UMMZ:mammals:120123",
+  "Taxonomy": "Salpingotus crassicauda",
+  "Element or Part": "skull mesh",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "07/16/2019",
+  "Data Manager": "UMMZ Division of Mammals",
+  "Date Uploaded": "12/03/2021",
   "Publication Status": "Open Download",
-  "Rights Statement": "No Known Copyright"
+  "Rights Statement": "In Copyright"
 }
