@@ -1,13 +1,12 @@
 {
-  "title": "Head [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000437880?locale=en",
-  "id": "000437880",
-  "Object": "UF:Fish:118150",
-  "Taxonomy": "Pseudotothyris obtusa",
-  "Element or Part": "head",
+  "title": "Whole Body [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000075481?locale=en",
+  "id": "000075481",
+  "Object": "UF:Fish:79884",
+  "Taxonomy": "Isistius labialisIsistius brasiliensis",
+  "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "04/29/2022",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Date Uploaded": "04/17/2019",
+  "Publication Status": "Open Download"
 }
