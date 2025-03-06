@@ -1,13 +1,13 @@
 {
-  "title": "Femur [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000068228?locale=en",
-  "id": "000068228",
-  "Object": "UMMZ:mammals:126289",
-  "Taxonomy": "Chironectes minimus minimus",
-  "Element or Part": "femur",
+  "title": "Anterior Lumbar [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000162464?locale=en",
+  "id": "000162464",
+  "Object": "UMMZ:mammals:168477",
+  "Taxonomy": "Microgale drouhardi",
+  "Element or Part": "anterior lumbar",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "02/01/2019",
+  "Date Uploaded": "09/30/2020",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
