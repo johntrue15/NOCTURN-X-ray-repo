@@ -1,12 +1,12 @@
 {
-  "title": "Mandible, Partial With P4 [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000068406?locale=en",
-  "id": "000068406",
-  "Object": "UF:VP:121262",
-  "Taxonomy": "Proheteromys floridanus",
-  "Element or Part": "Mandible, partial with P4",
+  "title": "Whole Alchohol Preserved Specimen [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000049187?locale=en",
+  "id": "000049187",
+  "Object": "UF:Fish:236246",
+  "Taxonomy": "Notemigonus crysoleucas",
+  "Element or Part": "Whole alchohol preserved specimen",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "02/04/2019",
-  "Publication Status": "Restricted Download"
+  "Date Uploaded": "05/28/2018",
+  "Publication Status": "Open Download"
 }
