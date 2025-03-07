@@ -1,13 +1,13 @@
 {
-  "title": "Partial Mandible With P4 M3, Holotype ?Dryopithecus Frickae [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000007856?locale=en",
-  "id": "000007856",
-  "Object": "amnh:fm:19413",
-  "Taxonomy": "Sivapithecus sp.",
-  "Element or Part": "Partial mandible with p4-m3, holotype ?Dryopithecus frickae",
+  "title": "Cranium [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000008182?locale=en",
+  "id": "000008182",
+  "Object": "amnh:fm:11466",
+  "Taxonomy": "Notharctus tenebrosus",
+  "Element or Part": "cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "10/30/2015",
+  "Date Uploaded": "01/06/2016",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
