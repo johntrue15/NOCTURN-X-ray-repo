@@ -1,12 +1,13 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000588754?locale=en",
-  "id": "000588754",
-  "Object": "AMNH:farb:1610",
-  "Taxonomy": "Peltosaurus granulosus",
+  "title": "Block C (Amnh Farb 2000 C) [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000638695?locale=en",
+  "id": "000638695",
+  "Object": "AMNH:farb:2000",
+  "Taxonomy": "Nesodactylus hesperius",
+  "Element or Part": "block C (AMNH_FARB_2000C)",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "12/01/2023",
+  "Date Uploaded": "06/22/2024",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
