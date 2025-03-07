@@ -1,13 +1,13 @@
 {
-  "title": "Jugal [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000486409?locale=en",
-  "id": "000486409",
-  "Object": "amnh:farb:6015",
-  "Taxonomy": "Plastomenus thomasii",
-  "Element or Part": "jugal",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000515411?locale=en",
+  "id": "000515411",
+  "Object": "AMNH:FARB:336",
+  "Taxonomy": "Glyptops sp.",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "12/04/2022",
+  "Date Uploaded": "04/14/2023",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
