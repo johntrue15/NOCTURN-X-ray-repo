@@ -1,13 +1,13 @@
 {
-  "title": "Cranium [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000525035?locale=en",
-  "id": "000525035",
-  "Object": "amnh:fm:4194",
-  "Taxonomy": "Tetonius homunculus",
-  "Element or Part": "cranium",
+  "title": "Edited Lumbar Vertebrae [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000529224?locale=en",
+  "id": "000529224",
+  "Object": "amnh:fm:13138",
+  "Taxonomy": "Limnocyon potens",
+  "Element or Part": "Edited Lumbar vertebrae",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "05/17/2023",
+  "Date Uploaded": "06/05/2023",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
