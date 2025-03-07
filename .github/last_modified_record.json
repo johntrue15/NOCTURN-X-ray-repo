@@ -1,13 +1,13 @@
 {
-  "title": "Cranium [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000352697?locale=en",
-  "id": "000352697",
-  "Object": "amnh:farb:30008",
-  "Taxonomy": "Phosphatochelys tedfordi",
+  "title": "Cranium [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000374468?locale=en",
+  "id": "000374468",
+  "Object": "amnh:farb:30569",
+  "Taxonomy": "Ummulisani rutgersensis",
   "Element or Part": "Cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "03/25/2021",
+  "Date Uploaded": "08/04/2021",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
