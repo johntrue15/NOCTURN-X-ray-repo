@@ -1,13 +1,13 @@
 {
-  "title": "Astragalus [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000020156?locale=en",
-  "id": "000020156",
-  "Object": "amnh:fm:129382",
-  "Taxonomy": "Notharctus tenebrosus",
-  "Element or Part": "Astragalus",
+  "title": "Astragalus [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000022015?locale=en",
+  "id": "000022015",
+  "Object": "amnh:fm:12000",
+  "Taxonomy": "Notharctus pugnax",
+  "Element or Part": "astragalus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "11/30/2016",
+  "Date Uploaded": "02/02/2017",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
