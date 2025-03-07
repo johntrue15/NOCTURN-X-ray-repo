@@ -1,13 +1,12 @@
 {
-  "title": "Tooth [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000037081?locale=en",
-  "id": "000037081",
-  "Object": "amnh:ff:20507",
-  "Taxonomy": "Carcharopsis wortheni",
-  "Element or Part": "tooth",
+  "title": "Partial Cranium, Jaws, Gill Arches, Teeth [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000043517?locale=en",
+  "id": "000043517",
+  "Object": "amnh:ff:20509",
+  "Element or Part": "Partial cranium, jaws, gill arches, teeth",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "11/10/2017",
+  "Date Uploaded": "03/10/2018",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
