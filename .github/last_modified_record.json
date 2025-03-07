@@ -1,12 +1,14 @@
 {
-  "title": "Element Unspecified [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000113504?locale=en",
-  "id": "000113504",
-  "Object": "UF:Herp:76511",
-  "Taxonomy": "Lithobates clamitansRana clamitans",
+  "title": "Elgol Dino   Part 2",
+  "detail_url": "https://www.morphosource.org/concern/media/000716261?locale=en",
+  "id": "000716261",
+  "Object": "nms:z:G.2023.19.1.2",
+  "Taxonomy": "Ornithopoda indet.",
+  "Element or Part": "NMS G.2023.19.1.2",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "03/23/2020",
+  "Data Manager": "Elsa Panciroli",
+  "Date Uploaded": "03/05/2025",
   "Publication Status": "Open Download",
-  "Rights Statement": "No Known Copyright"
+  "Rights Statement": "In Copyright - Educational Use Permitted",
+  "CC License": "Creative Commons BY-NC-ND Attribution-NonCommercial-NoDerivs 4.0 International"
 }
