@@ -1,13 +1,13 @@
 {
-  "title": "Calcaneus [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000009227?locale=en",
-  "id": "000009227",
-  "Object": "amnh:fm:11474",
+  "title": "Endocast [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000010905?locale=en",
+  "id": "000010905",
+  "Object": "amnh:fm:127167",
   "Taxonomy": "Notharctus tenebrosus",
-  "Element or Part": "Calcaneus",
+  "Element or Part": "Endocast",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "02/12/2016",
+  "Date Uploaded": "03/31/2016",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
