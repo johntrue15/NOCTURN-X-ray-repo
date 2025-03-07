@@ -1,13 +1,13 @@
 {
-  "title": "Labyrinth [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000451134?locale=en",
-  "id": "000451134",
+  "title": "Jugal [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000486409?locale=en",
+  "id": "000486409",
   "Object": "amnh:farb:6015",
   "Taxonomy": "Plastomenus thomasii",
-  "Element or Part": "Labyrinth",
+  "Element or Part": "jugal",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "07/21/2022",
+  "Date Uploaded": "12/04/2022",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
