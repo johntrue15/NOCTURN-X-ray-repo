@@ -1,13 +1,12 @@
 {
-  "title": "Cranium [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000374468?locale=en",
-  "id": "000374468",
-  "Object": "amnh:farb:30569",
-  "Taxonomy": "Ummulisani rutgersensis",
-  "Element or Part": "Cranium",
+  "title": "Left Hyomandibula [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000445220?locale=en",
+  "id": "000445220",
+  "Object": "amnh:ff:20509",
+  "Element or Part": "left hyomandibula",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "08/04/2021",
+  "Date Uploaded": "05/30/2022",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
