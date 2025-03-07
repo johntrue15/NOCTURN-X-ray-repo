@@ -1,13 +1,13 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000515411?locale=en",
-  "id": "000515411",
-  "Object": "AMNH:FARB:336",
-  "Taxonomy": "Glyptops sp.",
-  "Element or Part": "skull",
+  "title": "Brain Endocast With Vessel Casts [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000519123?locale=en",
+  "id": "000519123",
+  "Object": "amnh:fm:17008",
+  "Taxonomy": "Trogosus grangeri",
+  "Element or Part": "brain endocast with vessel casts",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "04/14/2023",
+  "Date Uploaded": "04/30/2023",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
