@@ -1,13 +1,12 @@
 {
-  "title": "Palatine [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000557543?locale=en",
-  "id": "000557543",
-  "Object": "amnh:farb:30899",
-  "Taxonomy": "Vegavis iaai",
-  "Element or Part": "palatine",
+  "title": "Element Unspecified [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000588754?locale=en",
+  "id": "000588754",
+  "Object": "AMNH:farb:1610",
+  "Taxonomy": "Peltosaurus granulosus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "09/08/2023",
+  "Date Uploaded": "12/01/2023",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
