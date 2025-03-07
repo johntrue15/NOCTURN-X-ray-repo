@@ -1,13 +1,13 @@
 {
-  "title": "Endocast [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000010905?locale=en",
-  "id": "000010905",
-  "Object": "amnh:fm:127167",
-  "Taxonomy": "Notharctus tenebrosus",
-  "Element or Part": "Endocast",
+  "title": "Petrosal [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000013377?locale=en",
+  "id": "000013377",
+  "Object": "amnh:fm:88802",
+  "Taxonomy": "Cantius ralstoni",
+  "Element or Part": "petrosal",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "03/31/2016",
+  "Date Uploaded": "06/03/2016",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
