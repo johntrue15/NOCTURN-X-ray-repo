@@ -1,13 +1,13 @@
 {
-  "title": "Cranium [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000008182?locale=en",
-  "id": "000008182",
-  "Object": "amnh:fm:11466",
-  "Taxonomy": "Notharctus tenebrosus",
-  "Element or Part": "cranium",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000642512?locale=en",
+  "id": "000642512",
+  "Object": "YPM:VZ:YPM MAM 000212",
+  "Taxonomy": "Carollia castanea",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "01/06/2016",
+  "Data Manager": "Nelson Rios",
+  "Date Uploaded": "07/04/2024",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
