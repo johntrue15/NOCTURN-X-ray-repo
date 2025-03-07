@@ -1,13 +1,13 @@
 {
-  "title": "Nasal (Left) [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000114839?locale=en",
-  "id": "000114839",
-  "Object": "amnh:farb:3158",
-  "Taxonomy": "Eocaiman cavernensis",
-  "Element or Part": "Nasal (left)",
+  "title": "Tiff Image Series Zip File [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000158998?locale=en",
+  "id": "000158998",
+  "Object": "amnh:farb:29300",
+  "Taxonomy": "Erpetosuchus sp.",
+  "Element or Part": "TIFF image series ZIP file",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "04/24/2020",
+  "Date Uploaded": "09/02/2020",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
