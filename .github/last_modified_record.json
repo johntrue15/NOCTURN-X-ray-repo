@@ -1,14 +1,13 @@
 {
-  "title": "Elgol Dino   Part 2",
-  "detail_url": "https://www.morphosource.org/concern/media/000716261?locale=en",
-  "id": "000716261",
-  "Object": "nms:z:G.2023.19.1.2",
-  "Taxonomy": "Ornithopoda indet.",
-  "Element or Part": "NMS G.2023.19.1.2",
+  "title": "Calcaneus [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000001130?locale=en",
+  "id": "000001130",
+  "Object": "amnh:fm:1727",
+  "Taxonomy": "Notharctus sp.",
+  "Element or Part": "Calcaneus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Elsa Panciroli",
-  "Date Uploaded": "03/05/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Educational Use Permitted",
-  "CC License": "Creative Commons BY-NC-ND Attribution-NonCommercial-NoDerivs 4.0 International"
+  "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
+  "Date Uploaded": "10/04/2013",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
