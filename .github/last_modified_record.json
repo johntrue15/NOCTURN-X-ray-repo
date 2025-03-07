@@ -1,13 +1,13 @@
 {
-  "title": "Thoracic 9 [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000006459?locale=en",
-  "id": "000006459",
-  "Object": "amnh:fm:127167",
-  "Taxonomy": "Notharctus tenebrosus",
-  "Element or Part": "Thoracic 9",
+  "title": "Partial Mandible With P4 M3, Holotype ?Dryopithecus Frickae [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000007856?locale=en",
+  "id": "000007856",
+  "Object": "amnh:fm:19413",
+  "Taxonomy": "Sivapithecus sp.",
+  "Element or Part": "Partial mandible with p4-m3, holotype ?Dryopithecus frickae",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "09/03/2015",
+  "Date Uploaded": "10/30/2015",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
