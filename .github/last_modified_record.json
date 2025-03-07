@@ -1,13 +1,12 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000672653?locale=en",
-  "id": "000672653",
-  "Object": "ummz:mammals:127168",
-  "Taxonomy": "Dactylomys boliviensis",
-  "Element or Part": "WholeBody",
+  "title": "Element Unspecified [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000113504?locale=en",
+  "id": "000113504",
+  "Object": "UF:Herp:76511",
+  "Taxonomy": "Lithobates clamitansRana clamitans",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "10/21/2024",
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "03/23/2020",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "No Known Copyright"
 }
