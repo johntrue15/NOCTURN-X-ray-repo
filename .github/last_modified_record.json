@@ -1,13 +1,13 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000642512?locale=en",
-  "id": "000642512",
-  "Object": "YPM:VZ:YPM MAM 000212",
-  "Taxonomy": "Carollia castanea",
-  "Element or Part": "Skull",
+  "title": "Mandible [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000009732?locale=en",
+  "id": "000009732",
+  "Object": "amnh:fm:14349",
+  "Taxonomy": "Smilodon fatalis",
+  "Element or Part": "mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Nelson Rios",
-  "Date Uploaded": "07/04/2024",
+  "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
+  "Date Uploaded": "03/02/2016",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
