@@ -1,13 +1,13 @@
 {
-  "title": "Block C (Amnh Farb 2000 C) [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000638695?locale=en",
-  "id": "000638695",
-  "Object": "AMNH:farb:2000",
-  "Taxonomy": "Nesodactylus hesperius",
-  "Element or Part": "block C (AMNH_FARB_2000C)",
+  "title": "Right Pterygoid [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000655143?locale=en",
+  "id": "000655143",
+  "Object": "AMNH:farb:4461",
+  "Taxonomy": "Bolosaurus major",
+  "Element or Part": "Right Pterygoid",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "06/22/2024",
-  "Publication Status": "Restricted Download",
+  "Date Uploaded": "08/07/2024",
+  "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
