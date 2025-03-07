@@ -1,10 +1,9 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000717104?locale=en",
-  "id": "000717104",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000717123?locale=en",
+  "id": "000717123",
   "Object": "cumv:herps:R-0009137",
   "Taxonomy": "Natrix maura",
-  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Riley Stanton",
   "Date Uploaded": "03/07/2025",
