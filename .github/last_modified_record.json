@@ -1,13 +1,13 @@
 {
-  "title": "Block [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000716742?locale=en",
-  "id": "000716742",
-  "Object": "amnh:farb:9522",
-  "Taxonomy": "Prolacerta broomi",
-  "Element or Part": "block",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000717050?locale=en",
+  "id": "000717050",
+  "Object": "LACM:Fish:6679.036",
+  "Taxonomy": "Helcogramma chica",
+  "Element or Part": "Whole Body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "03/06/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Natural History Museum of Los Angeles County",
+  "Date Uploaded": "03/07/2025",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
