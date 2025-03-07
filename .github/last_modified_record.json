@@ -1,13 +1,13 @@
 {
-  "title": "Cranium [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000055326?locale=en",
-  "id": "000055326",
-  "Object": "amnh:fm:206584",
-  "Taxonomy": "Dryomys nitedula",
-  "Element or Part": "Cranium",
+  "title": "Nasal (Left) [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000114839?locale=en",
+  "id": "000114839",
+  "Object": "amnh:farb:3158",
+  "Taxonomy": "Eocaiman cavernensis",
+  "Element or Part": "Nasal (left)",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "07/24/2018",
+  "Date Uploaded": "04/24/2020",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
