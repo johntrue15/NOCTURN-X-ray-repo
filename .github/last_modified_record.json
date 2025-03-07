@@ -1,13 +1,13 @@
 {
   "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000674774?locale=en",
-  "id": "000674774",
-  "Object": "ummz:mammals:114841",
-  "Taxonomy": "Ailurus fulgens",
+  "detail_url": "https://www.morphosource.org/concern/media/000672653?locale=en",
+  "id": "000672653",
+  "Object": "ummz:mammals:127168",
+  "Taxonomy": "Dactylomys boliviensis",
   "Element or Part": "WholeBody",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "10/24/2024",
+  "Date Uploaded": "10/21/2024",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
