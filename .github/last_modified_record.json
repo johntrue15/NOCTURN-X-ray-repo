@@ -1,12 +1,12 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000717123?locale=en",
-  "id": "000717123",
-  "Object": "cumv:herps:R-0009137",
-  "Taxonomy": "Natrix maura",
+  "title": "Left Mandibular M1 [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000519738?locale=en",
+  "id": "000519738",
+  "Object": "tmm:vpl:44105-15",
+  "Taxonomy": "Mytonius williamsae",
+  "Element or Part": "Left mandibular m1",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Riley Stanton",
-  "Date Uploaded": "03/07/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "Ben Rodwell",
+  "Date Uploaded": "05/04/2023",
+  "Publication Status": "Restricted Download"
 }
