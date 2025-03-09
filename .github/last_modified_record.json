@@ -1,13 +1,12 @@
 {
-  "title": "Frontals Left And Right [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000717724?locale=en",
-  "id": "000717724",
-  "Object": "USNM:PAL:USNM V21878",
-  "Taxonomy": "Hemiacodon gracilis",
-  "Element or Part": "Frontals left and right",
+  "title": "Frontal [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000717738?locale=en",
+  "id": "000717738",
+  "Object": "tmm:vpl:46513-1",
+  "Taxonomy": "Primates indet.",
+  "Element or Part": "Frontal",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Ben Rodwell",
   "Date Uploaded": "03/09/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "No Copyright - Contractual Restrictions"
+  "Publication Status": "Restricted Download"
 }
