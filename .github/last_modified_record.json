@@ -1,13 +1,13 @@
 {
-  "title": "Left Mandible With M1 3 [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000717711?locale=en",
-  "id": "000717711",
+  "title": "Frontals Left And Right [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000717724?locale=en",
+  "id": "000717724",
   "Object": "USNM:PAL:USNM V21878",
   "Taxonomy": "Hemiacodon gracilis",
-  "Element or Part": "Left Mandible with m1-3",
+  "Element or Part": "Frontals left and right",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Ben Rodwell",
   "Date Uploaded": "03/09/2025",
-  "Publication Status": "Open Download",
+  "Publication Status": "Restricted Download",
   "Rights Statement": "No Copyright - Contractual Restrictions"
 }
