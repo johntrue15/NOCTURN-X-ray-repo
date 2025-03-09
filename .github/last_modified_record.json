@@ -1,12 +1,12 @@
 {
-  "title": "Frontal [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000717738?locale=en",
-  "id": "000717738",
-  "Object": "tmm:vpl:46513-1",
-  "Taxonomy": "Primates indet.",
-  "Element or Part": "Frontal",
+  "title": "Element Unspecified [Image] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000717750?locale=en",
+  "id": "000717750",
+  "Object": "SHN:SHN:SHN.830",
+  "Taxonomy": "Cambelodon  Cambelodon torreensis",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Ben Rodwell",
+  "Data Manager": "Victor Carvalho",
   "Date Uploaded": "03/09/2025",
-  "Publication Status": "Restricted Download"
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
