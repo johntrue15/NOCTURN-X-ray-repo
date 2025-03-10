@@ -1,13 +1,12 @@
 {
-  "title": "Ct Scan Of Skeleton And Skull [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000025656?locale=en",
-  "id": "000025656",
-  "Object": "CAS:HERP:157511",
-  "Taxonomy": "Tomopterna delalandii",
-  "Element or Part": "CT scan of skeleton and skull",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000718446?locale=en",
+  "id": "000718446",
+  "Object": "nhmuk:PM PF 75517",
+  "Taxonomy": "Pulleniatina spectabilis",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "04/12/2017",
+  "Data Manager": "Alessio Fabbrini",
+  "Date Uploaded": "03/10/2025",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Rights Statement": "In Copyright"
 }
