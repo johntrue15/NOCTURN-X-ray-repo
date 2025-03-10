@@ -1,14 +1,13 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000718399?locale=en",
-  "id": "000718399",
-  "Object": "UCM:Herp:UCM:Herp:60389",
-  "Taxonomy": "Storeria storerioides",
-  "Element or Part": "whole body",
+  "title": "Ct Scan Of Skeleton And Skull [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000025656?locale=en",
+  "id": "000025656",
+  "Object": "CAS:HERP:157511",
+  "Taxonomy": "Tomopterna delalandii",
+  "Element or Part": "CT scan of skeleton and skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Emily Braker",
-  "Date Uploaded": "03/10/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC-SA Attribution-NonCommercial-ShareAlike 4.0 International"
+  "Data Manager": "Lauren Scheinberg",
+  "Date Uploaded": "04/12/2017",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
