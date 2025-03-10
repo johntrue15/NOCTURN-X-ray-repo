@@ -1,12 +1,13 @@
 {
-  "title": "Element Unspecified [Image] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000717750?locale=en",
-  "id": "000717750",
-  "Object": "SHN:SHN:SHN.830",
-  "Taxonomy": "Cambelodon  Cambelodon torreensis",
+  "title": "Maxillae Left And Right [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000717784?locale=en",
+  "id": "000717784",
+  "Object": "USNM:PAL:USNM V21878",
+  "Taxonomy": "Hemiacodon gracilis",
+  "Element or Part": "Maxillae left and right",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Victor Carvalho",
-  "Date Uploaded": "03/09/2025",
+  "Data Manager": "Ben Rodwell",
+  "Date Uploaded": "03/10/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "No Copyright - Contractual Restrictions"
 }
