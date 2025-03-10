@@ -1,13 +1,13 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000718284?locale=en",
-  "id": "000718284",
-  "Object": "UMMZ:mammals:87029",
-  "Taxonomy": "Dipodomys merriami merriami",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000706318?locale=en",
+  "id": "000706318",
+  "Object": "LACM:Fish:31579.010",
+  "Taxonomy": "Arcos rhodospilus",
+  "Element or Part": "Whole Body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Morgan Moltz",
-  "Date Uploaded": "03/10/2025",
+  "Data Manager": "Natural History Museum of Los Angeles County",
+  "Date Uploaded": "02/03/2025",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC-SA Attribution-NonCommercial-ShareAlike 4.0 International"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
