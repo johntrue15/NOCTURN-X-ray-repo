@@ -1,13 +1,12 @@
 {
-  "title": "Left Maxilla [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000717795?locale=en",
-  "id": "000717795",
-  "Object": "USNM:PAL:USNM V21878",
-  "Taxonomy": "Hemiacodon gracilis",
-  "Element or Part": "Left Maxilla",
+  "title": "Element Unspecified [Image] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000717811?locale=en",
+  "id": "000717811",
+  "Object": "nhmuk:PM PF 75514",
+  "Taxonomy": "Pulleniatina primalis",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Ben Rodwell",
+  "Data Manager": "Alessio Fabbrini",
   "Date Uploaded": "03/10/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "No Copyright - Contractual Restrictions"
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
