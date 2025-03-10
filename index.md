@@ -2,14 +2,14 @@
 
 This page displays information about the latest data releases for the NOCTURN X-ray project.
 
-**Last Updated:** 2025-03-10 07:16:48 UTC
+**Last Updated:** 2025-03-10 08:21:18 UTC
 
 ## Summary Statistics
 
 <div class="stats-container">
     <div class="stat-card">
         <div>Total Releases</div>
-        <div class="stat-value">2414</div>
+        <div class="stat-value">2415</div>
     </div>
     <div class="stat-card">
         <div>MorphoSource Updates</div>
@@ -21,7 +21,7 @@ This page displays information about the latest data releases for the NOCTURN X-
     </div>
     <div class="stat-card">
         <div>CT Image Analysis</div>
-        <div class="stat-value">151</div>
+        <div class="stat-value">152</div>
     </div>
     <div class="stat-card">
         <div>CT Slice Analysis</div>
@@ -71,6 +71,11 @@ This page displays information about the latest data releases for the NOCTURN X-
         <th>Type</th>
         <th>Date & Time</th>
         <th>Tag</th>
+    </tr>
+    <tr>
+        <td>CT Image Analysis</td>
+        <td>2025/03/10 07:28:44 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-10_07-28-44">ct_image_analysis-2025-03-10_07-28-44</a></td>
     </tr>
     <tr>
         <td>MorphoSource Modified</td>
@@ -317,14 +322,74 @@ This page displays information about the latest data releases for the NOCTURN X-
         <td>2025/03/07 21:58:22 UTC</td>
         <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-03-07_21-58-22">morphosource-modified-2025-03-07_21-58-22</a></td>
     </tr>
-    <tr>
-        <td>MorphoSource Modified</td>
-        <td>2025/03/07 21:51:41 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-03-07_21-51-41">morphosource-modified-2025-03-07_21-51-41</a></td>
-    </tr>
 </table>
 
 ## Recent Releases by Type
+
+### CT Image Analysis
+
+<div class="release-group">
+<div class="release-card">
+    <h4>2025/03/10 07:28:44 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-10_07-28-44">ct_image_analysis-2025-03-10_07-28-44</a></h4>
+    
+    ```
+    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-10_06-52-17</p>
+<p>To provide a detailed analysis of the 3D X-ray CT scan images available through Morphosource.org, the following points can be considered regarding the structural characteristics, material composition, and notable features or anomalies:</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li>
+<p><strong>Morphology</strong>: The specimens display intricate structural details with prominent contours, indicating various m... (truncated)
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/03/08 02:35:42 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-08_02-35-42">ct_image_analysis-2025-03-08_02-35-42</a></h4>
+    
+    ```
+    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-07_23-46-14</p>
+<p>To analyze 3D X-ray CT scan data from Morphosource.org, specifically focusing on the provided images of a skull specimen, the following aspects can be highlighted:</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li><strong>Overall Morphology</strong>:</li>
+<li>
+<p>The skull displays a complex structure with features typical of its biological classification, suggesting adaptations suited to its ecological niche.</... (truncated)
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/03/06 22:38:41 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-06_22-38-41">ct_image_analysis-2025-03-06_22-38-41</a></h4>
+    
+    ```
+    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-06_22-15-16</p>
+<p>Analyzing 3D X-ray CT scan data can yield valuable insights into the structural characteristics, material composition, and notable features of a specimen. Here’s a general framework for analysis based on similar datasets:</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li><strong>Geometry</strong>: The specimen appears to exhibit a complex, multi-faceted structure, showcasing intricate shapes and curvatures. Obse... (truncated)
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/03/06 20:17:03 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-06_20-17-03">ct_image_analysis-2025-03-06_20-17-03</a></h4>
+    
+    ```
+    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-06_19-49-44</p>
+<p>To analyze the 3D X-ray CT scan data from Morphosource.org effectively, we can consider the following aspects based on typical structural characteristics, material composition, and notable features visible across various orientations of a specimen (assuming it resembles a biological entity, potentially a vertebrate or invertebrate).</p>
+<h3>Structural Characteristics:</h3>
+<ol>
+<li>
+<p><strong>Overall Morpholog... (truncated)
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/03/06 19:41:10 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-06_19-41-10">ct_image_analysis-2025-03-06_19-41-10</a></h4>
+    
+    ```
+    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-06_19-37-49</p>
+<p>To provide an analysis of the 3D X-ray CT scan data of the specimen viewed from different angles, let's break down the structural characteristics, material composition, and any notable features or anomalies observed:</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li>
+<p><strong>Skeletal Structure</strong>: The CT scans reveal a complex skeletal framework, suggesting that the specimen has a well-defined vertebral... (truncated)
+    ```
+</div>
+</div>
 
 ### MorphoSource Modified
 
@@ -522,70 +587,6 @@ This page displays information about the latest data releases for the NOCTURN X-
     
     ```
     Daily check data [2025-03-06_01-24-56]
-    ```
-</div>
-</div>
-
-### CT Image Analysis
-
-<div class="release-group">
-<div class="release-card">
-    <h4>2025/03/08 02:35:42 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-08_02-35-42">ct_image_analysis-2025-03-08_02-35-42</a></h4>
-    
-    ```
-    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-07_23-46-14</p>
-<p>To analyze 3D X-ray CT scan data from Morphosource.org, specifically focusing on the provided images of a skull specimen, the following aspects can be highlighted:</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li><strong>Overall Morphology</strong>:</li>
-<li>
-<p>The skull displays a complex structure with features typical of its biological classification, suggesting adaptations suited to its ecological niche.</... (truncated)
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/03/06 22:38:41 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-06_22-38-41">ct_image_analysis-2025-03-06_22-38-41</a></h4>
-    
-    ```
-    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-06_22-15-16</p>
-<p>Analyzing 3D X-ray CT scan data can yield valuable insights into the structural characteristics, material composition, and notable features of a specimen. Here’s a general framework for analysis based on similar datasets:</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li><strong>Geometry</strong>: The specimen appears to exhibit a complex, multi-faceted structure, showcasing intricate shapes and curvatures. Obse... (truncated)
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/03/06 20:17:03 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-06_20-17-03">ct_image_analysis-2025-03-06_20-17-03</a></h4>
-    
-    ```
-    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-06_19-49-44</p>
-<p>To analyze the 3D X-ray CT scan data from Morphosource.org effectively, we can consider the following aspects based on typical structural characteristics, material composition, and notable features visible across various orientations of a specimen (assuming it resembles a biological entity, potentially a vertebrate or invertebrate).</p>
-<h3>Structural Characteristics:</h3>
-<ol>
-<li>
-<p><strong>Overall Morpholog... (truncated)
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/03/06 19:41:10 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-06_19-41-10">ct_image_analysis-2025-03-06_19-41-10</a></h4>
-    
-    ```
-    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-06_19-37-49</p>
-<p>To provide an analysis of the 3D X-ray CT scan data of the specimen viewed from different angles, let's break down the structural characteristics, material composition, and any notable features or anomalies observed:</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li>
-<p><strong>Skeletal Structure</strong>: The CT scans reveal a complex skeletal framework, suggesting that the specimen has a well-defined vertebral... (truncated)
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/03/03 18:46:56 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-03_18-46-56">ct_image_analysis-2025-03-03_18-46-56</a></h4>
-    
-    ```
-    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-03_17-39-53</p>
-<p>To perform a detailed analysis of 3D X-ray CT scan data from Morphosource.org, several structural characteristics, material compositions, and notable features can be considered across different orientations of the specimen.</p>
-<h3>1. Structural Characteristics</h3>
-<ul>
-<li><strong>Overall Shape</strong>: The specimen appears to have a rounded and somewhat irregular shape, suggesting a complex internal structu... (truncated)
     ```
 </div>
 </div>
