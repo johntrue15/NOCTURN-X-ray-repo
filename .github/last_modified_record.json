@@ -1,13 +1,13 @@
 {
-  "title": "16 Bit Tiff  Stack [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000041456?locale=en",
-  "id": "000041456",
-  "Object": "zmb:7873",
-  "Taxonomy": "Arthroleptis kutogundua",
-  "Element or Part": "16 bit tiff  stack",
+  "title": "Entire Specimen [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000531877?locale=en",
+  "id": "000531877",
+  "Object": "CAS:HERP:201762",
+  "Taxonomy": "Arthroleptis schubotzi",
+  "Element or Part": "entire specimen",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "David Blackburn",
-  "Date Uploaded": "02/22/2018",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Lauren Scheinberg",
+  "Date Uploaded": "06/21/2023",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
