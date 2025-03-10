@@ -1,12 +1,13 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000718446?locale=en",
-  "id": "000718446",
-  "Object": "nhmuk:PM PF 75517",
-  "Taxonomy": "Pulleniatina spectabilis",
+  "title": "16 Bit Tiff  Stack [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000041456?locale=en",
+  "id": "000041456",
+  "Object": "zmb:7873",
+  "Taxonomy": "Arthroleptis kutogundua",
+  "Element or Part": "16 bit tiff  stack",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Alessio Fabbrini",
-  "Date Uploaded": "03/10/2025",
-  "Publication Status": "Open Download",
+  "Data Manager": "David Blackburn",
+  "Date Uploaded": "02/22/2018",
+  "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
