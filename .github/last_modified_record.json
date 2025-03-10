@@ -1,13 +1,13 @@
 {
-  "title": "Ct Scan Of Skeleton And Skull [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000022662?locale=en",
-  "id": "000022662",
-  "Object": "CAS:HERP:258122",
-  "Taxonomy": "Conraua crassipes",
-  "Element or Part": "CT scan of skeleton and skull",
+  "title": "16 Bit Tiff Stack [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000045296?locale=en",
+  "id": "000045296",
+  "Object": "CAS:HERP:256821",
+  "Taxonomy": "Conraua robusta",
+  "Element or Part": "16 bit tiff stack",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "02/14/2017",
+  "Date Uploaded": "04/05/2018",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
