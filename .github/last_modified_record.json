@@ -1,13 +1,12 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000710313?locale=en",
-  "id": "000710313",
-  "Object": "LACM:Fish:32088.024",
-  "Taxonomy": "Rimicola eigenmanni",
-  "Element or Part": "Whole body",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000718313?locale=en",
+  "id": "000718313",
+  "Object": "TCWC:Mammals:64840",
+  "Taxonomy": "Dipodomys compactus sennetti",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Natural History Museum of Los Angeles County",
-  "Date Uploaded": "02/14/2025",
-  "Publication Status": "Open Download",
+  "Data Manager": "Leila Siciliano-Martina",
+  "Date Uploaded": "03/10/2025",
+  "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
