@@ -1,13 +1,13 @@
 {
   "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000706318?locale=en",
-  "id": "000706318",
-  "Object": "LACM:Fish:31579.010",
-  "Taxonomy": "Arcos rhodospilus",
-  "Element or Part": "Whole Body",
+  "detail_url": "https://www.morphosource.org/concern/media/000710313?locale=en",
+  "id": "000710313",
+  "Object": "LACM:Fish:32088.024",
+  "Taxonomy": "Rimicola eigenmanni",
+  "Element or Part": "Whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Natural History Museum of Los Angeles County",
-  "Date Uploaded": "02/03/2025",
+  "Date Uploaded": "02/14/2025",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
