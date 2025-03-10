@@ -1,13 +1,13 @@
 {
-  "title": "Ct Scan Of Skeleton And Skull [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000021508?locale=en",
-  "id": "000021508",
-  "Object": "CAS:HERP:250950",
-  "Taxonomy": "Cardioglossa cyaneospila",
-  "Element or Part": "CT scan of skeleton and skull",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000705168?locale=en",
+  "id": "000705168",
+  "Object": "LACM:Fish:20532.000",
+  "Taxonomy": "Arcos erythrops",
+  "Element or Part": "Whole Body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "01/24/2017",
+  "Data Manager": "Natural History Museum of Los Angeles County",
+  "Date Uploaded": "01/29/2025",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
