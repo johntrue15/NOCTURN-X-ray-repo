@@ -1,13 +1,13 @@
 {
-  "title": "Maxillae Left And Right [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000717784?locale=en",
-  "id": "000717784",
-  "Object": "USNM:PAL:USNM V21878",
-  "Taxonomy": "Hemiacodon gracilis",
-  "Element or Part": "Maxillae left and right",
+  "title": "Cranium [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000717789?locale=en",
+  "id": "000717789",
+  "Object": "amnh:fm:130000",
+  "Taxonomy": "Omomys carteri",
+  "Element or Part": "Cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Ben Rodwell",
   "Date Uploaded": "03/10/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "No Copyright - Contractual Restrictions"
+  "Rights Statement": "In Copyright"
 }
