@@ -1,12 +1,12 @@
 {
-  "title": "Full Body [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000084527?locale=en",
-  "id": "000084527",
-  "Object": "mtd:a:48744",
-  "Taxonomy": "Arthroleptis carquejai",
-  "Element or Part": "Full body",
+  "title": "Total Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000488397?locale=en",
+  "id": "000488397",
+  "Object": "zmb:70086",
+  "Taxonomy": "Arthroleptis variabilis",
+  "Element or Part": "Total Body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "David Blackburn",
-  "Date Uploaded": "08/08/2019",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Kristin Mahlow-Tillack",
+  "Date Uploaded": "12/13/2022",
+  "Publication Status": "Open Download"
 }
