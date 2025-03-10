@@ -1,13 +1,13 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000704863?locale=en",
-  "id": "000704863",
-  "Object": "LACM:Fish:1083.000",
-  "Taxonomy": "Tomicodon boehlkei",
-  "Element or Part": "Whole Body",
+  "title": "Whole Specimen [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000446464?locale=en",
+  "id": "000446464",
+  "Object": "UF:Herp:153328",
+  "Taxonomy": "Heloderma horridum",
+  "Element or Part": "Whole specimen",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Natural History Museum of Los Angeles County",
-  "Date Uploaded": "01/28/2025",
+  "Data Manager": "Edward Stanley",
+  "Date Uploaded": "06/13/2022",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Rights Statement": "No Known Copyright"
 }
