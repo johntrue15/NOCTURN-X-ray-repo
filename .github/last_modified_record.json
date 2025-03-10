@@ -1,13 +1,13 @@
 {
-  "title": "Cranium [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000717792?locale=en",
-  "id": "000717792",
-  "Object": "amnh:fm:130000",
-  "Taxonomy": "Omomys carteri",
-  "Element or Part": "Cranium",
+  "title": "Left Maxilla [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000717795?locale=en",
+  "id": "000717795",
+  "Object": "USNM:PAL:USNM V21878",
+  "Taxonomy": "Hemiacodon gracilis",
+  "Element or Part": "Left Maxilla",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Ben Rodwell",
   "Date Uploaded": "03/10/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "No Copyright - Contractual Restrictions"
 }
