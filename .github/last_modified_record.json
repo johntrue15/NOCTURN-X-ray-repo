@@ -1,13 +1,12 @@
 {
-  "title": "16 Bit Tiff Stack [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000045296?locale=en",
-  "id": "000045296",
-  "Object": "CAS:HERP:256821",
-  "Taxonomy": "Conraua robusta",
-  "Element or Part": "16 bit tiff stack",
+  "title": "Element Unspecified [SequentialSectionImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000717750?locale=en",
+  "id": "000717750",
+  "Object": "SHN:SHN:SHN.830",
+  "Taxonomy": "Cambelodon  Cambelodon torreensis",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "04/05/2018",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "Victor Carvalho",
+  "Date Uploaded": "03/09/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
