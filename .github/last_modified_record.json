@@ -1,13 +1,13 @@
 {
   "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000718556?locale=en",
-  "id": "000718556",
-  "Object": "LACM:Fish:42622.002",
-  "Taxonomy": "Trianectes bucephalus",
+  "detail_url": "https://www.morphosource.org/concern/media/000705095?locale=en",
+  "id": "000705095",
+  "Object": "LACM:Fish:39985.039",
+  "Taxonomy": "Lepadichthys frenatus",
   "Element or Part": "Whole Body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Natural History Museum of Los Angeles County",
-  "Date Uploaded": "03/10/2025",
+  "Date Uploaded": "01/29/2025",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
