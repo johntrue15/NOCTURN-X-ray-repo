@@ -1,13 +1,13 @@
 {
-  "title": "Cranium [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000048067?locale=en",
-  "id": "000048067",
-  "Object": "amnh:fm:128704",
-  "Taxonomy": "Rapamys atramontis",
-  "Element or Part": "cranium",
+  "title": "Ct Scan Of Skeleton And Skull [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000022662?locale=en",
+  "id": "000022662",
+  "Object": "CAS:HERP:258122",
+  "Taxonomy": "Conraua crassipes",
+  "Element or Part": "CT scan of skeleton and skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "05/06/2018",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Lauren Scheinberg",
+  "Date Uploaded": "02/14/2017",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
