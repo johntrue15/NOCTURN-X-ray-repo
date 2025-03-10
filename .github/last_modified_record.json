@@ -1,13 +1,12 @@
 {
-  "title": "Entire Specimen [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000531877?locale=en",
-  "id": "000531877",
-  "Object": "CAS:HERP:201762",
-  "Taxonomy": "Arthroleptis schubotzi",
-  "Element or Part": "entire specimen",
+  "title": "Element Unspecified [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000025583?locale=en",
+  "id": "000025583",
+  "Object": "CAS:HERP:168823",
+  "Taxonomy": "Arthroleptis tanneri",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "06/21/2023",
+  "Date Uploaded": "04/11/2017",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
