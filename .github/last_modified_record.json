@@ -1,13 +1,12 @@
 {
-  "title": "Ct Scan Of Skeleton And Skull [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000027178?locale=en",
-  "id": "000027178",
-  "Object": "CAS:HERP:254134",
-  "Taxonomy": "Trichobatrachus robustus",
-  "Element or Part": "CT scan of skeleton and skull",
+  "title": "Pulleniatina Obliquiloculata",
+  "detail_url": "https://www.morphosource.org/concern/media/000718604?locale=en",
+  "id": "000718604",
+  "Object": "nhmuk:PM PF 75519",
+  "Taxonomy": "Pulleniatina obliquiloculata",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "06/15/2017",
+  "Data Manager": "Alessio Fabbrini",
+  "Date Uploaded": "03/11/2025",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Rights Statement": "In Copyright"
 }
