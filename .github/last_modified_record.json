@@ -1,13 +1,12 @@
 {
-  "title": "Dentary [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000718879?locale=en",
-  "id": "000718879",
-  "Object": "amnh:farb:3219",
-  "Taxonomy": "Necrosuchus ionensis",
-  "Element or Part": "dentary",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000718893?locale=en",
+  "id": "000718893",
+  "Object": "MVZ:Mamm:MVZ:Mamm:84266",
+  "Taxonomy": "Dipodomys heermanni tularensis",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
+  "Data Manager": "Leila Siciliano-Martina",
   "Date Uploaded": "03/11/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
