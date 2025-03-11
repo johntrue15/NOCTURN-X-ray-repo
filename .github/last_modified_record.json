@@ -1,13 +1,12 @@
 {
-  "title": "16 Bit Tiff [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000048472?locale=en",
-  "id": "000048472",
-  "Object": "CAS:HERP:154518",
-  "Taxonomy": "Leptopelis bocagii",
-  "Element or Part": "16 bit tiff",
+  "title": "Element Unspecified [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000049529?locale=en",
+  "id": "000049529",
+  "Object": "CAS:HERP:253513",
+  "Taxonomy": "Leptopelis ocellatus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "05/14/2018",
+  "Date Uploaded": "06/01/2018",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
