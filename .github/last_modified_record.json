@@ -1,12 +1,13 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000049529?locale=en",
-  "id": "000049529",
-  "Object": "CAS:HERP:253513",
-  "Taxonomy": "Leptopelis ocellatus",
+  "title": "Whole Body [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000058458?locale=en",
+  "id": "000058458",
+  "Object": "UF:Herp:185632",
+  "Taxonomy": "Kassinula witteiAfrixalus wittei",
+  "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "06/01/2018",
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "09/28/2018",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Rights Statement": "No Known Copyright"
 }
