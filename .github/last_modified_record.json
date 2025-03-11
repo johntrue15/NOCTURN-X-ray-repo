@@ -1,14 +1,13 @@
 {
-  "title": "Elgol Dino   Part 1",
-  "detail_url": "https://www.morphosource.org/concern/media/000713484?locale=en",
-  "id": "000713484",
-  "Object": "nms:g:2023.19.1.1",
-  "Taxonomy": "Ornithopoda indet.",
-  "Element or Part": "NMS G.2023.19.1.1",
+  "title": "16 Bit Tiff Stack [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000046047?locale=en",
+  "id": "000046047",
+  "Object": "CAS:HERP:145354",
+  "Taxonomy": "Paracassina obscura",
+  "Element or Part": "16 bit tiff stack",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Elsa Panciroli",
-  "Date Uploaded": "02/26/2025",
+  "Data Manager": "Lauren Scheinberg",
+  "Date Uploaded": "04/18/2018",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Educational Use Permitted",
-  "CC License": "Creative Commons BY-NC-ND Attribution-NonCommercial-NoDerivs 4.0 International"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
