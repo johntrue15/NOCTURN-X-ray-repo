@@ -1,13 +1,12 @@
 {
-  "title": "16 Bit Tiff Stack [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000046047?locale=en",
-  "id": "000046047",
-  "Object": "CAS:HERP:145354",
-  "Taxonomy": "Paracassina obscura",
-  "Element or Part": "16 bit tiff stack",
+  "title": "16 Bit Tiffs [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000034597?locale=en",
+  "id": "000034597",
+  "Object": "UF:Herp:28288",
+  "Taxonomy": "Kassina senegalensis rwandaeKassina senegalensisKassina senegalensis ruandae",
+  "Element or Part": "16 bit tiffs",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "04/18/2018",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "David Blackburn",
+  "Date Uploaded": "10/25/2017",
+  "Publication Status": "Restricted Download"
 }
