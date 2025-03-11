@@ -1,12 +1,12 @@
 {
-  "title": "16 Bit Tiffs [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000034562?locale=en",
-  "id": "000034562",
-  "Object": "UF:Herp:27887",
-  "Taxonomy": "Callixalus pictus",
-  "Element or Part": "16 bit tiffs",
+  "title": "Pulleniatina Finalis",
+  "detail_url": "https://www.morphosource.org/concern/media/000718699?locale=en",
+  "id": "000718699",
+  "Object": "nhmuk:PM PF 75520",
+  "Taxonomy": "Pulleniatina finails",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "David Blackburn",
-  "Date Uploaded": "10/25/2017",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Alessio Fabbrini",
+  "Date Uploaded": "03/11/2025",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
