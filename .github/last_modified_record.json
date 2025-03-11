@@ -1,13 +1,13 @@
 {
-  "title": "Whole Body [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000062046?locale=en",
-  "id": "000062046",
-  "Object": "UF:Herp:185604",
+  "title": "16 Bit Tiff [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000048472?locale=en",
+  "id": "000048472",
+  "Object": "CAS:HERP:154518",
   "Taxonomy": "Leptopelis bocagii",
-  "Element or Part": "whole body",
+  "Element or Part": "16 bit tiff",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "10/21/2018",
+  "Data Manager": "Lauren Scheinberg",
+  "Date Uploaded": "05/14/2018",
   "Publication Status": "Open Download",
-  "Rights Statement": "No Known Copyright"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
