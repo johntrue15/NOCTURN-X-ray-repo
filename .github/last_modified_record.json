@@ -1,12 +1,13 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000718948?locale=en",
-  "id": "000718948",
-  "Object": "MVZ:Mamm:MVZ:Mamm:171265",
-  "Taxonomy": "Dipodomys venustus sanctiluciae",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000718952?locale=en",
+  "id": "000718952",
+  "Object": "LACM:Fish:32551.041",
+  "Taxonomy": "Lepidonectes clarkhubbsi",
+  "Element or Part": "Whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Leila Siciliano-Martina",
+  "Data Manager": "Natural History Museum of Los Angeles County",
   "Date Uploaded": "03/11/2025",
-  "Publication Status": "Restricted Download",
+  "Publication Status": "Open Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
