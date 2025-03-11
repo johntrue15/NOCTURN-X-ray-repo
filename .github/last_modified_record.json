@@ -1,12 +1,13 @@
 {
-  "title": "Pulleniatina Praecursor",
-  "detail_url": "https://www.morphosource.org/concern/media/000718749?locale=en",
-  "id": "000718749",
-  "Object": "nhmuk:PM PF 75518",
-  "Taxonomy": "Pulleniatina praecursor",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000718774?locale=en",
+  "id": "000718774",
+  "Object": "LACM:Fish:39985.058",
+  "Taxonomy": "Norfolkia thomasi",
+  "Element or Part": "Whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Alessio Fabbrini",
+  "Data Manager": "Natural History Museum of Los Angeles County",
   "Date Uploaded": "03/11/2025",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
