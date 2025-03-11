@@ -1,13 +1,12 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000718952?locale=en",
-  "id": "000718952",
-  "Object": "LACM:Fish:32551.041",
-  "Taxonomy": "Lepidonectes clarkhubbsi",
-  "Element or Part": "Whole body",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000718959?locale=en",
+  "id": "000718959",
+  "Object": "MVZ:Mamm:MVZ:Mamm:171341",
+  "Taxonomy": "Dipodomys microps microps",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Natural History Museum of Los Angeles County",
+  "Data Manager": "Leila Siciliano-Martina",
   "Date Uploaded": "03/11/2025",
-  "Publication Status": "Open Download",
+  "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
