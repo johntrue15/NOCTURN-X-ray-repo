@@ -1,12 +1,12 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000040143?locale=en",
-  "id": "000040143",
-  "Object": "CAS:HERP:196702",
-  "Taxonomy": "Kassinula wittei",
+  "title": "16 Bit Tiffs [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000034562?locale=en",
+  "id": "000034562",
+  "Object": "UF:Herp:27887",
+  "Taxonomy": "Callixalus pictus",
+  "Element or Part": "16 bit tiffs",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "01/31/2018",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "David Blackburn",
+  "Date Uploaded": "10/25/2017",
+  "Publication Status": "Restricted Download"
 }
