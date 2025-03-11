@@ -1,12 +1,12 @@
 {
-  "title": "16 Bit Tiffs [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000034597?locale=en",
-  "id": "000034597",
-  "Object": "UF:Herp:28288",
-  "Taxonomy": "Kassina senegalensis rwandaeKassina senegalensisKassina senegalensis ruandae",
-  "Element or Part": "16 bit tiffs",
+  "title": "Pulleniatina Obliquiloculata",
+  "detail_url": "https://www.morphosource.org/concern/media/000718604?locale=en",
+  "id": "000718604",
+  "Object": "nhmuk:PM PF 75519",
+  "Taxonomy": "Pulleniatina obliquiloculata",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "David Blackburn",
-  "Date Uploaded": "10/25/2017",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Alessio Fabbrini",
+  "Date Uploaded": "03/11/2025",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
