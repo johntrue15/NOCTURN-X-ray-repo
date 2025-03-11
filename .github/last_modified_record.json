@@ -1,13 +1,12 @@
 {
-  "title": "Whole Body [Image] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000718744?locale=en",
-  "id": "000718744",
-  "Object": "MCZ:Herp:A-1244",
-  "Taxonomy": "Pipa pipa",
-  "Element or Part": "whole body",
+  "title": "Pulleniatina Praecursor",
+  "detail_url": "https://www.morphosource.org/concern/media/000718749?locale=en",
+  "id": "000718749",
+  "Object": "nhmuk:PM PF 75518",
+  "Taxonomy": "Pulleniatina praecursor",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Matt Gage",
+  "Data Manager": "Alessio Fabbrini",
   "Date Uploaded": "03/11/2025",
-  "Publication Status": "Restricted Download",
+  "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
