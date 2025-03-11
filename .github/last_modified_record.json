@@ -1,12 +1,14 @@
 {
-  "title": "Pulleniatina Finalis",
-  "detail_url": "https://www.morphosource.org/concern/media/000718699?locale=en",
-  "id": "000718699",
-  "Object": "nhmuk:PM PF 75520",
-  "Taxonomy": "Pulleniatina finails",
+  "title": "Elgol Dino   Part 1",
+  "detail_url": "https://www.morphosource.org/concern/media/000713484?locale=en",
+  "id": "000713484",
+  "Object": "nms:g:2023.19.1.1",
+  "Taxonomy": "Ornithopoda indet.",
+  "Element or Part": "NMS G.2023.19.1.1",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Alessio Fabbrini",
-  "Date Uploaded": "03/11/2025",
+  "Data Manager": "Elsa Panciroli",
+  "Date Uploaded": "02/26/2025",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright - Educational Use Permitted",
+  "CC License": "Creative Commons BY-NC-ND Attribution-NonCommercial-NoDerivs 4.0 International"
 }
