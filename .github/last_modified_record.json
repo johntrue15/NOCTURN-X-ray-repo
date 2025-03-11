@@ -1,13 +1,12 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000705095?locale=en",
-  "id": "000705095",
-  "Object": "LACM:Fish:39985.039",
-  "Taxonomy": "Lepadichthys frenatus",
-  "Element or Part": "Whole Body",
+  "title": "Pulleniatina Obliquiloculata",
+  "detail_url": "https://www.morphosource.org/concern/media/000718588?locale=en",
+  "id": "000718588",
+  "Object": "nhmuk:PM PF 75519",
+  "Taxonomy": "Pulleniatina obliquiloculata",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Natural History Museum of Los Angeles County",
-  "Date Uploaded": "01/29/2025",
+  "Data Manager": "Alessio Fabbrini",
+  "Date Uploaded": "03/11/2025",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Rights Statement": "In Copyright"
 }
