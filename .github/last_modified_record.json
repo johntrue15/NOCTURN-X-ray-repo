@@ -1,12 +1,13 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000719715?locale=en",
-  "id": "000719715",
-  "Object": "MVZ:Mamm:MVZ:Mamm:171267",
-  "Taxonomy": "Dipodomys heermanni",
+  "title": "Whole Body [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000101091?locale=en",
+  "id": "000101091",
+  "Object": "CAS:HERP:250653",
+  "Taxonomy": "Rana sp.",
+  "Element or Part": "Whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Leila Siciliano-Martina",
-  "Date Uploaded": "03/12/2025",
-  "Publication Status": "Restricted Download",
+  "Data Manager": "Lauren Scheinberg",
+  "Date Uploaded": "02/17/2020",
+  "Publication Status": "Open Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
