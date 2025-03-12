@@ -1,12 +1,12 @@
 {
-  "title": "Xeneretmus Leiops Armor",
-  "detail_url": "https://www.morphosource.org/concern/media/000713889?locale=en",
-  "id": "000713889",
-  "Object": "UWFC:ADULT COLLECTION:UW 048701",
-  "Taxonomy": "Xeneretmus leiops",
-  "Element or Part": "section of trunk of fish behind first dorsal fin",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000719004?locale=en",
+  "id": "000719004",
+  "Object": "MVZ:Mamm:MVZ:Mamm:182236",
+  "Taxonomy": "Dipodomys heermanni",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Megan Vandenberg",
-  "Date Uploaded": "02/27/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "Carol  Spencer",
+  "Date Uploaded": "03/11/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
