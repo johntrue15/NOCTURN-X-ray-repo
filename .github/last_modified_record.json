@@ -1,13 +1,12 @@
 {
-  "title": "Cambelodon Torreensis",
-  "detail_url": "https://www.morphosource.org/concern/media/000717750?locale=en",
-  "id": "000717750",
-  "Object": "SHN:SHN:SHN.830",
-  "Taxonomy": "Cambelodon  Cambelodon torreensis",
-  "Element or Part": "Hemimandible",
+  "title": "Xeneretmus Leiops Armor",
+  "detail_url": "https://www.morphosource.org/concern/media/000713889?locale=en",
+  "id": "000713889",
+  "Object": "UWFC:ADULT COLLECTION:UW 048701",
+  "Taxonomy": "Xeneretmus leiops",
+  "Element or Part": "section of trunk of fish behind first dorsal fin",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Victor Carvalho",
-  "Date Uploaded": "03/09/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Megan Vandenberg",
+  "Date Uploaded": "02/27/2025",
+  "Publication Status": "Open Download"
 }
