@@ -1,14 +1,12 @@
 {
-  "title": "Trilobite Mold In Volcanic Ash [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000706227?locale=en",
-  "id": "000706227",
-  "Object": "UM5:Ait Youb:AY-TA-TB-01",
-  "Taxonomy": "Gigoutella mauretanica",
-  "Element or Part": "Trilobite mold in volcanic ash",
+  "title": "Pulleniatina Obliquiloculata",
+  "detail_url": "https://www.morphosource.org/concern/media/000718604?locale=en",
+  "id": "000718604",
+  "Object": "nhmuk:PM PF 75519",
+  "Taxonomy": "Pulleniatina obliquiloculata",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Arnaud Mazurier",
-  "Date Uploaded": "02/03/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC-ND Attribution-NonCommercial-NoDerivs 4.0 International"
+  "Data Manager": "Alessio Fabbrini",
+  "Date Uploaded": "03/11/2025",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
