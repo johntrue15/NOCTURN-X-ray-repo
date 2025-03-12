@@ -1,12 +1,12 @@
 {
-  "title": "Frontal [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000717738?locale=en",
-  "id": "000717738",
-  "Object": "tmm:vpl:46513-1",
-  "Taxonomy": "Primates indet.",
-  "Element or Part": "Frontal",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000719582?locale=en",
+  "id": "000719582",
+  "Object": "MVZ:Mamm:MVZ:Mamm:197357",
+  "Taxonomy": "Dipodomys panamintinus mohavensis",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Ben Rodwell",
-  "Date Uploaded": "03/09/2025",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Leila Siciliano-Martina",
+  "Date Uploaded": "03/12/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
