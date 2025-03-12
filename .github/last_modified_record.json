@@ -1,14 +1,12 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000718502?locale=en",
-  "id": "000718502",
-  "Object": "UTEP:Herp:UTEP:Herp:7976",
-  "Taxonomy": "Anolis parvicirculatus",
-  "Element or Part": "whole body",
+  "title": "Pulleniatina Obliquiloculata",
+  "detail_url": "https://www.morphosource.org/concern/media/000718604?locale=en",
+  "id": "000718604",
+  "Object": "nhmuk:PM PF 75519",
+  "Taxonomy": "Pulleniatina obliquiloculata",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Emily Braker",
-  "Date Uploaded": "03/10/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC-SA Attribution-NonCommercial-ShareAlike 4.0 International"
+  "Data Manager": "Alessio Fabbrini",
+  "Date Uploaded": "03/11/2025",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
