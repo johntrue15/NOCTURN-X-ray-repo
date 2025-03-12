@@ -1,12 +1,12 @@
 {
-  "title": "Pulleniatina Obliquiloculata",
-  "detail_url": "https://www.morphosource.org/concern/media/000718604?locale=en",
-  "id": "000718604",
-  "Object": "nhmuk:PM PF 75519",
-  "Taxonomy": "Pulleniatina obliquiloculata",
+  "title": "Tezcatlipoca",
+  "detail_url": "https://www.morphosource.org/concern/media/000649565?locale=en",
+  "id": "000649565",
+  "Object": "L-ERS:M:ERS2022-029",
+  "Taxonomy": "Taeniopygia castanotis",
+  "Element or Part": "Whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Alessio Fabbrini",
-  "Date Uploaded": "03/11/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Emma Schachner",
+  "Date Uploaded": "07/19/2024",
+  "Publication Status": "Restricted Download"
 }
