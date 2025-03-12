@@ -1,12 +1,12 @@
 {
-  "title": "Quetzalcoatl",
-  "detail_url": "https://www.morphosource.org/concern/media/000649389?locale=en",
-  "id": "000649389",
-  "Object": "L-ERS:M:ERS2022-027",
-  "Taxonomy": "Taeniopygia castanotis",
-  "Element or Part": "Whole body",
+  "title": "Element Unspecified [Image] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000718177?locale=en",
+  "id": "000718177",
+  "Object": "nhmuk:PM PF 75516",
+  "Taxonomy": "Pulleniatina praespectabilis",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Emma Schachner",
-  "Date Uploaded": "07/19/2024",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Alessio Fabbrini",
+  "Date Uploaded": "03/10/2025",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
