@@ -1,12 +1,13 @@
 {
-  "title": "Pulleniatina Obliquiloculata",
-  "detail_url": "https://www.morphosource.org/concern/media/000718604?locale=en",
-  "id": "000718604",
-  "Object": "nhmuk:PM PF 75519",
-  "Taxonomy": "Pulleniatina obliquiloculata",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000642517?locale=en",
+  "id": "000642517",
+  "Object": "YPM:VZ:YPM MAM 000204",
+  "Taxonomy": "Lophostoma silvicolum",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Alessio Fabbrini",
-  "Date Uploaded": "03/11/2025",
-  "Publication Status": "Open Download",
+  "Data Manager": "Nelson Rios",
+  "Date Uploaded": "07/04/2024",
+  "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
