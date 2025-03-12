@@ -1,13 +1,13 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000642343?locale=en",
-  "id": "000642343",
-  "Object": "YPM:VZ:YPM MAM 010619",
-  "Taxonomy": "Artibeus jamaicensis",
-  "Element or Part": "Skull",
+  "title": "Posterior Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000056528?locale=en",
+  "id": "000056528",
+  "Object": "FMNH:UC:692",
+  "Taxonomy": "Mycterosaurus longiceps",
+  "Element or Part": "posterior mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Nelson Rios",
-  "Date Uploaded": "07/04/2024",
+  "Data Manager": "Sharon Grant",
+  "Date Uploaded": "08/15/2018",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
