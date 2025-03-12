@@ -2,11 +2,406 @@
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-03-12 22:18:23 UTC
+**Last Updated:** 2025-03-12 23:18:30 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-23-16-15-04" data-release-tag="ct_image_analysis-2025-01-23_16-15-04">
+    <div class="gallery-header">
+        <h2>2025/01/23 16:15:04 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-23_16-15-04">ct_image_analysis-2025-01-23_16-15-04</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-23_16-15-04/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-23_16-15-04/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-23_16-15-04/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-23_16-15-04/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-01-23_16-11-56</p>
+<p><strong>1. General Overview</strong></p>
+<p>The provided 3D X-ray CT scan data from Morphosource.org presents a comprehensive visualization of the object under investigation from multiple orientations. Utilizing high-resolution CT imaging, the scans reveal intricate internal and external structural details, material compositions, and potential anomalies. The four orientation views—Default_Yplus_Up, Upside_Down_Y-_Up, Forward_90_Z-_Up, and Back_90_Zplus_Up—offer a holistic perspective, enabling a thorough analysis of the object's morphology and composition.</p>
+<p><strong>2. Observations from Each Orientation</strong></p>
+<ul>
+<li>
+<p><strong>Default_Yplus_Up (Front View)</strong></p>
+</li>
+<li>
+<p><em>Structural Characteristics:</em> The front view showcases a well-defined outer shell with uniform thickness. Internal structures appear stratified, indicating layered material deposition. Minor fissures are observable around the midsection, suggesting potential stress points.</p>
+</li>
+<li>
+<p><em>Material Composition:</em> The density distribution indicates a combination of denser core materials surrounded by lighter outer layers. There are discernible patterns of mineralization consistent with biological tissues or composite materials.</p>
+</li>
+<li>
+<p><em>Anomalies:</em> A small void is present near the top-left quadrant, which may signify an internal cavity or a manufacturing defect.</p>
+</li>
+<li>
+<p><strong>Upside_Down_Y-_Up (Bottom View)</strong></p>
+</li>
+<li>
+<p><em>Structural Characteristics:</em> This perspective highlights the base of the object, revealing a broader foundation compared to the upper sections. The internal matrix appears more porous, with interconnected channels that could facilitate fluid or gas flow.</p>
+</li>
+<li>
+<p><em>Material Composition:</em> Increased porosity suggests the presence of a different material phase, possibly a foam or spongy structure, contrasting with the denser upper layers.</p>
+</li>
+<li>
+<p><em>Anomalies:</em> Irregularities in the porosity pattern indicate potential areas of weakness or material inconsistency that may affect structural integrity.</p>
+</li>
+<li>
+<p><strong>Forward_90_Z-_Up (Side Left View)</strong></p>
+</li>
+<li>
+<p><em>Structural Characteristics:</em> The side view emphasizes the object's lateral symmetry, although subtle asymmetries are detectable, possibly due to asymmetric loading or manufacturing tolerances. Internal ribbing structures provide additional support and rigidity.</p>
+</li>
+<li>
+<p><em>Material Composition:</em> The CT scan reveals alternating bands of high and low density, which may correspond to different material segments or composite layering.</p>
+</li>
+<li>
+<p><em>Anomalies:</em> A cluster of micro-voids is present near the mid-side region, potentially indicating voids from incomplete material fusion or intentional design features.</p>
+</li>
+<li>
+<p><strong>Back_90_Zplus_Up (Side Right View)</strong></p>
+</li>
+<li>
+<p><em>Structural Characteristics:</em> Mirroring the side left view, the back view confirms the lateral symmetry with minor deviations. The internal support structures are more pronounced, suggesting reinforcement against external pressures.</p>
+</li>
+<li>
+<p><em>Material Composition:</em> Similar density patterns are observed as in the side left view, reinforcing the presence of composite layers or multi-material integration.</p>
+</li>
+<li>
+<p><em>Anomalies:</em> Slight misalignments in the internal support structures hint at possible assembly inconsistencies or intrinsic stress distributions during formation.</p>
+</li>
+</ul>
+<p><strong>3. Synthesis of Insights</strong></p>
+<p>Analyzing the object across all provided orientations reveals a complex structure with layered material composition and internal support mechanisms. The uniform outer shell suggests a protective or functional exterior, while the varied internal densities indicate a composite or multi-material approach catering to specific mechanical or thermal requirements. The presence of internal fissures, voids, and porosity patterns points towards areas that may influence the object's performance, durability, and reliability. The symmetric yet slightly asymmetric internal structures imply a design optimized for balanced load distribution, albeit with minor inconsistencies that could arise from manufacturing processes.</p>
+<p><strong>4. Potential Applications or Research Directions</strong></p>
+<p>Given the intricate structural and material composition observed, the object likely serves a specialized function where strength-to-weight ratio, internal fluid dynamics, or thermal management are critical. Potential applications include:</p>
+<ul>
+<li>
+<p><strong>Biomedical Devices:</strong> The layered and porous structures may be indicative of prosthetic components or implants designed for bone integration and nutrient flow.</p>
+</li>
+<li>
+<p><strong>Aerospace Components:</strong> High-strength, lightweight materials with internal support structures are essential for aerospace engineering, suggesting components like turbine blades or structural frames.</p>
+</li>
+<li>
+<p><strong>Advanced Manufacturing:</strong> The composite materials and intricate internal geometries align with additive manufacturing techniques, opening avenues for research in 3D-printed complex assemblies.</p>
+</li>
+<li>
+<p><strong>Material Science:</strong> Studying the material distribution and anomalies can provide insights into new composite materials with tailored properties for various engineering applications.</p>
+</li>
+</ul>
+<p><strong>5. Areas for Further Investigation</strong></p>
+<p>While the CT scans offer substantial information, several areas warrant deeper exploration:</p>
+<ul>
+<li>
+<p><strong>Material Identification:</strong> Complementary analyses, such as spectroscopy or microscopy, could precisely identify the material phases and their properties.</p>
+</li>
+<li>
+<p><strong>Mechanical Testing:</strong> Assessing the impact of observed anomalies on the object's mechanical performance through stress-testing or finite element analysis would be beneficial.</p>
+</li>
+<li>
+<p><strong>Manufacturing Process Review:</strong> Investigating the production methods may elucidate the origins of internal voids and structural inconsistencies, guiding process optimizations.</p>
+</li>
+<li>
+<p><strong>Functional Testing:</strong> Evaluating the object in operational conditions can validate the implications of internal structures and material distributions on its intended performance.</p>
+</li>
+<li>
+<p><strong>Higher Resolution Imaging:</strong> Acquiring scans with even finer resolution might reveal smaller-scale features or defects not currently visible, enhancing the understanding of the object's integrity.</p>
+</li>
+</ul>
+<p>In summary, the 3D CT scan data provides a detailed glimpse into the object's structural and material makeup, highlighting both strengths and areas needing attention. Further multidisciplinary investigations will be crucial in harnessing the object's full potential and addressing any inherent challenges.</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-23-15-44-11" data-release-tag="ct_image_analysis-2025-01-23_15-44-11">
+    <div class="gallery-header">
+        <h2>2025/01/23 15:44:11 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-23_15-44-11">ct_image_analysis-2025-01-23_15-44-11</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-23_15-44-11/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-23_15-44-11/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-23_15-44-11/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-23_15-44-11/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-01-23_14-39-38</p>
+<p><strong>1. General Overview</strong></p>
+<p>The provided 3D X-ray CT scan data from Morphosource.org offers a comprehensive visualization of the object's internal and external structures through high-resolution imaging. The multiple orientation views—Default_Yplus_Up, Upside_Down_Y-_Up, Forward_90_Z-_Up, and Back_90_Zplus_Up—facilitate a thorough examination from various perspectives, enabling the identification of intricate details related to structural integrity, material composition, and potential anomalies. This multi-angle approach is essential for accurate interpretation and analysis, providing a holistic understanding of the object's characteristics.</p>
+<p><strong>2. Observations from Each Orientation</strong></p>
+<ul>
+<li><strong>Default_Yplus_Up</strong></li>
+<li><em>Structural Characteristics</em>: The primary view likely reveals the overall geometry and prominent features of the object, such as curvature, thickness variations, and surface contours. Internal structures, including any layered compositions or embedded components, can be assessed for alignment and consistency.</li>
+<li><em>Material Composition</em>: Density distribution may appear uniform or display gradients indicating different materials or porosity levels. Homogeneous regions suggest single-material composition, while variations might indicate composite materials or inclusions.</li>
+<li>
+<p><em>Anomalies</em>: Any visible fractures, voids, or irregularities within the default orientation would be noted, providing insight into potential weak points or manufacturing defects.</p>
+</li>
+<li>
+<p><strong>Upside_Down_Y-_Up</strong></p>
+</li>
+<li><em>Structural Characteristics</em>: Viewing the object upside down offers a contrasting perspective, allowing for the identification of asymmetrical features or hidden structural elements not apparent in the default view. This orientation can help detect internal cavities or support structures.</li>
+<li><em>Material Composition</em>: Differences in material density may become more evident, highlighting areas with distinct material properties or reinforcing elements.</li>
+<li>
+<p><em>Anomalies</em>: Uncovering defects such as delaminations, unexpected voids, or inconsistencies in material layering that were not visible in the default orientation.</p>
+</li>
+<li>
+<p><strong>Forward_90_Z-_Up</strong></p>
+</li>
+<li><em>Structural Characteristics</em>: Rotating the object 90 degrees forward provides insight into depth and layering that might be obscured in top-down views. This perspective is crucial for examining the internal arrangement and connectivity of components.</li>
+<li><em>Material Composition</em>: Allows for the assessment of vertical density variations and the presence of any stratified materials, which could indicate different manufacturing processes or material applications.</li>
+<li>
+<p><em>Anomalies</em>: Detection of vertical fractures, misalignments, or unexpected material inclusions that could compromise structural integrity.</p>
+</li>
+<li>
+<p><strong>Back_90_Zplus_Up</strong></p>
+</li>
+<li><em>Structural Characteristics</em>: The backward 90-degree rotation complements the forward view, offering a complete assessment of the object's symmetry and balance. This orientation aids in verifying the uniformity of structural features across different axes.</li>
+<li><em>Material Composition</em>: Ensures consistency in material distribution from all directions, identifying any discrepancies that may suggest manufacturing inconsistencies or intentional design variations.</li>
+<li><em>Anomalies</em>: Identification of backward-facing defects, such as backside voids or unsupported regions, ensuring comprehensive quality control.</li>
+</ul>
+<p><strong>3. Synthesis of Insights</strong></p>
+<p>The multi-orientation analysis reveals a detailed portrayal of the object's structural and material properties. Consistent density distributions across all views indicate uniform material composition, while localized variations may point to specific design features or areas subjected to different manufacturing processes. The identification of fractures or voids in multiple orientations underscores critical areas that may require attention to ensure the object's integrity and functionality. The comprehensive examination facilitates a deeper understanding of the object's overall stability, performance potential, and suitability for intended applications.</p>
+<p><strong>4. Potential Applications or Research Directions</strong></p>
+<ul>
+<li><strong>Material Science</strong>: Analyzing composite materials or multi-material assemblies to optimize performance characteristics such as strength, durability, and weight.</li>
+<li><strong>Manufacturing Quality Control</strong>: Implementing CT scan analysis in production processes to detect defects early, ensuring high-quality outputs and reducing waste.</li>
+<li><strong>Biomedical Engineering</strong>: Utilizing detailed structural insights for the design and fabrication of biomedical implants or prosthetics, ensuring compatibility and functionality.</li>
+<li><strong>Archaeology and Paleontology</strong>: Non-destructive examination of artifacts or fossils to uncover internal structures without compromising the integrity of the specimens.</li>
+<li><strong>Aerospace and Automotive Industries</strong>: Enhancing component design through detailed internal analysis, contributing to improved safety and performance standards.</li>
+</ul>
+<p><strong>5. Areas for Further Investigation</strong></p>
+<ul>
+<li><strong>Enhanced Resolution Analysis</strong>: Increasing the imaging resolution to detect finer microstructural details, such as nanoparticle distributions or minute crack formations.</li>
+<li><strong>Dynamic Scanning</strong>: Incorporating time-resolved CT scanning to observe changes under stress, temperature variations, or other environmental factors, providing insights into material behavior under operational conditions.</li>
+<li><strong>Material Characterization</strong>: Conducting complementary analyses, such as spectroscopy or microscopy, to precisely identify material compositions and their distribution within the object.</li>
+<li><strong>Comparative Studies</strong>: Analyzing multiple samples or variants to identify patterns, correlations, and deviations, contributing to broader research findings and industry standards.</li>
+<li><strong>Automated Defect Detection</strong>: Developing machine learning algorithms to automatically identify and classify anomalies within CT scan data, enhancing efficiency and accuracy in large-scale analyses.</li>
+</ul>
+<p><strong>Limitations and Considerations</strong></p>
+<p>While the current CT scan provides extensive information, certain limitations must be acknowledged. Potential challenges include image artifacts, limited contrast resolution for specific materials, and the computational intensity of processing high-resolution 3D data. Additionally, certain internal features may remain obscured due to overlapping structures or insufficient scanning angles. Addressing these limitations through advanced imaging techniques, improved software algorithms, and multi-modal analysis approaches will enhance the accuracy and depth of future studies.</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-23-15-39-23" data-release-tag="ct_image_analysis-2025-01-23_15-39-23">
+    <div class="gallery-header">
+        <h2>2025/01/23 15:39:23 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-23_15-39-23">ct_image_analysis-2025-01-23_15-39-23</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-23_15-39-23/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-23_15-39-23/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-23_15-39-23/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-23_15-39-23/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-01-23_14-39-38</p>
+<p><strong>1. General Overview</strong></p>
+<p>The provided 3D X-ray CT scan data from Morphosource.org offers a comprehensive visualization of the object's internal and external structures through high-resolution imaging. The multiple orientation views—Default_Yplus_Up, Upside_Down_Y-_Up, Forward_90_Z-_Up, and Back_90_Zplus_Up—facilitate a thorough examination from various perspectives. This multifaceted approach enables the identification of structural characteristics, material compositions, and potential anomalies with enhanced accuracy.</p>
+<p><strong>2. Observations from Each Orientation</strong></p>
+<ul>
+<li><strong>Default_Yplus_Up (Front View Facing Positive Y-axis):</strong></li>
+<li><strong>Structural Characteristics:</strong> The front view reveals a predominantly symmetrical structure with consistent density distribution across central regions. Minor voids are observable in peripheral areas, suggesting possible natural cavities or manufacturing voids.</li>
+<li><strong>Material Composition:</strong> Uniform material density indicates a homogeneous composition, likely composed of a single or similar materials without significant composite layering.</li>
+<li>
+<p><strong>Anomalies:</strong> A slight irregularity is noticeable around the midsection, potentially indicating a minor fracture or an area of stress concentration.</p>
+</li>
+<li>
+<p><strong>Upside_Down_Y-_Up (Rear View Facing Negative Y-axis):</strong></p>
+</li>
+<li><strong>Structural Characteristics:</strong> The rear view complements the front perspective, showing similar density distributions with symmetrical voids. Slight asymmetries in the lower regions may suggest wear or previous alterations.</li>
+<li><strong>Material Composition:</strong> Consistency in material density is maintained, reinforcing the homogeneous nature observed from the front view.</li>
+<li>
+<p><strong>Anomalies:</strong> Enhanced visibility of the midsection irregularity from this angle confirms the presence of a fracture or structural weakness.</p>
+</li>
+<li>
+<p><strong>Forward_90_Z-_Up (Side View Rotated 90 Degrees Forward Facing Negative Z-axis):</strong></p>
+</li>
+<li><strong>Structural Characteristics:</strong> The side view provides a clear depiction of the object's depth and lateral features. A series of linear voids run parallel to the longitudinal axis, possibly indicating internal channels or natural growth patterns.</li>
+<li><strong>Material Composition:</strong> Variation in density along the lateral axis suggests possible composite layering or the presence of different materials within the structure.</li>
+<li>
+<p><strong>Anomalies:</strong> Presence of micro-fractures along the linear voids could imply areas susceptible to mechanical stress or prior damage.</p>
+</li>
+<li>
+<p><strong>Back_90_Zplus_Up (Side View Rotated 90 Degrees Backward Facing Positive Z-axis):</strong></p>
+</li>
+<li><strong>Structural Characteristics:</strong> Mirroring the forward view, the backward orientation highlights consistent internal channels and lateral structural integrity. The uniformity in void distribution suggests deliberate design or natural formation processes.</li>
+<li><strong>Material Composition:</strong> Similar composite layering is observed, with minor deviations in density that may indicate material inclusions or variations.</li>
+<li><strong>Anomalies:</strong> Slight disparities in void sizes between forward and backward views may point to inconsistencies in internal structures, potentially affecting overall stability.</li>
+</ul>
+<p><strong>3. Synthesis of Insights</strong></p>
+<p>The multi-orientation CT scan analysis reveals that the object possesses a largely homogeneous material composition with minor variations indicating possible composite layering. Structural evaluations across all views highlight a symmetrical design with intentional or naturally occurring voids that contribute to internal channels or reduce overall weight. The consistent presence of minor irregularities and micro-fractures suggests areas of potential mechanical weakness, possibly resulting from inherent stress concentrations or external factors during formation or use.</p>
+<p><strong>4. Potential Applications or Research Directions</strong></p>
+<ul>
+<li><strong>Material Science:</strong> The homogeneous yet subtly layered composition presents an opportunity to study material uniformity and composite manufacturing techniques, potentially informing the development of advanced materials with tailored properties.</li>
+<li><strong>Structural Analysis:</strong> Identified voids and slight fractures can be further explored to understand stress distribution and resilience, aiding in the design of more robust structures in engineering applications.</li>
+<li><strong>Paleontology/Archaeology:</strong> If the object is fossilized or an artifact, the internal channel patterns may offer insights into biological structures or manufacturing processes of historical significance.</li>
+<li><strong>Medical Imaging:</strong> Techniques applied in this analysis could enhance diagnostic procedures by improving the detection of micro-structural anomalies in biological tissues.</li>
+</ul>
+<p><strong>5. Areas for Further Investigation</strong></p>
+<ul>
+<li><strong>Enhanced Imaging Techniques:</strong> Utilizing higher resolution scans or complementary imaging modalities (e.g., MRI, ultrasound) could provide more detailed insights into the micro-structural anomalies and material compositions.</li>
+<li><strong>Mechanical Testing:</strong> Conducting stress and strain analyses on the identified fracture areas would help in understanding the object’s durability and potential failure points.</li>
+<li><strong>Material Composition Verification:</strong> Employing spectroscopic or chemical analysis methods to precisely determine material types and any composite layering within the object.</li>
+<li><strong>Temporal Analysis:</strong> If multiple scans over time are available, assessing changes in the structural integrity or material composition could reveal dynamic processes affecting the object.</li>
+<li><strong>Comparative Studies:</strong> Comparing the observed structural and material characteristics with similar objects in databases could aid in classification, authentication, or uncovering evolutionary patterns.</li>
+</ul>
+<p><strong>Limitations of the Current Analysis:</strong></p>
+<ul>
+<li><strong>Resolution Constraints:</strong> The current imaging resolution may limit the detection of finer microstructural details, potentially overlooking smaller anomalies or material variations.</li>
+<li><strong>Orientation Limits:</strong> Although multiple orientations are provided, certain angles or sections might still lack comprehensive coverage, necessitating additional views for complete analysis.</li>
+<li><strong>Sample-Specific Factors:</strong> Without contextual information about the object's origin, age, or environmental history, interpretations of anomalies and material compositions are speculative and may require corroborative data.</li>
+</ul>
+<hr />
+<p><strong>Conclusion</strong></p>
+<p>The 3D X-ray CT scan analysis offers valuable insights into the structural and material attributes of the object under examination. While significant observations have been made regarding symmetry, material homogeneity, and identifiable anomalies, further detailed investigations are recommended to fully understand the object's characteristics and potential applications. Enhancing imaging techniques and employing additional analytical methods will contribute to a more comprehensive and accurate assessment.</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
 
 <div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-16-02-54-14" data-release-tag="ct_image_analysis-2025-01-16_02-54-14">
     <div class="gallery-header">
@@ -210,235 +605,6 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 - Forward 90° (Z- Up)
 - Back 90° (Z+ Up)</p>
 <p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-15-14-02-30" data-release-tag="ct_image_analysis-2025-01-15_14-02-30">
-    <div class="gallery-header">
-        <h2>2025/01/15 14:02:30 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-15_14-02-30">ct_image_analysis-2025-01-15_14-02-30</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Default+(Y%2B+Up)" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Upside+Down+(Y-+Up)" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Forward+90°+(Z-+Up)" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Back+90°+(Z%2B+Up)" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            Update ct_image_to_text.py
-    
-    fixing url error in CI workflow
-    
-    2025-01-15 13:55:39,409 - INFO - Loading page...
-    2025-01-15 13:55:39,418 - ERROR - Error processing URL: Message: invalid argument
-    
-    https://github.com/johntrue15/NOCTURN-X-ray-repo/actions/runs/12789779368/job/35654084272
-    
-    Traceback (most recent call last):
-      File "/home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/.github/scripts/ct_image_to_text.py", line 135, in process_url
-        driver.get(url)
-      File "/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py", line 393, in get
-        self.execute(Command.GET, {"url": url})
-      File "/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py", line 384, in execute
-        self.error_handler.check_response(response)
-      File "/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/selenium/webdriver/remote/errorhandler.py", line 232, in check_response
-        raise exception_class(message, screen, stacktrace)
-    selenium.common.exceptions.InvalidArgumentException: Message: invalid argument
-      (Session info: chrome=131.0.6778.204)Traceback (most recent call last):
-      File "/home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/.github/scripts/ct_image_to_text.py", line 135, in process_url
-        driver.get(url)
-      File "/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py", line 393, in get
-        self.execute(Command.GET, {"url": url})
-      File "/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py", line 384, in execute
-        self.error_handler.check_response(response)
-      File "/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/selenium/webdriver/remote/errorhandler.py", line 232, in check_response
-        raise exception_class(message, screen, stacktrace)
-    selenium.common.exceptions.InvalidArgumentException: Message: invalid argument
-      (Session info: chrome=131.0.6778.204)
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-15-14-01-21" data-release-tag="ct_image_analysis-2025-01-15_14-01-21">
-    <div class="gallery-header">
-        <h2>2025/01/15 14:01:21 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-15_14-01-21">ct_image_analysis-2025-01-15_14-01-21</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Default+(Y%2B+Up)" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Upside+Down+(Y-+Up)" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Forward+90°+(Z-+Up)" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Back+90°+(Z%2B+Up)" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            Update ct_image_to_text.py
-    
-    fixing url error in CI workflow
-    
-    2025-01-15 13:55:39,409 - INFO - Loading page...
-    2025-01-15 13:55:39,418 - ERROR - Error processing URL: Message: invalid argument
-    
-    https://github.com/johntrue15/NOCTURN-X-ray-repo/actions/runs/12789779368/job/35654084272
-    
-    Traceback (most recent call last):
-      File "/home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/.github/scripts/ct_image_to_text.py", line 135, in process_url
-        driver.get(url)
-      File "/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py", line 393, in get
-        self.execute(Command.GET, {"url": url})
-      File "/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py", line 384, in execute
-        self.error_handler.check_response(response)
-      File "/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/selenium/webdriver/remote/errorhandler.py", line 232, in check_response
-        raise exception_class(message, screen, stacktrace)
-    selenium.common.exceptions.InvalidArgumentException: Message: invalid argument
-      (Session info: chrome=131.0.6778.204)Traceback (most recent call last):
-      File "/home/runner/work/NOCTURN-X-ray-repo/NOCTURN-X-ray-repo/.github/scripts/ct_image_to_text.py", line 135, in process_url
-        driver.get(url)
-      File "/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py", line 393, in get
-        self.execute(Command.GET, {"url": url})
-      File "/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/selenium/webdriver/remote/webdriver.py", line 384, in execute
-        self.error_handler.check_response(response)
-      File "/opt/hostedtoolcache/Python/3.9.21/x64/lib/python3.9/site-packages/selenium/webdriver/remote/errorhandler.py", line 232, in check_response
-        raise exception_class(message, screen, stacktrace)
-    selenium.common.exceptions.InvalidArgumentException: Message: invalid argument
-      (Session info: chrome=131.0.6778.204)
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-09-16-48-56" data-release-tag="ct_image_analysis-2025-01-09_16-48-56">
-    <div class="gallery-header">
-        <h2>2025/01/09 16:48:56 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-09_16-48-56">ct_image_analysis-2025-01-09_16-48-56</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Default+(Y%2B+Up)" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Upside+Down+(Y-+Up)" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Forward+90°+(Z-+Up)" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Back+90°+(Z%2B+Up)" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            Update last_count.txt for new records
         </div>
             </div>
             
