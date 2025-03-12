@@ -1,280 +1,185 @@
-# CT Image Analysis Gallery (Page 29 of 33)
+# CT Image Analysis Gallery (Page 29 of 34)
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-03-12 21:18:07 UTC
+**Last Updated:** 2025-03-12 22:18:23 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
 
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-28-15-40-47" data-release-tag="ct_image_analysis-2025-01-28_15-40-47">
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-29-17-02-55" data-release-tag="ct_image_analysis-2025-01-29_17-02-55">
     <div class="gallery-header">
-        <h2>2025/01/28 15:40:47 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-28_15-40-47">ct_image_analysis-2025-01-28_15-40-47</a></h3>
+        <h2>2025/01/29 17:02:55 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-29_17-02-55">ct_image_analysis-2025-01-29_17-02-55</a></h3>
     </div>
     
     <div class="image-grid">
               <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-28_15-40-47/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_17-02-55/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
         </div>
               <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-28_15-40-47/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_17-02-55/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
         </div>
               <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-28_15-40-47/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_17-02-55/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
         </div>
               <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-28_15-40-47/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_17-02-55/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
         </div>
             </div>
     
     <div class="release-description">
               <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-01-28_15-28-21</p>
-<p>To provide a detailed analysis of the 3D X-ray CT scan data from Morphosource.org, we can focus on the following aspects based on the images you've provided:</p>
-<h3>Structural Characteristics:</h3>
-<ol>
-<li><strong>Form and Shape</strong>: The specimen exhibits an intricate and rugged morphology, with numerous peaks and valleys. This suggests a complex structure that may have significant functional implications.</li>
-<li><strong>Surface Texture</strong>: The texture appears uneven and bumpy, indicative of erosion or wear, which may point to its functional history or interaction with its environment.</li>
-<li><strong>Orientation Variability</strong>: Different views demonstrate structural asymmetries and potentially varying cross-sectional profiles. This variability can indicate distinct functional adaptations.</li>
-<li><strong>Contours and Edges</strong>: Sharp edges and pronounced contours are observed in certain areas, which may indicate points of stress or attachment to other structures in a biological context.</li>
-</ol>
-<h3>Material Composition:</h3>
-<ol>
-<li><strong>Density and Opacity</strong>: The scans likely reflect mineralization in skeletal structures, where variations in density can hint at composition (possibly calcium-based compounds or hydroxyapatite).</li>
-<li><strong>Color Representation</strong>: The light coloration suggests a mineralized or fossilized material, common in osseous structures.</li>
-<li><strong>Anomalies in Material Consistency</strong>: Notable irregularities (e.g., pitting or cavities) might suggest areas where the material has weakened due to biological processes such as resorption or damage.</li>
-</ol>
-<h3>Notable Features or Anomalies:</h3>
-<ol>
-<li><strong>Cavities and Pockets</strong>: Some areas appear to contain cavities or hollow spaces, potentially indicating biological processes or pathological conditions (e.g., lesions).</li>
-<li><strong>Surface Discontinuities</strong>: Variations in surface continuity could point to prior mechanical stress or trauma.</li>
-<li><strong>Fossilization Indicators</strong>: If applicable, certain textural patterns might suggest the specimen has undergone fossilization, reflected in preserved cellular structures or mineral deposition.</li>
-<li><strong>Comparative Anomalies Across Views</strong>: Notable features may appear prominent from certain angles, highlighting the importance of multi-angle analysis for thorough understanding.</li>
-</ol>
-<h3>Conclusion:</h3>
-<p>The 3D X-ray CT scans provide essential insights into the structural intricacies, material properties, and potential anomalies of the specimen. Each view contributes valuable data that aids in understanding its biological functions and historical significance. Further analysis, potentially involving comparative studies with other specimens, could yield richer interpretations of its evolutionary adaptations and ecological roles.</p>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-25-01-46-36" data-release-tag="ct_image_analysis-2025-01-25_01-46-36">
-    <div class="gallery-header">
-        <h2>2025/01/25 01:46:36 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-25_01-46-36">ct_image_analysis-2025-01-25_01-46-36</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-46-36/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-46-36/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-46-36/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-46-36/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-01-14_23-27-15</p>
-<p>To analyze the 3D X-ray CT scan data from Morphosource.org, we can focus on several key aspects: structural characteristics, material composition, and notable features or anomalies visible across the different views. </p>
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-01-29_17-00-06</p>
+<p>Analyzing the 3D X-ray CT scan data from Morphosource reveals several important structural characteristics and features of the lower first molar's pulp endocast.</p>
 <h3>Structural Characteristics</h3>
 <ol>
-<li><strong>Morphology</strong>:</li>
-<li>The specimen appears elongated with variances in width and height along its length. This suggests complex anatomical features that may be subject to evolutionary adaptation.</li>
+<li><strong>Overall Morphology</strong>:</li>
+<li>The endocast exhibits a complex morphology typical of a lower first molar. The shape includes distinct curves and recesses that mirror the biological structure of dental pulp, often characterized by intricate canal systems.</li>
 <li>
-<p>Different orientations (lateral, frontal, back view) reveal varying degrees of curvature and surface irregularities which may relate to functional aspects or previous mechanical stress.</p>
+<p>The surfaces maintain a somewhat undulating profile, which suggests variations in wall thickness and structural integrity.</p>
 </li>
 <li>
-<p><strong>Detailing</strong>:</p>
+<p><strong>Surface Detail</strong>:</p>
 </li>
-<li>The surface appears rough or textured, indicating a potential for high-resolution detail that could aid in identifying specific anatomical structures or fossilized elements. </li>
-<li>There may be sections that show branching or extensions, which could suggest natural articulation points or morphological complexity.</li>
-</ol>
-<h3>Material Composition</h3>
-<ol>
-<li><strong>Density</strong>:</li>
+<li>The surface textures appear grainy or voxelated, indicating the resolution level of the 3D reconstruction. This granularity can be typical in CT-derived models where denser materials (e.g., enamel, dentin) provide sharper contrasts.</li>
 <li>
-<p>The coloration shifts (from pale to darker shades) may indicate variations in density within the material. Areas that are lighter in color might suggest less dense structures (possibly more porous), while darker areas may be denser, reflecting mineralization or preservation conditions.</p>
+<p>Some regions show variations in the smoothness of the surface, potentially reflecting areas of wear, decay, or intrinsic structural differences.</p>
 </li>
 <li>
-<p><strong>Composition</strong>:</p>
+<p><strong>Dimensions and Proportions</strong>:</p>
 </li>
-<li>A detailed analysis would require further examination of the mineral content, with potential indications of elements such as calcium carbonate or silica if this specimen originated from a biological organism with skeletal remains.</li>
-</ol>
-<h3>Notable Features or Anomalies</h3>
-<ol>
-<li><strong>Defects or Irregularities</strong>:</li>
-<li>Observations of possible fractures or erosion can provide insights into the environmental conditions the specimen underwent during its deposition or fossilization.</li>
-<li>
-<p>Anomalies may also include asymmetrical features or unusual surface patinas that could suggest past biological interactions (e.g., bioerosion or encrustation).</p>
-</li>
-<li>
-<p><strong>Comparative Analysis</strong>:</p>
-</li>
-<li>
-<p>Comparing multiple views offers perspectives on the specimen's morphology that can be vital for reconstructive analysis or phylogenetic studies. For example, identifying key differences in the profile can aid in classification or understanding evolutionary relationships.</p>
-</li>
-<li>
-<p><strong>Orientation Impacts</strong>:</p>
-</li>
-<li>Different orientations highlight various aspects of the specimen—certain features may only be visible from specific angles, underscoring the importance of obtaining a full 360-degree analysis for comprehensive interpretation.</li>
-</ol>
-<h3>Conclusion</h3>
-<p>The structural intricacies and potential anomalies within the specimen can reveal a wealth of information when analyzed through high-resolution CT imaging. Further investigation, possibly using cross-sectional data, would enhance understanding</p>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-25-01-45-42" data-release-tag="ct_image_analysis-2025-01-25_01-45-42">
-    <div class="gallery-header">
-        <h2>2025/01/25 01:45:42 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-25_01-45-42">ct_image_analysis-2025-01-25_01-45-42</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-45-42/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-45-42/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-45-42/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-45-42/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-01-16_02-09-30</p>
-<p>Analyzing the 3D X-ray CT scan data of a right maxillary second molar anterior tooth root reveals several structural characteristics and possible anomalies across different orientations of the specimen.</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li><strong>Morphology</strong>: </li>
-<li>The root exhibits a distinctive bifurcated or two-pronged appearance in some orientations, which reflects typical anatomical features of maxillary molars.</li>
-<li>
-<p>The contours show considerable surface irregularity, indicative of natural anatomical variations.</p>
-</li>
-<li>
-<p><strong>Dimensions</strong>:</p>
-</li>
-<li>The dimensions of the root suggest a robust structure suitable for supporting the molar's functions, which include grinding and chewing.</li>
-<li>The root has a tapered shape, ending in a narrower extremity, which is common in dental roots.</li>
+<li>The scans likely capture different aspects of the same structure from varying angles, allowing a comprehensive understanding of its dimensions. The slight asymmetry across views suggests natural anatomical variance.</li>
+<li>Specific dimensions may be estimated through measurement tools available in 3D software, allowing for comparative analysis against standard tooth dimensions.</li>
 </ol>
 <h3>Material Composition</h3>
 <ul>
-<li><strong>Density and Porosity</strong>:</li>
-<li>The model likely represents mineralized dental tissue, primarily composed of enamel, dentin, and possibly areas of pulp cavity, though specific material composition cannot be definitively assessed from the visual model alone.</li>
-<li>Dentin, being less dense than enamel, might contribute to the overall variability in appearance across different slices.</li>
+<li><strong>Primary Materials</strong>:</li>
+<li>The model is primarily composed of dental tissues, including dentin and pulp, rendered in a neutral beige or light color. It may be difficult to differentiate between materials based solely on color in a model without specific coding for material properties.</li>
+<li><strong>Density Variations</strong>:</li>
+<li>Denser areas might correspond to regions of less porosity, hinting at the mineralization levels in the dentin or remnants from the pulpal communication.</li>
+</ul>
+<h3>Notable Features and Anomalies</h3>
+<ol>
+<li><strong>Canal Systems</strong>:</li>
+<li>The internal structure hints at the presence of canals, which are critical for the tooth's vitality and health. Anomalies such as unusual canal branching or unexpected canal walls may be notable.</li>
+<li>
+<p>The orientation may reveal possible complexities in root canal systems which are often subject to anatomical variations and may influence treatment strategies in endodontics.</p>
+</li>
+<li>
+<p><strong>Surface Anomalies</strong>:</p>
+</li>
+<li>Any visible surface irregularities such as pits or grooves may indicate areas that warrant further investigation, such as past caries or dental treatments.</li>
+<li>These could represent significant diagnostic markers for understanding dental history or potential areas</li>
+</ol>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-29-15-40-04" data-release-tag="ct_image_analysis-2025-01-29_15-40-04">
+    <div class="gallery-header">
+        <h2>2025/01/29 15:40:04 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-29_15-40-04">ct_image_analysis-2025-01-29_15-40-04</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_15-40-04/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_15-40-04/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_15-40-04/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_15-40-04/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-01-29_15-36-55</p>
+<p>Analyzing the 3D X-ray CT scan data of the lower first molar pulp endocast reveals important structural characteristics and material insights.</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li><strong>Overall Morphology</strong>: </li>
+<li>
+<p>The scans display a complex morphology typical of a molar tooth, characterized by multiple cusps and interstitial spaces that indicate the original structure of the tooth. The endocast likely captures the canal structures and anterior/posterior orientation.</p>
+</li>
+<li>
+<p><strong>Canal System</strong>: </p>
+</li>
+<li>
+<p>The images likely show the branching canal systems, which are crucial for understanding the tooth's vascular supply. The alignment and curvature of these canals may provide insights into the tooth's function and growth.</p>
+</li>
+<li>
+<p><strong>Cusp Patterns</strong>: </p>
+</li>
+<li>The differentiation between the major cusps (e.g., mesial and distal) can be observed, contributing to functional aspects like occlusion during mastication.</li>
+</ol>
+<h3>Material Composition</h3>
+<ul>
+<li>The data suggests that the scanned object is probably comprised mostly of <strong>dentin</strong>, surrounded by enamel. </li>
+<li>The endocast may be less dense than actual tooth material due to the absence of organic components, primarily reflecting the mineralized structure's voids in the context of the pulp canal.</li>
 </ul>
 <h3>Notable Features and Anomalies</h3>
 <ol>
 <li><strong>Surface Textures</strong>:</li>
-<li>The surface of the roots features grooves and fissures, which could indicate natural wear or pathologic conditions, such as caries.</li>
 <li>
-<p>Variations in surface texture may also suggest areas of past dental treatments or pathological changes.</p>
+<p>The scans exhibit varied surface textures, indicating different growth patterns or wear over time. Sharp ridges and valleys may reflect wear patterns that could be diagnostic indicators of use.</p>
 </li>
 <li>
-<p><strong>Apical Foramen</strong>:</p>
+<p><strong>Potential Anomalies</strong>:</p>
+</li>
+<li>Anomalies such as irregular canal branching, narrowing, or asymmetry could hint at previous dental issues or congenital anomalies.</li>
+<li>
+<p>Notable bubble-like voids or unusual intrusions may suggest past decay or trauma affecting the tooth's internal architecture.</p>
 </li>
 <li>
-<p>The presence of an apical foramen can be associated with the dental pulp, which appears to be notably identified in some orientations. This anatomical feature is essential for the vascular supply to the tooth.</p>
+<p><strong>Orientation Variability</strong>: </p>
 </li>
-<li>
-<p><strong>Any Notable Anomalies</strong>:</p>
-</li>
-<li>In certain orientations, anomalies like fractures or abnormal root morphology may be observed. These could affect dental treatment plans, such as endodontic therapy.</li>
-<li>
-<p>Aspects like calcifications or resorptive lesions may not be visually discernible but could be inferred from irregularities in the contour or surface geometry.</p>
-</li>
-<li>
-<p><strong>Interdental Space</strong>:</p>
-</li>
-<li>Depending on the orientation, the space between the tooth root and adjacent anatomical structures may reveal insights into periodontal health.</li>
+<li>Different views can reveal distinct features, highlighting the importance of multi-view imaging to gain comprehensive insights into the structure, where certain aspects may be obscured in a single view.</li>
 </ol>
 <h3>Conclusion</h3>
-<p>The 3D modeling from the CT scan provides valuable insight into the anatomical details of the right maxillary second molar's anterior tooth root. Variations in structure, surface characteristics, and potential anomalies all contribute to a comprehensive understanding that is vital for</p>
+<p>The analysis of the pulp endocast from the lower first molar showcases the intricate structure of teeth while emphasizing the importance of CT imaging in dental studies. Understanding these features can facilitate better dental practices, improve treatment practices, and contribute to broader anthropological or evolutionary research. Further assessments, such as comparisons with normative data or historical specimens, could yield additional insights into dental health and evolution.</p>
 <h3>Orientation Views</h3>
 <p>The following orientation views were captured:
 - Default (Y+ Up)
@@ -315,77 +220,182 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 
 <div class="timeline-separator"></div>
 
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-25-01-42-28" data-release-tag="ct_image_analysis-2025-01-25_01-42-28">
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-29-15-30-45" data-release-tag="ct_image_analysis-2025-01-29_15-30-45">
     <div class="gallery-header">
-        <h2>2025/01/25 01:42:28 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-25_01-42-28">ct_image_analysis-2025-01-25_01-42-28</a></h3>
+        <h2>2025/01/29 15:30:45 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-29_15-30-45">ct_image_analysis-2025-01-29_15-30-45</a></h3>
     </div>
     
     <div class="image-grid">
               <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-42-28/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_15-30-45/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
         </div>
               <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-42-28/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_15-30-45/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
         </div>
               <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-42-28/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_15-30-45/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
         </div>
               <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-42-28/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_15-30-45/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
         </div>
             </div>
     
     <div class="release-description">
               <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-01-23_16-11-56</p>
-<p>Analyzing the provided 3D X-ray CT scan data reveals several structural characteristics and distinctive features of the specimen. Here’s an overview based on the different orientations of the skull:</p>
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-01-29_15-27-15</p>
+<p>To analyze the 3D X-ray CT scan data provided, I will discuss the key structural characteristics, material composition, and note any observable features or anomalies from the different views of the lower first molar's pulp endocast.</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li><strong>Morphology</strong>:</li>
+<li>The overall shape resembles a molar with distinct anatomical features, including cusps and grooves that represent natural dental morphology.</li>
+<li>
+<p>Variations in surface texture and contours are apparent across different orientations, indicating areas of structural significance.</p>
+</li>
+<li>
+<p><strong>Complex Geometry</strong>:</p>
+</li>
+<li>The endocast reveals a complex internal structure, with channels and spaces typically associated with pulp chambers and root canals.</li>
+<li>The presence of concavities and convexities suggests possible anatomical adaptations or pathologies.</li>
+</ol>
+<h3>Material Composition</h3>
+<ul>
+<li>The visual representation suggests that the specimen is primarily composed of calcified tissue (dentin and enamel) along with potential remnants of the pulp itself.</li>
+<li>In CT scans, variations in density often indicate differences in material composition; denser areas may correspond to enamel while less dense regions indicate dentin or other softer tissues.</li>
+</ul>
+<h3>Notable Features and Anomalies</h3>
+<ol>
+<li><strong>Surface Texture</strong>:</li>
+<li>The surfaces vary in roughness, which may indicate wear, caries, or other environmental interactions affecting the tooth's integrity.</li>
+<li>
+<p>Look for any spots that appear abnormally smooth or irregular which could suggest localized damage or alterations.</p>
+</li>
+<li>
+<p><strong>Pulp Chamber Volume</strong>:</p>
+</li>
+<li>The size of the pulp chamber may be evaluated for anomalies. A larger chamber could indicate past dental trauma or a condition such as pulpitis.</li>
+<li>
+<p>Anomalies such as irregularities in the walls of the pulp chamber can point to pathological conditions or variations in developmental architecture.</p>
+</li>
+<li>
+<p><strong>Root Canal Configuration</strong>:</p>
+</li>
+<li>
+<p>Observing the canal systems, whether they appear straight or curved, could provide insights into potential endodontic complexities. Variations in the canal's branching could indicate a greater likelihood of treatment challenges.</p>
+</li>
+<li>
+<p><strong>Structural Integrity</strong>:</p>
+</li>
+<li>Any visible cracks, fractures, or other structural weaknesses are significant; these could potentially lead to operational issues in clinical contexts, such as root canal treatment. </li>
+</ol>
+<h3>Conclusion</h3>
+<p>The analysis of the 3D CT scan data provides valuable insights into the anatomical and structural characteristics of the lower first molar. Evaluating the pulp endocast allows for the identification of material properties and possible pathological features that could inform treatment decisions in dental practice. Further analysis</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-29-15-12-49" data-release-tag="ct_image_analysis-2025-01-29_15-12-49">
+    <div class="gallery-header">
+        <h2>2025/01/29 15:12:49 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-29_15-12-49">ct_image_analysis-2025-01-29_15-12-49</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_15-12-49/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_15-12-49/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_15-12-49/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_15-12-49/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-01-29_15-09-45</p>
+<p>Analyzing the 3D X-ray CT scan data of the pulp endocast from a lower first molar, the following structural characteristics and observations can be noted:</p>
 <h3>Structural Characteristics:</h3>
 <ol>
-<li><strong>Morphology</strong>: </li>
-<li>The specimen displays a complex cranial structure with differentiated regions, such as the jaw, nasal cavity, and orbits, which suggest adaptations to its ecological niche.</li>
+<li><strong>General Morphology</strong>: </li>
 <li>
-<p>The arrangement of bones indicates a robust framework, likely associated with strong feeding mechanics.</p>
+<p>The endocast exhibits a complex and intricate structure that closely resembles the internal configuration of the molar tooth. Specific features, such as the canal networks and chamber sizes, are discernible, suggesting the specimen's biological significance.</p>
 </li>
 <li>
-<p><strong>Articulations</strong>: </p>
+<p><strong>3D Geometry</strong>:</p>
 </li>
-<li>Various joints and sutures are observed, indicating how different bones are interconnected. This is crucial for understanding the mechanics of movement and flexibility in the skull.</li>
-<li>The presence of multiple processes and ridges suggests functional adaptations, potentially serving as attachment points for muscles.</li>
+<li>
+<p>The endocast displays variations in thickness across different orientations. In some views, the morphology reveals a bulbous area, indicative of the pulp chamber, while other areas taper into narrower canal structures.</p>
+</li>
+<li>
+<p><strong>Surface Texture</strong>:</p>
+</li>
+<li>The surface appears to have a textured pattern, likely arising from the biological structures within the tooth. This texture can aid in understanding the adaptation of the tooth to its functional roles.</li>
 </ol>
 <h3>Material Composition:</h3>
 <ul>
-<li>The coloration in the scans can be indicative of different material densities or compositional variations. Different colors might represent various bone textures or types, suggesting regions of denser calcification versus more porous structures. </li>
+<li><strong>Composition Inference</strong>:</li>
+<li>While detailed material composition isn't visible in the 3D model, it is understood that the primary composition of the endocast would consist of mineralized dental tissues such as dentin and enamel, modified by post-mortem changes that can occur in the soft tissues.</li>
 </ul>
-<h3>Notable Features:</h3>
+<h3>Notable Features or Anomalies:</h3>
 <ol>
-<li><strong>Dentition</strong>:</li>
-<li>The specimens exhibit prominent teeth structures, hinting at dietary preferences—whether herbivorous, carnivorous, or omnivorous.</li>
+<li><strong>Microanatomical Details</strong>:</li>
 <li>
-<p>The alignment and size of teeth are key factors in understanding feeding strategies and ecological interactions.</p>
+<p>In various views, small canals or chambers can be identified. These features are crucial for understanding the vascular and nervous supply of the tooth during its lifetime.</p>
 </li>
 <li>
 <p><strong>Anomalies</strong>:</p>
 </li>
 <li>
-<p>Look for any irregularities such as abnormal bone growths, asymmetry, or signs of pathology like fractures or signs of healing. These could provide insights into the specimen's history or disorders encountered.</p>
+<p>If any notable irregularities were present, such as abnormal growths or unusual canal branching, these might be indicative of developmental anomalies or pathological conditions.</p>
 </li>
 <li>
-<p><strong>Cavities and Sinuses</strong>:</p>
+<p><strong>Comparative Variability</strong>:</p>
 </li>
-<li>The imaging shows several cavities which may correspond to air sinuses or marrow spaces, essential for reducing skull weight and improving respiratory efficiency.</li>
-</ol>
-<h3>Observations Across Different Views:</h3>
-<ol>
-<li><strong>Front and Side Views</strong>:</li>
-<li>These orientations reveal the overall proportion and symmetry of facial structures, aiding in phylogenetic analysis.</li>
-<li><strong>Dorsal and Ventral Views</strong>:</li>
-<li>The top and bottom perspectives help assess the cranial capabilities and the structural support for the brain or sensory organs.</li>
-<li><strong>Cross-sectional Views</strong>:</li>
-<li>Internal structures can be better analyzed, informing on age, health, and life history traits of the specimen.</li>
+<li>The differences in views highlight how this specimen could aid in comparative dental morphology studies, potentially showcasing variations across species or individuals.</li>
 </ol>
 <h3>Conclusion:</h3>
-<p>The analysis of the 3D CT scans provides a comprehensive understanding of the skull's structural characteristics, material composition, and any notable features or anomalies. Such detailed observations are vital for further</p>
+<p>This analysis highlights how 3D X-ray CT scans can provide invaluable insight into the intricate structural biology of dental specimens. The models present an opportunity for in-depth studies on dental health, species adaptation, and evolutionary biology. For detailed material composition analysis, further methods such as histological examination or spectroscopy might be necessary.</p>
 <h3>Orientation Views</h3>
 <p>The following orientation views were captured:
 - Default (Y+ Up)
@@ -426,75 +436,72 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 
 <div class="timeline-separator"></div>
 
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-25-01-39-43" data-release-tag="ct_image_analysis-2025-01-25_01-39-43">
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-29-14-51-15" data-release-tag="ct_image_analysis-2025-01-29_14-51-15">
     <div class="gallery-header">
-        <h2>2025/01/25 01:39:43 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-25_01-39-43">ct_image_analysis-2025-01-25_01-39-43</a></h3>
+        <h2>2025/01/29 14:51:15 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-29_14-51-15">ct_image_analysis-2025-01-29_14-51-15</a></h3>
     </div>
     
     <div class="image-grid">
               <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-39-43/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_14-51-15/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
         </div>
               <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-39-43/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_14-51-15/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
         </div>
               <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-39-43/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_14-51-15/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
         </div>
               <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-39-43/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-29_14-51-15/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
         </div>
             </div>
     
     <div class="release-description">
               <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-01-23_16-11-56</p>
-<p>Analyzing the provided 3D X-ray CT scan images reveals several structural characteristics and notable features of the specimen.</p>
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-01-29_14-48-23</p>
+<p>Analyzing 3D X-ray CT scan data of a tooth specimen like the pulp endocast from a lower first molar reveals several structural characteristics and notable features:</p>
 <h3>Structural Characteristics</h3>
 <ol>
-<li><strong>Morphology</strong></li>
-<li>The overall structure appears to be a skull, showing intricate design and multidimensional features that suggest complex functionalities.</li>
 <li>
-<p>Different colored regions represent distinct components of the skull, likely corresponding to various bones or anatomical features.</p>
+<p><strong>Overall Shape</strong>: The scans illustrate a complex morphology typical of a molar tooth, with multiple cusps and a defined occlusal surface. The endocast suggests a hollow interior that once contained the pulp chamber.</p>
 </li>
 <li>
-<p><strong>Orientation Views</strong></p>
+<p><strong>Cusp Features</strong>: Observing the different orientations allows for insights into the morphology of the cusps. The prominent peaks represent the cusps where occlusal forces are concentrated during chewing.</p>
 </li>
-<li>The various views (frontal, lateral, superior, etc.) highlight the symmetry and specific morphology of the skull.</li>
-<li>The scans display the overlapping of different sections, allowing for a comprehensive understanding of the connections between structures (e.g., sutures) that are usually obscured in two-dimensional images.</li>
+<li>
+<p><strong>Root Structure</strong>: The root regions are evident, indicating the anchorage structure of the tooth. The branching pattern could reveal information about the root canal system and potential variations among specimens.</p>
+</li>
+<li>
+<p><strong>Dental Anatomy Details</strong>: Superficial features, such as ridges and grooves, contribute to the functional aspects of the tooth, facilitating interdigitation with opposing teeth for effective mastication.</p>
+</li>
 </ol>
 <h3>Material Composition</h3>
 <ul>
-<li><strong>Density Variations</strong></li>
-<li>The differences in color coding in the images may reflect variations in material density, a common indicator used in CT scans to differentiate between bone, cartilage, and other tissues.</li>
-<li><strong>Bone Structure</strong></li>
-<li>Features such as the contours and thickness of bone surfaces indicate well-preserved osseous tissue, essential for understanding the specimen's biological background.</li>
+<li>
+<p><strong>Mineralization</strong>: The tooth structure suggests a high level of mineralization typical of enamel and dentin. This can be inferred based on the density variations seen in the CT scans.</p>
+</li>
+<li>
+<p><strong>Pulp Chamber</strong>: The endocast indicates the presence of a pulp chamber that once housed dental nerves and blood vessels. The thickness of the surrounding dentin is also notable, indicating the overall health of the tooth structure.</p>
+</li>
 </ul>
-<h3>Notable Features</h3>
+<h3>Notable Features and Anomalies</h3>
 <ol>
-<li><strong>Anomalies</strong></li>
 <li>
-<p>Any notable anomalies or pathologies are not explicitly describable without more detailed information, but variations in bone structure or alignment might indicate previous trauma or developmental abnormalities.</p>
+<p><strong>Anomalies</strong>: Any inconsistencies, such as irregularities in the root canals or unexpected thickness in the enamel, could suggest previous dental treatments or pathologies.</p>
 </li>
 <li>
-<p><strong>Hollow Spaces &amp; Fenestrae</strong></p>
+<p><strong>Porosity</strong>: Variations in surface texture may indicate porosity or wear patterns. These could reflect age-related changes or external impacts on the tooth.</p>
 </li>
 <li>
-<p>The presence of hollow spaces suggests the area for sinuses or other cavities, which may play roles in respiration, resonance, or weight reduction.</p>
+<p><strong>Orientation-Specific Details</strong>: Each view may provide unique insights:</p>
 </li>
-<li>
-<p><strong>Articulations</strong></p>
-</li>
-<li>Connection points for jaw articulation and other anatomical interactions are evident, suggesting functional adaptability for feeding or predation.</li>
+<li><strong>Lateral Views</strong>: Highlight the curvature and overall length of the tooth.</li>
+<li><strong>Occlusal Views</strong>: Showcase the contact surfaces and relationship with adjacent teeth.</li>
+<li><strong>Root Views</strong>: Provide a glimpse into the root canal anatomy, crucial for endodontic treatment considerations.</li>
 </ol>
-<h3>Cross-Sectional Insights</h3>
-<ul>
-<li>Viewing from different orientations reveals how certain elements, such as nasal passages or teeth, interact with the overall architecture of the skull.</li>
-<li>Certain views may emphasize the intricate details of dental structures, providing insight into dietary habits or evolutionary adaptations.</li>
-</ul>
 <h3>Conclusion</h3>
-<p>Overall, the 3D X-ray CT scans of the skull provide valuable insights into the structural and functional anatomy. Each view uncovers unique aspects, highlighting the importance of 3D imaging in biological and anatomical research. Further analysis with specific software could provide more detailed quantitative data regarding dimensions and structural integrity.</p>
+<p>A comprehensive assessment of 3D CT scans allows for a detailed interpretation of tooth morphology, material composition, and any exceptional features that may influence clinical practices. Further analysis could include comparing this data with other specimens to establish broader patterns in</p>
 <h3>Orientation Views</h3>
 <p>The following orientation views were captured:
 - Default (Y+ Up)
@@ -536,7 +543,7 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 <div class="timeline-separator"></div>
 
 <div class="pagination-container">
-    <a href="image_analysis_page28.html" class="pagination-button">Previous</a>    <a href="image_analysis.html" class="pagination-page">1</a>    <a href="image_analysis_page2.html" class="pagination-page">2</a>    <a href="image_analysis_page3.html" class="pagination-page">3</a>    <a href="image_analysis_page4.html" class="pagination-page">4</a>    <a href="image_analysis_page5.html" class="pagination-page">5</a>    <a href="image_analysis_page6.html" class="pagination-page">6</a>    <a href="image_analysis_page7.html" class="pagination-page">7</a>    <a href="image_analysis_page8.html" class="pagination-page">8</a>    <a href="image_analysis_page9.html" class="pagination-page">9</a>    <a href="image_analysis_page10.html" class="pagination-page">10</a>    <a href="image_analysis_page11.html" class="pagination-page">11</a>    <a href="image_analysis_page12.html" class="pagination-page">12</a>    <a href="image_analysis_page13.html" class="pagination-page">13</a>    <a href="image_analysis_page14.html" class="pagination-page">14</a>    <a href="image_analysis_page15.html" class="pagination-page">15</a>    <a href="image_analysis_page16.html" class="pagination-page">16</a>    <a href="image_analysis_page17.html" class="pagination-page">17</a>    <a href="image_analysis_page18.html" class="pagination-page">18</a>    <a href="image_analysis_page19.html" class="pagination-page">19</a>    <a href="image_analysis_page20.html" class="pagination-page">20</a>    <a href="image_analysis_page21.html" class="pagination-page">21</a>    <a href="image_analysis_page22.html" class="pagination-page">22</a>    <a href="image_analysis_page23.html" class="pagination-page">23</a>    <a href="image_analysis_page24.html" class="pagination-page">24</a>    <a href="image_analysis_page25.html" class="pagination-page">25</a>    <a href="image_analysis_page26.html" class="pagination-page">26</a>    <a href="image_analysis_page27.html" class="pagination-page">27</a>    <a href="image_analysis_page28.html" class="pagination-page">28</a>    <span class="pagination-page current">29</span>    <a href="image_analysis_page30.html" class="pagination-page">30</a>    <a href="image_analysis_page31.html" class="pagination-page">31</a>    <a href="image_analysis_page32.html" class="pagination-page">32</a>    <a href="image_analysis_page33.html" class="pagination-page">33</a>    <a href="image_analysis_page30.html" class="pagination-button">Next</a>
+    <a href="image_analysis_page28.html" class="pagination-button">Previous</a>    <a href="image_analysis.html" class="pagination-page">1</a>    <a href="image_analysis_page2.html" class="pagination-page">2</a>    <a href="image_analysis_page3.html" class="pagination-page">3</a>    <a href="image_analysis_page4.html" class="pagination-page">4</a>    <a href="image_analysis_page5.html" class="pagination-page">5</a>    <a href="image_analysis_page6.html" class="pagination-page">6</a>    <a href="image_analysis_page7.html" class="pagination-page">7</a>    <a href="image_analysis_page8.html" class="pagination-page">8</a>    <a href="image_analysis_page9.html" class="pagination-page">9</a>    <a href="image_analysis_page10.html" class="pagination-page">10</a>    <a href="image_analysis_page11.html" class="pagination-page">11</a>    <a href="image_analysis_page12.html" class="pagination-page">12</a>    <a href="image_analysis_page13.html" class="pagination-page">13</a>    <a href="image_analysis_page14.html" class="pagination-page">14</a>    <a href="image_analysis_page15.html" class="pagination-page">15</a>    <a href="image_analysis_page16.html" class="pagination-page">16</a>    <a href="image_analysis_page17.html" class="pagination-page">17</a>    <a href="image_analysis_page18.html" class="pagination-page">18</a>    <a href="image_analysis_page19.html" class="pagination-page">19</a>    <a href="image_analysis_page20.html" class="pagination-page">20</a>    <a href="image_analysis_page21.html" class="pagination-page">21</a>    <a href="image_analysis_page22.html" class="pagination-page">22</a>    <a href="image_analysis_page23.html" class="pagination-page">23</a>    <a href="image_analysis_page24.html" class="pagination-page">24</a>    <a href="image_analysis_page25.html" class="pagination-page">25</a>    <a href="image_analysis_page26.html" class="pagination-page">26</a>    <a href="image_analysis_page27.html" class="pagination-page">27</a>    <a href="image_analysis_page28.html" class="pagination-page">28</a>    <span class="pagination-page current">29</span>    <a href="image_analysis_page30.html" class="pagination-page">30</a>    <a href="image_analysis_page31.html" class="pagination-page">31</a>    <a href="image_analysis_page32.html" class="pagination-page">32</a>    <a href="image_analysis_page33.html" class="pagination-page">33</a>    <a href="image_analysis_page34.html" class="pagination-page">34</a>    <a href="image_analysis_page30.html" class="pagination-button">Next</a>
 </div>
       </div>
 
