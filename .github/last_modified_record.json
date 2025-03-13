@@ -1,12 +1,13 @@
 {
-  "title": "Left Mandibular M2 Talonid [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000519787?locale=en",
-  "id": "000519787",
-  "Object": "tmm:vpl:41443-582",
-  "Taxonomy": "Ourayia coverti",
-  "Element or Part": "Left mandibular m2 talonid",
+  "title": "Left Mandibular P4 [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000524293?locale=en",
+  "id": "000524293",
+  "Object": "umnh:vp:33193",
+  "Taxonomy": "Mytonius hopsoni",
+  "Element or Part": "Left mandibular p4",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Ben Rodwell",
-  "Date Uploaded": "05/04/2023",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Alyson Wilkins",
+  "Date Uploaded": "05/16/2023",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "Copyright Not Evaluated"
 }
