@@ -1,13 +1,13 @@
 {
-  "title": "Left Mandibular P4 [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000524293?locale=en",
-  "id": "000524293",
-  "Object": "umnh:vp:33193",
-  "Taxonomy": "Mytonius hopsoni",
-  "Element or Part": "Left mandibular p4",
+  "title": "Cranium [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000717792?locale=en",
+  "id": "000717792",
+  "Object": "amnh:fm:130000",
+  "Taxonomy": "Omomys carteri",
+  "Element or Part": "Cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Alyson Wilkins",
-  "Date Uploaded": "05/16/2023",
+  "Data Manager": "Ben Rodwell",
+  "Date Uploaded": "03/10/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "Copyright Not Evaluated"
+  "Rights Statement": "In Copyright"
 }
