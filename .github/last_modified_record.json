@@ -1,13 +1,12 @@
 {
-  "title": "Whole Body [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000101091?locale=en",
-  "id": "000101091",
-  "Object": "CAS:HERP:250653",
-  "Taxonomy": "Rana sp.",
-  "Element or Part": "Whole body",
+  "title": "Element Unspecified [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000049898?locale=en",
+  "id": "000049898",
+  "Object": "CAS:HERP:162678",
+  "Taxonomy": "Werneria preussi",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "02/17/2020",
+  "Date Uploaded": "06/11/2018",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
