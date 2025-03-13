@@ -1,12 +1,12 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000719626?locale=en",
-  "id": "000719626",
-  "Object": "MVZ:Mamm:MVZ:Mamm:182253",
-  "Taxonomy": "Dipodomys nitratoides",
+  "title": "Maxilla [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000720347?locale=en",
+  "id": "000720347",
+  "Object": "uf:uf/igm:143",
+  "Taxonomy": "Squamata  indet.",
+  "Element or Part": "Maxilla",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Carol  Spencer",
-  "Date Uploaded": "03/12/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "Mitchell Riegler",
+  "Date Uploaded": "03/13/2025",
+  "Publication Status": "Restricted Download"
 }
