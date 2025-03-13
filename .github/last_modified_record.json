@@ -1,12 +1,12 @@
 {
-  "title": "Whole Fish Iodine Stained [Ct Image Series]]",
-  "detail_url": "https://www.morphosource.org/concern/media/000720026?locale=en",
-  "id": "000720026",
-  "Object": "jfbm:fishes:uncatalogued",
-  "Taxonomy": "Dorosoma cepedianum",
-  "Element or Part": "Whole Fish",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000719641?locale=en",
+  "id": "000719641",
+  "Object": "MVZ:Mamm:MVZ:Mamm:158907",
+  "Taxonomy": "Dipodomys nitratoides nitratoides",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Allyson Evans",
-  "Date Uploaded": "03/13/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "Carol  Spencer",
+  "Date Uploaded": "03/12/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
