@@ -1,12 +1,13 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000720134?locale=en",
-  "id": "000720134",
-  "Object": "MVZ:Mamm:MVZ:Mamm:69021",
-  "Taxonomy": "Dipodomys spectabilis perblandus",
+  "title": "Cranium [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000055325?locale=en",
+  "id": "000055325",
+  "Object": "AMNH:M:206584",
+  "Taxonomy": "Dryomys nitedula",
+  "Element or Part": "Cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Leila Siciliano-Martina",
-  "Date Uploaded": "03/13/2025",
+  "Data Manager": "AMNH Mammalogy Department",
+  "Date Uploaded": "07/24/2018",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Rights Statement": "In Copyright"
 }
