@@ -1,12 +1,12 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000049898?locale=en",
-  "id": "000049898",
-  "Object": "CAS:HERP:162678",
-  "Taxonomy": "Werneria preussi",
+  "title": "Left Mandibular M2 Talonid [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000519787?locale=en",
+  "id": "000519787",
+  "Object": "tmm:vpl:41443-582",
+  "Taxonomy": "Ourayia coverti",
+  "Element or Part": "Left mandibular m2 talonid",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Lauren Scheinberg",
-  "Date Uploaded": "06/11/2018",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "Ben Rodwell",
+  "Date Uploaded": "05/04/2023",
+  "Publication Status": "Restricted Download"
 }
