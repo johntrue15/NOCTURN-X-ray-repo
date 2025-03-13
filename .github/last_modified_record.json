@@ -1,12 +1,12 @@
 {
-  "title": "Maxilla [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000720225?locale=en",
-  "id": "000720225",
-  "Object": "uf:uf/igm:143",
-  "Taxonomy": "Squamata  indet.",
-  "Element or Part": "Maxilla",
+  "title": "Whole Fish Iodine Stained [Ct Image Series]]",
+  "detail_url": "https://www.morphosource.org/concern/media/000720026?locale=en",
+  "id": "000720026",
+  "Object": "jfbm:fishes:uncatalogued",
+  "Taxonomy": "Dorosoma cepedianum",
+  "Element or Part": "Whole Fish",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Mitchell Riegler",
+  "Data Manager": "Allyson Evans",
   "Date Uploaded": "03/13/2025",
-  "Publication Status": "Restricted Download"
+  "Publication Status": "Open Download"
 }
