@@ -1,13 +1,12 @@
 {
-  "title": "Cranium [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000055325?locale=en",
-  "id": "000055325",
-  "Object": "AMNH:M:206584",
-  "Taxonomy": "Dryomys nitedula",
-  "Element or Part": "Cranium",
+  "title": "Maxilla [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000720225?locale=en",
+  "id": "000720225",
+  "Object": "uf:uf/igm:143",
+  "Taxonomy": "Squamata  indet.",
+  "Element or Part": "Maxilla",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "AMNH Mammalogy Department",
-  "Date Uploaded": "07/24/2018",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Mitchell Riegler",
+  "Date Uploaded": "03/13/2025",
+  "Publication Status": "Restricted Download"
 }
