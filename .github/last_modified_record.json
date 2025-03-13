@@ -1,12 +1,12 @@
 {
-  "title": "Maxilla [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000720347?locale=en",
-  "id": "000720347",
-  "Object": "uf:uf/igm:143",
-  "Taxonomy": "Squamata  indet.",
-  "Element or Part": "Maxilla",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000719571?locale=en",
+  "id": "000719571",
+  "Object": "MVZ:Mamm:MVZ:Mamm:182937",
+  "Taxonomy": "Dipodomys agilis agilisDipodomys agilis AGILIS",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Mitchell Riegler",
-  "Date Uploaded": "03/13/2025",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Carol  Spencer",
+  "Date Uploaded": "03/12/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
