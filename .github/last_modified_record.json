@@ -1,13 +1,13 @@
 {
-  "title": "Skeleton [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000092768?locale=en",
-  "id": "000092768",
-  "Object": "nhmuk:1871.7.20.87",
-  "Taxonomy": "Rollulus rouloul",
-  "Element or Part": "skeleton",
+  "title": "Whole Body [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000720637?locale=en",
+  "id": "000720637",
+  "Object": "DMNS:Mamm:DMNS:Mamm:12888",
+  "Taxonomy": "Zapus princeps",
+  "Element or Part": "whole_body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Roger Benson",
-  "Date Uploaded": "10/29/2019",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Erin Westeen",
+  "Date Uploaded": "03/14/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
