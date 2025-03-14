@@ -1,13 +1,13 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000517264?locale=en",
-  "id": "000517264",
-  "Object": "UMZC:Vertebrates:396.D",
-  "Taxonomy": "Pavo cristatus",
-  "Element or Part": "Skull",
+  "title": "Cranium [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000720592?locale=en",
+  "id": "000720592",
+  "Object": "UMMZ:birds:224005",
+  "Taxonomy": "Coturnix coturnix",
+  "Element or Part": "Cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Daniel Field",
-  "Date Uploaded": "04/20/2023",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "Bassel Arnaout",
+  "Date Uploaded": "03/14/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
