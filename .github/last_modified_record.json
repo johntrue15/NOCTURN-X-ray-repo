@@ -1,13 +1,12 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000517910?locale=en",
-  "id": "000517910",
-  "Object": "umzc:vertebrates:225",
-  "Taxonomy": "Anas platyrhynchos",
-  "Element or Part": "Skull",
+  "title": "Element Unspecified [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000126060?locale=en",
+  "id": "000126060",
+  "Object": "NHMUK:ZOO:S/1985.70.4",
+  "Taxonomy": "Oxyura jamaicensis",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Daniel Field",
-  "Date Uploaded": "04/22/2023",
+  "Data Manager": "Roger Benson",
+  "Date Uploaded": "07/14/2020",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Rights Statement": "In Copyright"
 }
