@@ -1,13 +1,13 @@
 {
   "title": "Skeleton [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000126039?locale=en",
-  "id": "000126039",
-  "Object": "NHMUK:ZOO:S/2010.1.36",
-  "Taxonomy": "Tragopan satyra",
+  "detail_url": "https://www.morphosource.org/concern/media/000092768?locale=en",
+  "id": "000092768",
+  "Object": "nhmuk:1871.7.20.87",
+  "Taxonomy": "Rollulus rouloul",
   "Element or Part": "skeleton",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Roger Benson",
-  "Date Uploaded": "07/14/2020",
+  "Date Uploaded": "10/29/2019",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
