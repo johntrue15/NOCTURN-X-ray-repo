@@ -1,12 +1,13 @@
 {
-  "title": "Dachshund Full Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000654543?locale=en",
-  "id": "000654543",
-  "Object": "cas:mam:33863",
-  "Taxonomy": "Canis familiaris Dachshund",
-  "Element or Part": "Dachshund full skull",
+  "title": "Skeleton [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000126039?locale=en",
+  "id": "000126039",
+  "Object": "NHMUK:ZOO:S/2010.1.36",
+  "Taxonomy": "Tragopan satyra",
+  "Element or Part": "skeleton",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Deborah Bird",
-  "Date Uploaded": "08/06/2024",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Roger Benson",
+  "Date Uploaded": "07/14/2020",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
