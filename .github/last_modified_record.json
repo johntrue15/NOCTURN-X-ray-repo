@@ -1,12 +1,13 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000157589?locale=en",
-  "id": "000157589",
-  "Object": "NHMUK:ZOO:1854.6.25.2",
-  "Taxonomy": "Cygnus olor",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000517207?locale=en",
+  "id": "000517207",
+  "Object": "UMZC:Vertebrates:12/Ana/33/a/1",
+  "Taxonomy": "Malacorhynchus membranaceus",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Roger Benson",
-  "Date Uploaded": "08/12/2020",
+  "Data Manager": "Daniel Field",
+  "Date Uploaded": "04/20/2023",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
