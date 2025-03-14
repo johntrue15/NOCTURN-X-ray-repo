@@ -1,12 +1,12 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000719571?locale=en",
-  "id": "000719571",
-  "Object": "MVZ:Mamm:MVZ:Mamm:182937",
-  "Taxonomy": "Dipodomys agilis agilisDipodomys agilis AGILIS",
+  "title": "Pararhincodon Head, Front Half",
+  "detail_url": "https://www.morphosource.org/concern/media/000678241?locale=en",
+  "id": "000678241",
+  "Object": "nhmuk:pv p:73821a",
+  "Taxonomy": "Pararhincodon sp.",
+  "Element or Part": "Section of rock containing fossil",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Carol  Spencer",
-  "Date Uploaded": "03/12/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "Richard Dearden",
+  "Date Uploaded": "11/05/2024",
+  "Publication Status": "Open Download"
 }
