@@ -1,12 +1,12 @@
 {
-  "title": "Pararhincodon Head, Front Half",
-  "detail_url": "https://www.morphosource.org/concern/media/000678241?locale=en",
-  "id": "000678241",
-  "Object": "nhmuk:pv p:73821a",
+  "title": "Pararhincodon Head",
+  "detail_url": "https://www.morphosource.org/concern/media/000677323?locale=en",
+  "id": "000677323",
+  "Object": "nhmuk:pv p:17223",
   "Taxonomy": "Pararhincodon sp.",
   "Element or Part": "Section of rock containing fossil",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Richard Dearden",
-  "Date Uploaded": "11/05/2024",
+  "Data Manager": "Emma Bernard",
+  "Date Uploaded": "10/30/2024",
   "Publication Status": "Open Download"
 }
