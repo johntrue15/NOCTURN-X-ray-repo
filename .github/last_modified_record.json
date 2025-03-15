@@ -1,12 +1,11 @@
 {
-  "title": "Collie Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000653923?locale=en",
-  "id": "000653923",
-  "Object": "cas:mam:32244",
-  "Taxonomy": "Canis familiaris Collie",
-  "Element or Part": "Collie skull",
+  "title": "Element Unspecified [Image] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000720739?locale=en",
+  "id": "000720739",
+  "Object": "ivpp:v:30936",
+  "Taxonomy": "Pulaosaurus  qinglong",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Deborah Bird",
-  "Date Uploaded": "08/04/2024",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Yunfeng Yang",
+  "Date Uploaded": "03/15/2025",
+  "Publication Status": "Open Download"
 }
