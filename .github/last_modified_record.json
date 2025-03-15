@@ -1,13 +1,12 @@
 {
-  "title": "Cranium [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000720641?locale=en",
-  "id": "000720641",
-  "Object": "UMMZ:birds:155489",
-  "Taxonomy": "Ortalis ruficauda",
-  "Element or Part": "Cranium",
+  "title": "Collie Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000653923?locale=en",
+  "id": "000653923",
+  "Object": "cas:mam:32244",
+  "Taxonomy": "Canis familiaris Collie",
+  "Element or Part": "Collie skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Bassel Arnaout",
-  "Date Uploaded": "03/14/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Deborah Bird",
+  "Date Uploaded": "08/04/2024",
+  "Publication Status": "Restricted Download"
 }
