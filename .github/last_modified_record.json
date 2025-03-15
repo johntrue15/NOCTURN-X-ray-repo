@@ -1,13 +1,13 @@
 {
-  "title": "Whole Body [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000720637?locale=en",
-  "id": "000720637",
-  "Object": "DMNS:Mamm:DMNS:Mamm:12888",
-  "Taxonomy": "Zapus princeps",
-  "Element or Part": "whole_body",
+  "title": "Cranium [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000720641?locale=en",
+  "id": "000720641",
+  "Object": "UMMZ:birds:155489",
+  "Taxonomy": "Ortalis ruficauda",
+  "Element or Part": "Cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Erin Westeen",
+  "Data Manager": "Bassel Arnaout",
   "Date Uploaded": "03/14/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Rights Statement": "In Copyright"
 }
