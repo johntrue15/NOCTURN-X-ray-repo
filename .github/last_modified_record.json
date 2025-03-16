@@ -1,11 +1,13 @@
 {
-  "title": "Element Unspecified [Image] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000720739?locale=en",
-  "id": "000720739",
-  "Object": "ivpp:v:30936",
-  "Taxonomy": "Pulaosaurus  qinglong",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000720688?locale=en",
+  "id": "000720688",
+  "Object": "DMNS:Mamm:DMNS:Mamm:16481",
+  "Taxonomy": "Zapus princeps",
+  "Element or Part": "whole_body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Yunfeng Yang",
+  "Data Manager": "Andrew Doll",
   "Date Uploaded": "03/15/2025",
-  "Publication Status": "Open Download"
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
