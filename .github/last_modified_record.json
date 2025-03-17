@@ -1,14 +1,13 @@
 {
-  "title": "Chromis punctipinnis skull",
-  "detail_url": "https://www.morphosource.org/concern/media/000721416?locale=en",
-  "id": "000721416",
-  "Object": "FMNH:Fishes:87419",
-  "Taxonomy": "Chromis punctipinnis",
-  "Element or Part": "Skull",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000720673?locale=en",
+  "id": "000720673",
+  "Object": "DMNS:Mamm:DMNS:Mamm:13760",
+  "Taxonomy": "Zapus princeps",
+  "Element or Part": "whole_body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Keiffer Williams",
-  "Date Uploaded": "03/17/2025",
+  "Data Manager": "Andrew Doll",
+  "Date Uploaded": "03/15/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
