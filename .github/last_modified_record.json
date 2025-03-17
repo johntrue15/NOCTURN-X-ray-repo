@@ -1,14 +1,13 @@
 {
-  "title": "Fossil Bones In Matrix [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000721605?locale=en",
-  "id": "000721605",
-  "Object": "NHMUK:PAL:PV R 8551",
-  "Taxonomy": "Parviraptor estesi",
-  "Element or Part": "fossil bones in matrix",
+  "title": "Parascyllium Variolatum Csiro Ca 3311 Head",
+  "detail_url": "https://www.morphosource.org/concern/media/000678704?locale=en",
+  "id": "000678704",
+  "Object": "csiro:fish:CA 3311",
+  "Taxonomy": "Parascyllium variolatum",
+  "Element or Part": "Scan of the head of Parascyllium variolatum CSIRO CA 3311",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Roger Benson",
-  "Date Uploaded": "03/17/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Data Manager": "Helen O'Neill",
+  "Date Uploaded": "11/07/2024",
+  "Publication Status": "Open Download",
+  "Rights Statement": "No Copyright - Non-Commercial Use Only"
 }
