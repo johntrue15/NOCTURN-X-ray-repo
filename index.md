@@ -2,14 +2,14 @@
 
 This page displays information about the latest data releases for the NOCTURN X-ray project.
 
-**Last Updated:** 2025-03-17 01:38:42 UTC
+**Last Updated:** 2025-03-17 02:59:07 UTC
 
 ## Summary Statistics
 
 <div class="stats-container">
     <div class="stat-card">
         <div>Total Releases</div>
-        <div class="stat-value">2818</div>
+        <div class="stat-value">2819</div>
     </div>
     <div class="stat-card">
         <div>MorphoSource Updates</div>
@@ -17,7 +17,7 @@ This page displays information about the latest data releases for the NOCTURN X-
     </div>
     <div class="stat-card">
         <div>CT Analysis Error</div>
-        <div class="stat-value">384</div>
+        <div class="stat-value">385</div>
     </div>
     <div class="stat-card">
         <div>CT Image Analysis</div>
@@ -661,6 +661,13 @@ This page displays information about the latest data releases for the NOCTURN X-
 
 <div class="release-group">
 <div class="release-card">
+    <h4>13890327549 - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_analysis_error-13890327549">ct_analysis_error-13890327549</a></h4>
+    
+    ```
+    Daily check data [2025-03-17_01-27-42]
+    ```
+</div>
+<div class="release-card">
     <h4>13883536029 - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_analysis_error-13883536029">ct_analysis_error-13883536029</a></h4>
     
     ```
@@ -683,13 +690,6 @@ This page displays information about the latest data releases for the NOCTURN X-
 </div>
 <div class="release-card">
     <h4>13867244438 - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_analysis_error-13867244438">ct_analysis_error-13867244438</a></h4>
-    
-    ```
-    Update last_count.txt for new records
-    ```
-</div>
-<div class="release-card">
-    <h4>13867135795 - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_analysis_error-13867135795">ct_analysis_error-13867135795</a></h4>
     
     ```
     Update last_count.txt for new records
