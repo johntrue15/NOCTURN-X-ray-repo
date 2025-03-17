@@ -1,13 +1,14 @@
 {
-  "title": "Whole Body [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000720693?locale=en",
-  "id": "000720693",
-  "Object": "DMNS:Mamm:DMNS:Mamm:14999",
-  "Taxonomy": "Zapus princeps",
-  "Element or Part": "whole_body",
+  "title": "Head [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000678413?locale=en",
+  "id": "000678413",
+  "Object": "ouvc:12483",
+  "Taxonomy": "Meleagris gallopavo",
+  "Element or Part": "head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Andrew Doll",
-  "Date Uploaded": "03/15/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "Joseph Groenke",
+  "Date Uploaded": "11/06/2024",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC-ND Attribution-NonCommercial-NoDerivs 4.0 International"
 }
