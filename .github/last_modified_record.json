@@ -1,14 +1,11 @@
 {
-  "title": "Chromis chromis skull",
-  "detail_url": "https://www.morphosource.org/concern/media/000721379?locale=en",
-  "id": "000721379",
-  "Object": "fmnh:fishes:84880",
-  "Taxonomy": "Chromis chromis",
-  "Element or Part": "Skull",
+  "title": "Amphiprion clarkii skull",
+  "detail_url": "https://www.morphosource.org/concern/media/000703897?locale=en",
+  "id": "000703897",
+  "Object": "jfbm:fishes:46764",
+  "Taxonomy": "Amphiprion clarkii",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Keiffer Williams",
-  "Date Uploaded": "03/17/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Date Uploaded": "01/22/2025",
+  "Publication Status": "Open Download"
 }
