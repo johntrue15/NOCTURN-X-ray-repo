@@ -1,13 +1,13 @@
 {
   "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000720673?locale=en",
-  "id": "000720673",
-  "Object": "DMNS:Mamm:DMNS:Mamm:13760",
-  "Taxonomy": "Zapus princeps",
+  "detail_url": "https://www.morphosource.org/concern/media/000720630?locale=en",
+  "id": "000720630",
+  "Object": "DMNS:Mamm:DMNS:Mamm:12324",
+  "Taxonomy": "Zapus hudsonius preblei",
   "Element or Part": "whole_body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Andrew Doll",
-  "Date Uploaded": "03/15/2025",
+  "Date Uploaded": "03/14/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
