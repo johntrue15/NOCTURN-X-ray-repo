@@ -1,13 +1,14 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000663304?locale=en",
-  "id": "000663304",
-  "Object": "AMNH:FARB:5561",
-  "Taxonomy": "Youngina capensis",
-  "Element or Part": "skull",
+  "title": "Chromis chromis skull",
+  "detail_url": "https://www.morphosource.org/concern/media/000721379?locale=en",
+  "id": "000721379",
+  "Object": "fmnh:fishes:84880",
+  "Taxonomy": "Chromis chromis",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
-  "Date Uploaded": "09/16/2024",
+  "Data Manager": "Keiffer Williams",
+  "Date Uploaded": "03/17/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
 }
