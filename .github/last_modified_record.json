@@ -1,13 +1,14 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000721401?locale=en",
-  "id": "000721401",
-  "Object": "FMNH:Fishes:138048",
-  "Taxonomy": "Chromis nitida",
+  "title": "Chirolophis decoratus-Tail (caudal skeleton)",
+  "detail_url": "https://www.morphosource.org/concern/media/000721539?locale=en",
+  "id": "000721539",
+  "Object": "uwfc:adult collection:UWFC003596, UWFC001426, UWFC003556",
+  "Taxonomy": "Chirolophis decoratus",
+  "Element or Part": "tail (caudal skeleton)",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Sharon Grant",
+  "Data Manager": "Olivia Hawkins",
   "Date Uploaded": "03/17/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Publication Status": "Open Download",
+  "Rights Statement": "No Known Copyright",
+  "CC License": "License Terms Unknown"
 }
