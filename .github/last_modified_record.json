@@ -1,11 +1,14 @@
 {
-  "title": "Amphiprion clarkii skull",
-  "detail_url": "https://www.morphosource.org/concern/media/000703897?locale=en",
-  "id": "000703897",
-  "Object": "jfbm:fishes:46764",
-  "Taxonomy": "Amphiprion clarkii",
+  "title": "Chromis amboinensis skull",
+  "detail_url": "https://www.morphosource.org/concern/media/000721389?locale=en",
+  "id": "000721389",
+  "Object": "FMNH:Fishes:112433",
+  "Taxonomy": "Chromis amboinensis",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Keiffer Williams",
-  "Date Uploaded": "01/22/2025",
-  "Publication Status": "Open Download"
+  "Date Uploaded": "03/17/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
 }
