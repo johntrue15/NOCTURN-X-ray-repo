@@ -1,13 +1,14 @@
 {
-  "title": "Parascyllium Variolatum Csiro Ca 3311 Head",
-  "detail_url": "https://www.morphosource.org/concern/media/000678704?locale=en",
-  "id": "000678704",
-  "Object": "csiro:fish:CA 3311",
-  "Taxonomy": "Parascyllium variolatum",
-  "Element or Part": "Scan of the head of Parascyllium variolatum CSIRO CA 3311",
+  "title": "Vertebra",
+  "detail_url": "https://www.morphosource.org/concern/media/000717037?locale=en",
+  "id": "000717037",
+  "Object": "ua:9684-5",
+  "Taxonomy": "Menarana nosymena",
+  "Element or Part": "posterior trunk vertebra (UA 9684-5 in publication)",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Helen O'Neill",
-  "Date Uploaded": "11/07/2024",
-  "Publication Status": "Open Download",
-  "Rights Statement": "No Copyright - Non-Commercial Use Only"
+  "Data Manager": "Joseph Groenke",
+  "Date Uploaded": "03/07/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC-SA Attribution-NonCommercial-ShareAlike 4.0 International"
 }
