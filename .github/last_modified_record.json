@@ -1,14 +1,13 @@
 {
-  "title": "Cebidichthys violaceus-Tail (caudal skeleton)",
-  "detail_url": "https://www.morphosource.org/concern/media/000721648?locale=en",
-  "id": "000721648",
-  "Object": "uwfc:adult collection:UWFC17471",
-  "Taxonomy": "Cebidichthys violaceus",
-  "Element or Part": "tail (caudal skeleton)",
+  "title": "Skeleton [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000721770?locale=en",
+  "id": "000721770",
+  "Object": "MCZ:Herp:R-136176",
+  "Taxonomy": "Anolis caquetae",
+  "Element or Part": "skeleton",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Olivia Hawkins",
+  "Data Manager": "Matt Gage",
   "Date Uploaded": "03/18/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "No Known Copyright",
-  "CC License": "License Terms Unknown"
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
