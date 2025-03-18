@@ -2,14 +2,14 @@
 
 This page displays information about the latest data releases for the NOCTURN X-ray project.
 
-**Last Updated:** 2025-03-18 19:15:46 UTC
+**Last Updated:** 2025-03-18 20:20:18 UTC
 
 ## Summary Statistics
 
 <div class="stats-container">
     <div class="stat-card">
         <div>Total Releases</div>
-        <div class="stat-value">2890</div>
+        <div class="stat-value">2891</div>
     </div>
     <div class="stat-card">
         <div>MorphoSource Updates</div>
@@ -17,7 +17,7 @@ This page displays information about the latest data releases for the NOCTURN X-
     </div>
     <div class="stat-card">
         <div>CT Analysis Error</div>
-        <div class="stat-value">399</div>
+        <div class="stat-value">400</div>
     </div>
     <div class="stat-card">
         <div>CT Image Analysis</div>
@@ -661,6 +661,13 @@ This page displays information about the latest data releases for the NOCTURN X-
 
 <div class="release-group">
 <div class="release-card">
+    <h4>13931618707 - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_analysis_error-13931618707">ct_analysis_error-13931618707</a></h4>
+    
+    ```
+    Update last_count.txt for new records
+    ```
+</div>
+<div class="release-card">
     <h4>13931329882 - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_analysis_error-13931329882">ct_analysis_error-13931329882</a></h4>
     
     ```
@@ -683,13 +690,6 @@ This page displays information about the latest data releases for the NOCTURN X-
 </div>
 <div class="release-card">
     <h4>13930175041 - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_analysis_error-13930175041">ct_analysis_error-13930175041</a></h4>
-    
-    ```
-    Update last_count.txt for new records
-    ```
-</div>
-<div class="release-card">
-    <h4>13927792156 - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_analysis_error-13927792156">ct_analysis_error-13927792156</a></h4>
     
     ```
     Update last_count.txt for new records
