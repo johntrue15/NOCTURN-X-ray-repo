@@ -1,14 +1,13 @@
 {
-  "title": "Chirolophis nugator-Tail (caudal skeleton)",
-  "detail_url": "https://www.morphosource.org/concern/media/000721906?locale=en",
-  "id": "000721906",
-  "Object": "uwfc:adult collection:UWFC017465, UWFC017465, UWFC017465",
-  "Taxonomy": "Chirolophis nugator",
-  "Element or Part": "tail (caudal skeleton)",
+  "title": "Left Distal Ulna [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000581416?locale=en",
+  "id": "000581416",
+  "Object": "IPS:IPS58443.18",
+  "Taxonomy": "Pliobates cataloniae",
+  "Element or Part": "Left distal ulna",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Olivia Hawkins",
-  "Date Uploaded": "03/18/2025",
+  "Data Manager": "Open Data ICP official profile",
+  "Date Uploaded": "11/13/2023",
   "Publication Status": "Open Download",
-  "Rights Statement": "No Known Copyright",
-  "CC License": "License Terms Unknown"
+  "Rights Statement": "In Copyright"
 }
