@@ -1,13 +1,13 @@
 {
-  "title": "Left Distal Ulna [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000581416?locale=en",
-  "id": "000581416",
-  "Object": "IPS:IPS58443.18",
-  "Taxonomy": "Pliobates cataloniae",
-  "Element or Part": "Left distal ulna",
+  "title": "Head [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000098574?locale=en",
+  "id": "000098574",
+  "Object": "FMNH:Amphibians and Reptiles:166958",
+  "Taxonomy": "Lialis burtonis",
+  "Element or Part": "head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Open Data ICP official profile",
-  "Date Uploaded": "11/13/2023",
-  "Publication Status": "Open Download",
+  "Data Manager": "Sharon Grant",
+  "Date Uploaded": "01/11/2020",
+  "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
