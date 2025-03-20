@@ -1,11 +1,12 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722505?locale=en",
-  "id": "000722505",
-  "Object": "msb:mammal specimens:39547",
-  "Taxonomy": "Dipodomys deserti",
+  "title": "Dice Ct Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000603907?locale=en",
+  "id": "000603907",
+  "Object": "UF:Herp:72672",
+  "Taxonomy": "Gekko gecko",
+  "Element or Part": "diceCT whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Leila Siciliano-Martina",
-  "Date Uploaded": "03/20/2025",
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "02/12/2024",
   "Publication Status": "Open Download"
 }
