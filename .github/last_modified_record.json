@@ -1,13 +1,13 @@
 {
-  "title": "Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000091309?locale=en",
-  "id": "000091309",
-  "Object": "LSUMZ:Herps:93563",
-  "Taxonomy": "Toxicocalamus loriae",
-  "Element or Part": "body",
+  "title": "Skull And Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722418?locale=en",
+  "id": "000722418",
+  "Object": "MCZ:Herp:R-126649",
+  "Taxonomy": "Lioheterophis iheringi",
+  "Element or Part": "skull and mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Zachary Randall",
-  "Date Uploaded": "10/21/2019",
+  "Data Manager": "Matt Gage",
+  "Date Uploaded": "03/20/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
