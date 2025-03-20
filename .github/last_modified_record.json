@@ -1,12 +1,11 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722487?locale=en",
-  "id": "000722487",
-  "Object": "OMNH:Amphibians:42021.0",
-  "Taxonomy": "Lithobates areolatus",
-  "Element or Part": "skull",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722505?locale=en",
+  "id": "000722505",
+  "Object": "msb:mammal specimens:39547",
+  "Taxonomy": "Dipodomys deserti",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Owen Edwards",
+  "Data Manager": "Leila Siciliano-Martina",
   "Date Uploaded": "03/20/2025",
   "Publication Status": "Open Download"
 }
