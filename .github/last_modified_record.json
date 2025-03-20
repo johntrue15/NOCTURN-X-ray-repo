@@ -1,9 +1,10 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722470?locale=en",
-  "id": "000722470",
+  "title": "Half Head (Roi2) [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722467?locale=en",
+  "id": "000722467",
   "Object": "NYIT:NYITCOM_ANAT",
   "Taxonomy": "Gallus gallus var. domesticus",
+  "Element or Part": "Half head (ROI2)",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Julia Molnar",
   "Date Uploaded": "03/20/2025",
