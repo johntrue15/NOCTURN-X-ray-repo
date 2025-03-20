@@ -1,12 +1,11 @@
 {
-  "title": "Dice Ct Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000603907?locale=en",
-  "id": "000603907",
-  "Object": "UF:Herp:72672",
-  "Taxonomy": "Gekko gecko",
-  "Element or Part": "diceCT whole body",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000718263?locale=en",
+  "id": "000718263",
+  "Object": "MSB:Mamm:MSB:Mamm:24227",
+  "Taxonomy": "Dipodomys merriami",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "02/12/2024",
+  "Data Manager": "Leila Siciliano-Martina",
+  "Date Uploaded": "03/10/2025",
   "Publication Status": "Open Download"
 }
