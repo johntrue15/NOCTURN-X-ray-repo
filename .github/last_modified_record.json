@@ -1,13 +1,12 @@
 {
-  "title": "Head [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000077374?locale=en",
-  "id": "000077374",
-  "Object": "LSUMZ:Herps:98702",
-  "Taxonomy": "Lobulia elegansPlestiodon elegans",
-  "Element or Part": "head",
+  "title": "Element Unspecified [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722467?locale=en",
+  "id": "000722467",
+  "Object": "NYIT:NYITCOM_ANAT",
+  "Taxonomy": "Gallus gallus var. domesticus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Zachary Randall",
-  "Date Uploaded": "05/10/2019",
+  "Data Manager": "Julia Molnar",
+  "Date Uploaded": "03/20/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright - Educational Use Permitted"
 }
