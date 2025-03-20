@@ -1,13 +1,11 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000114993?locale=en",
-  "id": "000114993",
-  "Object": "igm:MAE:3/84",
-  "Taxonomy": "Isodontosaurus gracilis",
-  "Element or Part": "skull",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722523?locale=en",
+  "id": "000722523",
+  "Object": "msb:mammal specimens:33126",
+  "Taxonomy": "Dipodomys deserti",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "AMNH VP Team",
-  "Date Uploaded": "04/28/2020",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Leila Siciliano-Martina",
+  "Date Uploaded": "03/20/2025",
+  "Publication Status": "Open Download"
 }
