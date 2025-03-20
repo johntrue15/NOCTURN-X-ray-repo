@@ -1,11 +1,12 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722538?locale=en",
-  "id": "000722538",
-  "Object": "msb:mammal specimens:105284",
-  "Taxonomy": "Dipodomys deserti",
+  "title": "Cocker Spaniel Partial Skull, Cribriform Plate [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000653901?locale=en",
+  "id": "000653901",
+  "Object": "cas:mam:32237",
+  "Taxonomy": "Canis familiaris Cocker Spaniel",
+  "Element or Part": "Cocker Spaniel partial skull, cribriform plate",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Leila Siciliano-Martina",
-  "Date Uploaded": "03/20/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "Deborah Bird",
+  "Date Uploaded": "08/03/2024",
+  "Publication Status": "Restricted Download"
 }
