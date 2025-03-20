@@ -1,12 +1,212 @@
-# CT Image Analysis Gallery (Page 13 of 35)
+# CT Image Analysis Gallery (Page 13 of 36)
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-03-20 20:21:32 UTC
+**Last Updated:** 2025-03-20 21:18:23 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-15-21-05-24" data-release-tag="ct_image_analysis-2025-02-15_21-05-24">
+    <div class="gallery-header">
+        <h2>2025/02/15 21:05:24 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-15_21-05-24">ct_image_analysis-2025-02-15_21-05-24</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_21-05-24/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_21-05-24/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_21-05-24/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_21-05-24/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-15_21-01-53</p>
+<p>To analyze 3D X-ray CT scan data of the specimen from Morphosource.org (Reticulate Nummulites), let's consider the following structural characteristics, material composition, and notable features observed across the different orientations.</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li>
+<p><strong>Overall Shape</strong>: The specimen exhibits a generally irregular and somewhat rounded morphology, distributed across a three-dimensional space. This suggests it may belong to a class of organisms with a robust and possibly segmented structure.</p>
+</li>
+<li>
+<p><strong>Surface Texture</strong>: The surface appears to have various textures, suggesting different material densities or compositional variances. Some regions seem smoother, while others exhibit roughness or distinct textural patterns, indicating possible growth features or environmental interactions.</p>
+</li>
+<li>
+<p><strong>Connectivity</strong>: There are visible points of connectivity among the structures, which may represent biological functions such as nutrient channels or structural supports. The orientation affects how prominent these connections appear.</p>
+</li>
+</ol>
+<h3>Material Composition</h3>
+<ol>
+<li>
+<p><strong>Mineral Composition</strong>: Since this is a geological specimen, the material may include calcite or aragonite, common mineral forms found in such biogenic structures. The uniform color and texture hint at a consistent mineral composition throughout.</p>
+</li>
+<li>
+<p><strong>Porosity</strong>: The appearance suggests varying levels of porosity, which could indicate past environmental stress, growth patterns, or the organism's metabolic processes. Higher porosity might correlate with areas historically exposed to water or sediments.</p>
+</li>
+</ol>
+<h3>Notable Features &amp; Anomalies</h3>
+<ol>
+<li>
+<p><strong>Anomalous Structures</strong>: There are sections of the structure that appear significantly different in shape or texture from the rest. These deviations may point toward abnormal growths or responses to environmental factors, possibly revealing insights into the organism's life history or reactions to external stressors.</p>
+</li>
+<li>
+<p><strong>Orientation Effects</strong>: Changing the orientation dramatically alters the visibility of certain features. For example, some structures may become more pronounced from specific angles, allowing for a better understanding of their arrangement and interaction.</p>
+</li>
+<li>
+<p><strong>Dimensionality</strong>: The 3D nature of the scans allows the assessment of the specimen's volumetric features, which may uncover complexities not visible in traditional 2D imaging, such as internal cavities or layered formations.</p>
+</li>
+</ol>
+<h3>Conclusion</h3>
+<p>Overall, this detailed assessment of the 3D X-ray CT scan data highlights important morphological and compositional aspects of the specimen. These features can serve as a crucial foundation for further biological or geological research, linking the physical structure with historical environmental conditions or evolutionary processes. Further analysis could involve comparing these observations to</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-15-20-57-43" data-release-tag="ct_image_analysis-2025-02-15_20-57-43">
+    <div class="gallery-header">
+        <h2>2025/02/15 20:57:43 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-15_20-57-43">ct_image_analysis-2025-02-15_20-57-43</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_20-57-43/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_20-57-43/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_20-57-43/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_20-57-43/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-15_20-54-06</p>
+<p>To analyze the 3D X-ray CT scan data of the <em>Reticulate Nummulites</em> from Morphosource.org, we can observe several aspects of the structural characteristics, material composition, and notable features or anomalies across different views of the specimen.</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li>
+<p><strong>Morphology</strong>: The structure appears to be composed of a series of ovoid and irregularly shaped elements, suggesting a complex internal architecture. The overall shape may indicate a specific growth form appropriate for its ecological niche.</p>
+</li>
+<li>
+<p><strong>Layers and Textures</strong>: There are visible layers in the segments, with varying surface textures that suggest differentiation in material density or composition. The irregularities and bumps on the surfaces indicate age-related wear or growth patterns.</p>
+</li>
+<li>
+<p><strong>Size and Scale</strong>: The dimensions of the specimen are consistent across the different views, with each element showing a range of sizes that may indicate different developmental stages or environmental conditions affecting growth.</p>
+</li>
+</ol>
+<h3>Material Composition</h3>
+<ol>
+<li>
+<p><strong>Mineralization</strong>: The scan data suggests the presence of calcitic or aragonitic mineralization, typical of fossilized gastropods or related organisms. The pale yellowish hue may indicate a calcite composition, which often retains finer details in fossilization.</p>
+</li>
+<li>
+<p><strong>Porosity</strong>: Some areas within the structure show signs of porosity, which may reflect organic features or vacuoles formed during the fossilization process. This porosity can be critical for understanding how the organism interacted with its environment.</p>
+</li>
+</ol>
+<h3>Notable Features and Anomalies</h3>
+<ol>
+<li>
+<p><strong>Anomalies in Structure</strong>: Some irregularities, such as cracks or void spaces, may point to post-mortem alterations or stress fractures that occurred during burial and diagenesis.</p>
+</li>
+<li>
+<p><strong>Symmetry</strong>: The overall symmetry of the specimen suggests a well-preserved organism, which could imply a less turbulent environment during its life, aiding in the fossilization process.</p>
+</li>
+<li>
+<p><strong>Erosion and Damage</strong>: Observations of specific areas reveal signs of erosion or damage, indicating potential biotic interactions or environmental factors after death. Identifying these can provide insights into the paleoecological conditions.</p>
+</li>
+</ol>
+<h3>Conclusion</h3>
+<p>The analyzed specimen, categorized under <em>Reticulate Nummulites</em>, presents numerous features worthy of in-depth study. Its structural integrity, combined with the observed porosity and magnetism of its layers, suggests an organism well-suited for its ecological role during its lifetime. Further analysis, possibly including isotopic studies, would</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
 
 <div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-15-20-50-34" data-release-tag="ct_image_analysis-2025-02-15_20-50-34">
     <div class="gallery-header">
@@ -316,213 +516,8 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 
 <div class="timeline-separator"></div>
 
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-15-19-53-43" data-release-tag="ct_image_analysis-2025-02-15_19-53-43">
-    <div class="gallery-header">
-        <h2>2025/02/15 19:53:43 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-15_19-53-43">ct_image_analysis-2025-02-15_19-53-43</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_19-53-43/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_19-53-43/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_19-53-43/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_19-53-43/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-15_19-43-12</p>
-<p>Analyzing the 3D X-ray CT scan data of the specimen from Morphosource.org reveals several structural characteristics, material compositions, and notable features or anomalies. Below is a detailed overview based on the provided images:</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li><strong>Overall Shape</strong>: The specimen exhibits an elongated, somewhat symmetrical shape, resembling a streamlined organism or fossil.</li>
-<li><strong>Surface Texture</strong>: The surfaces are irregular, with varying topographies indicating different patterns of growth or possible erosion. Some regions appear smooth, while others are more contoured or pocked.</li>
-<li><strong>Internal Structure</strong>: While the external morphology is prominent, the internal segmentation or chamber-like features suggest a complex internal arrangement, typical of certain marine organisms.</li>
-</ol>
-<h3>Material Composition</h3>
-<ol>
-<li><strong>Mineral Composition</strong>: The light color and texture hint at a mineralized structure, likely composed of calcite or aragonite, common in marine organisms like foraminifera or mollusks.</li>
-<li><strong>Density Variations</strong>: The irregular shapes and sizes of the features may indicate varying densities in the material, which may be due to different mineral compositions or the presence of organic matter.</li>
-<li><strong>Porosity</strong>: Notable areas appear porous, suggesting that the specimen has a lightweight structure, which is important for buoyancy in aquatic environments.</li>
-</ol>
-<h3>Notable Features</h3>
-<ol>
-<li><strong>Distinct Chambering</strong>: There are visible divisions within the structure, indicating a segmented body plan. This is typical in foraminifera and may suggest its ecological adaptations.</li>
-<li><strong>Potential Anomalies</strong>: Some regions exhibit odd formations or asymmetrical growth, possibly indicative of environmental stress or developmental abnormalities.</li>
-<li><strong>Surface Growth Patterns</strong>: Certain areas may display growth rings or layers, which can provide insight into the organism’s age or growth conditions.</li>
-</ol>
-<h3>Additional Observations</h3>
-<ul>
-<li><strong>View Variability</strong>: Different orientations provide comprehensive insights, allowing for an understanding of 3D morphology. Observations from various angles can highlight how structural features relate to one another spatially.</li>
-<li><strong>Imaging Quality</strong>: The resolution of the CT scans appears high enough to discern finer details, which is beneficial for evaluating fossil integrity and assessing past biological conditions.</li>
-</ul>
-<h3>Conclusion</h3>
-<p>The 3D X-ray CT analysis of the specimen reveals significant information regarding its structural and material characteristics, with identifiable notable features suggesting its ecological role and potential anomalies present in its formation. This analysis can provide vital insights into the specimen's biology, environment, and historical significance</p>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-15-19-40-36" data-release-tag="ct_image_analysis-2025-02-15_19-40-36">
-    <div class="gallery-header">
-        <h2>2025/02/15 19:40:36 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-15_19-40-36">ct_image_analysis-2025-02-15_19-40-36</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_19-40-36/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_19-40-36/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_19-40-36/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_19-40-36/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-15_19-36-22</p>
-<p>To analyze the 3D X-ray CT scan data from Morphosource.org based on the images you provided, here is a comprehensive overview of the specimen's structural characteristics, potential material composition, and notable features or anomalies.</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li><strong>Shape and Form</strong>:</li>
-<li>The specimen exhibits an elongated, somewhat globular shape, indicative of certain biological or geological structures.</li>
-<li>
-<p>There are regions of varying elevation, suggesting features such as lobes, grooves, or ridges, which may imply growth patterns or environmental adaptations.</p>
-</li>
-<li>
-<p><strong>Surface Texture</strong>:</p>
-</li>
-<li>The surface appears to be uneven with a combination of smooth and rough areas, indicating possible weathering or biological activity affecting the surface.</li>
-<li>
-<p>Textures may also suggest layering or sedimentary processes if this is a geological sample.</p>
-</li>
-<li>
-<p><strong>Orientation</strong>:</p>
-</li>
-<li>Different views show the three-dimensional nature of the specimen very well, making it possible to observe its volume and how light interacts with its surface.</li>
-</ol>
-<h3>Material Composition</h3>
-<ul>
-<li>While a direct analysis of material composition can't be completed without additional spectral data, the texture and coloration may suggest a mineral or organic composition. For example:</li>
-<li>A light tan or greyish color could indicate calcareous materials or bio-mineralization, often seen in certain types of fossils.</li>
-<li>The density of the material might suggest it is composed of calcite or aragonite, common in marine organisms.</li>
-</ul>
-<h3>Notable Features</h3>
-<ol>
-<li><strong>Surface Anomalies</strong>:</li>
-<li>
-<p>Certain areas appear to have unusual markings or indentations that could signify growth patterns, scars from environmental interactions, or fossilization processes.</p>
-</li>
-<li>
-<p><strong>Potential Anomalies</strong>:</p>
-</li>
-<li>
-<p>The presence of areas that seem to be more porous or have different textural patterns may suggest erosional features or the presence of internal cavities.</p>
-</li>
-<li>
-<p><strong>Variations Across Views</strong>:</p>
-</li>
-<li>
-<p>The multiple orientations reveal how certain features are either hidden or become prominent, indicating the intricate structural details that may be more easily appreciated from specific angles.</p>
-</li>
-<li>
-<p><strong>Interior Structures</strong>:</p>
-</li>
-<li>If visible in further sections or images, internal channels or voids could offer insights into the biological processes or environmental conditions during the organism's life or the formation of the specimen.</li>
-</ol>
-<h3>Conclusion</h3>
-<p>The 3D X-ray CT scan data allows for a thorough examination of the specimen, revealing critical details about its shape, texture, and possible composition. Continued analysis, possibly including cross-sectional scans or higher-resolution imaging</p>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
 <div class="pagination-container">
-    <a href="image_analysis_page12.html" class="pagination-button">Previous</a>    <a href="image_analysis.html" class="pagination-page">1</a>    <a href="image_analysis_page2.html" class="pagination-page">2</a>    <a href="image_analysis_page3.html" class="pagination-page">3</a>    <a href="image_analysis_page4.html" class="pagination-page">4</a>    <a href="image_analysis_page5.html" class="pagination-page">5</a>    <a href="image_analysis_page6.html" class="pagination-page">6</a>    <a href="image_analysis_page7.html" class="pagination-page">7</a>    <a href="image_analysis_page8.html" class="pagination-page">8</a>    <a href="image_analysis_page9.html" class="pagination-page">9</a>    <a href="image_analysis_page10.html" class="pagination-page">10</a>    <a href="image_analysis_page11.html" class="pagination-page">11</a>    <a href="image_analysis_page12.html" class="pagination-page">12</a>    <span class="pagination-page current">13</span>    <a href="image_analysis_page14.html" class="pagination-page">14</a>    <a href="image_analysis_page15.html" class="pagination-page">15</a>    <a href="image_analysis_page16.html" class="pagination-page">16</a>    <a href="image_analysis_page17.html" class="pagination-page">17</a>    <a href="image_analysis_page18.html" class="pagination-page">18</a>    <a href="image_analysis_page19.html" class="pagination-page">19</a>    <a href="image_analysis_page20.html" class="pagination-page">20</a>    <a href="image_analysis_page21.html" class="pagination-page">21</a>    <a href="image_analysis_page22.html" class="pagination-page">22</a>    <a href="image_analysis_page23.html" class="pagination-page">23</a>    <a href="image_analysis_page24.html" class="pagination-page">24</a>    <a href="image_analysis_page25.html" class="pagination-page">25</a>    <a href="image_analysis_page26.html" class="pagination-page">26</a>    <a href="image_analysis_page27.html" class="pagination-page">27</a>    <a href="image_analysis_page28.html" class="pagination-page">28</a>    <a href="image_analysis_page29.html" class="pagination-page">29</a>    <a href="image_analysis_page30.html" class="pagination-page">30</a>    <a href="image_analysis_page31.html" class="pagination-page">31</a>    <a href="image_analysis_page32.html" class="pagination-page">32</a>    <a href="image_analysis_page33.html" class="pagination-page">33</a>    <a href="image_analysis_page34.html" class="pagination-page">34</a>    <a href="image_analysis_page35.html" class="pagination-page">35</a>    <a href="image_analysis_page14.html" class="pagination-button">Next</a>
+    <a href="image_analysis_page12.html" class="pagination-button">Previous</a>    <a href="image_analysis.html" class="pagination-page">1</a>    <a href="image_analysis_page2.html" class="pagination-page">2</a>    <a href="image_analysis_page3.html" class="pagination-page">3</a>    <a href="image_analysis_page4.html" class="pagination-page">4</a>    <a href="image_analysis_page5.html" class="pagination-page">5</a>    <a href="image_analysis_page6.html" class="pagination-page">6</a>    <a href="image_analysis_page7.html" class="pagination-page">7</a>    <a href="image_analysis_page8.html" class="pagination-page">8</a>    <a href="image_analysis_page9.html" class="pagination-page">9</a>    <a href="image_analysis_page10.html" class="pagination-page">10</a>    <a href="image_analysis_page11.html" class="pagination-page">11</a>    <a href="image_analysis_page12.html" class="pagination-page">12</a>    <span class="pagination-page current">13</span>    <a href="image_analysis_page14.html" class="pagination-page">14</a>    <a href="image_analysis_page15.html" class="pagination-page">15</a>    <a href="image_analysis_page16.html" class="pagination-page">16</a>    <a href="image_analysis_page17.html" class="pagination-page">17</a>    <a href="image_analysis_page18.html" class="pagination-page">18</a>    <a href="image_analysis_page19.html" class="pagination-page">19</a>    <a href="image_analysis_page20.html" class="pagination-page">20</a>    <a href="image_analysis_page21.html" class="pagination-page">21</a>    <a href="image_analysis_page22.html" class="pagination-page">22</a>    <a href="image_analysis_page23.html" class="pagination-page">23</a>    <a href="image_analysis_page24.html" class="pagination-page">24</a>    <a href="image_analysis_page25.html" class="pagination-page">25</a>    <a href="image_analysis_page26.html" class="pagination-page">26</a>    <a href="image_analysis_page27.html" class="pagination-page">27</a>    <a href="image_analysis_page28.html" class="pagination-page">28</a>    <a href="image_analysis_page29.html" class="pagination-page">29</a>    <a href="image_analysis_page30.html" class="pagination-page">30</a>    <a href="image_analysis_page31.html" class="pagination-page">31</a>    <a href="image_analysis_page32.html" class="pagination-page">32</a>    <a href="image_analysis_page33.html" class="pagination-page">33</a>    <a href="image_analysis_page34.html" class="pagination-page">34</a>    <a href="image_analysis_page35.html" class="pagination-page">35</a>    <a href="image_analysis_page36.html" class="pagination-page">36</a>    <a href="image_analysis_page14.html" class="pagination-button">Next</a>
 </div>
       </div>
 
