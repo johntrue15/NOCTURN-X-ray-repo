@@ -1,12 +1,13 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000365014?locale=en",
-  "id": "000365014",
-  "Object": "LSUMZ:Herps:97987",
-  "Taxonomy": "Mantophryne lateralis",
+  "title": "Head [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000077374?locale=en",
+  "id": "000077374",
+  "Object": "LSUMZ:Herps:98702",
+  "Taxonomy": "Lobulia elegansPlestiodon elegans",
+  "Element or Part": "head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Chris Austin",
-  "Date Uploaded": "05/24/2021",
+  "Data Manager": "Zachary Randall",
+  "Date Uploaded": "05/10/2019",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
