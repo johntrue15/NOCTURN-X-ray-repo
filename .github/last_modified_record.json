@@ -1,14 +1,12 @@
 {
-  "title": "Puma Concolor (Femur)",
-  "detail_url": "https://www.morphosource.org/concern/media/000722070?locale=en",
-  "id": "000722070",
-  "Object": "MCC:MCC:991V",
-  "Taxonomy": "Puma concolor",
-  "Element or Part": "Femur (proximal)",
+  "title": "Skull [Image] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722137?locale=en",
+  "id": "000722137",
+  "Object": "OMNH:Amphibians:39112.0",
+  "Taxonomy": "Lithobates areolatus",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Tito Aureliano",
-  "Date Uploaded": "03/19/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Data Manager": "Owen Edwards",
+  "Date Uploaded": "03/20/2025",
+  "Publication Status": "Open Download"
 }
