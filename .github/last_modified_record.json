@@ -1,12 +1,12 @@
 {
-  "title": "Dice Ct Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000603907?locale=en",
-  "id": "000603907",
-  "Object": "UF:Herp:72672",
-  "Taxonomy": "Gekko gecko",
-  "Element or Part": "diceCT whole body",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722487?locale=en",
+  "id": "000722487",
+  "Object": "OMNH:Amphibians:42021.0",
+  "Taxonomy": "Lithobates areolatus",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "02/12/2024",
+  "Data Manager": "Owen Edwards",
+  "Date Uploaded": "03/20/2025",
   "Publication Status": "Open Download"
 }
