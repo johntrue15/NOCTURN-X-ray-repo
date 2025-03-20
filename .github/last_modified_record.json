@@ -1,13 +1,12 @@
 {
-  "title": "Skull And Mandible [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722418?locale=en",
-  "id": "000722418",
-  "Object": "MCZ:Herp:R-126649",
-  "Taxonomy": "Lioheterophis iheringi",
-  "Element or Part": "skull and mandible",
+  "title": "Element Unspecified [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000365014?locale=en",
+  "id": "000365014",
+  "Object": "LSUMZ:Herps:97987",
+  "Taxonomy": "Mantophryne lateralis",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Matt Gage",
-  "Date Uploaded": "03/20/2025",
+  "Data Manager": "Chris Austin",
+  "Date Uploaded": "05/24/2021",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
