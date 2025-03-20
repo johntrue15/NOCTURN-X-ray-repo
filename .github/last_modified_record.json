@@ -1,12 +1,12 @@
 {
-  "title": "Cocker Spaniel Partial Skull, Cribriform Plate [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000653901?locale=en",
-  "id": "000653901",
-  "Object": "cas:mam:32237",
-  "Taxonomy": "Canis familiaris Cocker Spaniel",
-  "Element or Part": "Cocker Spaniel partial skull, cribriform plate",
+  "title": "Chow Chow Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000649776?locale=en",
+  "id": "000649776",
+  "Object": "cas:mam:26735",
+  "Taxonomy": "Canis familiaris Chow chow",
+  "Element or Part": "Chow chow skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Deborah Bird",
-  "Date Uploaded": "08/03/2024",
+  "Date Uploaded": "07/19/2024",
   "Publication Status": "Restricted Download"
 }
