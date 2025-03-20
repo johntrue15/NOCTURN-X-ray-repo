@@ -1,11 +1,13 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000718263?locale=en",
-  "id": "000718263",
-  "Object": "MSB:Mamm:MSB:Mamm:24227",
-  "Taxonomy": "Dipodomys merriami",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000114997?locale=en",
+  "id": "000114997",
+  "Object": "igm:MAE:3/76",
+  "Taxonomy": "Mimeosaurus sp.",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Leila Siciliano-Martina",
-  "Date Uploaded": "03/10/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "AMNH VP Team",
+  "Date Uploaded": "04/28/2020",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
