@@ -1,13 +1,13 @@
 {
   "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000078296?locale=en",
-  "id": "000078296",
-  "Object": "LSUMZ:Herps:93563",
-  "Taxonomy": "Toxicocalamus loriae",
+  "detail_url": "https://www.morphosource.org/concern/media/000113744?locale=en",
+  "id": "000113744",
+  "Object": "LSUMZ:Herps:27295",
+  "Taxonomy": "Epicrionops bicolor",
   "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Zachary Randall",
-  "Date Uploaded": "05/22/2019",
+  "Data Manager": "David Blackburn",
+  "Date Uploaded": "03/25/2020",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
