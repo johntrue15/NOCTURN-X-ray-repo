@@ -1,12 +1,13 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722193?locale=en",
-  "id": "000722193",
-  "Object": "OMNH:Amphibians:42017.0",
-  "Taxonomy": "Lithobates areolatus",
-  "Element or Part": "skull",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000384950?locale=en",
+  "id": "000384950",
+  "Object": "LSUMZ:Herps:90394",
+  "Taxonomy": "Deinagkistrodon acutus",
+  "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Owen Edwards",
-  "Date Uploaded": "03/20/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "Chris Austin",
+  "Date Uploaded": "09/24/2021",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
