@@ -1,13 +1,12 @@
 {
-  "title": "Half Head (Roi2) [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722467?locale=en",
-  "id": "000722467",
-  "Object": "NYIT:NYITCOM_ANAT",
-  "Taxonomy": "Gallus gallus var. domesticus",
-  "Element or Part": "Half head (ROI2)",
+  "title": "Dice Ct Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000603907?locale=en",
+  "id": "000603907",
+  "Object": "UF:Herp:72672",
+  "Taxonomy": "Gekko gecko",
+  "Element or Part": "diceCT whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Julia Molnar",
-  "Date Uploaded": "03/20/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Educational Use Permitted"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "02/12/2024",
+  "Publication Status": "Open Download"
 }
