@@ -1,13 +1,13 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000167328?locale=en",
-  "id": "000167328",
-  "Object": "LSUMZ:Herps:83838",
-  "Taxonomy": "Micropisthodon ochraceus",
-  "Element or Part": "whole body",
+  "title": "Skull [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000078296?locale=en",
+  "id": "000078296",
+  "Object": "LSUMZ:Herps:93563",
+  "Taxonomy": "Toxicocalamus loriae",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Zachary Randall",
-  "Date Uploaded": "11/24/2020",
-  "Publication Status": "Open Download",
+  "Date Uploaded": "05/22/2019",
+  "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
