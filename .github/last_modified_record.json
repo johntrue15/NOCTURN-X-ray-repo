@@ -1,8 +1,8 @@
 {
-  "title": "Skull [Image] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722142?locale=en",
-  "id": "000722142",
-  "Object": "OMNH:Amphibians:39228.0",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722193?locale=en",
+  "id": "000722193",
+  "Object": "OMNH:Amphibians:42017.0",
   "Taxonomy": "Lithobates areolatus",
   "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
