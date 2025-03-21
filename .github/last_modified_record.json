@@ -1,13 +1,13 @@
 {
-  "title": "Left Proximal Ulna [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000581413?locale=en",
-  "id": "000581413",
-  "Object": "IPS:IPS58443.17",
-  "Taxonomy": "Pliobates cataloniae",
-  "Element or Part": "Left Proximal Ulna",
+  "title": "Skull And Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722413?locale=en",
+  "id": "000722413",
+  "Object": "MCZ:Herp:R-126648",
+  "Taxonomy": "Lioheterophis iheringi",
+  "Element or Part": "skull and mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Open Data ICP official profile",
-  "Date Uploaded": "11/13/2023",
-  "Publication Status": "Open Download",
+  "Data Manager": "Matt Gage",
+  "Date Uploaded": "03/20/2025",
+  "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
