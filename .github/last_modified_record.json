@@ -1,13 +1,12 @@
 {
-  "title": "Skull And Mandible [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722413?locale=en",
-  "id": "000722413",
-  "Object": "MCZ:Herp:R-126648",
-  "Taxonomy": "Lioheterophis iheringi",
-  "Element or Part": "skull and mandible",
+  "title": "Skeleton [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000056952?locale=en",
+  "id": "000056952",
+  "Object": "UF:Mammals:10177",
+  "Taxonomy": "Chironectes minimus",
+  "Element or Part": "Skeleton",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Matt Gage",
-  "Date Uploaded": "03/20/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "08/28/2018",
+  "Publication Status": "Open Download"
 }
