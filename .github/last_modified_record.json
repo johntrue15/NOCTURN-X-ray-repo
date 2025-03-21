@@ -1,12 +1,13 @@
 {
-  "title": "Bosten Terrier Cas Mam26499",
-  "detail_url": "https://www.morphosource.org/concern/media/000649711?locale=en",
-  "id": "000649711",
-  "Object": "cas:mam:26499",
-  "Taxonomy": "Canis familiaris Boston terrier",
-  "Element or Part": "Boston terrier skull",
+  "title": "Left Proximal Ulna [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000581413?locale=en",
+  "id": "000581413",
+  "Object": "IPS:IPS58443.17",
+  "Taxonomy": "Pliobates cataloniae",
+  "Element or Part": "Left Proximal Ulna",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Deborah Bird",
-  "Date Uploaded": "07/19/2024",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Open Data ICP official profile",
+  "Date Uploaded": "11/13/2023",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
