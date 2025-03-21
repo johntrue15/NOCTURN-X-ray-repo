@@ -1,12 +1,13 @@
 {
-  "title": "Skeleton [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000056952?locale=en",
-  "id": "000056952",
-  "Object": "UF:Mammals:10177",
-  "Taxonomy": "Chironectes minimus",
-  "Element or Part": "Skeleton",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000100312?locale=en",
+  "id": "000100312",
+  "Object": "USNM:MAMM:USNM 507338",
+  "Taxonomy": "Canis lupus arctos",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "08/28/2018",
-  "Publication Status": "Open Download"
+  "Data Manager": "Department of Vertebrate Zoology National Museum of Natural History",
+  "Date Uploaded": "02/04/2020",
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined"
 }
