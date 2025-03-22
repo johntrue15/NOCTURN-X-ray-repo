@@ -1,12 +1,13 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722670?locale=en",
-  "id": "000722670",
-  "Object": "UNED:GBE:450",
-  "Taxonomy": "Taphrosphys ippolitoi",
-  "Element or Part": "skull",
+  "title": "Pelvic Region [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722674?locale=en",
+  "id": "000722674",
+  "Object": "SAMA:Herpetology:R42903",
+  "Taxonomy": "Ctenotus astarte",
+  "Element or Part": "pelvic region",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Marcos Mart\u00edn Jim\u00e9nez",
+  "Data Manager": "Natasha Stepanova",
   "Date Uploaded": "03/22/2025",
-  "Publication Status": "Restricted Download"
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
