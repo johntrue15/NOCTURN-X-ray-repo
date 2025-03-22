@@ -1,13 +1,12 @@
 {
-  "title": "Pelvic Region [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722674?locale=en",
-  "id": "000722674",
-  "Object": "SAMA:Herpetology:R42903",
-  "Taxonomy": "Ctenotus astarte",
-  "Element or Part": "pelvic region",
+  "title": "Dentary, Partial [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722681?locale=en",
+  "id": "000722681",
+  "Object": "uf:uf:563074",
+  "Taxonomy": "Mesoprocta sp.Mesoprocta hypsodus",
+  "Element or Part": "dentary, partial",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Natasha Stepanova",
+  "Data Manager": "Rachel Narducci",
   "Date Uploaded": "03/22/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Publication Status": "Restricted Download"
 }
