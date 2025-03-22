@@ -1,12 +1,12 @@
 {
-  "title": "Dentary, Partial [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722681?locale=en",
-  "id": "000722681",
-  "Object": "uf:uf:563074",
-  "Taxonomy": "Mesoprocta sp.Mesoprocta hypsodus",
-  "Element or Part": "dentary, partial",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722670?locale=en",
+  "id": "000722670",
+  "Object": "UNED:GBE:450",
+  "Taxonomy": "Taphrosphys ippolitoi",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Rachel Narducci",
+  "Data Manager": "Marcos Mart\u00edn Jim\u00e9nez",
   "Date Uploaded": "03/22/2025",
   "Publication Status": "Restricted Download"
 }
