@@ -1,13 +1,12 @@
 {
-  "title": "Head [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000078514?locale=en",
-  "id": "000078514",
-  "Object": "LSUMZ:Herps:96093",
-  "Taxonomy": "Tropidonophis picturatus",
-  "Element or Part": "head",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722670?locale=en",
+  "id": "000722670",
+  "Object": "UNED:GBE:450",
+  "Taxonomy": "Taphrosphys ippolitoi",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Zachary Randall",
-  "Date Uploaded": "05/23/2019",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Marcos Mart\u00edn Jim\u00e9nez",
+  "Date Uploaded": "03/22/2025",
+  "Publication Status": "Restricted Download"
 }
