@@ -1,11 +1,12 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722160?locale=en",
-  "id": "000722160",
-  "Object": "OMNH:Amphibians:39470.0",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722706?locale=en",
+  "id": "000722706",
+  "Object": "OMNH:Amphibians:42024.0",
   "Taxonomy": "Lithobates areolatus",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Owen Edwards",
-  "Date Uploaded": "03/20/2025",
+  "Date Uploaded": "03/23/2025",
   "Publication Status": "Open Download"
 }
