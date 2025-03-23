@@ -1,9 +1,9 @@
 {
   "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722766?locale=en",
-  "id": "000722766",
-  "Object": "omnh:amphibians:50023",
-  "Taxonomy": "Lithobates palustris",
+  "detail_url": "https://www.morphosource.org/concern/media/000722771?locale=en",
+  "id": "000722771",
+  "Object": "omnh:reptiles:50022",
+  "Taxonomy": "Lithobates sphenocephalus",
   "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Owen Edwards",
