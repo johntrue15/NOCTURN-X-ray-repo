@@ -1,12 +1,11 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722699?locale=en",
-  "id": "000722699",
-  "Object": "UNED:GBE:450",
-  "Taxonomy": "Taphrosphys ippolitoi",
-  "Element or Part": "skull",
+  "title": "Element Unspecified [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722160?locale=en",
+  "id": "000722160",
+  "Object": "OMNH:Amphibians:39470.0",
+  "Taxonomy": "Lithobates areolatus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Marcos Mart\u00edn Jim\u00e9nez",
-  "Date Uploaded": "03/22/2025",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Owen Edwards",
+  "Date Uploaded": "03/20/2025",
+  "Publication Status": "Open Download"
 }
