@@ -1,12 +1,12 @@
 {
-  "title": "Femur [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000391786?locale=en",
-  "id": "000391786",
-  "Object": "mnhn.f:mad:7405",
-  "Taxonomy": "Megaladapis sp.",
-  "Element or Part": "Femur",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722946?locale=en",
+  "id": "000722946",
+  "Object": "COV:herp:A499",
+  "Taxonomy": "Lithobates capito",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Mus\u00e9um national d'histoire naturelle \u00e0 Paris",
-  "Date Uploaded": "10/19/2021",
+  "Data Manager": "Owen Edwards",
+  "Date Uploaded": "03/24/2025",
   "Publication Status": "Open Download"
 }
