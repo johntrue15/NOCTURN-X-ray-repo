@@ -1,12 +1,12 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000723010?locale=en",
-  "id": "000723010",
-  "Object": "omnh:amphibians:50022",
-  "Taxonomy": "Lithobates sphenocephalus",
-  "Element or Part": "Skull",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722776?locale=en",
+  "id": "000722776",
+  "Object": "omnh:amphibians:50021",
+  "Taxonomy": "Lithobates palustris",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Owen Edwards",
-  "Date Uploaded": "03/24/2025",
+  "Date Uploaded": "03/23/2025",
   "Publication Status": "Open Download"
 }
