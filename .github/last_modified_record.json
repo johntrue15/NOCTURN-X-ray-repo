@@ -1,13 +1,13 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000642349?locale=en",
-  "id": "000642349",
-  "Object": "ypm:vz:007573",
-  "Taxonomy": "Phyllostomus discolor",
+  "title": "Abudefduf bengalensis skull",
+  "detail_url": "https://www.morphosource.org/concern/media/000722881?locale=en",
+  "id": "000722881",
+  "Object": "ypm:vz:006602",
+  "Taxonomy": "Abudefduf bengalensis",
   "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Nelson Rios",
-  "Date Uploaded": "07/04/2024",
+  "Data Manager": "Keiffer Williams",
+  "Date Uploaded": "03/24/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
