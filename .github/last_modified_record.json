@@ -1,12 +1,13 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722776?locale=en",
-  "id": "000722776",
-  "Object": "omnh:amphibians:50021",
-  "Taxonomy": "Lithobates palustris",
-  "Element or Part": "skull",
+  "title": "Scaphoid [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000479216?locale=en",
+  "id": "000479216",
+  "Object": "dlc:1607m",
+  "Taxonomy": "Cheirogaleus medius",
+  "Element or Part": "Scaphoid",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Owen Edwards",
-  "Date Uploaded": "03/23/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "Alisha Anaya",
+  "Date Uploaded": "11/02/2022",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
