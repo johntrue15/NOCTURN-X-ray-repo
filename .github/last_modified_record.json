@@ -1,12 +1,13 @@
 {
-  "title": "Pulleniatina Primalis",
-  "detail_url": "https://www.morphosource.org/concern/media/000717815?locale=en",
-  "id": "000717815",
-  "Object": "nhmuk:PM PF 75514",
-  "Taxonomy": "Pulleniatina primalis",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000642349?locale=en",
+  "id": "000642349",
+  "Object": "ypm:vz:007573",
+  "Taxonomy": "Phyllostomus discolor",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Alessio Fabbrini",
-  "Date Uploaded": "03/10/2025",
-  "Publication Status": "Open Download",
+  "Data Manager": "Nelson Rios",
+  "Date Uploaded": "07/04/2024",
+  "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
