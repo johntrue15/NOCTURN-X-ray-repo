@@ -1,13 +1,12 @@
 {
-  "title": "Abudefduf bengalensis skull",
-  "detail_url": "https://www.morphosource.org/concern/media/000722881?locale=en",
-  "id": "000722881",
-  "Object": "ypm:vz:006602",
-  "Taxonomy": "Abudefduf bengalensis",
-  "Element or Part": "Skull",
+  "title": "Full Specimen [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722929?locale=en",
+  "id": "000722929",
+  "Object": "BYU:Herp:BYU:Herp:41975",
+  "Taxonomy": "Lioheterophis iheringi",
+  "Element or Part": "Full specimen",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Keiffer Williams",
+  "Data Manager": "Edward Stanley",
   "Date Uploaded": "03/24/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Publication Status": "Open Download"
 }
