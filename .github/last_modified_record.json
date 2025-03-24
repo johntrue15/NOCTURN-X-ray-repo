@@ -1,13 +1,13 @@
 {
-  "title": "Lunate [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000479712?locale=en",
-  "id": "000479712",
-  "Object": "USNM:MAMM:USNM A35260",
-  "Taxonomy": "Eulemur mongozEulemur fulvus mongoz",
-  "Element or Part": "Lunate",
+  "title": "Hamate [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000479367?locale=en",
+  "id": "000479367",
+  "Object": "dlc:6788m",
+  "Taxonomy": "Daubentonia madagascariensis",
+  "Element or Part": "Hamate",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Department of Vertebrate Zoology National Museum of Natural History",
+  "Data Manager": "Alisha Anaya",
   "Date Uploaded": "11/02/2022",
   "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Rights Statement": "In Copyright"
 }
