@@ -1,13 +1,11 @@
 {
-  "title": "Manual Intermediate Phalanx 5 [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000526479?locale=en",
-  "id": "000526479",
-  "Object": "AMNH:Mammals:M-183285",
-  "Taxonomy": "Callimico goeldii",
-  "Element or Part": "Manual Intermediate Phalanx 5",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722995?locale=en",
+  "id": "000722995",
+  "Object": "omnh:amphibians:50032",
+  "Taxonomy": "Lithobates areolatus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "AMNH Mammalogy Department",
-  "Date Uploaded": "05/22/2023",
-  "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Data Manager": "Owen Edwards",
+  "Date Uploaded": "03/24/2025",
+  "Publication Status": "Open Download"
 }
