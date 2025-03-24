@@ -1,12 +1,13 @@
 {
-  "title": "Foot [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000678185?locale=en",
-  "id": "000678185",
-  "Object": "USNM:MAMM:USNM 396163",
-  "Taxonomy": "Felis catus",
-  "Element or Part": "Foot",
+  "title": "Hand Proximal Phalanx 2 [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000677504?locale=en",
+  "id": "000677504",
+  "Object": "AMNH:Mammals:M-267607",
+  "Taxonomy": "Potos flavus",
+  "Element or Part": "Hand Proximal Phalanx 2",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Sarah Ouda",
-  "Date Uploaded": "11/04/2024",
-  "Publication Status": "Restricted Download"
+  "Date Uploaded": "11/01/2024",
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined"
 }
