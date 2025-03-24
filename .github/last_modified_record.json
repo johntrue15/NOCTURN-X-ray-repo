@@ -1,12 +1,12 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722803?locale=en",
-  "id": "000722803",
-  "Object": "omnh:amphibians:50018",
-  "Taxonomy": "Lithobates areolatusTaxonomy indet.",
-  "Element or Part": "skull",
+  "title": "Head [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722813?locale=en",
+  "id": "000722813",
+  "Object": "BYU:Herp:BYU:Herp:41975",
+  "Taxonomy": "Lioheterophis iheringi",
+  "Element or Part": "Head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Owen Edwards",
-  "Date Uploaded": "03/23/2025",
+  "Data Manager": "Edward Stanley",
+  "Date Uploaded": "03/24/2025",
   "Publication Status": "Open Download"
 }
