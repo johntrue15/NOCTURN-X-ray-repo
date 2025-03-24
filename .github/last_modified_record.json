@@ -1,13 +1,13 @@
 {
-  "title": "Pisiform [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000479262?locale=en",
-  "id": "000479262",
-  "Object": "dlc:6604m",
-  "Taxonomy": "Daubentonia madagascariensis",
-  "Element or Part": "Pisiform",
+  "title": "Talus [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000480121?locale=en",
+  "id": "000480121",
+  "Object": "dlc:1317f",
+  "Taxonomy": "Hapalemur griseus",
+  "Element or Part": "Talus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Alisha Anaya",
-  "Date Uploaded": "11/02/2022",
+  "Date Uploaded": "11/03/2022",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
