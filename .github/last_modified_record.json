@@ -1,13 +1,13 @@
 {
-  "title": "Hand And Foot [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000599708?locale=en",
-  "id": "000599708",
-  "Object": "FMNH:Mammals:43962",
-  "Taxonomy": "Vulpes vulpes",
-  "Element or Part": "Hand and foot",
+  "title": "Hamate [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000479411?locale=en",
+  "id": "000479411",
+  "Object": "dlc:1087f",
+  "Taxonomy": "Galago moholi",
+  "Element or Part": "Hamate",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Sarah Ouda",
-  "Date Uploaded": "01/26/2024",
-  "Publication Status": "Restricted Download",
+  "Data Manager": "Alisha Anaya",
+  "Date Uploaded": "11/02/2022",
+  "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
