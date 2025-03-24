@@ -1,13 +1,13 @@
 {
-  "title": "Talus [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000480121?locale=en",
-  "id": "000480121",
-  "Object": "dlc:1317f",
-  "Taxonomy": "Hapalemur griseus",
-  "Element or Part": "Talus",
+  "title": "Hand And Foot [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000599708?locale=en",
+  "id": "000599708",
+  "Object": "FMNH:Mammals:43962",
+  "Taxonomy": "Vulpes vulpes",
+  "Element or Part": "Hand and foot",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Alisha Anaya",
-  "Date Uploaded": "11/03/2022",
-  "Publication Status": "Open Download",
+  "Data Manager": "Sarah Ouda",
+  "Date Uploaded": "01/26/2024",
+  "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
