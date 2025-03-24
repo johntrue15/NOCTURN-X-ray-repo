@@ -1,13 +1,13 @@
 {
-  "title": "Centrale [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000502833?locale=en",
-  "id": "000502833",
-  "Object": "AMNH:Mammals:M-185643",
-  "Taxonomy": "Daubentonia madagascariensis",
-  "Element or Part": "Centrale",
+  "title": "Manual Intermediate Phalanx 5 [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000526479?locale=en",
+  "id": "000526479",
+  "Object": "AMNH:Mammals:M-183285",
+  "Taxonomy": "Callimico goeldii",
+  "Element or Part": "Manual Intermediate Phalanx 5",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "AMNH Mammalogy Department",
-  "Date Uploaded": "03/13/2023",
+  "Date Uploaded": "05/22/2023",
   "Publication Status": "Open Download",
   "Rights Statement": "Copyright Undetermined"
 }
