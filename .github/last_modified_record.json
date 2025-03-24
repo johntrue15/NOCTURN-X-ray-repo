@@ -1,13 +1,13 @@
 {
-  "title": "Pedal Distal Phalanx 5 [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000500365?locale=en",
-  "id": "000500365",
-  "Object": "AMNH:Mammals:M-183291",
-  "Taxonomy": "Callimico goeldii",
-  "Element or Part": "Pedal Distal Phalanx 5",
+  "title": "Centrale [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000502833?locale=en",
+  "id": "000502833",
+  "Object": "AMNH:Mammals:M-185643",
+  "Taxonomy": "Daubentonia madagascariensis",
+  "Element or Part": "Centrale",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "AMNH Mammalogy Department",
-  "Date Uploaded": "03/02/2023",
+  "Date Uploaded": "03/13/2023",
   "Publication Status": "Open Download",
   "Rights Statement": "Copyright Undetermined"
 }
