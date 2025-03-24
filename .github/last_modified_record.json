@@ -1,12 +1,13 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722946?locale=en",
-  "id": "000722946",
-  "Object": "COV:herp:A499",
-  "Taxonomy": "Lithobates capito",
-  "Element or Part": "Skull",
+  "title": "Pedal Proximal Phalanx 3 [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000500394?locale=en",
+  "id": "000500394",
+  "Object": "AMNH:Mammals:M-183291",
+  "Taxonomy": "Callimico goeldii",
+  "Element or Part": "Pedal Proximal Phalanx 3",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Owen Edwards",
-  "Date Uploaded": "03/24/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "AMNH Mammalogy Department",
+  "Date Uploaded": "03/02/2023",
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined"
 }
