@@ -1,13 +1,13 @@
 {
-  "title": "Navicular [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000502853?locale=en",
-  "id": "000502853",
-  "Object": "USNM:MAMM:USNM 305066",
-  "Taxonomy": "Daubentonia madagascariensis",
-  "Element or Part": "Navicular",
+  "title": "Lunate [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000479712?locale=en",
+  "id": "000479712",
+  "Object": "USNM:MAMM:USNM A35260",
+  "Taxonomy": "Eulemur mongozEulemur fulvus mongoz",
+  "Element or Part": "Lunate",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Department of Vertebrate Zoology National Museum of Natural History",
-  "Date Uploaded": "03/13/2023",
+  "Date Uploaded": "11/02/2022",
   "Publication Status": "Open Download",
   "Rights Statement": "Copyright Undetermined"
 }
