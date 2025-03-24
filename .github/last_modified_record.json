@@ -1,13 +1,13 @@
 {
-  "title": "Trapezoid [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000526531?locale=en",
-  "id": "000526531",
-  "Object": "AMNH:Mammals:M-183285",
+  "title": "Pedal Proximal Phalanx 1 [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000500386?locale=en",
+  "id": "000500386",
+  "Object": "AMNH:Mammals:M-183291",
   "Taxonomy": "Callimico goeldii",
-  "Element or Part": "Trapezoid",
+  "Element or Part": "Pedal Proximal Phalanx 1",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "AMNH Mammalogy Department",
-  "Date Uploaded": "05/22/2023",
+  "Date Uploaded": "03/02/2023",
   "Publication Status": "Open Download",
   "Rights Statement": "Copyright Undetermined"
 }
