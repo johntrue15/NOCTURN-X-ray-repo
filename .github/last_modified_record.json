@@ -1,12 +1,12 @@
 {
-  "title": "Full Specimen [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722929?locale=en",
-  "id": "000722929",
-  "Object": "BYU:Herp:BYU:Herp:41975",
-  "Taxonomy": "Lioheterophis iheringi",
-  "Element or Part": "Full specimen",
+  "title": "Femur [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000391786?locale=en",
+  "id": "000391786",
+  "Object": "mnhn.f:mad:7405",
+  "Taxonomy": "Megaladapis sp.",
+  "Element or Part": "Femur",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Edward Stanley",
-  "Date Uploaded": "03/24/2025",
+  "Data Manager": "Mus\u00e9um national d'histoire naturelle \u00e0 Paris",
+  "Date Uploaded": "10/19/2021",
   "Publication Status": "Open Download"
 }
