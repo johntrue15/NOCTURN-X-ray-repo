@@ -1,13 +1,13 @@
 {
-  "title": "Scaphoid [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000479216?locale=en",
-  "id": "000479216",
-  "Object": "dlc:1607m",
-  "Taxonomy": "Cheirogaleus medius",
-  "Element or Part": "Scaphoid",
+  "title": "Navicular [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000502853?locale=en",
+  "id": "000502853",
+  "Object": "USNM:MAMM:USNM 305066",
+  "Taxonomy": "Daubentonia madagascariensis",
+  "Element or Part": "Navicular",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Alisha Anaya",
-  "Date Uploaded": "11/02/2022",
+  "Data Manager": "Department of Vertebrate Zoology National Museum of Natural History",
+  "Date Uploaded": "03/13/2023",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "Copyright Undetermined"
 }
