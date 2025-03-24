@@ -1,12 +1,12 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722858?locale=en",
-  "id": "000722858",
-  "Object": "OMNH:Amphibians:39228.0",
-  "Taxonomy": "Lithobates areolatus",
-  "Element or Part": "skull",
+  "title": "Pulleniatina Primalis",
+  "detail_url": "https://www.morphosource.org/concern/media/000717815?locale=en",
+  "id": "000717815",
+  "Object": "nhmuk:PM PF 75514",
+  "Taxonomy": "Pulleniatina primalis",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Owen Edwards",
-  "Date Uploaded": "03/24/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "Alessio Fabbrini",
+  "Date Uploaded": "03/10/2025",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
