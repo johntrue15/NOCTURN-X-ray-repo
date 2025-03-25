@@ -1,13 +1,11 @@
 {
-  "title": "Skeleton [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000723165?locale=en",
-  "id": "000723165",
-  "Object": "MCZ:Herp:A-150117",
-  "Taxonomy": "Hyla imitator",
-  "Element or Part": "skeleton",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000723185?locale=en",
+  "id": "000723185",
+  "Object": "msb:mammal specimens:105253",
+  "Taxonomy": "Dipodomys deserti",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Matt Gage",
+  "Data Manager": "Leila Siciliano-Martina",
   "Date Uploaded": "03/25/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Publication Status": "Open Download"
 }
