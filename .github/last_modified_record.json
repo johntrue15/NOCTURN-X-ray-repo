@@ -1,12 +1,13 @@
 {
-  "title": "Hand [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000678195?locale=en",
-  "id": "000678195",
-  "Object": "USNM:MAMM:USNM 396163",
-  "Taxonomy": "Felis catus",
-  "Element or Part": "Hand",
+  "title": "Second Metatarsal [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000520759?locale=en",
+  "id": "000520759",
+  "Object": "AMNH:Mammals:M-106272",
+  "Taxonomy": "Nasalis larvatus",
+  "Element or Part": "Second metatarsal",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Sarah Ouda",
-  "Date Uploaded": "11/04/2024",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "AMNH Mammalogy Department",
+  "Date Uploaded": "05/06/2023",
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined"
 }
