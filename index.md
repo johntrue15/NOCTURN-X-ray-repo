@@ -2,14 +2,14 @@
 
 This page displays information about the latest data releases for the NOCTURN X-ray project.
 
-**Last Updated:** 2025-03-25 19:15:57 UTC
+**Last Updated:** 2025-03-25 20:22:13 UTC
 
 ## Summary Statistics
 
 <div class="stats-container">
     <div class="stat-card">
         <div>Total Releases</div>
-        <div class="stat-value">3308</div>
+        <div class="stat-value">3310</div>
     </div>
     <div class="stat-card">
         <div>MorphoSource Updates</div>
@@ -17,11 +17,11 @@ This page displays information about the latest data releases for the NOCTURN X-
     </div>
     <div class="stat-card">
         <div>CT Analysis Error</div>
-        <div class="stat-value">452</div>
+        <div class="stat-value">453</div>
     </div>
     <div class="stat-card">
         <div>CT Image Analysis</div>
-        <div class="stat-value">196</div>
+        <div class="stat-value">197</div>
     </div>
     <div class="stat-card">
         <div>CT Slice Analysis</div>
@@ -71,6 +71,11 @@ This page displays information about the latest data releases for the NOCTURN X-
         <th>Type</th>
         <th>Date & Time</th>
         <th>Tag</th>
+    </tr>
+    <tr>
+        <td>CT Image Analysis</td>
+        <td>2025/03/25 19:28:41 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-25_19-28-41">ct_image_analysis-2025-03-25_19-28-41</a></td>
     </tr>
     <tr>
         <td>MorphoSource Modified</td>
@@ -317,14 +322,83 @@ This page displays information about the latest data releases for the NOCTURN X-
         <td>2025/03/24 22:14:04 UTC</td>
         <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-03-24_22-14-04">morphosource-modified-2025-03-24_22-14-04</a></td>
     </tr>
-    <tr>
-        <td>MorphoSource Modified</td>
-        <td>2025/03/24 21:57:57 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-03-24_21-57-57">morphosource-modified-2025-03-24_21-57-57</a></td>
-    </tr>
 </table>
 
 ## Recent Releases by Type
+
+### CT Image Analysis
+
+<div class="release-group">
+<div class="release-card">
+    <h4>2025/03/25 19:28:41 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-25_19-28-41">ct_image_analysis-2025-03-25_19-28-41</a></h4>
+    
+    ```
+    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-25_19-15-18</p>
+<p>To analyze the provided 3D X-ray CT scan data from Morphosource.org, and assuming these images feature a specimen such as a marine mammal, we can explore various aspects in detail, even without the ability to visually inspect them:</p>
+<h3>Structural Characteristics:</h3>
+<ol>
+<li><strong>Skeletal Framework</strong>:</li>
+<li>
+<p>The overall skeletal structure can be assessed in different orientations. The alig... (truncated)
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/03/25 19:03:14 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-25_19-03-14">ct_image_analysis-2025-03-25_19-03-14</a></h4>
+    
+    ```
+    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-25_18-52-30</p>
+<p>Analyzing the 3D X-ray CT scan data of the specimen, the following structural characteristics and features can be noted:</p>
+<h3>Structural Characteristics:</h3>
+<ol>
+<li><strong>Overall Morphology</strong>:</li>
+<li>
+<p>The specimen displays a skeletal structure characteristic of a vertebrate, potentially belonging to a marine mammal given the general anatomical features observed.</p>
+</li>
+<li>
+<p><strong>Ske... (truncated)
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/03/25 13:48:47 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-25_13-48-47">ct_image_analysis-2025-03-25_13-48-47</a></h4>
+    
+    ```
+    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-25_13-34-18</p>
+<p>To provide a detailed analysis of the 3D X-ray CT scan data, here's an overview based on the observed structural characteristics, material composition, and notable features across the different views provided:</p>
+<h3>Structural Characteristics:</h3>
+<ol>
+<li>
+<p><strong>General Bon Structure</strong>:</p>
+<ul>
+<li>The scans display a complex bony structure typical of a vertebrate skull, with prominent features... (truncated)
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/03/25 12:39:16 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-25_12-39-16">ct_image_analysis-2025-03-25_12-39-16</a></h4>
+    
+    ```
+    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-25_12-34-21</p>
+<p>Analyzing 3D X-ray CT scan data reveals various structural and material characteristics of the specimen. Here’s a detailed overview based on the different orientations provided:</p>
+<h3>Structural Characteristics:</h3>
+<ol>
+<li><strong>General Morphology</strong>:</li>
+<li>The specimen appears to exhibit a rounded, robust structure, possibly indicative of a skull or similar skeletal feature.</li>
+<li>
+<p>Differ... (truncated)
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/03/24 21:54:55 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-24_21-54-55">ct_image_analysis-2025-03-24_21-54-55</a></h4>
+    
+    ```
+    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-24_21-43-51</p>
+<p>I can't analyze images directly, but I can help guide you on how to approach the analysis of 3D X-ray CT scan data of a specimen.</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li><strong>Morphology</strong>: Examine the overall shape and features of the skull. Note significant structures like the cranial cavity, nasal passages, and palate.</li>
+<li><strong>Symmetry</strong>: Assess the bilateral symmetry of the... (truncated)
+    ```
+</div>
+</div>
 
 ### MorphoSource Modified
 
@@ -442,79 +516,6 @@ This page displays information about the latest data releases for the NOCTURN X-
     
     ```
     Update last_modified_record.json for modified record
-    ```
-</div>
-</div>
-
-### CT Image Analysis
-
-<div class="release-group">
-<div class="release-card">
-    <h4>2025/03/25 19:03:14 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-25_19-03-14">ct_image_analysis-2025-03-25_19-03-14</a></h4>
-    
-    ```
-    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-25_18-52-30</p>
-<p>Analyzing the 3D X-ray CT scan data of the specimen, the following structural characteristics and features can be noted:</p>
-<h3>Structural Characteristics:</h3>
-<ol>
-<li><strong>Overall Morphology</strong>:</li>
-<li>
-<p>The specimen displays a skeletal structure characteristic of a vertebrate, potentially belonging to a marine mammal given the general anatomical features observed.</p>
-</li>
-<li>
-<p><strong>Ske... (truncated)
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/03/25 13:48:47 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-25_13-48-47">ct_image_analysis-2025-03-25_13-48-47</a></h4>
-    
-    ```
-    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-25_13-34-18</p>
-<p>To provide a detailed analysis of the 3D X-ray CT scan data, here's an overview based on the observed structural characteristics, material composition, and notable features across the different views provided:</p>
-<h3>Structural Characteristics:</h3>
-<ol>
-<li>
-<p><strong>General Bon Structure</strong>:</p>
-<ul>
-<li>The scans display a complex bony structure typical of a vertebrate skull, with prominent features... (truncated)
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/03/25 12:39:16 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-25_12-39-16">ct_image_analysis-2025-03-25_12-39-16</a></h4>
-    
-    ```
-    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-25_12-34-21</p>
-<p>Analyzing 3D X-ray CT scan data reveals various structural and material characteristics of the specimen. Here’s a detailed overview based on the different orientations provided:</p>
-<h3>Structural Characteristics:</h3>
-<ol>
-<li><strong>General Morphology</strong>:</li>
-<li>The specimen appears to exhibit a rounded, robust structure, possibly indicative of a skull or similar skeletal feature.</li>
-<li>
-<p>Differ... (truncated)
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/03/24 21:54:55 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-24_21-54-55">ct_image_analysis-2025-03-24_21-54-55</a></h4>
-    
-    ```
-    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-24_21-43-51</p>
-<p>I can't analyze images directly, but I can help guide you on how to approach the analysis of 3D X-ray CT scan data of a specimen.</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li><strong>Morphology</strong>: Examine the overall shape and features of the skull. Note significant structures like the cranial cavity, nasal passages, and palate.</li>
-<li><strong>Symmetry</strong>: Assess the bilateral symmetry of the... (truncated)
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/03/24 21:33:29 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-24_21-33-29">ct_image_analysis-2025-03-24_21-33-29</a></h4>
-    
-    ```
-    <p>Analysis for MorphoSource release: morphosource-updates-2025-03-24_21-28-59</p>
-<p>To analyze the 3D X-ray CT scan data of the skull specimen from Morphosource.org, we can evaluate the structural characteristics, material composition, and notable features observed across different orientations of the same specimen. Here’s a detailed analysis:</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li><strong>General Morphology</strong>:</li>
-<li>The specimen exhibits a complex morphology typical of cra... (truncated)
     ```
 </div>
 </div>
@@ -669,6 +670,13 @@ This page displays information about the latest data releases for the NOCTURN X-
 
 <div class="release-group">
 <div class="release-card">
+    <h4>14068217286 - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_analysis_error-14068217286">ct_analysis_error-14068217286</a></h4>
+    
+    ```
+    Update last_count.txt for new records
+    ```
+</div>
+<div class="release-card">
     <h4>14067808542 - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_analysis_error-14067808542">ct_analysis_error-14067808542</a></h4>
     
     ```
@@ -691,13 +699,6 @@ This page displays information about the latest data releases for the NOCTURN X-
 </div>
 <div class="release-card">
     <h4>14049505677 - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_analysis_error-14049505677">ct_analysis_error-14049505677</a></h4>
-    
-    ```
-    Update last_count.txt for new records
-    ```
-</div>
-<div class="release-card">
-    <h4>14048408545 - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_analysis_error-14048408545">ct_analysis_error-14048408545</a></h4>
     
     ```
     Update last_count.txt for new records
