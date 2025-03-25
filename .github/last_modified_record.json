@@ -1,13 +1,13 @@
 {
   "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000642343?locale=en",
-  "id": "000642343",
-  "Object": "YPM:VZ:YPM MAM 010619",
-  "Taxonomy": "Artibeus jamaicensis",
+  "detail_url": "https://www.morphosource.org/concern/media/000642332?locale=en",
+  "id": "000642332",
+  "Object": "ypm:vz:010639",
+  "Taxonomy": "Glossophaga mutica",
   "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Nelson Rios",
-  "Date Uploaded": "07/04/2024",
+  "Date Uploaded": "07/03/2024",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
