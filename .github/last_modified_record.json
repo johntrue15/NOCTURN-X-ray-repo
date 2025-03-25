@@ -1,13 +1,12 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000642354?locale=en",
-  "id": "000642354",
-  "Object": "ypm:vz:003780",
-  "Taxonomy": "Leptonycteris curasoae",
-  "Element or Part": "Skull",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000723124?locale=en",
+  "id": "000723124",
+  "Object": "YPM:VZ:YPM MAM 003136",
+  "Taxonomy": "Macrotus waterhousii",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Nelson Rios",
-  "Date Uploaded": "07/04/2024",
+  "Data Manager": "Laurel Yohe",
+  "Date Uploaded": "03/25/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
