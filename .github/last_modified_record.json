@@ -1,11 +1,13 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000723210?locale=en",
-  "id": "000723210",
-  "Object": "msb:mammal specimens:105288",
-  "Taxonomy": "Dipodomys merriami",
+  "title": "Calcaneus [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000723236?locale=en",
+  "id": "000723236",
+  "Object": "ypm:vp:013600",
+  "Taxonomy": "Hemiacodon gracilis",
+  "Element or Part": "calcaneus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Leila Siciliano-Martina",
+  "Data Manager": "Julia Stone",
   "Date Uploaded": "03/25/2025",
-  "Publication Status": "Open Download"
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
