@@ -1,12 +1,13 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000723124?locale=en",
-  "id": "000723124",
-  "Object": "YPM:VZ:YPM MAM 003136",
-  "Taxonomy": "Macrotus waterhousii",
+  "title": "Pulleniatina Primalis",
+  "detail_url": "https://www.morphosource.org/concern/media/000717815?locale=en",
+  "id": "000717815",
+  "Object": "nhmuk:PM PF 75514",
+  "Taxonomy": "Pulleniatina primalis",
+  "Element or Part": "Full Specimen",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Laurel Yohe",
-  "Date Uploaded": "03/25/2025",
-  "Publication Status": "Restricted Download",
+  "Data Manager": "Alessio Fabbrini",
+  "Date Uploaded": "03/10/2025",
+  "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
