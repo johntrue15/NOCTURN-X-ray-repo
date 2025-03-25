@@ -1,12 +1,13 @@
 {
-  "title": "Pulleniatina Praecursor",
-  "detail_url": "https://www.morphosource.org/concern/media/000723162?locale=en",
-  "id": "000723162",
-  "Object": "nhmuk:PM PF 75518",
-  "Taxonomy": "Pulleniatina praecursor",
+  "title": "Skeleton [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000723174?locale=en",
+  "id": "000723174",
+  "Object": "MCZ:Herp:A-150117",
+  "Taxonomy": "Hyla imitator",
+  "Element or Part": "skeleton",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Alessio Fabbrini",
+  "Data Manager": "Matt Gage",
   "Date Uploaded": "03/25/2025",
-  "Publication Status": "Open Download",
+  "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
