@@ -1,13 +1,13 @@
 {
   "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000723109?locale=en",
-  "id": "000723109",
-  "Object": "YPM:VZ:YPM MAM 010639",
-  "Taxonomy": "Glossophaga mutica",
+  "detail_url": "https://www.morphosource.org/concern/media/000723433?locale=en",
+  "id": "000723433",
+  "Object": "YPM:VZ:YPM MAM 000256",
+  "Taxonomy": "Desmodus rotundus",
   "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Laurel Yohe",
-  "Date Uploaded": "03/25/2025",
+  "Date Uploaded": "03/26/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
