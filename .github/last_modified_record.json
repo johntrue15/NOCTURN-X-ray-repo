@@ -1,13 +1,13 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000723280?locale=en",
-  "id": "000723280",
-  "Object": "ypm:vz:007988",
-  "Taxonomy": "Canis familiaris English Bulldog",
+  "title": "Skull [Mesh] [Ct]",
+  "detail_url": "https://www.morphosource.org/concern/media/000723291?locale=en",
+  "id": "000723291",
+  "Object": "ypm:vz:004944",
+  "Taxonomy": "Canis familiaris Chow Chow",
   "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Laurel Yohe",
-  "Date Uploaded": "03/25/2025",
+  "Date Uploaded": "03/26/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
