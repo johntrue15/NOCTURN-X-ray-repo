@@ -1,13 +1,13 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000723368?locale=en",
-  "id": "000723368",
-  "Object": "YPM:VZ:YPM MAM 006940",
-  "Taxonomy": "Canis familiarisCanis lupus familiaris Siberian Bloodhound",
+  "title": "Artibeus Hirsutus Skull",
+  "detail_url": "https://www.morphosource.org/concern/media/000666952?locale=en",
+  "id": "000666952",
+  "Object": "YPM:VZ:YPM MAM 003785",
+  "Taxonomy": "Artibeus hirsutus",
   "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Laurel Yohe",
-  "Date Uploaded": "03/26/2025",
+  "Data Manager": "Nelson Rios",
+  "Date Uploaded": "09/30/2024",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
