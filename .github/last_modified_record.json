@@ -1,13 +1,13 @@
 {
-  "title": "Skull [Ct Image Series] [Ct]",
-  "detail_url": "https://www.morphosource.org/concern/media/000666960?locale=en",
-  "id": "000666960",
-  "Object": "YPM:VZ:YPM MAM 011740",
-  "Taxonomy": "Choeronycteris mexicana",
+  "title": "Skull [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000723358?locale=en",
+  "id": "000723358",
+  "Object": "YPM:VZ:YPM MAM 007987",
+  "Taxonomy": "Canis familiarisCanis lupus familiaris Scottish Deerhound",
   "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Nelson Rios",
-  "Date Uploaded": "09/30/2024",
+  "Data Manager": "Laurel Yohe",
+  "Date Uploaded": "03/26/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
