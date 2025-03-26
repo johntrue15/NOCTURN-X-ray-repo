@@ -2,11 +2,120 @@
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-03-26 14:19:56 UTC
+**Last Updated:** 2025-03-26 15:22:29 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-03-02-20-32-06" data-release-tag="ct_image_analysis-2025-03-02_20-32-06">
+    <div class="gallery-header">
+        <h2>2025/03/02 20:32:06 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-02_20-32-06">ct_image_analysis-2025-03-02_20-32-06</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-02_20-32-06/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-02_20-32-06/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-02_20-32-06/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-02_20-32-06/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-03-02_20-14-24</p>
+<p>To analyze the 3D X-ray CT scan data of the provided specimen, we can focus on several key aspects including structural characteristics, material composition, and notable features visible across different orientations:</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li><strong>General Shape and Proportions:</strong></li>
+<li>The specimen appears elongated, indicative of a phalanx. The proximal end is notably wider and more robust, which is typical as it connects with other bones at a joint.</li>
+<li>
+<p>The distal end exhibits a more rounded contour, which facilitates articulation.</p>
+</li>
+<li>
+<p><strong>Surface Texture:</strong></p>
+</li>
+<li>
+<p>The outer surface shows intricate patterns and textures, likely due to natural wear or anatomical features that enhance grip with other bones, suggesting functionality in mobility and stability.</p>
+</li>
+<li>
+<p><strong>Orientation Variations:</strong></p>
+</li>
+<li>Different orientations provide insights into the bone's morphology, such as the presence of any indentations or projections that might correspond to muscle attachment sites or ligament insertions.</li>
+</ol>
+<h3>Material Composition</h3>
+<ol>
+<li><strong>Bone Density and Structure:</strong></li>
+<li>The CT scan indicates a dense material indicative of cortical bone. The dense outer wall contrasted with potentially less dense trabecular (cancellous) bone internally is common in phalanx structures.</li>
+<li>The smoothness of the surface may point towards well-preserved material, devoid of significant pathological changes.</li>
+</ol>
+<h3>Notable Features and Anomalies</h3>
+<ol>
+<li><strong>Anatomical Features:</strong></li>
+<li>The proximal end likely shows markings or facets where it articulates with neighboring bones. These articulating surfaces can be critical in understanding the function and movement of the digit.</li>
+<li>
+<p>At the distal end, adaptations for interaction with the next bone segment (such as a concave or convex surface) may be observable.</p>
+</li>
+<li>
+<p><strong>Anomalies:</strong></p>
+</li>
+<li>
+<p>If any irregularities such as fractures, deformities, or unusual growths are visible across the views, these could provide valuable insights into historical trauma or pathological conditions that affected the specimen.</p>
+</li>
+<li>
+<p><strong>Comparative Analysis:</strong></p>
+</li>
+<li>Observing the variations across the different views may also allow for comparisons with other specimens or phalanx bones from similar or different species, highlighting evolutionary adaptations.</li>
+</ol>
+<h3>Conclusion</h3>
+<p>This analysis emphasizes the detailed characteristics observable through the 3D CT scans. Further examination, particularly with advanced imaging techniques or comparative morphological studies, could yield deeper insights into the specimen's biological and evolutionary significance.</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
 
 <div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-27-23-13-09" data-release-tag="ct_image_analysis-2025-02-27_23-13-09">
     <div class="gallery-header">
@@ -343,107 +452,6 @@ Error analyzing images: Error code: 429 - {'error': {'message': 'You exceeded yo
 </ol>
 <h3>Conclusion</h3>
 <p>The dataset from Morphosource provides a rich resource for understanding the structural and material properties of the proximal phalanx. When evaluated comprehensively, the data can inform on growth</p>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-26-01-32-33" data-release-tag="ct_image_analysis-2025-02-26_01-32-33">
-    <div class="gallery-header">
-        <h2>2025/02/26 01:32:33 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-26_01-32-33">ct_image_analysis-2025-02-26_01-32-33</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-26_01-32-33/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-26_01-32-33/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-26_01-32-33/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-26_01-32-33/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-26_01-27-47</p>
-<p>To analyze the 3D X-ray CT scan data presented, we can focus on various aspects of the specimen shown in the images, which appears to be a proximal phalanx bone. Here's a detailed analysis based on hypothetical observations typical for such specimens:</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li>
-<p><strong>Morphology</strong>: The proximal phalanx exhibits a cylindrical shape with rounded ends, indicative of its role in connecting to the distal end of the metacarpal bone. The robust nature of the bone suggests it is adapted for weight-bearing or movement.</p>
-</li>
-<li>
-<p><strong>Articular Surface</strong>: The distal end likely has a smooth, concave articular surface designed to articulate with the next phalanx. This surface may show signs of wear or abnormalities indicative of past stress or injury.</p>
-</li>
-<li>
-<p><strong>Intermedial Structure</strong>: The midsection appears slightly narrower than the ends, which is common as it helps to provide structural integrity while allowing for flexibility during movement.</p>
-</li>
-</ol>
-<h3>Material Composition</h3>
-<ol>
-<li>
-<p><strong>Bone Density</strong>: The CT scans may reveal variations in density, which would suggest differences in mineralization. Areas of higher density indicate cortical (compact) bone, while areas of lower density may represent cancellous (spongy) bone.</p>
-</li>
-<li>
-<p><strong>Thickness</strong>: The thickness of the cortical layer can be an important aspect. A thicker cortical bone region would signify stronger support for the joint forces, while a thinner section might point to potential areas of weakness or stress.</p>
-</li>
-</ol>
-<h3>Notable Features or Anomalies</h3>
-<ol>
-<li>
-<p><strong>Surface Textures</strong>: The surface texture observed in the images may show natural growth rings, indicative of the bone's development. Any irregularities could suggest pathology or previous trauma.</p>
-</li>
-<li>
-<p><strong>Fractures or Remodeling</strong>: If present, microfractures or remodeling patterns could indicate previous injuries or conditions such as osteoarthritis.</p>
-</li>
-<li>
-<p><strong>Variations Across Orientations</strong>: Different views might highlight asymmetries or unique features not evident in a single perspective. It's important to consider how the alignment impacts the assessment of structural integrity.</p>
-</li>
-</ol>
-<h3>Conclusions</h3>
-<p>The combined information from various orientations of the proximal phalanx bone provides a comprehensive view of its structural characteristics, material properties, and any potential anomalies. This analysis can be invaluable for fields such as anthropology, paleontology, and forensic science in understanding the functional and pathological history of the specimen. </p>
-<p>To complete a thorough assessment, detailed measurements and comparisons to known standards may be required, alongside further imaging if necessary.</p>
 <h3>Orientation Views</h3>
 <p>The following orientation views were captured:
 - Default (Y+ Up)

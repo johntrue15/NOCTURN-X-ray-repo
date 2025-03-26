@@ -2,11 +2,120 @@
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-03-26 14:19:56 UTC
+**Last Updated:** 2025-03-26 15:22:29 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-17-20-40-44" data-release-tag="ct_image_analysis-2025-02-17_20-40-44">
+    <div class="gallery-header">
+        <h2>2025/02/17 20:40:44 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-17_20-40-44">ct_image_analysis-2025-02-17_20-40-44</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-17_20-40-44/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-17_20-40-44/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-17_20-40-44/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-17_20-40-44/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-17_20-37-24</p>
+<p>To analyze the provided 3D X-ray CT scan data of the specimen, let’s break down the observations based on structural characteristics, material composition, and notable features or anomalies across the different views.</p>
+<h3>Structural Characteristics:</h3>
+<ol>
+<li><strong>General Shape and Contours</strong>:</li>
+<li>The specimen appears to have an irregular, somewhat asymmetrical shape, conducive to its natural form.</li>
+<li>
+<p>Several protrusions and depressions are observed, indicating complex morphological features typical of skeletal structures.</p>
+</li>
+<li>
+<p><strong>Surface Texture</strong>:</p>
+</li>
+<li>The outer surface presents a rough texture with varying degrees of smoothness. This may suggest areas of wear, growth patterns, or natural texture seen in some biological tissues.</li>
+<li>
+<p>The variation in texture across views indicates possible areas of stress or strain, particularly if the specimen was subject to physical forces.</p>
+</li>
+<li>
+<p><strong>Internal Structure</strong>:</p>
+</li>
+<li>Although the external view is detailed, internal structures are not visible. However, the overall robustness of the specimen implies it may possess a dense, possibly mineralized internal composition.</li>
+</ol>
+<h3>Material Composition:</h3>
+<ul>
+<li>The overall color and texture of the specimen suggest a mineralized structure, likely composed of calcium phosphate (as in bone) or similar materials common in paleontological specimens.</li>
+<li>Given the rough surface features, it is probable that the specimen has been subjected to natural erosive processes or biological activity.</li>
+</ul>
+<h3>Notable Features or Anomalies:</h3>
+<ol>
+<li><strong>Cracks and Fractures</strong>:</li>
+<li>In the third image, there are visible cracks that run along the surface of the specimen. These may indicate previous trauma or stress points possibly due to environmental conditions.</li>
+<li>
+<p>The presence of such fractures can be crucial for understanding the specimen's history, including potential impacts or geological activity.</p>
+</li>
+<li>
+<p><strong>Pits and Indentations</strong>:</p>
+</li>
+<li>
+<p>Small pits or indentations present across the surface might suggest the action of microorganisms or other biological processes that can erode and shape bone or similar materials over time.</p>
+</li>
+<li>
+<p><strong>Orientation of Features</strong>:</p>
+</li>
+<li>Each angle of the specimen reveals unique aspects, indicating its complex geometry and potential functional adaptations or roles in the organism's life, such as muscle attachment points or load-bearing regions.</li>
+</ol>
+<h3>Conclusion:</h3>
+<p>The analysis of the 3D X-ray CT scan reveals a structurally complex specimen with notable variations in surface texture, the presence of cracks that might indicate stress, and possible biological interactions evident through pits or indentations. The underlying material composition suggests a mineralized biological structure akin to bone. Further</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
 
 <div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-17-18-04-11" data-release-tag="ct_image_analysis-2025-02-17_18-04-11">
     <div class="gallery-header">
@@ -396,131 +505,6 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 </ol>
 <h3>Conclusion:</h3>
 <p>The 3D analyses of the Reticulate Nummulites specimen present a fascinating study of its structural complexity and potential material properties. Further examination, possibly with advanced imaging techniques or comparative studies with other specimens, could enrich our understanding of its ecological role and evolutionary significance in marine ecosystems.</p>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-17-16-44-56" data-release-tag="ct_image_analysis-2025-02-17_16-44-56">
-    <div class="gallery-header">
-        <h2>2025/02/17 16:44:56 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-17_16-44-56">ct_image_analysis-2025-02-17_16-44-56</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-17_16-44-56/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-17_16-44-56/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-17_16-44-56/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-17_16-44-56/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-17_16-40-49</p>
-<p>Analyzing the 3D X-ray CT scan data of the specimen from Morphosource.org reveals several structural characteristics and potential material compositions. Here’s a detailed breakdown based on the provided images:</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li><strong>Shape and Size</strong>:</li>
-<li>The scanned specimen exhibits an irregular shape, typical of morphologies found in organic and inorganic matter.</li>
-<li>
-<p>The dimensions provided indicate a notable size of approximately 44.55 cm.</p>
-</li>
-<li>
-<p><strong>Surface Texture</strong>:</p>
-</li>
-<li>
-<p>The surfaces appear to be relatively smooth with some portions displaying slight undulations or contours. This suggests a material that may undergo erosion or one that is shaped by its environment.</p>
-</li>
-<li>
-<p><strong>Orientation</strong>:</p>
-</li>
-<li>
-<p>Different views highlight various orientations and layers. Some sections appear clustered together while others are more isolated, indicating potential segmentation within the structure.</p>
-</li>
-<li>
-<p><strong>Translucence</strong>:</p>
-</li>
-<li>The model renders a semi-translucent quality, which suggests varying densities within the material. This could imply that the specimen contains both lighter and denser components.</li>
-</ol>
-<h3>Material Composition</h3>
-<ol>
-<li><strong>Mineralogical Indicators</strong>:</li>
-<li>
-<p>While the direct material composition cannot be established visually, the smooth, pale exterior could hint at a carbonate-based mineral or a fossilized organic entity, commonly found in environments such as marine sediment.</p>
-</li>
-<li>
-<p><strong>Porosity</strong>:</p>
-</li>
-<li>
-<p>There appear to be multiple cavities or voids within some areas, which could suggest a porous structure. This is characteristic of many natural materials, such as corals or mollusks.</p>
-</li>
-<li>
-<p><strong>Coloration</strong>:</p>
-</li>
-<li>The pale yellowish hue provides minimal insights into specific mineral content but could indicate the presence of calcite or other carbonate minerals often found in aquatic deposits.</li>
-</ol>
-<h3>Notable Features and Anomalies</h3>
-<ol>
-<li><strong>Fragmentation</strong>:</li>
-<li>
-<p>There are observable breaks and edges that could represent natural fractures or damage during fossilization or preservation.</p>
-</li>
-<li>
-<p><strong>Anomalies</strong>:</p>
-</li>
-<li>
-<p>Certain areas show unexpected protrusions or unusual geometric shapes that may warrant further examination. These could be indicative of biological growth patterns or mineral deposition processes.</p>
-</li>
-<li>
-<p><strong>Layering</strong>:</p>
-</li>
-<li>Some views suggest possible stratification, which could imply the geological history of the specimen or sedimentological processes that led to its current form.</li>
-</ol>
-<h3>Conclusion</h3>
-<p>The intricate details visible from the various orientations of the CT scans provide a wealth of insights into the structural characteristics and possible material composition of the specimen. To further refine the analysis and confirm hypotheses regarding</p>
 <h3>Orientation Views</h3>
 <p>The following orientation views were captured:
 - Default (Y+ Up)
