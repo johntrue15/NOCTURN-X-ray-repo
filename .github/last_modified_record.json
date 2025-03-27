@@ -1,13 +1,11 @@
 {
-  "title": "Astragalus [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000724233?locale=en",
-  "id": "000724233",
-  "Object": "ypm:vp:030456",
-  "Taxonomy": "Hemiacodon sp.",
-  "Element or Part": "astragalus",
+  "title": "Element Unspecified [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000616700?locale=en",
+  "id": "000616700",
+  "Object": "sam:pk:006536",
+  "Taxonomy": "Mesosuchus browni",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Julia Stone",
-  "Date Uploaded": "03/27/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Jacob Wilson",
+  "Date Uploaded": "03/29/2024",
+  "Publication Status": "Restricted Download"
 }
