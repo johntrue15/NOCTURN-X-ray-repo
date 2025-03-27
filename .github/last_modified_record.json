@@ -1,9 +1,9 @@
 {
   "title": "Whole Body [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000723772?locale=en",
-  "id": "000723772",
-  "Object": "MVZ:Mamm:MVZ:Mamm:11846",
-  "Taxonomy": "Zapus trinotatus eureka",
+  "detail_url": "https://www.morphosource.org/concern/media/000723787?locale=en",
+  "id": "000723787",
+  "Object": "MVZ:Mamm:MVZ:Mamm:46896",
+  "Taxonomy": "Zapus princeps idahoensis",
   "Element or Part": "whole_body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Erin Westeen",
