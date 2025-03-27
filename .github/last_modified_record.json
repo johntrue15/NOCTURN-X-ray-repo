@@ -1,12 +1,12 @@
 {
-  "title": "Abudefduf sexfasciatus skull",
-  "detail_url": "https://www.morphosource.org/concern/media/000723604?locale=en",
-  "id": "000723604",
-  "Object": "111.97",
-  "Taxonomy": "Abudefduf sexfasciatus",
-  "Element or Part": "Skull",
+  "title": "Femur [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722925?locale=en",
+  "id": "000722925",
+  "Object": "mnhn:f:scz:238",
+  "Taxonomy": "Hapalops sp.",
+  "Element or Part": "Femur",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Keiffer Williams",
-  "Date Uploaded": "03/27/2025",
+  "Data Manager": "Mus\u00e9um national d'histoire naturelle \u00e0 Paris",
+  "Date Uploaded": "03/24/2025",
   "Publication Status": "Open Download"
 }
