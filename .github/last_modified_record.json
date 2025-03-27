@@ -1,12 +1,13 @@
 {
-  "title": "Femur [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722925?locale=en",
-  "id": "000722925",
-  "Object": "mnhn:f:scz:238",
-  "Taxonomy": "Hapalops sp.",
-  "Element or Part": "Femur",
+  "title": "Frontoparietal [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000656700?locale=en",
+  "id": "000656700",
+  "Object": "AMNH:FARB:5450",
+  "Taxonomy": "Stegoceras validum",
+  "Element or Part": "Frontoparietal",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Mus\u00e9um national d'histoire naturelle \u00e0 Paris",
-  "Date Uploaded": "03/24/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
+  "Date Uploaded": "08/16/2024",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
