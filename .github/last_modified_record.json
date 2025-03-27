@@ -1,13 +1,11 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000723818?locale=en",
-  "id": "000723818",
-  "Object": "MVZ:Mamm:MVZ:Mamm:11860",
-  "Taxonomy": "Zapus princeps oregonus",
-  "Element or Part": "whole_body",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000723858?locale=en",
+  "id": "000723858",
+  "Object": "msb:mammal specimens:39187",
+  "Taxonomy": "Dipodomys merriami",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Erin Westeen",
+  "Data Manager": "Leila Siciliano-Martina",
   "Date Uploaded": "03/27/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Publication Status": "Open Download"
 }
