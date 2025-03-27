@@ -1,13 +1,12 @@
 {
-  "title": "Pulleniatina Finalis",
-  "detail_url": "https://www.morphosource.org/concern/media/000718709?locale=en",
-  "id": "000718709",
-  "Object": "nhmuk:PM PF 75520",
-  "Taxonomy": "Pulleniatina finalis",
-  "Element or Part": "Full Specimen",
+  "title": "Abudefduf sexfasciatus skull",
+  "detail_url": "https://www.morphosource.org/concern/media/000723604?locale=en",
+  "id": "000723604",
+  "Object": "111.97",
+  "Taxonomy": "Abudefduf sexfasciatus",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Alessio Fabbrini",
-  "Date Uploaded": "03/11/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Keiffer Williams",
+  "Date Uploaded": "03/27/2025",
+  "Publication Status": "Open Download"
 }
