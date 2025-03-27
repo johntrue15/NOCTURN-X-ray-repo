@@ -1,13 +1,13 @@
 {
-  "title": "Whole Speciemen [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000723726?locale=en",
-  "id": "000723726",
-  "Object": "cas:su:62745",
-  "Taxonomy": "Citharinops  distichodoides",
-  "Element or Part": "whole speciemen",
+  "title": "Calcaneus [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000724243?locale=en",
+  "id": "000724243",
+  "Object": "ypm:vp:039986",
+  "Taxonomy": "Hemiacodon sp.",
+  "Element or Part": "calcaneus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Department Ichthyology",
+  "Data Manager": "Julia Stone",
   "Date Uploaded": "03/27/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Educational Use Permitted"
+  "Rights Statement": "In Copyright"
 }
