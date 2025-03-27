@@ -1,13 +1,13 @@
 {
-  "title": "Whole Speciemen [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000723726?locale=en",
-  "id": "000723726",
-  "Object": "cas:su:62745",
-  "Taxonomy": "Citharinops  distichodoides",
-  "Element or Part": "whole speciemen",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000621410?locale=en",
+  "id": "000621410",
+  "Object": "amnh:fm:29987",
+  "Taxonomy": "Galianemys whitei",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Fish and More  laboratory",
-  "Date Uploaded": "03/27/2025",
+  "Data Manager": "American Museum of Natural History - AMNH Vertebrate Paleontology Collection",
+  "Date Uploaded": "04/16/2024",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Educational Use Permitted"
+  "Rights Statement": "In Copyright"
 }
