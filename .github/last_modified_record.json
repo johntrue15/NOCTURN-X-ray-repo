@@ -1,11 +1,13 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000616700?locale=en",
-  "id": "000616700",
-  "Object": "sam:pk:006536",
-  "Taxonomy": "Mesosuchus browni",
+  "title": "Whole Speciemen [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000723726?locale=en",
+  "id": "000723726",
+  "Object": "cas:su:62745",
+  "Taxonomy": "Citharinops  distichodoides",
+  "Element or Part": "whole speciemen",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jacob Wilson",
-  "Date Uploaded": "03/29/2024",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Department Ichthyology",
+  "Date Uploaded": "03/27/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright - Educational Use Permitted"
 }
