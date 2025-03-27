@@ -1,13 +1,12 @@
 {
-  "title": "Microspathodon chrysurus skull",
-  "detail_url": "https://www.morphosource.org/concern/media/000724278?locale=en",
-  "id": "000724278",
-  "Object": "ypm:vz:023914",
-  "Taxonomy": "Microspathodon chrysurus",
+  "title": "Plectroglyphidodon johnstonianus skull",
+  "detail_url": "https://www.morphosource.org/concern/media/000724298?locale=en",
+  "id": "000724298",
+  "Object": "111.65",
+  "Taxonomy": "Plectroglyphidodon johnstonianus",
   "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Keiffer Williams",
   "Date Uploaded": "03/27/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Publication Status": "Open Download"
 }
