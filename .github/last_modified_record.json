@@ -1,13 +1,13 @@
 {
-  "title": "Pulleniatina Finalis",
-  "detail_url": "https://www.morphosource.org/concern/media/000718699?locale=en",
-  "id": "000718699",
-  "Object": "nhmuk:PM PF 75520",
-  "Taxonomy": "Pulleniatina finalis",
-  "Element or Part": "Full Specimen",
+  "title": "Whole Speciemen [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000723726?locale=en",
+  "id": "000723726",
+  "Object": "cas:su:62745",
+  "Taxonomy": "Citharinops  distichodoides",
+  "Element or Part": "whole speciemen",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Alessio Fabbrini",
-  "Date Uploaded": "03/11/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Fish and More  laboratory",
+  "Date Uploaded": "03/27/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright - Educational Use Permitted"
 }
