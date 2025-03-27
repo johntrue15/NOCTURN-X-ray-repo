@@ -1,13 +1,11 @@
 {
-  "title": "Astragalus [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000724011?locale=en",
-  "id": "000724011",
-  "Object": "ypm:vp:024467",
-  "Taxonomy": "Hemiacodon gracilis",
-  "Element or Part": "astragalus",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000724029?locale=en",
+  "id": "000724029",
+  "Object": "msb:mammal specimens:76738",
+  "Taxonomy": "Dipodomys microps",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Julia Stone",
+  "Data Manager": "Leila Siciliano-Martina",
   "Date Uploaded": "03/27/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Publication Status": "Open Download"
 }
