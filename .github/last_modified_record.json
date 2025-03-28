@@ -1,13 +1,13 @@
 {
-  "title": "Articulated Vertebrae [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000724347?locale=en",
-  "id": "000724347",
-  "Object": "ypm:vp:044525",
-  "Taxonomy": "Hemiacodon sp.",
-  "Element or Part": "articulated vertebrae",
+  "title": "Dmns:Mamm:16368 Diceros Bicornis",
+  "detail_url": "https://www.morphosource.org/concern/media/000724398?locale=en",
+  "id": "000724398",
+  "Object": "DMNS:Mamm:DMNS:Mamm:16368",
+  "Taxonomy": "Diceros bicornis",
+  "Element or Part": "mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Julia Stone",
+  "Data Manager": "Cameron Pittman",
   "Date Uploaded": "03/28/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
