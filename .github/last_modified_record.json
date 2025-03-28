@@ -1,13 +1,13 @@
 {
-  "title": "Dmns:Mamm:16368 Diceros Bicornis",
-  "detail_url": "https://www.morphosource.org/concern/media/000724398?locale=en",
-  "id": "000724398",
-  "Object": "DMNS:Mamm:DMNS:Mamm:16368",
-  "Taxonomy": "Diceros bicornis",
-  "Element or Part": "mandible",
+  "title": "Phalanx [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000724493?locale=en",
+  "id": "000724493",
+  "Object": "ypm:vp:065924",
+  "Taxonomy": "Omomys carteri",
+  "Element or Part": "phalanx",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Andrew Doll",
+  "Data Manager": "Julia Stone",
   "Date Uploaded": "03/28/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Rights Statement": "In Copyright"
 }
