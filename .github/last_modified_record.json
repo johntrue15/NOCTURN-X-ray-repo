@@ -1,13 +1,13 @@
 {
-  "title": "Phalanx B",
-  "detail_url": "https://www.morphosource.org/concern/media/000724548?locale=en",
-  "id": "000724548",
-  "Object": "ypm:vp:VPPU011681",
-  "Taxonomy": "Adapis parisiensis",
-  "Element or Part": "phalanx",
+  "title": "Dmns:Mamm:14995 Hippopotamus Amphibius",
+  "detail_url": "https://www.morphosource.org/concern/media/000724408?locale=en",
+  "id": "000724408",
+  "Object": "DMNS:Mamm:DMNS:Mamm:14995",
+  "Taxonomy": "Hippopotamus amphibius",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Julia Stone",
+  "Data Manager": "Andrew Doll",
   "Date Uploaded": "03/28/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
