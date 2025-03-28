@@ -1,13 +1,13 @@
 {
-  "title": "Dmns:Mamm:16368 Diceros Bicornis",
-  "detail_url": "https://www.morphosource.org/concern/media/000724398?locale=en",
-  "id": "000724398",
-  "Object": "DMNS:Mamm:DMNS:Mamm:16368",
-  "Taxonomy": "Diceros bicornis",
-  "Element or Part": "mandible",
+  "title": "Skull [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000722990?locale=en",
+  "id": "000722990",
+  "Object": "YPM:VZ:YPM MAM 007573",
+  "Taxonomy": "Phyllostomus discolor",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Cameron Pittman",
-  "Date Uploaded": "03/28/2025",
+  "Data Manager": "Nelson Rios",
+  "Date Uploaded": "03/24/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Rights Statement": "In Copyright"
 }
