@@ -1,13 +1,13 @@
 {
-  "title": "Calcaneus [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000724445?locale=en",
-  "id": "000724445",
-  "Object": "ypm:vp:065918",
-  "Taxonomy": "Hemiacodon gracilis",
-  "Element or Part": "calcaneus",
+  "title": "Dmns:Mamm:14995 Hippopotamus Amphibius",
+  "detail_url": "https://www.morphosource.org/concern/media/000724415?locale=en",
+  "id": "000724415",
+  "Object": "DMNS:Mamm:DMNS:Mamm:14995",
+  "Taxonomy": "Hippopotamus amphibius",
+  "Element or Part": "mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Julia Stone",
+  "Data Manager": "Andrew Doll",
   "Date Uploaded": "03/28/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
