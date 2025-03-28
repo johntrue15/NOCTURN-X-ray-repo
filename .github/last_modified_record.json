@@ -1,13 +1,13 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000722990?locale=en",
-  "id": "000722990",
-  "Object": "YPM:VZ:YPM MAM 007573",
-  "Taxonomy": "Phyllostomus discolor",
+  "title": "Dmns:Mamm:14995 Hippopotamus Amphibius",
+  "detail_url": "https://www.morphosource.org/concern/media/000724408?locale=en",
+  "id": "000724408",
+  "Object": "DMNS:Mamm:DMNS:Mamm:14995",
+  "Taxonomy": "Hippopotamus amphibius",
   "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Nelson Rios",
-  "Date Uploaded": "03/24/2025",
+  "Data Manager": "Cameron Pittman",
+  "Date Uploaded": "03/28/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
