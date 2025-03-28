@@ -1,13 +1,13 @@
 {
-  "title": "Calcaneus [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000724337?locale=en",
-  "id": "000724337",
-  "Object": "ypm:vp:044524",
+  "title": "Articulated Vertebrae [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000724347?locale=en",
+  "id": "000724347",
+  "Object": "ypm:vp:044525",
   "Taxonomy": "Hemiacodon sp.",
-  "Element or Part": "calcaneus",
+  "Element or Part": "articulated vertebrae",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Julia Stone",
-  "Date Uploaded": "03/27/2025",
+  "Date Uploaded": "03/28/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
