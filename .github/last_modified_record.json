@@ -1,13 +1,13 @@
 {
-  "title": "Dmns:Mamm:14995 Hippopotamus Amphibius",
-  "detail_url": "https://www.morphosource.org/concern/media/000724408?locale=en",
-  "id": "000724408",
-  "Object": "DMNS:Mamm:DMNS:Mamm:14995",
-  "Taxonomy": "Hippopotamus amphibius",
-  "Element or Part": "skull",
+  "title": "Calcaneus [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000724427?locale=en",
+  "id": "000724427",
+  "Object": "ypm:vp:044528",
+  "Taxonomy": "Hemiacodon sp.",
+  "Element or Part": "calcaneus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Cameron Pittman",
+  "Data Manager": "Julia Stone",
   "Date Uploaded": "03/28/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Rights Statement": "In Copyright"
 }
