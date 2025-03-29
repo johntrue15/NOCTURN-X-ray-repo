@@ -2,14 +2,14 @@
 
 This page displays information about the latest data releases for the NOCTURN X-ray project.
 
-**Last Updated:** 2025-03-28 23:18:53 UTC
+**Last Updated:** 2025-03-29 01:36:36 UTC
 
 ## Summary Statistics
 
 <div class="stats-container">
     <div class="stat-card">
         <div>Total Releases</div>
-        <div class="stat-value">3584</div>
+        <div class="stat-value">3585</div>
     </div>
     <div class="stat-card">
         <div>MorphoSource Updates</div>
@@ -33,7 +33,7 @@ This page displays information about the latest data releases for the NOCTURN X-
     </div>
     <div class="stat-card">
         <div>Daily</div>
-        <div class="stat-value">104</div>
+        <div class="stat-value">105</div>
     </div>
     <div class="stat-card">
         <div>Monthly Collection</div>
@@ -71,6 +71,11 @@ This page displays information about the latest data releases for the NOCTURN X-
         <th>Type</th>
         <th>Date & Time</th>
         <th>Tag</th>
+    </tr>
+    <tr>
+        <td>Daily</td>
+        <td>2025/03/29 01:26:25 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/daily-2025-03-29_01-26-25">daily-2025-03-29_01-26-25</a></td>
     </tr>
     <tr>
         <td>CT Slice Analysis</td>
@@ -317,14 +322,49 @@ This page displays information about the latest data releases for the NOCTURN X-
         <td>2025/03/28 01:26:50 UTC</td>
         <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-03-28_01-26-50">morphosource-updates-2025-03-28_01-26-50</a></td>
     </tr>
-    <tr>
-        <td>MorphoSource Modified</td>
-        <td>2025/03/28 00:00:06 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-03-28_00-00-06">morphosource-modified-2025-03-28_00-00-06</a></td>
-    </tr>
 </table>
 
 ## Recent Releases by Type
+
+### Daily
+
+<div class="release-group">
+<div class="release-card">
+    <h4>2025/03/29 01:26:25 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/daily-2025-03-29_01-26-25">daily-2025-03-29_01-26-25</a></h4>
+    
+    ```
+    Daily check data [2025-03-29_01-26-25]
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/03/28 01:26:59 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/daily-2025-03-28_01-26-59">daily-2025-03-28_01-26-59</a></h4>
+    
+    ```
+    Daily check data [2025-03-28_01-26-59]
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/03/27 01:26:56 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/daily-2025-03-27_01-26-56">daily-2025-03-27_01-26-56</a></h4>
+    
+    ```
+    Daily check data [2025-03-27_01-26-56]
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/03/26 01:26:55 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/daily-2025-03-26_01-26-55">daily-2025-03-26_01-26-55</a></h4>
+    
+    ```
+    Daily check data [2025-03-26_01-26-55]
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/03/24 01:37:20 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/daily-2025-03-24_01-37-20">daily-2025-03-24_01-37-20</a></h4>
+    
+    ```
+    Daily check data [2025-03-24_01-37-20]
+    ```
+</div>
+</div>
 
 ### CT Slice Analysis
 
@@ -482,46 +522,6 @@ This page displays information about the latest data releases for the NOCTURN X-
     
     ```
     Update last_modified_record.json for modified record
-    ```
-</div>
-</div>
-
-### Daily
-
-<div class="release-group">
-<div class="release-card">
-    <h4>2025/03/28 01:26:59 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/daily-2025-03-28_01-26-59">daily-2025-03-28_01-26-59</a></h4>
-    
-    ```
-    Daily check data [2025-03-28_01-26-59]
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/03/27 01:26:56 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/daily-2025-03-27_01-26-56">daily-2025-03-27_01-26-56</a></h4>
-    
-    ```
-    Daily check data [2025-03-27_01-26-56]
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/03/26 01:26:55 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/daily-2025-03-26_01-26-55">daily-2025-03-26_01-26-55</a></h4>
-    
-    ```
-    Daily check data [2025-03-26_01-26-55]
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/03/24 01:37:20 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/daily-2025-03-24_01-37-20">daily-2025-03-24_01-37-20</a></h4>
-    
-    ```
-    Daily check data [2025-03-24_01-37-20]
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/03/23 01:39:03 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/daily-2025-03-23_01-39-03">daily-2025-03-23_01-39-03</a></h4>
-    
-    ```
-    Daily check data [2025-03-23_01-39-03]
     ```
 </div>
 </div>
