@@ -1,13 +1,14 @@
 {
-  "title": "Skeleton [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000083617?locale=en",
-  "id": "000083617",
+  "title": "Cranium [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000724712?locale=en",
+  "id": "000724712",
   "Object": "FMNH:Birds:347273",
   "Taxonomy": "Columba livia livia",
-  "Element or Part": "skeleton",
+  "Element or Part": "Cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Sharon Grant",
-  "Date Uploaded": "07/24/2019",
+  "Data Manager": "Bassel Arnaout",
+  "Date Uploaded": "03/29/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
 }
