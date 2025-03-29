@@ -1,13 +1,13 @@
 {
-  "title": "Dmns:Mamm:14995 Hippopotamus Amphibius",
-  "detail_url": "https://www.morphosource.org/concern/media/000724408?locale=en",
-  "id": "000724408",
-  "Object": "DMNS:Mamm:DMNS:Mamm:14995",
-  "Taxonomy": "Hippopotamus amphibius",
-  "Element or Part": "skull",
+  "title": "Cranium [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000724709?locale=en",
+  "id": "000724709",
+  "Object": "oumnh:23790",
+  "Taxonomy": "Chauna chavaria",
+  "Element or Part": "Cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Andrew Doll",
-  "Date Uploaded": "03/28/2025",
+  "Data Manager": "Bassel Arnaout",
+  "Date Uploaded": "03/29/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Rights Statement": "In Copyright"
 }
