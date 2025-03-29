@@ -1,14 +1,12 @@
 {
-  "title": "Cranium [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000724712?locale=en",
-  "id": "000724712",
-  "Object": "FMNH:Birds:347273",
-  "Taxonomy": "Columba livia livia",
-  "Element or Part": "Cranium",
+  "title": "Cambelodon Torreensis",
+  "detail_url": "https://www.morphosource.org/concern/media/000718120?locale=en",
+  "id": "000718120",
+  "Object": "SHN:SHN:SHN.830",
+  "Taxonomy": "Cambelodon  Cambelodon torreensis",
+  "Element or Part": "Hemimandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Bassel Arnaout",
-  "Date Uploaded": "03/29/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Data Manager": "Victor Carvalho",
+  "Date Uploaded": "03/10/2025",
+  "Publication Status": "Restricted Download"
 }
