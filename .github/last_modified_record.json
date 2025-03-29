@@ -1,13 +1,13 @@
 {
-  "title": "Cranium [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000724709?locale=en",
-  "id": "000724709",
-  "Object": "oumnh:23790",
-  "Taxonomy": "Chauna chavaria",
-  "Element or Part": "Cranium",
+  "title": "Skeleton [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000083617?locale=en",
+  "id": "000083617",
+  "Object": "FMNH:Birds:347273",
+  "Taxonomy": "Columba livia livia",
+  "Element or Part": "skeleton",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Bassel Arnaout",
-  "Date Uploaded": "03/29/2025",
+  "Data Manager": "Sharon Grant",
+  "Date Uploaded": "07/24/2019",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
