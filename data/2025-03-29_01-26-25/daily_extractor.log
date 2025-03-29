@@ -1,0 +1,37 @@
+2025-03-29 01:26:27,548 - Data directory: data/2025-03-29_01-26-25
+2025-03-29 01:26:27,548 - Output directory: data/2025-03-29_01-26-25
+2025-03-29 01:26:27,548 - Using data directory: data/2025-03-29_01-26-25
+2025-03-29 01:26:27,548 - Looking for previous data in: data
+2025-03-29 01:26:27,549 - Loading previous data from: data/2025-03-28_01-26-59/morphosource_data_complete.json
+2025-03-29 01:26:27,926 - Loaded 105871 records from previous data file
+2025-03-29 01:26:27,926 - Latest stored record ID: 000724347
+2025-03-29 01:26:27,926 - Previous record count: 105871
+2025-03-29 01:26:27,926 - Fetching page 1
+2025-03-29 01:26:46,626 - Found record 000724554 - Total records: 1
+2025-03-29 01:26:46,626 - Found record 000724548 - Total records: 2
+2025-03-29 01:26:46,626 - Found record 000724542 - Total records: 3
+2025-03-29 01:26:46,627 - Found record 000724536 - Total records: 4
+2025-03-29 01:26:46,627 - Found record 000724530 - Total records: 5
+2025-03-29 01:26:46,628 - Found record 000724519 - Total records: 6
+2025-03-29 01:26:46,628 - Found record 000724512 - Total records: 7
+2025-03-29 01:26:46,628 - Found record 000724506 - Total records: 8
+2025-03-29 01:26:46,629 - Found record 000724500 - Total records: 9
+2025-03-29 01:26:46,629 - Found record 000724493 - Total records: 10
+2025-03-29 01:26:46,629 - Found record 000724486 - Total records: 11
+2025-03-29 01:26:46,630 - Found record 000724475 - Total records: 12
+2025-03-29 01:26:46,630 - Found record 000724445 - Total records: 13
+2025-03-29 01:26:46,631 - Found record 000724436 - Total records: 14
+2025-03-29 01:26:46,631 - Found record 000724427 - Total records: 15
+2025-03-29 01:26:46,631 - Found record 000724415 - Total records: 16
+2025-03-29 01:26:46,632 - Found record 000724408 - Total records: 17
+2025-03-29 01:26:46,632 - Found record 000724398 - Total records: 18
+2025-03-29 01:26:46,632 - Found record 000724347 - Total records: 19
+2025-03-29 01:26:46,632 - Found latest stored record 000724347 - stopping fetch
+2025-03-29 01:26:46,633 - Completed fetch - Found 19 new records
+2025-03-29 01:26:46,633 - Latest webpage record ID: 000724554
+2025-03-29 01:26:46,633 - New records available - latest records differ
+2025-03-29 01:26:46,834 - New records: 19
+2025-03-29 01:26:46,834 - Previous records: 105871
+2025-03-29 01:26:46,834 - Combined records: 105889
+2025-03-29 01:26:48,375 - Saved 105889 records to: data/2025-03-29_01-26-25/morphosource_data_complete.json
+2025-03-29 01:26:48,376 - Created detailed release notes at: data/2025-03-29_01-26-25/release_notes.txt
