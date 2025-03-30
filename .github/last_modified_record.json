@@ -1,14 +1,12 @@
 {
-  "title": "Cebidichthys violaceus-Tail (caudal skeleton) 2  indi.",
-  "detail_url": "https://www.morphosource.org/concern/media/000724727?locale=en",
-  "id": "000724727",
-  "Object": "uwfc:adult collection:UWFC151341",
-  "Taxonomy": "Cebidichthys sp.",
-  "Element or Part": "tail (caudal skeleton)",
+  "title": "Pomacentrus vaiuli skull",
+  "detail_url": "https://www.morphosource.org/concern/media/000724739?locale=en",
+  "id": "000724739",
+  "Object": "111.57",
+  "Taxonomy": "Pomacentrus vaiuli",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Olivia Hawkins",
+  "Data Manager": "Keiffer Williams",
   "Date Uploaded": "03/30/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "No Known Copyright",
-  "CC License": "License Terms Unknown"
+  "Publication Status": "Open Download"
 }
