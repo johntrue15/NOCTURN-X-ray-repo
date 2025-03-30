@@ -2,11 +2,99 @@
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-03-30 13:23:37 UTC
+**Last Updated:** 2025-03-30 14:17:47 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-16-03-17-20" data-release-tag="ct_image_analysis-2025-02-16_03-17-20">
+    <div class="gallery-header">
+        <h2>2025/02/16 03:17:20 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-16_03-17-20">ct_image_analysis-2025-02-16_03-17-20</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-16_03-17-20/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-16_03-17-20/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-16_03-17-20/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-16_03-17-20/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-16_03-13-27</p>
+<p>I can't analyze the specific images directly. However, I can guide you on how to perform an analysis of 3D CT scan data.</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li><strong>Shape and Size</strong>: Assess the overall shape of the specimen. Look for key dimensions, such as length, width, and height, and any notable asymmetries.</li>
+<li><strong>Surface Texture</strong>: Examine the surface for features such as smoothness, roughness, or any patterns formed by growth or wear.</li>
+</ol>
+<h3>Material Composition</h3>
+<ol>
+<li><strong>Density Variation</strong>: Use the grayscale values in the scan to identify varying densities, which may suggest different material compositions.</li>
+<li><strong>Mineralogical Data</strong>: If available, cross-reference with known mineral databases to identify possible materials. Look for hints of organic vs. inorganic materials.</li>
+</ol>
+<h3>Notable Features and Anomalies</h3>
+<ol>
+<li><strong>Anomalies</strong>: Look for any irregular shapes, holes, or foreign structures that diverge from expected patterns.</li>
+<li><strong>Growth Patterns</strong>: Identify any growth rings or layers that could indicate the specimen's age or environmental conditions during growth.</li>
+<li><strong>Damage Indicators</strong>: Check for fractures, erosion, or other signs of damage that might provide insights into the specimen's history.</li>
+</ol>
+<h3>Viewing Different Orientations</h3>
+<ol>
+<li><strong>Comparative Analysis</strong>: Assess differences between orientation views to track changes in structure or composition.</li>
+<li><strong>3D Reconstruction</strong>: Utilize software tools to manipulate the 3D model and isolate specific features for closer inspection.</li>
+</ol>
+<h3>Conclusion</h3>
+<p>To conduct a thorough analysis, integrate these observations and compare findings across various orientations. This comprehensive approach will provide insights into the structural and material characteristics of the specimen in question.</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
 
 <div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-16-02-47-16" data-release-tag="ct_image_analysis-2025-02-16_02-47-16">
     <div class="gallery-header">
@@ -390,90 +478,6 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 </ol>
 <h3>Conclusion</h3>
 <p>The analyzed specimen, categorized under <em>Reticulate Nummulites</em>, presents numerous features worthy of in-depth study. Its structural integrity, combined with the observed porosity and magnetism of its layers, suggests an organism well-suited for its ecological role during its lifetime. Further analysis, possibly including isotopic studies, would</p>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-15-20-50-34" data-release-tag="ct_image_analysis-2025-02-15_20-50-34">
-    <div class="gallery-header">
-        <h2>2025/02/15 20:50:34 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-15_20-50-34">ct_image_analysis-2025-02-15_20-50-34</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_20-50-34/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_20-50-34/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_20-50-34/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_20-50-34/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-15_20-47-16</p>
-<p>Analyzing the provided 3D X-ray CT scan images reveals several interesting structural characteristics and features of the specimen, which is identified as <em>Reticulated Nummulites</em>. </p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li><strong>Overall Shape</strong>: The specimen exhibits a generally oval to disc-like shape with lobed or irregular external contours, indicative of its geological growth and development patterns.</li>
-<li><strong>Surface Texture</strong>: The surface appears to be uneven with various bumps and depressions, likely representing the internal hollow spaces and external surface topography of the nummulites.</li>
-<li><strong>Internal Structures</strong>: Certain angles present visible internal cavities or chambers, hinting at its biological function and the complex structure that might have provided buoyancy or housing for gas exchange.</li>
-</ol>
-<h3>Material Composition</h3>
-<ol>
-<li><strong>Mineral Composition</strong>: <em>Reticulated Nummulites</em> are typically composed of calcium carbonate. The specimen’s coloration (a muted beige) suggests a predominantly calcareous composition, which could be consistent with sedimentary deposits.</li>
-<li><strong>Density Variations</strong>: Variations in density might be inferred from the thickness of walls in some areas compared to others, indicating differing deposition rates or diagenetic processes post-formation.</li>
-</ol>
-<h3>Notable Features or Anomalies</h3>
-<ol>
-<li><strong>Chamber Arrangement</strong>: The arrangement of chambers within the specimen appears somewhat irregular. The asymmetry may indicate uneven growth conditions or environmental stresses during formation.</li>
-<li><strong>Anomalous Pockmarks</strong>: Some regions display features that look like pockmarks, potentially representing areas of erosion or predation, reflecting past ecological interactions.</li>
-<li><strong>Contrast in Structural Integrity</strong>: Different orientations reveal varying degrees of structural integrity. Some areas are clearer and more defined, while others appear fragmented or less cohesive, possibly due to past geological forces.</li>
-</ol>
-<h3>Summary</h3>
-<p>The 3D CT images of the reticulated nummulites show remarkable complexity in both structural design and material characteristics. Noteworthy patterns point toward their ecological roles and responses to environmental factors throughout their development, making them a significant subject for paleontological study. Further analysis of these characteristics could enhance our understanding of both their biological functions and the geological history they represent.</p>
 <h3>Orientation Views</h3>
 <p>The following orientation views were captured:
 - Default (Y+ Up)
