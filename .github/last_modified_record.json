@@ -1,12 +1,13 @@
 {
-  "title": "Cambelodon Torreensis",
-  "detail_url": "https://www.morphosource.org/concern/media/000718120?locale=en",
-  "id": "000718120",
-  "Object": "SHN:SHN:SHN.830",
-  "Taxonomy": "Cambelodon  Cambelodon torreensis",
-  "Element or Part": "Hemimandible",
+  "title": "Dmns:Mamm:14995 Hippopotamus Amphibius",
+  "detail_url": "https://www.morphosource.org/concern/media/000724415?locale=en",
+  "id": "000724415",
+  "Object": "DMNS:Mamm:DMNS:Mamm:14995",
+  "Taxonomy": "Hippopotamus amphibius",
+  "Element or Part": "mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Victor Carvalho",
-  "Date Uploaded": "03/10/2025",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Andrew Doll",
+  "Date Uploaded": "03/28/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
