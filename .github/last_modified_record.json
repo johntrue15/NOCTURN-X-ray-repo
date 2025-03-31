@@ -1,13 +1,14 @@
 {
-  "title": "Stegastes albifasciatus skull",
-  "detail_url": "https://www.morphosource.org/concern/media/000724751?locale=en",
-  "id": "000724751",
-  "Object": "ypm:vz:026729",
-  "Taxonomy": "Stegastes albifasciatus",
-  "Element or Part": "Skull",
+  "title": "Dmns:Mamm:16368 Diceros Bicornis",
+  "detail_url": "https://www.morphosource.org/concern/media/000693556?locale=en",
+  "id": "000693556",
+  "Object": "DMNS:Mamm:DMNS:Mamm:16368",
+  "Taxonomy": "Diceros bicornis",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Keiffer Williams",
-  "Date Uploaded": "03/31/2025",
+  "Data Manager": "Andrew Doll",
+  "Date Uploaded": "12/12/2024",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted",
+  "CC License": "Creative Commons BY-NC-ND Attribution-NonCommercial-NoDerivs 4.0 International"
 }
