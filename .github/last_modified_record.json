@@ -1,12 +1,13 @@
 {
-  "title": "Pomacentrus vaiuli skull",
-  "detail_url": "https://www.morphosource.org/concern/media/000724739?locale=en",
-  "id": "000724739",
-  "Object": "111.57",
-  "Taxonomy": "Pomacentrus vaiuli",
+  "title": "Stegastes albifasciatus skull",
+  "detail_url": "https://www.morphosource.org/concern/media/000724751?locale=en",
+  "id": "000724751",
+  "Object": "ypm:vz:026729",
+  "Taxonomy": "Stegastes albifasciatus",
   "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Keiffer Williams",
-  "Date Uploaded": "03/30/2025",
-  "Publication Status": "Open Download"
+  "Date Uploaded": "03/31/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
