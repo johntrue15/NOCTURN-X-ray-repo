@@ -1,14 +1,13 @@
 {
-  "title": "Dmns:Mamm:16368 Diceros Bicornis",
-  "detail_url": "https://www.morphosource.org/concern/media/000693556?locale=en",
-  "id": "000693556",
-  "Object": "DMNS:Mamm:DMNS:Mamm:16368",
-  "Taxonomy": "Diceros bicornis",
-  "Element or Part": "skull",
+  "title": "Skull And Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000713320?locale=en",
+  "id": "000713320",
+  "Object": "MCZ:Herp:R-178172",
+  "Taxonomy": "Oxyrhopus doliatus",
+  "Element or Part": "skull and mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Andrew Doll",
-  "Date Uploaded": "12/12/2024",
+  "Data Manager": "Harvard - Museum of Comparative Zoology",
+  "Date Uploaded": "02/25/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted",
-  "CC License": "Creative Commons BY-NC-ND Attribution-NonCommercial-NoDerivs 4.0 International"
+  "Rights Statement": "In Copyright"
 }
