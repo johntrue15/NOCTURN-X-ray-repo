@@ -1,13 +1,13 @@
 {
-  "title": "Skull And Mandible [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000713320?locale=en",
-  "id": "000713320",
-  "Object": "MCZ:Herp:R-178172",
-  "Taxonomy": "Oxyrhopus doliatus",
-  "Element or Part": "skull and mandible",
+  "title": "Whole Body [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000723902?locale=en",
+  "id": "000723902",
+  "Object": "MVZ:Mamm:MVZ:Mamm:222825",
+  "Taxonomy": "Zapus princeps pacificus",
+  "Element or Part": "whole_body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Harvard - Museum of Comparative Zoology",
-  "Date Uploaded": "02/25/2025",
+  "Data Manager": "Carol  Spencer",
+  "Date Uploaded": "03/27/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
