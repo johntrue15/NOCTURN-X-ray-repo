@@ -1,13 +1,13 @@
 {
-  "title": "Abudefduf bengalensis skull",
-  "detail_url": "https://www.morphosource.org/concern/media/000722881?locale=en",
-  "id": "000722881",
-  "Object": "ypm:vz:006602",
-  "Taxonomy": "Abudefduf bengalensis",
-  "Element or Part": "Skull",
+  "title": "Skull [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000723460?locale=en",
+  "id": "000723460",
+  "Object": "YPM:VZ:YPM MAM 004921",
+  "Taxonomy": "Canis lupus familiarisCanis familiarisCanis lupus familiaris Pointer",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Nelson Rios",
-  "Date Uploaded": "03/24/2025",
+  "Date Uploaded": "03/26/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
