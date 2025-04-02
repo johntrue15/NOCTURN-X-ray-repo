@@ -1,14 +1,13 @@
 {
-  "title": "Amblyglyphidodon ternatensis dentary teeth",
-  "detail_url": "https://www.morphosource.org/concern/media/000725276?locale=en",
-  "id": "000725276",
-  "Object": "FMNH:Fishes:119382",
-  "Taxonomy": "Amblyglyphidodon ternatensis",
-  "Element or Part": "dentary teeth",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000725312?locale=en",
+  "id": "000725312",
+  "Object": "LACM:Fish:46085.002",
+  "Taxonomy": "Ruanoho decemdigitatus",
+  "Element or Part": "Whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Keiffer Williams",
+  "Data Manager": "Natural History Museum of Los Angeles County",
   "Date Uploaded": "04/02/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
