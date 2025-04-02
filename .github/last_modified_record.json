@@ -1,13 +1,14 @@
 {
-  "title": "Stegastes lividus skull",
-  "detail_url": "https://www.morphosource.org/concern/media/000725206?locale=en",
-  "id": "000725206",
-  "Object": "ypm:vz:006608",
-  "Taxonomy": "Stegastes lividus",
-  "Element or Part": "Skull",
+  "title": "Amblyglyphidodon aureus dentary teeth",
+  "detail_url": "https://www.morphosource.org/concern/media/000725235?locale=en",
+  "id": "000725235",
+  "Object": "FMNH:Fishes:118639",
+  "Taxonomy": "Amblyglyphidodon aureus",
+  "Element or Part": "dentary teeth",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Keiffer Williams",
   "Date Uploaded": "04/02/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
 }
