@@ -1,14 +1,14 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000725038?locale=en",
-  "id": "000725038",
-  "Object": "USNM:HERP:USNM 267168",
-  "Taxonomy": "Plethodon petraeus",
-  "Element or Part": "whole body",
+  "title": "Skull 3 D [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000655726?locale=en",
+  "id": "000655726",
+  "Object": "NHMUK:PAL:PV OR 15500",
+  "Taxonomy": "Steneosaurus gracilirostrisPlagiophthalmosuchus gracilirostris",
+  "Element or Part": "Skull 3D",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jonathan Huie",
-  "Date Uploaded": "04/02/2025",
+  "Data Manager": "NHMUK Fossil Reptiles, Amphibians, and Birds",
+  "Date Uploaded": "08/11/2024",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "Copyright Undetermined",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted",
   "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
 }
