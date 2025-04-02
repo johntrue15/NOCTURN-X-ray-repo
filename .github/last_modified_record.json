@@ -1,13 +1,13 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000723460?locale=en",
-  "id": "000723460",
-  "Object": "YPM:VZ:YPM MAM 004921",
-  "Taxonomy": "Canis lupus familiarisCanis familiarisCanis lupus familiaris Pointer",
-  "Element or Part": "skull",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000725161?locale=en",
+  "id": "000725161",
+  "Object": "LACM:Fish:54087.005",
+  "Taxonomy": "Enneanectes boehlkei",
+  "Element or Part": "Whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Nelson Rios",
-  "Date Uploaded": "03/26/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Natural History Museum of Los Angeles County",
+  "Date Uploaded": "04/02/2025",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
