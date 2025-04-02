@@ -1,14 +1,12 @@
 {
-  "title": "Palatal Canals [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000655729?locale=en",
-  "id": "000655729",
-  "Object": "NHMUK:PAL:PV OR 15500",
-  "Taxonomy": "Plagiophthalmosuchus gracilirostrisSteneosaurus gracilirostris",
-  "Element or Part": "Palatal Canals",
+  "title": "Amphiprion chrysopterus skull",
+  "detail_url": "https://www.morphosource.org/concern/media/000725143?locale=en",
+  "id": "000725143",
+  "Object": "111.54",
+  "Taxonomy": "Amphiprion chrysopterus",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "NHMUK Fossil Reptiles, Amphibians, and Birds",
-  "Date Uploaded": "08/11/2024",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Data Manager": "Keiffer Williams",
+  "Date Uploaded": "04/02/2025",
+  "Publication Status": "Open Download"
 }
