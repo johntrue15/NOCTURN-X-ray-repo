@@ -1,12 +1,13 @@
 {
-  "title": "Amphiprion chrysopterus skull",
-  "detail_url": "https://www.morphosource.org/concern/media/000725143?locale=en",
-  "id": "000725143",
-  "Object": "111.54",
-  "Taxonomy": "Amphiprion chrysopterus",
+  "title": "Abudefduf bengalensis skull",
+  "detail_url": "https://www.morphosource.org/concern/media/000722881?locale=en",
+  "id": "000722881",
+  "Object": "ypm:vz:006602",
+  "Taxonomy": "Abudefduf bengalensis",
   "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Keiffer Williams",
-  "Date Uploaded": "04/02/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "Nelson Rios",
+  "Date Uploaded": "03/24/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
