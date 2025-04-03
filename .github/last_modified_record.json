@@ -1,14 +1,13 @@
 {
-  "title": "Amblyglyphidodon aureus dentary teeth",
-  "detail_url": "https://www.morphosource.org/concern/media/000725235?locale=en",
-  "id": "000725235",
-  "Object": "FMNH:Fishes:118639",
-  "Taxonomy": "Amblyglyphidodon aureus",
-  "Element or Part": "dentary teeth",
+  "title": "Skull And Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000726960?locale=en",
+  "id": "000726960",
+  "Object": "MCZ:Herp:R-30423",
+  "Taxonomy": "Proatheris superciliaris",
+  "Element or Part": "skull and mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Sharon Grant",
-  "Date Uploaded": "04/02/2025",
+  "Data Manager": "Matt Gage",
+  "Date Uploaded": "04/03/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Rights Statement": "In Copyright"
 }
