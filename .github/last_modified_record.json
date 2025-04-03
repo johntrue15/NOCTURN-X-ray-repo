@@ -1,13 +1,11 @@
 {
-  "title": "Stegastes variabilis dentary teeth",
-  "detail_url": "https://www.morphosource.org/concern/media/000727174?locale=en",
-  "id": "000727174",
-  "Object": "ypm:vz:000437",
-  "Taxonomy": "Stegastes variabilis",
-  "Element or Part": "Dentary teeth",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000727185?locale=en",
+  "id": "000727185",
+  "Object": "msb:mammal specimens:30183",
+  "Taxonomy": "Dipodomys ordii",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Keiffer Williams",
+  "Data Manager": "Leila Siciliano-Martina",
   "Date Uploaded": "04/03/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Publication Status": "Open Download"
 }
