@@ -1,13 +1,13 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000726323?locale=en",
-  "id": "000726323",
-  "Object": "SIO:Marine Vertebrates:15-1708",
-  "Taxonomy": "Orthonopias triacis",
-  "Element or Part": "whole body",
+  "title": "Skull And Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000726960?locale=en",
+  "id": "000726960",
+  "Object": "MCZ:Herp:R-30423",
+  "Taxonomy": "Proatheris superciliaris",
+  "Element or Part": "skull and mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Ben Frable",
+  "Data Manager": "Matt Gage",
   "Date Uploaded": "04/03/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "No Copyright - Non-Commercial Use Only"
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
