@@ -1,13 +1,14 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000726323?locale=en",
-  "id": "000726323",
-  "Object": "SIO:Marine Vertebrates:15-1708",
-  "Taxonomy": "Orthonopias triacis",
-  "Element or Part": "whole body",
+  "title": "Amblyglyphidodon aureus dentary teeth",
+  "detail_url": "https://www.morphosource.org/concern/media/000725235?locale=en",
+  "id": "000725235",
+  "Object": "FMNH:Fishes:118639",
+  "Taxonomy": "Amblyglyphidodon aureus",
+  "Element or Part": "dentary teeth",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jonathan Huie",
-  "Date Uploaded": "04/03/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "No Copyright - Non-Commercial Use Only"
+  "Data Manager": "Sharon Grant",
+  "Date Uploaded": "04/02/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
 }
