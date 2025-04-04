@@ -1,12 +1,13 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000717066?locale=en",
-  "id": "000717066",
-  "Object": "MCZ:Mala:413272",
-  "Taxonomy": "Pectinodonta sp.",
+  "title": "Skull [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000100780?locale=en",
+  "id": "000100780",
+  "Object": "USNM:MAMM:USNM 291836",
+  "Taxonomy": "Rupicapra rupicapra",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jennifer Trimble",
-  "Date Uploaded": "03/07/2025",
+  "Data Manager": "Department of Vertebrate Zoology National Museum of Natural History",
+  "Date Uploaded": "02/11/2020",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "Copyright Undetermined"
 }
