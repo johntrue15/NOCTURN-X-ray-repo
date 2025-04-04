@@ -1,13 +1,13 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000727309?locale=en",
-  "id": "000727309",
-  "Object": "LACM:Fish:46091.001",
-  "Taxonomy": "Forsterygion capitoGrahamina capito",
-  "Element or Part": "Whole body",
+  "title": "Cranium [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000724709?locale=en",
+  "id": "000724709",
+  "Object": "oumnh:23790",
+  "Taxonomy": "Chauna chavaria",
+  "Element or Part": "Cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Natural History Museum of Los Angeles County",
-  "Date Uploaded": "04/04/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "Duncan Murdock",
+  "Date Uploaded": "03/29/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
