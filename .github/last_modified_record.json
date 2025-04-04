@@ -1,13 +1,12 @@
 {
-  "title": "Cranium [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000724709?locale=en",
-  "id": "000724709",
-  "Object": "oumnh:23790",
-  "Taxonomy": "Chauna chavaria",
-  "Element or Part": "Cranium",
+  "title": "Element Unspecified [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000717066?locale=en",
+  "id": "000717066",
+  "Object": "MCZ:Mala:413272",
+  "Taxonomy": "Pectinodonta sp.",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Duncan Murdock",
-  "Date Uploaded": "03/29/2025",
+  "Data Manager": "Jennifer Trimble",
+  "Date Uploaded": "03/07/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
