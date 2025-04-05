@@ -1,12 +1,212 @@
-# CT Image Analysis Gallery (Page 3 of 42)
+# CT Image Analysis Gallery (Page 3 of 43)
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-04-05 17:15:26 UTC
+**Last Updated:** 2025-04-05 18:24:47 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-03-26-19-03-49" data-release-tag="ct_image_analysis-2025-03-26_19-03-49">
+    <div class="gallery-header">
+        <h2>2025/03/26 19:03:49 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-26_19-03-49">ct_image_analysis-2025-03-26_19-03-49</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-26_19-03-49/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-26_19-03-49/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-26_19-03-49/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-26_19-03-49/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-03-26_18-45-47</p>
+<p>Analyzing the 3D X-ray CT scan images of the specimen reveals several notable structural characteristics, potential material composition, and unique features across different views. </p>
+<h3>Structural Characteristics:</h3>
+<ol>
+<li><strong>General Form</strong>: The skull appears robust with a distinctive shape typical of certain species. The prominent upper features suggest adaptations possibly related to feeding or defense mechanisms.</li>
+<li><strong>Surface Texture</strong>: The texture of the skull is uneven with visible surface details such as pits and ridges, indicating a potentially complex interaction with environmental factors or biological processes (like muscle attachment).</li>
+<li><strong>Symmetry</strong>: The skull displays bilateral symmetry, typical in many vertebrates, suggesting evolutionary pressures for streamlined form and function.</li>
+</ol>
+<h3>Material Composition:</h3>
+<ol>
+<li><strong>Bone Density</strong>: The density of the structure suggests it is primarily composed of bone or calcareous materials. Areas with varying density may indicate different functionalities, such as lightweight regions balanced for mobility or areas reinforced for strength.</li>
+<li><strong>Mineralization</strong>: The uneven surface might indicate varied mineralization across the specimen, possibly reflecting age, health, or environmental stresses during the organism's life.</li>
+</ol>
+<h3>Notable Features:</h3>
+<ol>
+<li><strong>Ornamentation</strong>: The presence of spines or additional protuberances suggests specialized functions, such as defense or species identification. This feature is prominent in views showcasing the lateral aspects.</li>
+<li><strong>Cranial Openings</strong>: The large nasal and ocular openings provide insight into the sensory capabilities. The positioning and size of these features may indicate behavioral adaptations or ecological niches.</li>
+<li><strong>Anomalies</strong>: Any irregularities or asymmetries (if present) could signify past injuries, pathologies, or developmental anomalies. Identifying these will require close observation and comparison across views.</li>
+</ol>
+<h3>Observations Across Different Views:</h3>
+<ul>
+<li><strong>Frontal View</strong>: Highlights the arrangement of teeth and facial structures, important for feeding mechanisms. The frontal bones are clearly defined.</li>
+<li><strong>Lateral View</strong>: Provides insight into jaw articulation and muscle attachment points which may be critical for movement and feeding habits.</li>
+<li><strong>Dorsal View</strong>: Shows the curvature of the skull, indicating adaptations that might have evolved for specific environmental interactions.</li>
+<li><strong>Ventral View</strong>: Important for studying the floor of the skull, revealing morphologies related to internal structures like the brain and vascular pathways.</li>
+</ul>
+<h3>Conclusion:</h3>
+<p>These scans provide a rich source for understanding the morphology, functional adaptations, and potential ecological roles of the specimen. Detailed analysis of the various features</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-03-26-17-31-37" data-release-tag="ct_image_analysis-2025-03-26_17-31-37">
+    <div class="gallery-header">
+        <h2>2025/03/26 17:31:37 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-26_17-31-37">ct_image_analysis-2025-03-26_17-31-37</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-26_17-31-37/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-26_17-31-37/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-26_17-31-37/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-26_17-31-37/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-03-26_17-08-17</p>
+<p>Analyzing the 3D X-ray CT scan data of the skull specimen, we can extract several key structural characteristics and features based on the different views:</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li><strong>Overall Morphology</strong>:</li>
+<li>The skull appears to be well-preserved, showing a defined cranial cavity and distinctive features such as zygomatic arches and nasal openings.</li>
+<li>
+<p>The mandible (lower jaw) is separate from the skull, indicating a clear articulation point at the temporomandibular joint.</p>
+</li>
+<li>
+<p><strong>Cranial Features</strong>:</p>
+</li>
+<li>The top view reveals a smooth, elongated shape typical of certain species, indicating adaptation to specific environmental needs.</li>
+<li>
+<p>Notable structures include the orbits, which may show varying sizes depending on the specimen's lineage.</p>
+</li>
+<li>
+<p><strong>Mandibular Structure</strong>:</p>
+</li>
+<li>The mandible exhibits a robust design, potentially hinting at dietary habits and feeding mechanisms.</li>
+<li>It features dental structures that can provide insights into the age and species of the specimen.</li>
+</ol>
+<h3>Material Composition</h3>
+<ul>
+<li>The CT scan likely indicates a high density of mineralized tissues, typical of bone. The light coloration suggests well-developed osseous material, with possible variation in density across regions—key for understanding developmental and evolutionary aspects.</li>
+</ul>
+<h3>Notable Features and Anomalies</h3>
+<ol>
+<li><strong>Surface Textures</strong>:</li>
+<li>
+<p>Several views indicate a textured surface on the skull, which may reflect features such as muscle attachment sites or areas affected by wear, indicating the specimen's life history.</p>
+</li>
+<li>
+<p><strong>Anomalies</strong>:</p>
+</li>
+<li>Should any irregularities present themselves—such as deformities or unusual growths—these could be crucial for studying pathologies or stressors encountered in life.</li>
+<li>
+<p>Certain views might also display artifacts from the scanning process, presenting opportunities to refine imaging techniques.</p>
+</li>
+<li>
+<p><strong>Vascular and Nerve Pathways</strong>:</p>
+</li>
+<li>If visible, it could be interesting to examine any traces of vascular canals or nerve pathways, which can provide insights into the specimen's physiology and health status.</li>
+</ol>
+<h3>Conclusion</h3>
+<p>The 3D X-ray CT scan data from Morphosource.org offers a wealth of information about the specimen’s structural characteristics, material composition, and potential anomalies. Further analysis could involve cross-referencing these features with existing literature to derive comprehensive insights into the organism's biology and evolutionary history.</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
 
 <div class="gallery-item" data-release-id="release-ct-image-analysis-2025-03-26-14-44-48" data-release-tag="ct_image_analysis-2025-03-26_14-44-48">
     <div class="gallery-header">
@@ -358,269 +558,8 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 
 <div class="timeline-separator"></div>
 
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-03-25-19-03-14" data-release-tag="ct_image_analysis-2025-03-25_19-03-14">
-    <div class="gallery-header">
-        <h2>2025/03/25 19:03:14 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-25_19-03-14">ct_image_analysis-2025-03-25_19-03-14</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-25_19-03-14/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-25_19-03-14/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-25_19-03-14/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-25_19-03-14/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-03-25_18-52-30</p>
-<p>Analyzing the 3D X-ray CT scan data of the specimen, the following structural characteristics and features can be noted:</p>
-<h3>Structural Characteristics:</h3>
-<ol>
-<li><strong>Overall Morphology</strong>:</li>
-<li>
-<p>The specimen displays a skeletal structure characteristic of a vertebrate, potentially belonging to a marine mammal given the general anatomical features observed.</p>
-</li>
-<li>
-<p><strong>Skeletal Arrangement</strong>:</p>
-</li>
-<li>The backbone (vertebral column) is prominently visible, with a total count of vertebrae that suggests a specialization adapted for aquatic life.</li>
-<li>
-<p>The forelimbs, noted for their elongated phalanges and reduced digits, indicate adaptations such as flippers or paddles.</p>
-</li>
-<li>
-<p><strong>Cranial Features</strong>:</p>
-</li>
-<li>
-<p>The skull exhibits notable features such as reduced jaw size and cranial elongation, typical for species adapted to hydrodynamic efficiency.</p>
-</li>
-<li>
-<p><strong>Rib Structure</strong>:</p>
-</li>
-<li>
-<p>Ribs appear well-developed, suggesting a strong thoracic structure capable of supporting respiratory functions critical for submerged environments.</p>
-</li>
-<li>
-<p><strong>Pelvic Anatomy</strong>:</p>
-</li>
-<li>The pelvic girdle displays adaptations indicating either vestigial structures or specific modifications for streamlined swimming.</li>
-</ol>
-<h3>Material Composition:</h3>
-<ul>
-<li>The data suggests a composite material primarily consisting of calcified tissues such as bone, with variations in density that can indicate different material properties or age-related changes.</li>
-</ul>
-<h3>Notable Features or Anomalies:</h3>
-<ol>
-<li><strong>Anomalies in Bone Density</strong>:</li>
-<li>
-<p>Areas of irregularity in bone density may indicate pathological conditions, such as osteopetrosis or osteopenia, which could affect locomotion or buoyancy.</p>
-</li>
-<li>
-<p><strong>Surface Features</strong>:</p>
-</li>
-<li>
-<p>Small textural features on the surface of the bones may suggest areas of muscle attachment, suggesting muscle mass adaptation for enhanced movement.</p>
-</li>
-<li>
-<p><strong>Presence of Foreign Elements</strong>:</p>
-</li>
-<li>
-<p>In one view, there appears to be additional smaller objects near the head, which could be indicative of ingested materials, potential artifacts, or foreign bodies, warranting further investigation.</p>
-</li>
-<li>
-<p><strong>Variation Across Angles</strong>:</p>
-</li>
-<li>Different orientations reveal complex interrelationships among skeletal components, vital for understanding the biomechanics of the specimen.</li>
-</ol>
-<h3>Conclusion</h3>
-<p>The observed specimen showcases a range of structural characteristics that highlight both its physiological adaptations and ecological role. Each angle provides valuable information on the anatomical and functional aspects of the organism, which can guide further studies in areas such as paleobiology, functional morphology, and evolutionary biology. Further analysis integrating histological data could provide insights into developmental and health</p>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-03-25-13-48-47" data-release-tag="ct_image_analysis-2025-03-25_13-48-47">
-    <div class="gallery-header">
-        <h2>2025/03/25 13:48:47 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-25_13-48-47">ct_image_analysis-2025-03-25_13-48-47</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-25_13-48-47/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-25_13-48-47/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-25_13-48-47/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-25_13-48-47/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-03-25_13-34-18</p>
-<p>To provide a detailed analysis of the 3D X-ray CT scan data, here's an overview based on the observed structural characteristics, material composition, and notable features across the different views provided:</p>
-<h3>Structural Characteristics:</h3>
-<ol>
-<li>
-<p><strong>General Bon Structure</strong>:</p>
-<ul>
-<li>The scans display a complex bony structure typical of a vertebrate skull, with prominent features indicative of the species’ adaptations.</li>
-</ul>
-</li>
-<li>
-<p><strong>Dental Structure</strong>:</p>
-<ul>
-<li>The ventral views, especially in the first and second images, highlight a series of conical or cusp-like teeth, which could suggest a carnivorous diet. The arrangement and shape of the teeth play a critical role in understanding dietary habits.</li>
-</ul>
-</li>
-<li>
-<p><strong>Cranial Features</strong>:</p>
-<ul>
-<li>The contours indicate a robust cranium with pronounced zygomatic arches, suggesting strong jaw musculature. </li>
-<li>The nasal opening is elongated, indicative of species adapted for specific environmental conditions, possibly aquatic or aerial.</li>
-</ul>
-</li>
-<li>
-<p><strong>Eye Sockets</strong>:</p>
-<ul>
-<li>The orbits are somewhat large, which often correlates with enhanced vision capabilities. The shape and orientation can provide insight into the animal's behavioral ecology.</li>
-</ul>
-</li>
-</ol>
-<h3>Material Composition:</h3>
-<ol>
-<li>
-<p><strong>Bone Density</strong>:</p>
-<ul>
-<li>Variations in density can be observed, with denser areas indicating stronger structural support, especially around regions of stress (e.g., jaw and attachment points for muscles).</li>
-</ul>
-</li>
-<li>
-<p><strong>Surface Texture</strong>:</p>
-<ul>
-<li>The surface appears somewhat porous, which is common in bones that allow for weight reduction while maintaining structural integrity. This feature may also indicate the presence of vascular channels or growth patterns.</li>
-</ul>
-</li>
-<li>
-<p><strong>Possible Pathologies</strong>:</p>
-<ul>
-<li>Any irregularities in the bone texture could suggest potential pathologies or historical impacts experienced by the specimen, such as injury or disease.</li>
-</ul>
-</li>
-</ol>
-<h3>Notable Features or Anomalies:</h3>
-<ol>
-<li>
-<p><strong>Symmetry</strong>:</p>
-<ul>
-<li>The overall symmetry of the skull structure suggests normal developmental processes. Deviations would indicate potential issues during growth or adaptation strategies.</li>
-</ul>
-</li>
-<li>
-<p><strong>Anatomical Variations</strong>:</p>
-<ul>
-<li>The differing views may show variations in bony protrusions that might serve as attachment sites for muscles, indicating adaptation for specific lifestyle habits.</li>
-</ul>
-</li>
-<li>
-<p><strong>Fossilization Indicators</strong>:</p>
-<ul>
-<li>The texture and structural integrity of the scans might reflect fossilization processes if this is a historical specimen, with implications for the preservation of organic material.</li>
-</ul>
-</li>
-</ol>
-<h3>Conclusion</h3>
-<p>The 3D X-ray CT scans provide invaluable insight into the structural design, material characteristics,</p>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
 <div class="pagination-container">
-    <a href="image_analysis_page2.html" class="pagination-button">Previous</a>    <a href="image_analysis.html" class="pagination-page">1</a>    <a href="image_analysis_page2.html" class="pagination-page">2</a>    <span class="pagination-page current">3</span>    <a href="image_analysis_page4.html" class="pagination-page">4</a>    <a href="image_analysis_page5.html" class="pagination-page">5</a>    <a href="image_analysis_page6.html" class="pagination-page">6</a>    <a href="image_analysis_page7.html" class="pagination-page">7</a>    <a href="image_analysis_page8.html" class="pagination-page">8</a>    <a href="image_analysis_page9.html" class="pagination-page">9</a>    <a href="image_analysis_page10.html" class="pagination-page">10</a>    <a href="image_analysis_page11.html" class="pagination-page">11</a>    <a href="image_analysis_page12.html" class="pagination-page">12</a>    <a href="image_analysis_page13.html" class="pagination-page">13</a>    <a href="image_analysis_page14.html" class="pagination-page">14</a>    <a href="image_analysis_page15.html" class="pagination-page">15</a>    <a href="image_analysis_page16.html" class="pagination-page">16</a>    <a href="image_analysis_page17.html" class="pagination-page">17</a>    <a href="image_analysis_page18.html" class="pagination-page">18</a>    <a href="image_analysis_page19.html" class="pagination-page">19</a>    <a href="image_analysis_page20.html" class="pagination-page">20</a>    <a href="image_analysis_page21.html" class="pagination-page">21</a>    <a href="image_analysis_page22.html" class="pagination-page">22</a>    <a href="image_analysis_page23.html" class="pagination-page">23</a>    <a href="image_analysis_page24.html" class="pagination-page">24</a>    <a href="image_analysis_page25.html" class="pagination-page">25</a>    <a href="image_analysis_page26.html" class="pagination-page">26</a>    <a href="image_analysis_page27.html" class="pagination-page">27</a>    <a href="image_analysis_page28.html" class="pagination-page">28</a>    <a href="image_analysis_page29.html" class="pagination-page">29</a>    <a href="image_analysis_page30.html" class="pagination-page">30</a>    <a href="image_analysis_page31.html" class="pagination-page">31</a>    <a href="image_analysis_page32.html" class="pagination-page">32</a>    <a href="image_analysis_page33.html" class="pagination-page">33</a>    <a href="image_analysis_page34.html" class="pagination-page">34</a>    <a href="image_analysis_page35.html" class="pagination-page">35</a>    <a href="image_analysis_page36.html" class="pagination-page">36</a>    <a href="image_analysis_page37.html" class="pagination-page">37</a>    <a href="image_analysis_page38.html" class="pagination-page">38</a>    <a href="image_analysis_page39.html" class="pagination-page">39</a>    <a href="image_analysis_page40.html" class="pagination-page">40</a>    <a href="image_analysis_page41.html" class="pagination-page">41</a>    <a href="image_analysis_page42.html" class="pagination-page">42</a>    <a href="image_analysis_page4.html" class="pagination-button">Next</a>
+    <a href="image_analysis_page2.html" class="pagination-button">Previous</a>    <a href="image_analysis.html" class="pagination-page">1</a>    <a href="image_analysis_page2.html" class="pagination-page">2</a>    <span class="pagination-page current">3</span>    <a href="image_analysis_page4.html" class="pagination-page">4</a>    <a href="image_analysis_page5.html" class="pagination-page">5</a>    <a href="image_analysis_page6.html" class="pagination-page">6</a>    <a href="image_analysis_page7.html" class="pagination-page">7</a>    <a href="image_analysis_page8.html" class="pagination-page">8</a>    <a href="image_analysis_page9.html" class="pagination-page">9</a>    <a href="image_analysis_page10.html" class="pagination-page">10</a>    <a href="image_analysis_page11.html" class="pagination-page">11</a>    <a href="image_analysis_page12.html" class="pagination-page">12</a>    <a href="image_analysis_page13.html" class="pagination-page">13</a>    <a href="image_analysis_page14.html" class="pagination-page">14</a>    <a href="image_analysis_page15.html" class="pagination-page">15</a>    <a href="image_analysis_page16.html" class="pagination-page">16</a>    <a href="image_analysis_page17.html" class="pagination-page">17</a>    <a href="image_analysis_page18.html" class="pagination-page">18</a>    <a href="image_analysis_page19.html" class="pagination-page">19</a>    <a href="image_analysis_page20.html" class="pagination-page">20</a>    <a href="image_analysis_page21.html" class="pagination-page">21</a>    <a href="image_analysis_page22.html" class="pagination-page">22</a>    <a href="image_analysis_page23.html" class="pagination-page">23</a>    <a href="image_analysis_page24.html" class="pagination-page">24</a>    <a href="image_analysis_page25.html" class="pagination-page">25</a>    <a href="image_analysis_page26.html" class="pagination-page">26</a>    <a href="image_analysis_page27.html" class="pagination-page">27</a>    <a href="image_analysis_page28.html" class="pagination-page">28</a>    <a href="image_analysis_page29.html" class="pagination-page">29</a>    <a href="image_analysis_page30.html" class="pagination-page">30</a>    <a href="image_analysis_page31.html" class="pagination-page">31</a>    <a href="image_analysis_page32.html" class="pagination-page">32</a>    <a href="image_analysis_page33.html" class="pagination-page">33</a>    <a href="image_analysis_page34.html" class="pagination-page">34</a>    <a href="image_analysis_page35.html" class="pagination-page">35</a>    <a href="image_analysis_page36.html" class="pagination-page">36</a>    <a href="image_analysis_page37.html" class="pagination-page">37</a>    <a href="image_analysis_page38.html" class="pagination-page">38</a>    <a href="image_analysis_page39.html" class="pagination-page">39</a>    <a href="image_analysis_page40.html" class="pagination-page">40</a>    <a href="image_analysis_page41.html" class="pagination-page">41</a>    <a href="image_analysis_page42.html" class="pagination-page">42</a>    <a href="image_analysis_page43.html" class="pagination-page">43</a>    <a href="image_analysis_page4.html" class="pagination-button">Next</a>
 </div>
       </div>
 
