@@ -1,14 +1,11 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000727644?locale=en",
-  "id": "000727644",
-  "Object": "NMBE:mamm:1124125",
-  "Taxonomy": "Capra hircus",
-  "Element or Part": "Skull",
+  "title": "Element Unspecified [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000727656?locale=en",
+  "id": "000727656",
+  "Object": "SMNK:pal:76022",
+  "Taxonomy": "Manistropheus kulicki",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Valentina Segura",
-  "Date Uploaded": "04/05/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted",
-  "CC License": "Creative Commons BY-NC-ND Attribution-NonCommercial-NoDerivs 4.0 International"
+  "Data Manager": "Martin Ezcurra",
+  "Date Uploaded": "04/06/2025",
+  "Publication Status": "Open Download"
 }
