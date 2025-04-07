@@ -1,11 +1,14 @@
 {
-  "title": "Element Unspecified [Image] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000728241?locale=en",
-  "id": "000728241",
-  "Object": "ZFMK121964",
-  "Taxonomy": "Oryzias wolasi",
+  "title": "Skull [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000728261?locale=en",
+  "id": "000728261",
+  "Object": "NMBE:mamm:1124116",
+  "Taxonomy": "Capra hircus",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Tobias Spanke",
+  "Data Manager": "Valentina Segura",
   "Date Uploaded": "04/07/2025",
-  "Publication Status": "Restricted Download"
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted",
+  "CC License": "Creative Commons BY-NC-ND Attribution-NonCommercial-NoDerivs 4.0 International"
 }
