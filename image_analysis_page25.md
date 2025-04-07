@@ -2,11 +2,128 @@
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-04-07 17:18:01 UTC
+**Last Updated:** 2025-04-07 18:27:59 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-10-18-31-31" data-release-tag="ct_image_analysis-2025-02-10_18-31-31">
+    <div class="gallery-header">
+        <h2>2025/02/10 18:31:31 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-10_18-31-31">ct_image_analysis-2025-02-10_18-31-31</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_18-31-31/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_18-31-31/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_18-31-31/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_18-31-31/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-10_18-00-11</p>
+<p>Based on the provided descriptions of the 3D X-ray CT scan images depicting a specimen's mandible, here is a detailed analysis of its structural characteristics, material composition, and any notable features observable in various orientations:</p>
+<h3>Structural Characteristics:</h3>
+<ol>
+<li><strong>Overall Shape and Structure</strong>:</li>
+<li>The mandible appears to have a roughly U-shaped structure, indicative of its functional role in mastication.</li>
+<li>
+<p>The two halves of the mandible are symmetrical, converging towards the midline, suggesting a robust design for mechanical leverage.</p>
+</li>
+<li>
+<p><strong>Jaw Mechanism</strong>:</p>
+</li>
+<li>Notable features, such as the coronoid processes and condylar processes, are likely present in some views, which facilitate jaw movement.</li>
+<li>
+<p>The surfaces are likely textured to provide attachment for muscles, indicating adaptation for forceful biting and grinding.</p>
+</li>
+<li>
+<p><strong>Cross-section Features</strong>:</p>
+</li>
+<li>Cross-sectional views may reveal medullary cavities within the bone, indicative of its overall lightweight yet strong structure, significant for daily function.</li>
+</ol>
+<h3>Material Composition:</h3>
+<ol>
+<li><strong>Density Variation</strong>:</li>
+<li>The CT scans likely reflect variations in mineral density, consistent with osseous tissue. Denser regions typically correspond with load-bearing areas.</li>
+<li>
+<p>Possible presence of features such as trabecular bone suggests adaptive strength in areas subjected to higher fatigue.</p>
+</li>
+<li>
+<p><strong>Composition</strong>:</p>
+</li>
+<li>The mandible is primarily composed of compact bone, providing rigidity, and may also include cancellous bone in specific regions.</li>
+<li>The color tone in the scans (typically shades of gray or off-white) indicates mineral content, with higher densities appearing lighter.</li>
+</ol>
+<h3>Notable Features and Anomalies:</h3>
+<ol>
+<li><strong>Surface Texturing</strong>:</li>
+<li>
+<p>The surface finish demonstrated in the images might show various micro-features, including foramina for blood vessels, contributing to the vascularization of the bone.</p>
+</li>
+<li>
+<p><strong>Pathological Changes</strong>:</p>
+</li>
+<li>Any anomalies such as irregular growths, deformities, or signs of previous trauma might be analyzed in different orientations.</li>
+<li>
+<p>The presence of any pathologies, such as osteophytes or lesions, would suggest historical or developmental changes, possibly affecting functionality.</p>
+</li>
+<li>
+<p><strong>Orientation Impact</strong>:</p>
+</li>
+<li>Different views reveal varying aspects of the mandible's structural integrity, showing functions and load-bearing capabilities under different mechanical stresses.</li>
+</ol>
+<h3>Conclusion:</h3>
+<p>Through analysis of the 3D X-ray CT images, this evaluation illustrates the functional design and robust characteristics of the mandible. The combinations</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
 
 <div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-10-17-57-16" data-release-tag="ct_image_analysis-2025-02-10_17-57-16">
     <div class="gallery-header">
@@ -393,136 +510,6 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 </li>
 <li>If regions in the images appear unusually thickened, porous, or distorted, these could indicate previous</li>
 </ol>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-10-16-58-27" data-release-tag="ct_image_analysis-2025-02-10_16-58-27">
-    <div class="gallery-header">
-        <h2>2025/02/10 16:58:27 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-10_16-58-27">ct_image_analysis-2025-02-10_16-58-27</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_16-58-27/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_16-58-27/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_16-58-27/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_16-58-27/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-10_16-54-36</p>
-<p>The analysis of the 3D X-ray CT scan data of the mandible reveals several important structural characteristics and features across the different views provided:</p>
-<h3>Structural Characteristics:</h3>
-<ol>
-<li><strong>Bilateral Symmetry</strong>:</li>
-<li>
-<p>The mandible exhibits a symmetrical morphology with two distinct halves united at the midline, which is typical of many vertebrate mandibles.</p>
-</li>
-<li>
-<p><strong>Articular Surfaces</strong>:</p>
-</li>
-<li>
-<p>The joint areas where the mandible connects to the skull are well-defined. These surfaces typically display varied orientations based on the specific view, providing insights into joint mobility and functionality.</p>
-</li>
-<li>
-<p><strong>Incisive and Canine Regions</strong>:</p>
-</li>
-<li>
-<p>Notable features include the presence of canine and incisor regions, which are crucial for dietary function. The morphology of these areas can hint at dietary adaptations.</p>
-</li>
-<li>
-<p><strong>Alveolar Processes</strong>:</p>
-</li>
-<li>
-<p>The structure shows prominent alveolar processes where teeth would be anchored, indicating a well-developed area for dental attachment.</p>
-</li>
-<li>
-<p><strong>Condyle and Coronoid Processes</strong>:</p>
-</li>
-<li>These processes are evident in certain views, showing the site of muscle attachment and functional aspects of jaw movement.</li>
-</ol>
-<h3>Material Composition:</h3>
-<ul>
-<li><strong>Bone Density</strong>:</li>
-<li>
-<p>The CT scan data suggests varying densities in the bone, which is typical as different areas are subjected to different mechanical stresses during activities like feeding.</p>
-</li>
-<li>
-<p><strong>Mineralization</strong>:</p>
-</li>
-<li>The mandible’s composition likely includes a high level of mineralization, characteristic of vertebrate bone structures. The specific mineral composition (primarily hydroxyapatite) contributes to the strength and rigidity of the mandible.</li>
-</ul>
-<h3>Notable Features and Anomalies:</h3>
-<ol>
-<li><strong>Surface Texture</strong>:</li>
-<li>
-<p>Variations in surface texture can indicate areas of wear or stress, potentially reflecting the age or use of the specimen.</p>
-</li>
-<li>
-<p><strong>Pathological Features</strong>:</p>
-</li>
-<li>
-<p>Depending on specific features observed (e.g., unusual growths or deformities), there may be pathological concerns. Further analysis would be needed to detail any anomalies definitively.</p>
-</li>
-<li>
-<p><strong>Presence of Foramina</strong>:</p>
-</li>
-<li>
-<p>Foramina (small holes) observed on the surface may be indicative of neurovascular structures, allowing for nerves and blood vessels to pass through, which is crucial for function and health.</p>
-</li>
-<li>
-<p><strong>Orientation Differences</strong>:</p>
-</li>
-<li>Changing views alters the perception of depth, providing insights into the three-dimensional complexity of the mandible, including the angles between different processes which can affect mechanical function.</li>
-</ol>
-<h3>Conclusion:</h3>
-<p>The</p>
 <h3>Orientation Views</h3>
 <p>The following orientation views were captured:
 - Default (Y+ Up)
