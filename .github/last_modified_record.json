@@ -1,11 +1,13 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000727988?locale=en",
-  "id": "000727988",
-  "Object": "Unvouchered object contributed by Tobias Spanke",
-  "Taxonomy": "Adrianichthyidae indet.",
+  "title": "Skull [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000728016?locale=en",
+  "id": "000728016",
+  "Object": "YPM:VZ:YPM MAM 004930",
+  "Taxonomy": "Canis familiarisCanis lupus familiaris Mexican PitbullCanis lupus familiaris",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Tobias Spanke",
+  "Data Manager": "Laurel Yohe",
   "Date Uploaded": "04/07/2025",
-  "Publication Status": "Restricted Download"
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
