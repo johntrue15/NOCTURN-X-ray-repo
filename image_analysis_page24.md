@@ -2,11 +2,115 @@
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-04-07 16:24:43 UTC
+**Last Updated:** 2025-04-07 17:18:01 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-10-21-03-08" data-release-tag="ct_image_analysis-2025-02-10_21-03-08">
+    <div class="gallery-header">
+        <h2>2025/02/10 21:03:08 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-10_21-03-08">ct_image_analysis-2025-02-10_21-03-08</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_21-03-08/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_21-03-08/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_21-03-08/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_21-03-08/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-10_20-59-08</p>
+<p>Analyzing the 3D X-ray CT scan data reveals several structural characteristics and potential features of the specimen across different orientations. Here’s a detailed analysis:</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li><strong>Morphology</strong>:</li>
+<li>The specimen exhibits a complex morphology with elongated elements indicative of osteological structures, likely belonging to a vertebrate.</li>
+<li>
+<p>The various views suggest a branching pattern typical of skeletal elements, possibly representing limb bones or vertebrae.</p>
+</li>
+<li>
+<p><strong>Orientation and Alignment</strong>:</p>
+</li>
+<li>
+<p>Different orientations display shifts in how the components are aligned, emphasizing the spatial relationships among parts (e.g., points of articulation or junctions between bones).</p>
+</li>
+<li>
+<p><strong>Thickness Variation</strong>:</p>
+</li>
+<li>There are variations in the thickness of the bones, with certain areas appearing more robust. This could indicate adaptation to stress or specific functional needs.</li>
+</ol>
+<h3>Material Composition</h3>
+<ul>
+<li>The CT scans portray a dense, possibly mineralized material, characteristic of bone. The lighter coloration might suggest high calcium content.</li>
+</ul>
+<h3>Notable Features</h3>
+<ol>
+<li><strong>Surface Texture</strong>:</li>
+<li>
+<p>Textures on the surface may imply areas of growth or pathological conditions. Any pitting or irregularity could indicate wear, disease, or natural growth patterns.</p>
+</li>
+<li>
+<p><strong>Cavities and Medullary Canals</strong>:</p>
+</li>
+<li>Some views show open sections or canals that might represent marrow cavities, essential for understanding the functional anatomy.</li>
+</ol>
+<h3>Anomalies</h3>
+<ul>
+<li>Any evident anomalies, such as unusual growths, deformities, or asymmetries, could pose questions regarding the health or lifestyle of the organism from which this specimen originates.</li>
+</ul>
+<h3>Conclusion</h3>
+<p>The detailed structural insights from varying perspectives enhance our understanding of the specimen's anatomy and potential functions. Further comparisons with known specimens could shed light on evolutionary adaptations and health status.</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
 
 <div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-10-20-56-05" data-release-tag="ct_image_analysis-2025-02-10_20-56-05">
     <div class="gallery-header">
@@ -413,117 +517,6 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 </ol>
 <h3>Conclusion:</h3>
 <p>Through analysis of the 3D X-ray CT images, this evaluation illustrates the functional design and robust characteristics of the mandible. The combinations</p>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-10-17-57-16" data-release-tag="ct_image_analysis-2025-02-10_17-57-16">
-    <div class="gallery-header">
-        <h2>2025/02/10 17:57:16 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-10_17-57-16">ct_image_analysis-2025-02-10_17-57-16</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_17-57-16/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_17-57-16/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_17-57-16/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_17-57-16/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-10_17-53-24</p>
-<p>Analyzing the 3D X-ray CT scan data of the radius and ulna from Morphosource.org reveals several key structural characteristics, material composition aspects, and notable features across different views.</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li><strong>Morphology</strong>: </li>
-<li>The radius and ulna exhibit a typical long bone structure, characterized by a cylindrical shaft and expanded ends. </li>
-<li>
-<p>The radius appears slightly more slender compared to the ulna in some views, suggesting a differentiation in function or load-bearing capacity.</p>
-</li>
-<li>
-<p><strong>Articular Ends</strong>:</p>
-</li>
-<li>Each bone concludes in articulating surfaces. The distal ends of both bones connect with the carpal bones, indicating areas for joint movement.</li>
-<li>
-<p>The proximal end of the radius is bowl-shaped, while the ulna has a more complex shape to fit into the elbow joint.</p>
-</li>
-<li>
-<p><strong>Curvature</strong>:</p>
-</li>
-<li>The overall curvature of both bones varies, which could relate to the anatomical positioning or functional demands of the limb.</li>
-</ol>
-<h3>Material Composition</h3>
-<ul>
-<li><strong>Density and Texture</strong>: </li>
-<li>The CT images, where high-resolution scanning is employed, can reveal variations in density. Denser regions typically indicate areas where there may be more compact bone (cortical bone) as opposed to less dense areas (trabecular bone).</li>
-<li>The texture on the surface can suggest wear or remodeling which may result from usage over time.</li>
-</ul>
-<h3>Notable Features and Anomalies</h3>
-<ol>
-<li><strong>Surface Anomalies</strong>:</li>
-<li>Any irregularities or surface abnormalities may suggest previous injuries or pathological conditions, although these would need more detailed analysis to confirm.</li>
-<li>
-<p>Features such as osteophytes (bone spurs) or other growths may not be apparent without enhanced imaging techniques but should be noted if visible.</p>
-</li>
-<li>
-<p><strong>Attachments for Muscles and Ligaments</strong>:</p>
-</li>
-<li>The presence of holes or grooves on the bone surface indicates points of attachment for muscles and ligaments, crucial for functionality.</li>
-<li>
-<p>Different orientations may emphasize these features differently, making it important to analyze from various angles.</p>
-</li>
-<li>
-<p><strong>Precision in Joint Interfaces</strong>:</p>
-</li>
-<li>The fit and finish of the proximal and distal articulating surfaces are critical for joint stability and function, and different views can show how well these surfaces align.</li>
-</ol>
-<h3>Conclusion</h3>
-<p>The analysis of the 3D CT scans offers valuable insights into the anatomical features and morphological nuances of the radius and ulna. Understanding these characteristics can aid in fields such as anthropology, archaeology, and biomedical sciences</p>
 <h3>Orientation Views</h3>
 <p>The following orientation views were captured:
 - Default (Y+ Up)
