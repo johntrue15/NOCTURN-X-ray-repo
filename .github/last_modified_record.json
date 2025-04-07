@@ -1,13 +1,11 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000568837?locale=en",
-  "id": "000568837",
-  "Object": "LACM:Fish:54121.001",
-  "Taxonomy": "Asterropteryx semipunctatus",
-  "Element or Part": "Whole body",
+  "title": "Element Unspecified [Image] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000728102?locale=en",
+  "id": "000728102",
+  "Object": "LIB:ICH144678",
+  "Taxonomy": "Adrianichthys oophorus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Natural History Museum of Los Angeles County",
-  "Date Uploaded": "10/05/2023",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "Tobias Spanke",
+  "Date Uploaded": "04/07/2025",
+  "Publication Status": "Restricted Download"
 }
