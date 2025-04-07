@@ -1,12 +1,11 @@
 {
-  "title": "Whole Skeleton",
-  "detail_url": "https://www.morphosource.org/concern/media/000718095?locale=en",
-  "id": "000718095",
-  "Object": "UF:Herp:153328",
-  "Taxonomy": "Heloderma horridum",
-  "Element or Part": "whole skeleton with osteoderms",
+  "title": "Element Unspecified [Image] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000728171?locale=en",
+  "id": "000728171",
+  "Object": "LIB:ZFMK121934",
+  "Taxonomy": "Oryzias eversi",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "03/10/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "Tobias Spanke",
+  "Date Uploaded": "04/07/2025",
+  "Publication Status": "Restricted Download"
 }
