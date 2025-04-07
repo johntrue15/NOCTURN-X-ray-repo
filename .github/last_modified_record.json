@@ -1,11 +1,13 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000727656?locale=en",
-  "id": "000727656",
-  "Object": "SMNK:pal:76022",
-  "Taxonomy": "Manistropheus kulicki",
+  "title": "Skull [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000727934?locale=en",
+  "id": "000727934",
+  "Object": "OUMNH:zc:13804",
+  "Taxonomy": "Rhabdomys pumilio",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Martin Ezcurra",
-  "Date Uploaded": "04/06/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "Iris Men\u00e9ndez",
+  "Date Uploaded": "04/07/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
