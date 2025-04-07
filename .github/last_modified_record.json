@@ -1,11 +1,12 @@
 {
-  "title": "Element Unspecified [Image] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000728102?locale=en",
-  "id": "000728102",
-  "Object": "LIB:ICH144678",
-  "Taxonomy": "Adrianichthys oophorus",
+  "title": "Whole Skeleton",
+  "detail_url": "https://www.morphosource.org/concern/media/000718095?locale=en",
+  "id": "000718095",
+  "Object": "UF:Herp:153328",
+  "Taxonomy": "Heloderma horridum",
+  "Element or Part": "whole skeleton with osteoderms",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Tobias Spanke",
-  "Date Uploaded": "04/07/2025",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "03/10/2025",
+  "Publication Status": "Open Download"
 }
