@@ -1,14 +1,13 @@
 {
-  "title": "Skull Mesh Of Proceratosaurus [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000553225?locale=en",
-  "id": "000553225",
-  "Object": "NHMUK:PAL:PV R 4860",
-  "Taxonomy": "Proceratosaurus bradleyi",
-  "Element or Part": "Skull mesh of Proceratosaurus",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000728422?locale=en",
+  "id": "000728422",
+  "Object": "usnm:ri:17999",
+  "Taxonomy": "Echmatemys sp.",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "NHMUK Fossil Reptiles, Amphibians, and Birds",
-  "Date Uploaded": "08/25/2023",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Data Manager": "Gabriel Bever",
+  "Date Uploaded": "04/08/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "No Copyright - Contractual Restrictions"
 }
