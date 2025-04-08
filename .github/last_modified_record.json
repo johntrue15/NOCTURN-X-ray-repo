@@ -1,13 +1,12 @@
 {
-  "title": "Dmns:Mamm:14995 Hippopotamus Amphibius",
-  "detail_url": "https://www.morphosource.org/concern/media/000728846?locale=en",
-  "id": "000728846",
-  "Object": "DMNS:Mamm:DMNS:Mamm:14995",
-  "Taxonomy": "Hippopotamus amphibius",
-  "Element or Part": "mandible",
+  "title": "Head [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000728897?locale=en",
+  "id": "000728897",
+  "Object": "UF:Fish:166108",
+  "Taxonomy": "Homalopteroides sp.",
+  "Element or Part": "Head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Cameron Pittman",
+  "Data Manager": "Digital Imaging Florida Museum",
   "Date Uploaded": "04/08/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Publication Status": "Open Download"
 }
