@@ -1,14 +1,13 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000728284?locale=en",
-  "id": "000728284",
-  "Object": "NMBE:mamm:1124117",
-  "Taxonomy": "Capra hircus",
-  "Element or Part": "Skull",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000728299?locale=en",
+  "id": "000728299",
+  "Object": "l-aps",
+  "Taxonomy": "Oligocottus maculosus",
+  "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Valentina Segura",
-  "Date Uploaded": "04/07/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted",
-  "CC License": "Creative Commons BY-NC-ND Attribution-NonCommercial-NoDerivs 4.0 International"
+  "Data Manager": "Jonathan Huie",
+  "Date Uploaded": "04/08/2025",
+  "Publication Status": "Open Download",
+  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
 }
