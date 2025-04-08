@@ -1,13 +1,13 @@
 {
-  "title": "Tibia [Mesh] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000026788?locale=en",
-  "id": "000026788",
-  "Object": "AMNH:Mammals:M-100508",
-  "Taxonomy": "Indri indri",
-  "Element or Part": "Tibia",
+  "title": "Dmns:Mamm:16368 Diceros Bicornis",
+  "detail_url": "https://www.morphosource.org/concern/media/000728816?locale=en",
+  "id": "000728816",
+  "Object": "DMNS:Mamm:DMNS:Mamm:16368",
+  "Taxonomy": "Diceros bicornis",
+  "Element or Part": "mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "AMNH Mammalogy Department",
-  "Date Uploaded": "06/06/2017",
-  "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Data Manager": "Cameron Pittman",
+  "Date Uploaded": "04/08/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
