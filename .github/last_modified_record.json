@@ -1,13 +1,13 @@
 {
-  "title": "Pomacentrus brachialis dentary teeth",
-  "detail_url": "https://www.morphosource.org/concern/media/000727147?locale=en",
-  "id": "000727147",
-  "Object": "ypm:vz:006284",
-  "Taxonomy": "Pomacentrus brachialis",
-  "Element or Part": "Dentary teeth",
+  "title": "Head [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000728646?locale=en",
+  "id": "000728646",
+  "Object": "YPM:VZ:YPM ICH 014284",
+  "Taxonomy": "Tropheus mooriiVariabilichromis moorii",
+  "Element or Part": "Head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Nelson Rios",
-  "Date Uploaded": "04/03/2025",
+  "Data Manager": "Zachary Randall",
+  "Date Uploaded": "04/08/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
