@@ -1,13 +1,13 @@
 {
-  "title": "Echmatemys Ypm11525",
-  "detail_url": "https://www.morphosource.org/concern/media/000728495?locale=en",
-  "id": "000728495",
-  "Object": "ypm:vp:11525",
-  "Taxonomy": "Echmatemys sp.",
-  "Element or Part": "skull",
+  "title": "Pomacentrus brachialis dentary teeth",
+  "detail_url": "https://www.morphosource.org/concern/media/000727147?locale=en",
+  "id": "000727147",
+  "Object": "ypm:vz:006284",
+  "Taxonomy": "Pomacentrus brachialis",
+  "Element or Part": "Dentary teeth",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Gabriel Bever",
-  "Date Uploaded": "04/08/2025",
+  "Data Manager": "Nelson Rios",
+  "Date Uploaded": "04/03/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
