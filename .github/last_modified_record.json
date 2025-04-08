@@ -1,12 +1,13 @@
 {
-  "title": "Head [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000728781?locale=en",
-  "id": "000728781",
-  "Object": "VIMS:VIMS:42887",
-  "Taxonomy": "Sebastes norvegicus",
-  "Element or Part": "Head",
+  "title": "Tibia [Mesh] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000026788?locale=en",
+  "id": "000026788",
+  "Object": "AMNH:Mammals:M-100508",
+  "Taxonomy": "Indri indri",
+  "Element or Part": "Tibia",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Zachary Randall",
-  "Date Uploaded": "04/08/2025",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "AMNH Mammalogy Department",
+  "Date Uploaded": "06/06/2017",
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined"
 }
