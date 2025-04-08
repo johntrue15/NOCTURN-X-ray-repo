@@ -1,13 +1,13 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000728422?locale=en",
-  "id": "000728422",
-  "Object": "usnm:ri:17999",
+  "title": "Echmatemys Ypm11525",
+  "detail_url": "https://www.morphosource.org/concern/media/000728495?locale=en",
+  "id": "000728495",
+  "Object": "ypm:vp:11525",
   "Taxonomy": "Echmatemys sp.",
   "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Gabriel Bever",
   "Date Uploaded": "04/08/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "No Copyright - Contractual Restrictions"
+  "Rights Statement": "In Copyright"
 }
