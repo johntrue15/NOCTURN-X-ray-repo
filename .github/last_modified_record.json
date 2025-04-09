@@ -1,13 +1,13 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000726051?locale=en",
-  "id": "000726051",
-  "Object": "l-aps",
-  "Taxonomy": "Clinocottus globiceps",
-  "Element or Part": "whole body",
+  "title": "Dmns:Mamm:14995 Hippopotamus Amphibius",
+  "detail_url": "https://www.morphosource.org/concern/media/000728837?locale=en",
+  "id": "000728837",
+  "Object": "DMNS:Mamm:DMNS:Mamm:14995",
+  "Taxonomy": "Hippopotamus amphibius",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jonathan Huie",
-  "Date Uploaded": "04/03/2025",
-  "Publication Status": "Open Download",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Data Manager": "Andrew Doll",
+  "Date Uploaded": "04/08/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
