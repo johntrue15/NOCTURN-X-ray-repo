@@ -1,13 +1,14 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000728994?locale=en",
-  "id": "000728994",
-  "Object": "l-aps",
-  "Taxonomy": "Clinocottus globiceps",
-  "Element or Part": "whole body",
+  "title": "Skull [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000727624?locale=en",
+  "id": "000727624",
+  "Object": "NMBE:mamm:1124114",
+  "Taxonomy": "Capra hircus",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jonathan Huie",
-  "Date Uploaded": "04/09/2025",
-  "Publication Status": "Open Download",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Data Manager": "Anne-Claire Fabre",
+  "Date Uploaded": "04/05/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted",
+  "CC License": "Creative Commons BY-NC-ND Attribution-NonCommercial-NoDerivs 4.0 International"
 }
