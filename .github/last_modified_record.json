@@ -1,13 +1,13 @@
 {
-  "title": "Dmns:Mamm:14995 Hippopotamus Amphibius",
-  "detail_url": "https://www.morphosource.org/concern/media/000728837?locale=en",
-  "id": "000728837",
-  "Object": "DMNS:Mamm:DMNS:Mamm:14995",
-  "Taxonomy": "Hippopotamus amphibius",
-  "Element or Part": "skull",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000729039?locale=en",
+  "id": "000729039",
+  "Object": "SIO:Marine Vertebrates:15-1725",
+  "Taxonomy": "Clinocottus recalvus",
+  "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Andrew Doll",
-  "Date Uploaded": "04/08/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "Jonathan Huie",
+  "Date Uploaded": "04/09/2025",
+  "Publication Status": "Open Download",
+  "Rights Statement": "No Copyright - Non-Commercial Use Only"
 }
