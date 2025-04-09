@@ -1,13 +1,12 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000728968?locale=en",
-  "id": "000728968",
-  "Object": "OS:Fishes:7071",
-  "Taxonomy": "Clinocottus embryum",
-  "Element or Part": "whole body",
+  "title": "Head [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000728958?locale=en",
+  "id": "000728958",
+  "Object": "UF:Fish:249350",
+  "Taxonomy": "Schistura sexcauda",
+  "Element or Part": "Head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jonathan Huie",
-  "Date Uploaded": "04/09/2025",
-  "Publication Status": "Open Download",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "04/08/2025",
+  "Publication Status": "Open Download"
 }
