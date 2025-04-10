@@ -1,13 +1,13 @@
 {
-  "title": "Radius [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000727917?locale=en",
-  "id": "000727917",
-  "Object": "OUMNH:zc:13804",
-  "Taxonomy": "Rhabdomys pumilio",
-  "Element or Part": "radius",
+  "title": "Brain [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000435782?locale=en",
+  "id": "000435782",
+  "Object": "UF:Herp:182476",
+  "Taxonomy": "Gopherus polyphemus",
+  "Element or Part": "brain",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Duncan Murdock",
-  "Date Uploaded": "04/07/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Jaimi Gray",
+  "Date Uploaded": "04/20/2022",
+  "Publication Status": "Open Download",
+  "Rights Statement": "No Known Copyright"
 }
