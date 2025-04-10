@@ -1,12 +1,214 @@
-# CT Image Analysis Gallery (Page 33 of 44)
+# CT Image Analysis Gallery (Page 33 of 45)
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-04-10 20:21:52 UTC
+**Last Updated:** 2025-04-10 21:18:43 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-05-19-51-12" data-release-tag="ct_image_analysis-2025-02-05_19-51-12">
+    <div class="gallery-header">
+        <h2>2025/02/05 19:51:12 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-05_19-51-12">ct_image_analysis-2025-02-05_19-51-12</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-05_19-51-12/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-05_19-51-12/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-05_19-51-12/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-05_19-51-12/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-05_16-03-11</p>
+<p>The 3D X-ray CT scan images of the right mandibular second molar exhibit several distinct structural characteristics and notable features across different orientations. Here’s a detailed analysis:</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li>
+<p><strong>General Morphology</strong>: The specimen displays a typical molar shape, with a broad surface area and multiple cusps. The occlusal surface appears complex, designed for grinding food, which is characteristic of molars.</p>
+</li>
+<li>
+<p><strong>Cusp Development</strong>: The images suggest a pronounced cusp pattern, with likely three main cusps visible. These are more rounded and prominent at the top when viewed from an occlusal perspective.</p>
+</li>
+<li>
+<p><strong>Root Configuration</strong>: The images show significant root structure, which is essential for anchoring the tooth in the mandible. The root appears to be broad and might contain multiple canals.</p>
+</li>
+<li>
+<p><strong>Surface Texture</strong>: The surface exhibits a somewhat rugged texture, possibly indicating wear patterns or the presence of enamel ridges typical of molars.</p>
+</li>
+</ol>
+<h3>Material Composition</h3>
+<ul>
+<li><strong>Dental Enamel</strong>: The outer layer visible in the images is enamel, which appears relatively smooth and shiny in certain light settings. This contributes to its durability and resistance to abrasion.</li>
+<li><strong>Dentin</strong>: Beneath the enamel, the dentin may not be clearly visible but likely supports the enamel structure, providing some degree of flexibility and moisture control.</li>
+<li><strong>Pulp Chamber</strong>: The interior likely contains a pulp chamber, which may be inferred from structural cavities not distinctly visible in the external views.</li>
+</ul>
+<h3>Notable Features or Anomalies</h3>
+<ol>
+<li>
+<p><strong>Wear Patterns</strong>: Depending on the orientation, certain areas may display wear related to chewing activities. This could include flat areas on cusp tips or irregularities along the sides.</p>
+</li>
+<li>
+<p><strong>Variability in Surface Angles</strong>: Different views might reveal varied tilting of the crown, suggesting positional wear or unique developmental characteristics.</p>
+</li>
+<li>
+<p><strong>Coloration</strong>: The perceived coloration in the models hints at a possibly healthy tooth structure, but discoloration may also indicate past issues (e.g., caries, dietary effects).</p>
+</li>
+<li>
+<p><strong>Orientation-dependent Features</strong>: Certain views may highlight specific anatomical features more clearly; for example, one angle might show the root system better, while another emphasizes the occlusal surface.</p>
+</li>
+</ol>
+<p>Overall, these 3D CT images offer a rich visual representation of the dental structure, aiding in both clinical assessments and educational endeavors within the field of dental anatomy and pathology. Further analysis could involve cross</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-05-14-55-06" data-release-tag="ct_image_analysis-2025-02-05_14-55-06">
+    <div class="gallery-header">
+        <h2>2025/02/05 14:55:06 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-05_14-55-06">ct_image_analysis-2025-02-05_14-55-06</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-05_14-55-06/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-05_14-55-06/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-05_14-55-06/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-05_14-55-06/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-05_14-50-58</p>
+<p>Analyzing the 3D X-ray CT scan data of the left maxillary third molar (tooth root) reveals several key structural characteristics and features:</p>
+<h3>Structural Characteristics:</h3>
+<ol>
+<li>
+<p><strong>Morphology</strong>: The 3D scans illustrate a complex, irregular surface with a generally conical shape, typical of a molar tooth root. Variations in the contour suggest the presence of multiple surfaces formed through natural wear and possibly developmental variations.</p>
+</li>
+<li>
+<p><strong>Surface Texture</strong>: The uneven, rugged texture indicates a potential for edentulous areas where the tooth may have interacted with adjacent teeth or hard materials. This roughness may also reflect the underlying dentin and enamel structure beneath any possible restorative materials.</p>
+</li>
+<li>
+<p><strong>Root Canal System</strong>: There may be indications of root canals, particularly visible from certain angles. The morphology of these canals can reveal complexities, such as bifurcations or additional canal branches, which are essential for understanding endodontic treatment requirements.</p>
+</li>
+</ol>
+<h3>Material Composition:</h3>
+<ol>
+<li>
+<p><strong>Calcified Structure</strong>: The primary material observed is likely a combination of hydroxyapatite (the mineral component of teeth) and organic materials, mostly collagen. The shades suggest a mineralized structure common to tooth roots.</p>
+</li>
+<li>
+<p><strong>Restorative Materials</strong>: If any discoloration or anomalies can be seen, these may suggest previously placed restorative materials or treatments that have affected the tooth's structure, such as fillings in the root canals.</p>
+</li>
+</ol>
+<h3>Notable Features or Anomalies:</h3>
+<ol>
+<li>
+<p><strong>Anomalous Features</strong>: Any irregularities, such as surface pits, grooves, or unusual shapes, may represent developmental anomalies, dental caries, or wear patterns. These should be assessed for clinical implications.</p>
+</li>
+<li>
+<p><strong>Root Apex</strong>: The tips of the roots would be a critical area to assess for resorption or periapical lesions, which can manifest as dark areas in imaging but may require further analysis.</p>
+</li>
+<li>
+<p><strong>Orientation Effects</strong>: Viewing the specimen from different angles reveals distinct features that might go unnoticed from a single perspective, emphasizing the importance of multi-angle analysis in dental morphology.</p>
+</li>
+</ol>
+<h3>Conclusion:</h3>
+<p>This analysis emphasizes the need for a detailed examination of the root morphology, potential anomalies, and restorative implications visible in the 3D scan data. Such examinations are crucial for planning appropriate treatments in dental practice, especially concerning endodontic procedures or restorative interventions.</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
 
 <div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-05-14-47-32" data-release-tag="ct_image_analysis-2025-02-05_14-47-32">
     <div class="gallery-header">
@@ -319,222 +521,8 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 
 <div class="timeline-separator"></div>
 
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-05-12-01-43" data-release-tag="ct_image_analysis-2025-02-05_12-01-43">
-    <div class="gallery-header">
-        <h2>2025/02/05 12:01:43 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-05_12-01-43">ct_image_analysis-2025-02-05_12-01-43</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-05_12-01-43/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-05_12-01-43/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-05_12-01-43/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-05_12-01-43/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-05_11-58-24</p>
-<p>Analyzing the provided 3D X-ray CT scan images of the left mandibular second molar treatment anterior subalveolar bone root reveals several structural characteristics and notable features:</p>
-<h3>Structural Characteristics:</h3>
-<ol>
-<li>
-<p><strong>Overall Shape</strong>: The root displays a distinctly irregular and asymmetrical profile, consistent with the anatomical characteristics typical of molar roots. The contours are slightly rounded with varying degrees of angularity at different views.</p>
-</li>
-<li>
-<p><strong>Surface Texture</strong>: The surface appears to be rugged and uneven, indicative of natural bone structure. This texture may reflect the presence of micro-structural features such as trabecular bone patterns.</p>
-</li>
-<li>
-<p><strong>Cross-Sectional Changes</strong>: Each view provides insights into the variations in the cross-sectional area of the root. The root tapers towards the apex, which is typical, and there may be variations in thickness that could hint at areas of stress or pathology.</p>
-</li>
-</ol>
-<h3>Material Composition:</h3>
-<ul>
-<li><strong>Bone Density</strong>: The images likely represent mineralized bone material. While specific material composition cannot be derived directly from the images, bone typically consists of hydroxyapatite crystals and collagen fibers, which provide strength and rigidity.</li>
-<li><strong>Porosity Indicators</strong>: The rough surface may suggest varying degrees of porosity, which is relevant for both biological function and the impact of any pathological conditions that may affect the bone density.</li>
-</ul>
-<h3>Notable Features or Anomalies:</h3>
-<ol>
-<li>
-<p><strong>Variability in Thickness</strong>: Across different angles, certain areas appear thicker, which might indicate where bone mass has been accumulated, possibly due to adaptive changes or compensatory responses to stress.</p>
-</li>
-<li>
-<p><strong>Potential Anomalies</strong>: Any unexpected protrusions or irregularities in the geometry could suggest prior surgical intervention, resorption processes, or other pathological conditions affecting the bone.</p>
-</li>
-<li>
-<p><strong>Root Canal Implications</strong>: The structure of the root may provide insights into the canal system within the molar. If the structural views display significant irregularities, it could be relevant for endodontic treatment planning.</p>
-</li>
-<li>
-<p><strong>Visual Aids for Further Analysis</strong>: The variation in orientations may assist in 3D reconstructions for enhanced visualization of the internal canal systems or underlying anatomical features not clearly visible in 2D imaging.</p>
-</li>
-</ol>
-<h3>Conclusion:</h3>
-<p>These images represent a multifaceted view of a molar root structure, enabling a thorough assessment of anatomical features. Further analysis, potentially involving quantitative evaluations of density and porosity, could elucidate more detailed aspects of the bone's condition and its implications for dental health</p>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-05-11-48-22" data-release-tag="ct_image_analysis-2025-02-05_11-48-22">
-    <div class="gallery-header">
-        <h2>2025/02/05 11:48:22 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-05_11-48-22">ct_image_analysis-2025-02-05_11-48-22</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-05_11-48-22/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-05_11-48-22/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-05_11-48-22/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-05_11-48-22/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-05_11-45-08</p>
-<p>Analyzing the 3D X-ray CT scan data of the left mandibular second molar reveals several structural characteristics and notable features across the different orientations of the specimen.</p>
-<h3>Structural Characteristics:</h3>
-<ol>
-<li><strong>Overall Shape</strong>: </li>
-<li>
-<p>The specimen maintains a characteristic molar shape, wider and more flattened at the occlusal surface, gradually tapering towards the roots. This shape aligns with typical mandibular molar morphology.</p>
-</li>
-<li>
-<p><strong>Crown Structure</strong>:</p>
-</li>
-<li>
-<p>The occlusal surface exhibits the classic features of grinding surfaces, including cusps that peak and interdigitate with opposing teeth. There may be indications of cusp formation and wear patterns.</p>
-</li>
-<li>
-<p><strong>Roots</strong>:</p>
-</li>
-<li>The roots appear robust, indicative of anchorage within the mandibular bone. The number and configuration (usually two roots for mandibular second molars) can often be assessed, potentially including the presence of bifurcations.</li>
-</ol>
-<h3>Material Composition:</h3>
-<ol>
-<li><strong>Enamel and Dentin</strong>:</li>
-<li>
-<p>The outer layer representing enamel likely shows a denser structure in the scans. Underneath, a not-so-dense area corresponding to dentin is visible, suggesting variations in material density.</p>
-</li>
-<li>
-<p><strong>Potential Pathologies</strong>:</p>
-</li>
-<li>Any discoloration, irregularities, or lesions should be noted, which can indicate caries or other dental pathologies. The scans may show areas of less density indicative of decayed material.</li>
-</ol>
-<h3>Notable Features or Anomalies:</h3>
-<ol>
-<li><strong>Surface Texture</strong>:</li>
-<li>
-<p>A rough surface can be noted in certain areas, potentially indicative of abrasion or erosion. Observing these features in multiple views may confirm their extent.</p>
-</li>
-<li>
-<p><strong>Pulp Chamber</strong>:</p>
-</li>
-<li>
-<p>The inner morphology can be assessed for the size and shape of the pulp chamber, which can vary based on individual anatomical differences.</p>
-</li>
-<li>
-<p><strong>Anomalies</strong>:</p>
-</li>
-<li>If present, any unusual formations like extra roots or developmental anomalies may be identifiable. This information is crucial for treatment planning in dental procedures.</li>
-</ol>
-<h3>Cross-Sectional Observations:</h3>
-<ul>
-<li>Viewing the specimen from various angles allows for a comprehensive understanding of its 3D morphology, confirming consistent features such as root anatomy and crown surface interactions.</li>
-</ul>
-<p>This thorough examination across different views enhances the understanding of this specimen's anatomical and pathological characteristics, assisting in both academic research and practical dental applications.</p>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
 <div class="pagination-container">
-    <a href="image_analysis_page32.html" class="pagination-button">Previous</a>    <a href="image_analysis.html" class="pagination-page">1</a>    <a href="image_analysis_page2.html" class="pagination-page">2</a>    <a href="image_analysis_page3.html" class="pagination-page">3</a>    <a href="image_analysis_page4.html" class="pagination-page">4</a>    <a href="image_analysis_page5.html" class="pagination-page">5</a>    <a href="image_analysis_page6.html" class="pagination-page">6</a>    <a href="image_analysis_page7.html" class="pagination-page">7</a>    <a href="image_analysis_page8.html" class="pagination-page">8</a>    <a href="image_analysis_page9.html" class="pagination-page">9</a>    <a href="image_analysis_page10.html" class="pagination-page">10</a>    <a href="image_analysis_page11.html" class="pagination-page">11</a>    <a href="image_analysis_page12.html" class="pagination-page">12</a>    <a href="image_analysis_page13.html" class="pagination-page">13</a>    <a href="image_analysis_page14.html" class="pagination-page">14</a>    <a href="image_analysis_page15.html" class="pagination-page">15</a>    <a href="image_analysis_page16.html" class="pagination-page">16</a>    <a href="image_analysis_page17.html" class="pagination-page">17</a>    <a href="image_analysis_page18.html" class="pagination-page">18</a>    <a href="image_analysis_page19.html" class="pagination-page">19</a>    <a href="image_analysis_page20.html" class="pagination-page">20</a>    <a href="image_analysis_page21.html" class="pagination-page">21</a>    <a href="image_analysis_page22.html" class="pagination-page">22</a>    <a href="image_analysis_page23.html" class="pagination-page">23</a>    <a href="image_analysis_page24.html" class="pagination-page">24</a>    <a href="image_analysis_page25.html" class="pagination-page">25</a>    <a href="image_analysis_page26.html" class="pagination-page">26</a>    <a href="image_analysis_page27.html" class="pagination-page">27</a>    <a href="image_analysis_page28.html" class="pagination-page">28</a>    <a href="image_analysis_page29.html" class="pagination-page">29</a>    <a href="image_analysis_page30.html" class="pagination-page">30</a>    <a href="image_analysis_page31.html" class="pagination-page">31</a>    <a href="image_analysis_page32.html" class="pagination-page">32</a>    <span class="pagination-page current">33</span>    <a href="image_analysis_page34.html" class="pagination-page">34</a>    <a href="image_analysis_page35.html" class="pagination-page">35</a>    <a href="image_analysis_page36.html" class="pagination-page">36</a>    <a href="image_analysis_page37.html" class="pagination-page">37</a>    <a href="image_analysis_page38.html" class="pagination-page">38</a>    <a href="image_analysis_page39.html" class="pagination-page">39</a>    <a href="image_analysis_page40.html" class="pagination-page">40</a>    <a href="image_analysis_page41.html" class="pagination-page">41</a>    <a href="image_analysis_page42.html" class="pagination-page">42</a>    <a href="image_analysis_page43.html" class="pagination-page">43</a>    <a href="image_analysis_page44.html" class="pagination-page">44</a>    <a href="image_analysis_page34.html" class="pagination-button">Next</a>
+    <a href="image_analysis_page32.html" class="pagination-button">Previous</a>    <a href="image_analysis.html" class="pagination-page">1</a>    <a href="image_analysis_page2.html" class="pagination-page">2</a>    <a href="image_analysis_page3.html" class="pagination-page">3</a>    <a href="image_analysis_page4.html" class="pagination-page">4</a>    <a href="image_analysis_page5.html" class="pagination-page">5</a>    <a href="image_analysis_page6.html" class="pagination-page">6</a>    <a href="image_analysis_page7.html" class="pagination-page">7</a>    <a href="image_analysis_page8.html" class="pagination-page">8</a>    <a href="image_analysis_page9.html" class="pagination-page">9</a>    <a href="image_analysis_page10.html" class="pagination-page">10</a>    <a href="image_analysis_page11.html" class="pagination-page">11</a>    <a href="image_analysis_page12.html" class="pagination-page">12</a>    <a href="image_analysis_page13.html" class="pagination-page">13</a>    <a href="image_analysis_page14.html" class="pagination-page">14</a>    <a href="image_analysis_page15.html" class="pagination-page">15</a>    <a href="image_analysis_page16.html" class="pagination-page">16</a>    <a href="image_analysis_page17.html" class="pagination-page">17</a>    <a href="image_analysis_page18.html" class="pagination-page">18</a>    <a href="image_analysis_page19.html" class="pagination-page">19</a>    <a href="image_analysis_page20.html" class="pagination-page">20</a>    <a href="image_analysis_page21.html" class="pagination-page">21</a>    <a href="image_analysis_page22.html" class="pagination-page">22</a>    <a href="image_analysis_page23.html" class="pagination-page">23</a>    <a href="image_analysis_page24.html" class="pagination-page">24</a>    <a href="image_analysis_page25.html" class="pagination-page">25</a>    <a href="image_analysis_page26.html" class="pagination-page">26</a>    <a href="image_analysis_page27.html" class="pagination-page">27</a>    <a href="image_analysis_page28.html" class="pagination-page">28</a>    <a href="image_analysis_page29.html" class="pagination-page">29</a>    <a href="image_analysis_page30.html" class="pagination-page">30</a>    <a href="image_analysis_page31.html" class="pagination-page">31</a>    <a href="image_analysis_page32.html" class="pagination-page">32</a>    <span class="pagination-page current">33</span>    <a href="image_analysis_page34.html" class="pagination-page">34</a>    <a href="image_analysis_page35.html" class="pagination-page">35</a>    <a href="image_analysis_page36.html" class="pagination-page">36</a>    <a href="image_analysis_page37.html" class="pagination-page">37</a>    <a href="image_analysis_page38.html" class="pagination-page">38</a>    <a href="image_analysis_page39.html" class="pagination-page">39</a>    <a href="image_analysis_page40.html" class="pagination-page">40</a>    <a href="image_analysis_page41.html" class="pagination-page">41</a>    <a href="image_analysis_page42.html" class="pagination-page">42</a>    <a href="image_analysis_page43.html" class="pagination-page">43</a>    <a href="image_analysis_page44.html" class="pagination-page">44</a>    <a href="image_analysis_page45.html" class="pagination-page">45</a>    <a href="image_analysis_page34.html" class="pagination-button">Next</a>
 </div>
       </div>
 
