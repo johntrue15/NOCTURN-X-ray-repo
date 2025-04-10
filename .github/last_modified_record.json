@@ -1,13 +1,12 @@
 {
-  "title": "2 Fused Caudal Vertebrae [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000729091?locale=en",
-  "id": "000729091",
-  "Object": "MCZ:Herp:R-24905",
-  "Taxonomy": "Varanus komodoensis",
-  "Element or Part": "2 fused caudal vertebrae",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000729086?locale=en",
+  "id": "000729086",
+  "Object": "TCWC:Mammals:64710",
+  "Taxonomy": "Dipodomys ordii obscurus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Matt Gage",
+  "Data Manager": "Leila Siciliano-Martina",
   "Date Uploaded": "04/10/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
