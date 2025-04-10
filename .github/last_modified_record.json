@@ -1,13 +1,13 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000729035?locale=en",
-  "id": "000729035",
-  "Object": "SIO:Marine Vertebrates:15-1725",
-  "Taxonomy": "Clinocottus recalvus",
-  "Element or Part": "whole body",
+  "title": "Radius [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000727917?locale=en",
+  "id": "000727917",
+  "Object": "OUMNH:zc:13804",
+  "Taxonomy": "Rhabdomys pumilio",
+  "Element or Part": "radius",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Ben Frable",
-  "Date Uploaded": "04/09/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "No Copyright - Non-Commercial Use Only"
+  "Data Manager": "Duncan Murdock",
+  "Date Uploaded": "04/07/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
