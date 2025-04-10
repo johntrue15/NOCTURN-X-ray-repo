@@ -1,13 +1,13 @@
 {
-  "title": "Dice Ct [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000574364?locale=en",
-  "id": "000574364",
-  "Object": "AMNH:Herpetology:R-175585",
-  "Taxonomy": "Uroplatus sikorae",
-  "Element or Part": "diceCT",
+  "title": "2 Fused Caudal Vertebrae [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000729091?locale=en",
+  "id": "000729091",
+  "Object": "MCZ:Herp:R-24905",
+  "Taxonomy": "Varanus komodoensis",
+  "Element or Part": "2 fused caudal vertebrae",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "American Museum of Natural History",
-  "Date Uploaded": "10/26/2023",
+  "Data Manager": "Matt Gage",
+  "Date Uploaded": "04/10/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
