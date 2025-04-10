@@ -1,13 +1,13 @@
 {
-  "title": "Brain [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000435782?locale=en",
-  "id": "000435782",
-  "Object": "UF:Herp:182476",
-  "Taxonomy": "Gopherus polyphemus",
-  "Element or Part": "brain",
+  "title": "Dice Ct [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000574364?locale=en",
+  "id": "000574364",
+  "Object": "AMNH:Herpetology:R-175585",
+  "Taxonomy": "Uroplatus sikorae",
+  "Element or Part": "diceCT",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jaimi Gray",
-  "Date Uploaded": "04/20/2022",
-  "Publication Status": "Open Download",
-  "Rights Statement": "No Known Copyright"
+  "Data Manager": "American Museum of Natural History",
+  "Date Uploaded": "10/26/2023",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
