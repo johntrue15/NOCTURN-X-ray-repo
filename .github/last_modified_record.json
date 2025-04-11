@@ -1,13 +1,13 @@
 {
-  "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000729545?locale=en",
-  "id": "000729545",
-  "Object": "SIO:Marine Vertebrates:15-2017",
-  "Taxonomy": "Clinocottus globiceps",
-  "Element or Part": "whole body",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000100995?locale=en",
+  "id": "000100995",
+  "Object": "USNM:MAMM:USNM 282124",
+  "Taxonomy": "Neofelis nebulosa",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Ben Frable",
-  "Date Uploaded": "04/11/2025",
+  "Data Manager": "Department of Vertebrate Zoology National Museum of Natural History",
+  "Date Uploaded": "02/14/2020",
   "Publication Status": "Open Download",
-  "Rights Statement": "No Copyright - Non-Commercial Use Only"
+  "Rights Statement": "Copyright Undetermined"
 }
