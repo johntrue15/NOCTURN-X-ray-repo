@@ -1,13 +1,13 @@
 {
   "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000729916?locale=en",
-  "id": "000729916",
-  "Object": "OS:Fishes:8137",
-  "Taxonomy": "Orthonopias triacis",
+  "detail_url": "https://www.morphosource.org/concern/media/000729545?locale=en",
+  "id": "000729545",
+  "Object": "SIO:Marine Vertebrates:15-2017",
+  "Taxonomy": "Clinocottus globiceps",
   "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jonathan Huie",
+  "Data Manager": "Ben Frable",
   "Date Uploaded": "04/11/2025",
   "Publication Status": "Open Download",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Rights Statement": "No Copyright - Non-Commercial Use Only"
 }
