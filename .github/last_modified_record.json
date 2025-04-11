@@ -1,13 +1,13 @@
 {
   "title": "Whole Body [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000729271?locale=en",
-  "id": "000729271",
-  "Object": "l-aps",
-  "Taxonomy": "Clinocottus embryum",
+  "detail_url": "https://www.morphosource.org/concern/media/000729584?locale=en",
+  "id": "000729584",
+  "Object": "SIO:Marine Vertebrates:15-2017",
+  "Taxonomy": "Clinocottus globiceps",
   "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Jonathan Huie",
-  "Date Uploaded": "04/10/2025",
+  "Date Uploaded": "04/11/2025",
   "Publication Status": "Open Download",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Rights Statement": "No Copyright - Non-Commercial Use Only"
 }
