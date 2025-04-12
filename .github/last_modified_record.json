@@ -1,13 +1,12 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000100995?locale=en",
-  "id": "000100995",
-  "Object": "USNM:MAMM:USNM 282124",
-  "Taxonomy": "Neofelis nebulosa",
-  "Element or Part": "skull",
+  "title": "Pelvic Girdle [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000656395?locale=en",
+  "id": "000656395",
+  "Object": "UF:Herp:109124",
+  "Taxonomy": "Ranoidea aureaLitoria aurea",
+  "Element or Part": "Pelvic girdle",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Department of Vertebrate Zoology National Museum of Natural History",
-  "Date Uploaded": "02/14/2020",
-  "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Data Manager": "Roy Farman",
+  "Date Uploaded": "08/15/2024",
+  "Publication Status": "Restricted Download"
 }
