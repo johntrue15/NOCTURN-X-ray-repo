@@ -1,12 +1,14 @@
 {
-  "title": "Pelvic Girdle [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000656395?locale=en",
-  "id": "000656395",
-  "Object": "UF:Herp:109124",
-  "Taxonomy": "Ranoidea aureaLitoria aurea",
-  "Element or Part": "Pelvic girdle",
+  "title": "Endocast [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000729989?locale=en",
+  "id": "000729989",
+  "Object": "fmnh:pm:9476",
+  "Taxonomy": "Paleolgus haydeni",
+  "Element or Part": "Endocast",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Roy Farman",
-  "Date Uploaded": "08/15/2024",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Mary Silcox",
+  "Date Uploaded": "04/13/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
 }
