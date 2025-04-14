@@ -1,12 +1,12 @@
 {
-  "title": "Navicular [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000526291?locale=en",
-  "id": "000526291",
-  "Object": "AMNH:Mammals:M-23490",
-  "Taxonomy": "Procyon cancrivorus proteus",
-  "Element or Part": "navicular",
+  "title": "Element Unspecified [Image] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000731066?locale=en",
+  "id": "000731066",
+  "Object": "ypm:vz:ICH 25311",
+  "Taxonomy": "Chologaster cornuta",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "AMNH Mammalogy Department",
-  "Date Uploaded": "05/22/2023",
-  "Publication Status": "Open Download"
+  "Data Manager": "Chase Brownstein",
+  "Date Uploaded": "04/14/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
