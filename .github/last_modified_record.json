@@ -1,13 +1,13 @@
 {
-  "title": "Astragalus [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000692601?locale=en",
-  "id": "000692601",
-  "Object": "isem:Elephas Mtpl",
-  "Taxonomy": "Elephas sp.",
-  "Element or Part": "Astragalus",
+  "title": "Whole Body [Image] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000730154?locale=en",
+  "id": "000730154",
+  "Object": "ypm:vz:ICH 31558",
+  "Taxonomy": "Aphredoderus sp.",
+  "Element or Part": "Whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Cl\u00e9mentine Tetaert",
-  "Date Uploaded": "12/09/2024",
+  "Data Manager": "Chase Brownstein",
+  "Date Uploaded": "04/14/2025",
   "Publication Status": "Restricted Download",
-  "CC License": "Creative Commons BY-NC-ND Attribution-NonCommercial-NoDerivs 4.0 International"
+  "Rights Statement": "In Copyright"
 }
