@@ -1,12 +1,12 @@
 {
-  "title": "Cuboid [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000526259?locale=en",
-  "id": "000526259",
+  "title": "Calcaneus [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000526253?locale=en",
+  "id": "000526253",
   "Object": "AMNH:Mammals:M-23490",
   "Taxonomy": "Procyon cancrivorus proteus",
-  "Element or Part": "cuboid",
+  "Element or Part": "calcaneus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Korey Cadiz",
+  "Data Manager": "AMNH Mammalogy Department",
   "Date Uploaded": "05/22/2023",
   "Publication Status": "Open Download"
 }
