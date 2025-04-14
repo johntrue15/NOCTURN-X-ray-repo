@@ -1,14 +1,12 @@
 {
-  "title": "Endocast [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000729989?locale=en",
-  "id": "000729989",
-  "Object": "fmnh:pm:9476",
-  "Taxonomy": "Paleolgus haydeni",
-  "Element or Part": "Endocast",
+  "title": "Astragalus [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000691548?locale=en",
+  "id": "000691548",
+  "Object": "mnhn:zm:AC-1936-280",
+  "Taxonomy": "Elephas maximus",
+  "Element or Part": "Astragalus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Mary Silcox",
-  "Date Uploaded": "04/13/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Data Manager": "Cl\u00e9mentine Tetaert",
+  "Date Uploaded": "12/05/2024",
+  "Publication Status": "Open Download"
 }
