@@ -1,13 +1,12 @@
 {
-  "title": "Whole Body [Image] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000730154?locale=en",
-  "id": "000730154",
-  "Object": "ypm:vz:ICH 31558",
-  "Taxonomy": "Aphredoderus sp.",
-  "Element or Part": "Whole body",
+  "title": "Cuboid [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000526259?locale=en",
+  "id": "000526259",
+  "Object": "AMNH:Mammals:M-23490",
+  "Taxonomy": "Procyon cancrivorus proteus",
+  "Element or Part": "cuboid",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Chase Brownstein",
-  "Date Uploaded": "04/14/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Korey Cadiz",
+  "Date Uploaded": "05/22/2023",
+  "Publication Status": "Open Download"
 }
