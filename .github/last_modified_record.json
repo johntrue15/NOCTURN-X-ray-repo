@@ -1,12 +1,13 @@
 {
-  "title": "Element Unspecified [Image] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000731066?locale=en",
-  "id": "000731066",
-  "Object": "ypm:vz:ICH 25311",
-  "Taxonomy": "Chologaster cornuta",
+  "title": "One Cervical Vertebra [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000731140?locale=en",
+  "id": "000731140",
+  "Object": "MCZ:Herp:R-24907",
+  "Taxonomy": "Varanus komodoensis",
+  "Element or Part": "one cervical vertebra",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Chase Brownstein",
-  "Date Uploaded": "04/14/2025",
+  "Data Manager": "Matt Gage",
+  "Date Uploaded": "04/15/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
