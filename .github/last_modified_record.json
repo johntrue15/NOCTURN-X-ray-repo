@@ -1,13 +1,12 @@
 {
-  "title": "One Cervical Vertebra [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000731140?locale=en",
-  "id": "000731140",
-  "Object": "MCZ:Herp:R-24907",
-  "Taxonomy": "Varanus komodoensis",
-  "Element or Part": "one cervical vertebra",
+  "title": "Dentary Of Sivulliusalmo",
+  "detail_url": "https://www.morphosource.org/concern/media/000690204?locale=en",
+  "id": "000690204",
+  "Object": "UAM:ES:51874",
+  "Taxonomy": "Sivulliusalmo  alaskensis",
+  "Element or Part": "dentary",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Matt Gage",
-  "Date Uploaded": "04/15/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Don Brinkman",
+  "Date Uploaded": "12/01/2024",
+  "Publication Status": "Open Download"
 }
