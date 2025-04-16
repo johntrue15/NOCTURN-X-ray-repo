@@ -1,12 +1,13 @@
 {
-  "title": "Calcaneus [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000691556?locale=en",
-  "id": "000691556",
-  "Object": "mnhn:zm:AC-1936-280",
-  "Taxonomy": "Elephas maximus",
-  "Element or Part": "Calcaneus",
+  "title": "Endocast [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000729977?locale=en",
+  "id": "000729977",
+  "Object": "dpc:7850",
+  "Taxonomy": "Archaeolemur sp.",
+  "Element or Part": "Endocast",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Mus\u00e9um national d'histoire naturelle \u00e0 Paris",
-  "Date Uploaded": "12/05/2024",
-  "Publication Status": "Open Download"
+  "Data Manager": "Duke Lemur Center Museum of Natural History",
+  "Date Uploaded": "04/12/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "Copyright Not Evaluated"
 }
