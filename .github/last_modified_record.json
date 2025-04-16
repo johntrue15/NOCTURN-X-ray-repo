@@ -1,12 +1,12 @@
 {
-  "title": "Dentary Of Sivulliusalmo",
-  "detail_url": "https://www.morphosource.org/concern/media/000690204?locale=en",
-  "id": "000690204",
-  "Object": "UAM:ES:51874",
-  "Taxonomy": "Sivulliusalmo  alaskensis",
-  "Element or Part": "dentary",
+  "title": "Calcaneus [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000691556?locale=en",
+  "id": "000691556",
+  "Object": "mnhn:zm:AC-1936-280",
+  "Taxonomy": "Elephas maximus",
+  "Element or Part": "Calcaneus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Don Brinkman",
-  "Date Uploaded": "12/01/2024",
+  "Data Manager": "Mus\u00e9um national d'histoire naturelle \u00e0 Paris",
+  "Date Uploaded": "12/05/2024",
   "Publication Status": "Open Download"
 }
