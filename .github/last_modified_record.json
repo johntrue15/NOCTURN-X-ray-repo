@@ -1,13 +1,13 @@
 {
-  "title": "Endocast [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000729977?locale=en",
-  "id": "000729977",
-  "Object": "dpc:7850",
-  "Taxonomy": "Archaeolemur sp.",
-  "Element or Part": "Endocast",
+  "title": "Whole Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000079510?locale=en",
+  "id": "000079510",
+  "Object": "zsm:2194/2007",
+  "Taxonomy": "Xenotyphlops grandidieri",
+  "Element or Part": "Whole Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Duke Lemur Center Museum of Natural History",
-  "Date Uploaded": "04/12/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "Copyright Not Evaluated"
+  "Data Manager": "Mark Scherz",
+  "Date Uploaded": "06/03/2019",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
