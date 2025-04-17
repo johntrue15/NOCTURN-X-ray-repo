@@ -2,7 +2,7 @@
 
 This page displays information about the latest data releases for the NOCTURN X-ray project.
 
-**Last Updated:** 2025-04-17 07:21:03 UTC
+**Last Updated:** 2025-04-17 08:27:36 UTC
 
 ## Summary Statistics
 
