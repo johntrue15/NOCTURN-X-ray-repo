@@ -1,13 +1,13 @@
 {
-  "title": "Right Trigeminal Nerve [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000623573?locale=en",
-  "id": "000623573",
-  "Object": "NHMUK:PAL:PV A 5204",
-  "Taxonomy": "Lithornis vulturinus",
-  "Element or Part": "Right trigeminal nerve",
+  "title": "Basioccipital [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000575661?locale=en",
+  "id": "000575661",
+  "Object": "NHMUK:PAL:PV R 7591 a",
+  "Taxonomy": "Terrestrisuchus sp.",
+  "Element or Part": "Basioccipital",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "NHMUK Fossil Reptiles, Amphibians, and Birds",
-  "Date Uploaded": "04/23/2024",
+  "Date Uploaded": "10/30/2023",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
