@@ -1,13 +1,13 @@
 {
-  "title": "Basioccipital [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000575661?locale=en",
-  "id": "000575661",
-  "Object": "NHMUK:PAL:PV R 7591 a",
-  "Taxonomy": "Terrestrisuchus sp.",
-  "Element or Part": "Basioccipital",
+  "title": "Tooth [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000568790?locale=en",
+  "id": "000568790",
+  "Object": "NHMUK:PAL:PV R 38812",
+  "Taxonomy": "Ornithischia indet.",
+  "Element or Part": "Tooth",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "NHMUK Fossil Reptiles, Amphibians, and Birds",
-  "Date Uploaded": "10/30/2023",
+  "Date Uploaded": "10/05/2023",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
