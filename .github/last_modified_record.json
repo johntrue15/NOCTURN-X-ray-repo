@@ -1,12 +1,12 @@
 {
-  "title": "Mandible [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000731367?locale=en",
-  "id": "000731367",
-  "Object": "LSUMZ:Mammals:14314",
-  "Taxonomy": "Lasiurus egaDasypterus ega",
-  "Element or Part": "Mandible",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000731387?locale=en",
+  "id": "000731387",
+  "Object": "TCWC:Mammals:63776",
+  "Taxonomy": "Dipodomys compactus sennetti",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Sydney Decker",
+  "Data Manager": "Leila Siciliano-Martina",
   "Date Uploaded": "04/17/2025",
-  "Publication Status": "Restricted Download"
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
