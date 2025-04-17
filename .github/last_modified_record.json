@@ -1,12 +1,12 @@
 {
-  "title": "Mandible [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000731355?locale=en",
-  "id": "000731355",
-  "Object": "uf:uf:563074",
-  "Taxonomy": "Mesoprocta sp.Mesoprocta hypsodus",
-  "Element or Part": "mandible",
+  "title": "Cranium [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000731363?locale=en",
+  "id": "000731363",
+  "Object": "LSUMZ:Mammals:14314",
+  "Taxonomy": "Lasiurus egaDasypterus ega",
+  "Element or Part": "Cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Rachel Narducci",
+  "Data Manager": "Sydney Decker",
   "Date Uploaded": "04/17/2025",
   "Publication Status": "Restricted Download"
 }
