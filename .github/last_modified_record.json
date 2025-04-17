@@ -1,13 +1,13 @@
 {
-  "title": "Whole Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000079510?locale=en",
-  "id": "000079510",
-  "Object": "zsm:2194/2007",
-  "Taxonomy": "Xenotyphlops grandidieri",
-  "Element or Part": "Whole Skull",
+  "title": "Right Trigeminal Nerve [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000623573?locale=en",
+  "id": "000623573",
+  "Object": "NHMUK:PAL:PV A 5204",
+  "Taxonomy": "Lithornis vulturinus",
+  "Element or Part": "Right trigeminal nerve",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Mark Scherz",
-  "Date Uploaded": "06/03/2019",
+  "Data Manager": "NHMUK Fossil Reptiles, Amphibians, and Birds",
+  "Date Uploaded": "04/23/2024",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
