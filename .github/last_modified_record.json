@@ -1,12 +1,12 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000731474?locale=en",
-  "id": "000731474",
-  "Object": "TCWC:Mammals:64883",
-  "Taxonomy": "Dipodomys compactus sennetti",
+  "title": "Cranium [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000731503?locale=en",
+  "id": "000731503",
+  "Object": "LSUMZ:Mammals:14315",
+  "Taxonomy": "Lasiurus egaDasypterus ega",
+  "Element or Part": "Cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Leila Siciliano-Martina",
-  "Date Uploaded": "04/17/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "Sydney Decker",
+  "Date Uploaded": "04/18/2025",
+  "Publication Status": "Restricted Download"
 }
