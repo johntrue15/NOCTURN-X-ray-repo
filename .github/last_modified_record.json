@@ -1,13 +1,12 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000731594?locale=en",
-  "id": "000731594",
-  "Object": "cumv:herps:R-0009532",
-  "Taxonomy": "Micrurus nigrocinctus",
-  "Element or Part": "Skull",
+  "title": "Element Unspecified [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000037808?locale=en",
+  "id": "000037808",
+  "Object": "nmnz:P.030626",
+  "Taxonomy": "Dellichthys morelandi",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Riley Stanton",
-  "Date Uploaded": "04/18/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Data Manager": "ADAM SUMMERS",
+  "Date Uploaded": "11/28/2017",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
