@@ -1,12 +1,13 @@
 {
-  "title": "Mandible [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000731552?locale=en",
-  "id": "000731552",
-  "Object": "LSUMZ:Mammals:11740",
-  "Taxonomy": "Dasypterus intermediusLasiurus intermedius",
-  "Element or Part": "Mandible",
+  "title": "Skull [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000731589?locale=en",
+  "id": "000731589",
+  "Object": "cumv:herps:R-0001928",
+  "Taxonomy": "Micrurus frontalis",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Sydney Decker",
+  "Data Manager": "Riley Stanton",
   "Date Uploaded": "04/18/2025",
-  "Publication Status": "Restricted Download"
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
