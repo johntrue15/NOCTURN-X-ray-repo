@@ -1,12 +1,12 @@
 {
-  "title": "Mandible [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000731837?locale=en",
-  "id": "000731837",
-  "Object": "TTU:TTU-M:80739",
-  "Taxonomy": "Lasiurus borealis",
-  "Element or Part": "Mandible",
+  "title": "Cranium [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000731363?locale=en",
+  "id": "000731363",
+  "Object": "LSUMZ:Mammals:14314",
+  "Taxonomy": "Lasiurus egaDasypterus ega",
+  "Element or Part": "Cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Sydney Decker",
-  "Date Uploaded": "04/19/2025",
+  "Date Uploaded": "04/17/2025",
   "Publication Status": "Restricted Download"
 }
