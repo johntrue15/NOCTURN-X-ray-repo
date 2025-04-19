@@ -2,22 +2,22 @@
 
 This page displays information about the latest data releases for the NOCTURN X-ray project.
 
-**Last Updated:** 2025-04-19 18:25:19 UTC
+**Last Updated:** 2025-04-19 19:16:22 UTC
 
 ## Summary Statistics
 
 <div class="stats-container">
     <div class="stat-card">
         <div>Total Releases</div>
-        <div class="stat-value">4181</div>
+        <div class="stat-value">4193</div>
     </div>
     <div class="stat-card">
         <div>MorphoSource Updates</div>
-        <div class="stat-value">996</div>
+        <div class="stat-value">999</div>
     </div>
     <div class="stat-card">
         <div>CT Analysis Error</div>
-        <div class="stat-value">587</div>
+        <div class="stat-value">588</div>
     </div>
     <div class="stat-card">
         <div>CT Image Analysis</div>
@@ -25,11 +25,11 @@ This page displays information about the latest data releases for the NOCTURN X-
     </div>
     <div class="stat-card">
         <div>CT Slice Analysis</div>
-        <div class="stat-value">263</div>
+        <div class="stat-value">265</div>
     </div>
     <div class="stat-card">
         <div>CT to Text Analysis</div>
-        <div class="stat-value">1129</div>
+        <div class="stat-value">1132</div>
     </div>
     <div class="stat-card">
         <div>Daily</div>
@@ -45,7 +45,7 @@ This page displays information about the latest data releases for the NOCTURN X-
     </div>
     <div class="stat-card">
         <div>MorphoSource Modified</div>
-        <div class="stat-value">833</div>
+        <div class="stat-value">836</div>
     </div>
 </div>
 
@@ -61,7 +61,7 @@ This page displays information about the latest data releases for the NOCTURN X-
 
 <!-- Hidden element containing heatmap data -->
 <script id="heatmap-data" type="application/json">
-{"2025-04-19": 26, "2025-04-18": 15, "2025-04-17": 17, "2025-04-16": 3, "2025-04-15": 3, "2025-04-14": 12, "2025-04-13": 2, "2025-04-12": 2, "2025-04-11": 13, "2025-04-10": 23, "2025-04-09": 22, "2025-04-08": 33, "2025-04-07": 21, "2025-04-06": 3, "2025-04-05": 12, "2025-04-04": 12, "2025-04-03": 42, "2025-04-02": 23, "2025-04-01": 2, "2025-03-31": 2, "2025-03-30": 6, "2025-03-29": 7, "2025-03-28": 32, "2025-03-27": 64, "2025-03-26": 39, "2025-03-25": 34, "2025-03-24": 67, "2025-03-23": 28, "2025-03-22": 12, "2025-03-21": 8, "2025-03-20": 54, "2025-03-19": 20, "2025-03-18": 20, "2025-03-17": 23, "2025-03-16": 2, "2025-03-15": 5, "2025-03-14": 20, "2025-03-13": 28, "2025-03-12": 46, "2025-03-11": 69, "2025-03-10": 64, "2025-03-09": 9, "2025-03-08": 3, "2025-03-07": 51, "2025-03-06": 126, "2025-03-05": 36, "2025-03-04": 27, "2025-03-03": 40, "2025-03-02": 2, "2025-03-01": 11, "2025-02-28": 17, "2025-02-27": 39, "2025-02-26": 20, "2025-02-25": 8, "2025-02-24": 7, "2025-02-21": 1, "2025-02-19": 14, "2025-02-18": 9, "2025-02-17": 14, "2025-02-16": 5, "2025-02-15": 14, "2025-02-14": 9, "2025-02-13": 2, "2025-02-12": 12, "2025-02-11": 19, "2025-02-10": 54, "2025-02-09": 1, "2025-02-08": 1, "2025-02-07": 21, "2025-02-06": 14, "2025-02-05": 22, "2025-02-04": 34, "2025-02-03": 18, "2025-02-02": 1, "2025-02-01": 3, "2025-01-31": 7, "2025-01-30": 11, "2025-01-29": 12, "2025-01-28": 15, "2025-01-27": 14, "2025-01-26": 3, "2025-01-25": 8, "2025-01-24": 6, "2025-01-23": 6, "2025-01-22": 3, "2025-01-21": 3, "2025-01-20": 7, "2025-01-19": 10, "2025-01-17": 5, "2025-01-16": 5, "2025-01-15": 13, "2025-01-14": 3, "2025-01-13": 4, "2025-01-10": 4, "2025-01-09": 5, "2025-01-08": 20, "2025-01-07": 21, "2025-01-06": 1, "2025-01-04": 1, "2025-01-03": 1, "2025-01-02": 43, "2025-01-01": 9}
+{"2025-04-19": 32, "2025-04-18": 15, "2025-04-17": 17, "2025-04-16": 3, "2025-04-15": 3, "2025-04-14": 12, "2025-04-13": 2, "2025-04-12": 2, "2025-04-11": 13, "2025-04-10": 23, "2025-04-09": 22, "2025-04-08": 33, "2025-04-07": 21, "2025-04-06": 3, "2025-04-05": 12, "2025-04-04": 12, "2025-04-03": 42, "2025-04-02": 23, "2025-04-01": 2, "2025-03-31": 2, "2025-03-30": 6, "2025-03-29": 7, "2025-03-28": 32, "2025-03-27": 64, "2025-03-26": 39, "2025-03-25": 34, "2025-03-24": 67, "2025-03-23": 28, "2025-03-22": 12, "2025-03-21": 8, "2025-03-20": 54, "2025-03-19": 20, "2025-03-18": 20, "2025-03-17": 23, "2025-03-16": 2, "2025-03-15": 5, "2025-03-14": 20, "2025-03-13": 28, "2025-03-12": 46, "2025-03-11": 69, "2025-03-10": 64, "2025-03-09": 9, "2025-03-08": 3, "2025-03-07": 51, "2025-03-06": 126, "2025-03-05": 36, "2025-03-04": 27, "2025-03-03": 40, "2025-03-02": 2, "2025-03-01": 11, "2025-02-28": 17, "2025-02-27": 39, "2025-02-26": 20, "2025-02-25": 8, "2025-02-24": 7, "2025-02-21": 1, "2025-02-19": 14, "2025-02-18": 9, "2025-02-17": 14, "2025-02-16": 5, "2025-02-15": 14, "2025-02-14": 9, "2025-02-13": 2, "2025-02-12": 12, "2025-02-11": 19, "2025-02-10": 54, "2025-02-09": 1, "2025-02-08": 1, "2025-02-07": 21, "2025-02-06": 14, "2025-02-05": 22, "2025-02-04": 34, "2025-02-03": 18, "2025-02-02": 1, "2025-02-01": 3, "2025-01-31": 7, "2025-01-30": 11, "2025-01-29": 12, "2025-01-28": 15, "2025-01-27": 14, "2025-01-26": 3, "2025-01-25": 8, "2025-01-24": 6, "2025-01-23": 6, "2025-01-22": 3, "2025-01-21": 3, "2025-01-20": 7, "2025-01-19": 10, "2025-01-17": 5, "2025-01-16": 5, "2025-01-15": 13, "2025-01-14": 3, "2025-01-13": 4, "2025-01-10": 4, "2025-01-09": 5, "2025-01-08": 20, "2025-01-07": 21, "2025-01-06": 1, "2025-01-04": 1, "2025-01-03": 1, "2025-01-02": 43, "2025-01-01": 9}
 </script>
 
 ## Releases by Type
@@ -71,6 +71,61 @@ This page displays information about the latest data releases for the NOCTURN X-
         <th>Type</th>
         <th>Date & Time</th>
         <th>Tag</th>
+    </tr>
+    <tr>
+        <td>CT Slice Analysis</td>
+        <td>2025/04/19 19:03:47 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_slice_analysis-2025-04-19_19-03-47">ct_slice_analysis-2025-04-19_19-03-47</a></td>
+    </tr>
+    <tr>
+        <td>MorphoSource Modified</td>
+        <td>2025/04/19 19:01:03 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-04-19_19-01-03">morphosource-modified-2025-04-19_19-01-03</a></td>
+    </tr>
+    <tr>
+        <td>CT to Text Analysis</td>
+        <td>2025/04/19 19:00:50 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-04-19_19-00-50">ct_to_text_analysis-2025-04-19_19-00-50</a></td>
+    </tr>
+    <tr>
+        <td>MorphoSource Updates</td>
+        <td>2025/04/19 19:00:21 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-04-19_19-00-21">morphosource-updates-2025-04-19_19-00-21</a></td>
+    </tr>
+    <tr>
+        <td>MorphoSource Modified</td>
+        <td>2025/04/19 18:48:30 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-04-19_18-48-30">morphosource-modified-2025-04-19_18-48-30</a></td>
+    </tr>
+    <tr>
+        <td>CT to Text Analysis</td>
+        <td>2025/04/19 18:48:16 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-04-19_18-48-16">ct_to_text_analysis-2025-04-19_18-48-16</a></td>
+    </tr>
+    <tr>
+        <td>MorphoSource Updates</td>
+        <td>2025/04/19 18:47:45 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-04-19_18-47-45">morphosource-updates-2025-04-19_18-47-45</a></td>
+    </tr>
+    <tr>
+        <td>CT Slice Analysis</td>
+        <td>2025/04/19 18:35:17 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_slice_analysis-2025-04-19_18-35-17">ct_slice_analysis-2025-04-19_18-35-17</a></td>
+    </tr>
+    <tr>
+        <td>MorphoSource Modified</td>
+        <td>2025/04/19 18:32:39 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-04-19_18-32-39">morphosource-modified-2025-04-19_18-32-39</a></td>
+    </tr>
+    <tr>
+        <td>CT to Text Analysis</td>
+        <td>2025/04/19 18:32:31 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-04-19_18-32-31">ct_to_text_analysis-2025-04-19_18-32-31</a></td>
+    </tr>
+    <tr>
+        <td>MorphoSource Updates</td>
+        <td>2025/04/19 18:32:02 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-04-19_18-32-02">morphosource-updates-2025-04-19_18-32-02</a></td>
     </tr>
     <tr>
         <td>MorphoSource Modified</td>
@@ -267,188 +322,27 @@ This page displays information about the latest data releases for the NOCTURN X-
         <td>2025/04/19 14:41:52 UTC</td>
         <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-04-19_14-41-52">morphosource-modified-2025-04-19_14-41-52</a></td>
     </tr>
-    <tr>
-        <td>CT to Text Analysis</td>
-        <td>2025/04/19 14:41:40 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-04-19_14-41-40">ct_to_text_analysis-2025-04-19_14-41-40</a></td>
-    </tr>
-    <tr>
-        <td>MorphoSource Updates</td>
-        <td>2025/04/19 14:41:11 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-04-19_14-41-11">morphosource-updates-2025-04-19_14-41-11</a></td>
-    </tr>
-    <tr>
-        <td>CT Image Analysis</td>
-        <td>2025/04/19 03:06:48 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-04-19_03-06-48">ct_image_analysis-2025-04-19_03-06-48</a></td>
-    </tr>
-    <tr>
-        <td>MorphoSource Modified</td>
-        <td>2025/04/19 03:02:11 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-04-19_03-02-11">morphosource-modified-2025-04-19_03-02-11</a></td>
-    </tr>
-    <tr>
-        <td>CT to Text Analysis</td>
-        <td>2025/04/19 03:02:04 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-04-19_03-02-04">ct_to_text_analysis-2025-04-19_03-02-04</a></td>
-    </tr>
-    <tr>
-        <td>MorphoSource Updates</td>
-        <td>2025/04/19 03:01:31 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-04-19_03-01-31">morphosource-updates-2025-04-19_03-01-31</a></td>
-    </tr>
-    <tr>
-        <td>MorphoSource Modified</td>
-        <td>2025/04/19 01:57:34 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-04-19_01-57-34">morphosource-modified-2025-04-19_01-57-34</a></td>
-    </tr>
-    <tr>
-        <td>CT to Text Analysis</td>
-        <td>2025/04/19 01:57:27 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-04-19_01-57-27">ct_to_text_analysis-2025-04-19_01-57-27</a></td>
-    </tr>
-    <tr>
-        <td>MorphoSource Updates</td>
-        <td>2025/04/19 01:56:58 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-04-19_01-56-58">morphosource-updates-2025-04-19_01-56-58</a></td>
-    </tr>
-    <tr>
-        <td>Daily</td>
-        <td>2025/04/19 01:26:03 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/daily-2025-04-19_01-26-03">daily-2025-04-19_01-26-03</a></td>
-    </tr>
-    <tr>
-        <td>MorphoSource Modified</td>
-        <td>2025/04/18 23:18:44 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-04-18_23-18-44">morphosource-modified-2025-04-18_23-18-44</a></td>
-    </tr>
 </table>
 
 ## Recent Releases by Type
 
-### MorphoSource Modified
-
-<div class="release-group">
-<div class="release-card">
-    <h4>2025/04/19 17:58:03 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-04-19_17-58-03">morphosource-modified-2025-04-19_17-58-03</a></h4>
-    
-    ```
-    Update last_count.txt for new records
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/04/19 17:45:27 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-04-19_17-45-27">morphosource-modified-2025-04-19_17-45-27</a></h4>
-    
-    ```
-    Update last_count.txt for new records
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/04/19 17:32:21 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-04-19_17-32-21">morphosource-modified-2025-04-19_17-32-21</a></h4>
-    
-    ```
-    Update last_count.txt for new records
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/04/19 17:11:58 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-04-19_17-11-58">morphosource-modified-2025-04-19_17-11-58</a></h4>
-    
-    ```
-    Update last_count.txt for new records
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/04/19 16:36:45 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-04-19_16-36-45">morphosource-modified-2025-04-19_16-36-45</a></h4>
-    
-    ```
-    Update last_count.txt for new records
-    ```
-</div>
-</div>
-
-### CT to Text Analysis
-
-<div class="release-group">
-<div class="release-card">
-    <h4>2025/04/19 17:57:55 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-04-19_17-57-55">ct_to_text_analysis-2025-04-19_17-57-55</a></h4>
-    
-    ```
-    Update last_modified_record.json for modified record
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/04/19 17:45:21 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-04-19_17-45-21">ct_to_text_analysis-2025-04-19_17-45-21</a></h4>
-    
-    ```
-    Update last_modified_record.json for modified record
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/04/19 17:32:13 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-04-19_17-32-13">ct_to_text_analysis-2025-04-19_17-32-13</a></h4>
-    
-    ```
-    Update last_modified_record.json for modified record
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/04/19 17:11:49 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-04-19_17-11-49">ct_to_text_analysis-2025-04-19_17-11-49</a></h4>
-    
-    ```
-    Update last_modified_record.json for modified record
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/04/19 16:36:37 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-04-19_16-36-37">ct_to_text_analysis-2025-04-19_16-36-37</a></h4>
-    
-    ```
-    Update last_modified_record.json for modified record
-    ```
-</div>
-</div>
-
-### MorphoSource Updates
-
-<div class="release-group">
-<div class="release-card">
-    <h4>2025/04/19 17:57:27 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-04-19_17-57-27">morphosource-updates-2025-04-19_17-57-27</a></h4>
-    
-    ```
-    Update last_modified_record.json for modified record
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/04/19 17:44:48 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-04-19_17-44-48">morphosource-updates-2025-04-19_17-44-48</a></h4>
-    
-    ```
-    Update last_modified_record.json for modified record
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/04/19 17:31:41 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-04-19_17-31-41">morphosource-updates-2025-04-19_17-31-41</a></h4>
-    
-    ```
-    Update last_modified_record.json for modified record
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/04/19 17:11:21 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-04-19_17-11-21">morphosource-updates-2025-04-19_17-11-21</a></h4>
-    
-    ```
-    Update last_modified_record.json for modified record
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/04/19 16:36:05 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-04-19_16-36-05">morphosource-updates-2025-04-19_16-36-05</a></h4>
-    
-    ```
-    Update last_modified_record.json for modified record
-    ```
-</div>
-</div>
-
 ### CT Slice Analysis
 
 <div class="release-group">
+<div class="release-card">
+    <h4>2025/04/19 19:03:47 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_slice_analysis-2025-04-19_19-03-47">ct_slice_analysis-2025-04-19_19-03-47</a></h4>
+    
+    ```
+    Update last_count.txt for new records
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/04/19 18:35:17 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_slice_analysis-2025-04-19_18-35-17">ct_slice_analysis-2025-04-19_18-35-17</a></h4>
+    
+    ```
+    Update last_count.txt for new records
+    ```
+</div>
 <div class="release-card">
     <h4>2025/04/19 17:48:25 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_slice_analysis-2025-04-19_17-48-25">ct_slice_analysis-2025-04-19_17-48-25</a></h4>
     
@@ -470,18 +364,124 @@ This page displays information about the latest data releases for the NOCTURN X-
     Update last_count.txt for new records
     ```
 </div>
+</div>
+
+### MorphoSource Modified
+
+<div class="release-group">
 <div class="release-card">
-    <h4>2025/04/19 16:39:37 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_slice_analysis-2025-04-19_16-39-37">ct_slice_analysis-2025-04-19_16-39-37</a></h4>
+    <h4>2025/04/19 19:01:03 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-04-19_19-01-03">morphosource-modified-2025-04-19_19-01-03</a></h4>
     
     ```
     Update last_count.txt for new records
     ```
 </div>
 <div class="release-card">
-    <h4>2025/04/19 15:52:00 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_slice_analysis-2025-04-19_15-52-00">ct_slice_analysis-2025-04-19_15-52-00</a></h4>
+    <h4>2025/04/19 18:48:30 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-04-19_18-48-30">morphosource-modified-2025-04-19_18-48-30</a></h4>
     
     ```
     Update last_count.txt for new records
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/04/19 18:32:39 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-04-19_18-32-39">morphosource-modified-2025-04-19_18-32-39</a></h4>
+    
+    ```
+    Update last_count.txt for new records
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/04/19 17:58:03 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-04-19_17-58-03">morphosource-modified-2025-04-19_17-58-03</a></h4>
+    
+    ```
+    Update last_count.txt for new records
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/04/19 17:45:27 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-modified-2025-04-19_17-45-27">morphosource-modified-2025-04-19_17-45-27</a></h4>
+    
+    ```
+    Update last_count.txt for new records
+    ```
+</div>
+</div>
+
+### CT to Text Analysis
+
+<div class="release-group">
+<div class="release-card">
+    <h4>2025/04/19 19:00:50 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-04-19_19-00-50">ct_to_text_analysis-2025-04-19_19-00-50</a></h4>
+    
+    ```
+    Update last_modified_record.json for modified record
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/04/19 18:48:16 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-04-19_18-48-16">ct_to_text_analysis-2025-04-19_18-48-16</a></h4>
+    
+    ```
+    Update last_modified_record.json for modified record
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/04/19 18:32:31 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-04-19_18-32-31">ct_to_text_analysis-2025-04-19_18-32-31</a></h4>
+    
+    ```
+    Update last_modified_record.json for modified record
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/04/19 17:57:55 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-04-19_17-57-55">ct_to_text_analysis-2025-04-19_17-57-55</a></h4>
+    
+    ```
+    Update last_modified_record.json for modified record
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/04/19 17:45:21 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-04-19_17-45-21">ct_to_text_analysis-2025-04-19_17-45-21</a></h4>
+    
+    ```
+    Update last_modified_record.json for modified record
+    ```
+</div>
+</div>
+
+### MorphoSource Updates
+
+<div class="release-group">
+<div class="release-card">
+    <h4>2025/04/19 19:00:21 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-04-19_19-00-21">morphosource-updates-2025-04-19_19-00-21</a></h4>
+    
+    ```
+    Update last_modified_record.json for modified record
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/04/19 18:47:45 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-04-19_18-47-45">morphosource-updates-2025-04-19_18-47-45</a></h4>
+    
+    ```
+    Update last_modified_record.json for modified record
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/04/19 18:32:02 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-04-19_18-32-02">morphosource-updates-2025-04-19_18-32-02</a></h4>
+    
+    ```
+    Update last_modified_record.json for modified record
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/04/19 17:57:27 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-04-19_17-57-27">morphosource-updates-2025-04-19_17-57-27</a></h4>
+    
+    ```
+    Update last_modified_record.json for modified record
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/04/19 17:44:48 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-04-19_17-44-48">morphosource-updates-2025-04-19_17-44-48</a></h4>
+    
+    ```
+    Update last_modified_record.json for modified record
     ```
 </div>
 </div>
@@ -672,6 +672,13 @@ This page displays information about the latest data releases for the NOCTURN X-
 
 <div class="release-group">
 <div class="release-card">
+    <h4>14551933631 - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_analysis_error-14551933631">ct_analysis_error-14551933631</a></h4>
+    
+    ```
+    Update last_count.txt for new records
+    ```
+</div>
+<div class="release-card">
     <h4>14551543551 - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_analysis_error-14551543551">ct_analysis_error-14551543551</a></h4>
     
     ```
@@ -694,13 +701,6 @@ This page displays information about the latest data releases for the NOCTURN X-
 </div>
 <div class="release-card">
     <h4>14544564459 - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_analysis_error-14544564459">ct_analysis_error-14544564459</a></h4>
-    
-    ```
-    Update last_count.txt for new records
-    ```
-</div>
-<div class="release-card">
-    <h4>14541442538 - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_analysis_error-14541442538">ct_analysis_error-14541442538</a></h4>
     
     ```
     Update last_count.txt for new records
