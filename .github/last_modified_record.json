@@ -1,12 +1,12 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000052687?locale=en",
-  "id": "000052687",
-  "Object": "USNM:FISH:USNM 360154",
-  "Taxonomy": "Gobiesox juradoensis",
+  "title": "Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000731650?locale=en",
+  "id": "000731650",
+  "Object": "TTU:TTU-M:10003",
+  "Taxonomy": "Dasypterus intermedius",
+  "Element or Part": "Mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Vertebrate Zoology, Fishes (USNM)",
-  "Date Uploaded": "06/28/2018",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Data Manager": "Sydney Decker",
+  "Date Uploaded": "04/19/2025",
+  "Publication Status": "Restricted Download"
 }
