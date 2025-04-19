@@ -1,12 +1,12 @@
 {
-  "title": "Cranium [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000731363?locale=en",
-  "id": "000731363",
-  "Object": "LSUMZ:Mammals:14314",
-  "Taxonomy": "Lasiurus egaDasypterus ega",
-  "Element or Part": "Cranium",
+  "title": "Element Unspecified [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000731853?locale=en",
+  "id": "000731853",
+  "Object": "ypm:vz:ICH025294",
+  "Taxonomy": "Amblyopsis spelaea",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Sydney Decker",
-  "Date Uploaded": "04/17/2025",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Chase Brownstein",
+  "Date Uploaded": "04/19/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
