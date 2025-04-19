@@ -1,12 +1,12 @@
 {
   "title": "Element Unspecified [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000731610?locale=en",
-  "id": "000731610",
-  "Object": "ypm:vz:ICH025305",
-  "Taxonomy": "Amblyopsis hoosieri",
+  "detail_url": "https://www.morphosource.org/concern/media/000052687?locale=en",
+  "id": "000052687",
+  "Object": "USNM:FISH:USNM 360154",
+  "Taxonomy": "Gobiesox juradoensis",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Chase Brownstein",
-  "Date Uploaded": "04/19/2025",
+  "Data Manager": "Vertebrate Zoology, Fishes (USNM)",
+  "Date Uploaded": "06/28/2018",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "Copyright Undetermined"
 }
