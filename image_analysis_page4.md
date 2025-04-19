@@ -2,11 +2,132 @@
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-04-19 02:57:05 UTC
+**Last Updated:** 2025-04-19 03:32:50 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-04-10-19-23-46" data-release-tag="ct_image_analysis-2025-04-10_19-23-46">
+    <div class="gallery-header">
+        <h2>2025/04/10 19:23:46 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-04-10_19-23-46">ct_image_analysis-2025-04-10_19-23-46</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-10_19-23-46/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-10_19-23-46/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-10_19-23-46/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-10_19-23-46/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-04-10_19-20-30</p>
+<p>Analyzing the 3D X-ray CT scan data, the following structural characteristics, material compositions, and notable features can be observed across the different views presented:</p>
+<h3>Structural Characteristics:</h3>
+<ol>
+<li><strong>Overall Shape and Surface Texture:</strong></li>
+<li>The specimen exhibits a rounded morphology, suggesting it might belong to a group such as vertebrates or other smooth-surfaced organisms.</li>
+<li>
+<p>The surface is marked with numerous small indentations and texture variations, indicative of biological features such as pores or growth patterns.</p>
+</li>
+<li>
+<p><strong>Internal Cavities:</strong></p>
+</li>
+<li>Multiple openings and voids can be identified, suggesting a complex internal structure. These could represent air sacs, sinuses, or tissue spaces.</li>
+<li>
+<p>The variation in thickness and density of the material could be a sign of differing developmental stages or adaptations.</p>
+</li>
+<li>
+<p><strong>Symmetry:</strong></p>
+</li>
+<li>The specimen appears relatively symmetrical across different axes, which is common in biological structures; however, any asymmetry could signal developmental anomalies or specific adaptations.</li>
+</ol>
+<h3>Material Composition:</h3>
+<ol>
+<li><strong>Density Variation:</strong></li>
+<li>The density seems to vary throughout the specimen, which may indicate different tissue types or stages of mineralization (e.g., bone vs. cartilage).</li>
+<li>
+<p>The lighter areas might represent less dense regions, potentially correlating with softer tissues or hollow structures.</p>
+</li>
+<li>
+<p><strong>Mineralization:</strong></p>
+</li>
+<li>Areas of denser material suggest regions of high mineral content, likely indicative of bone structures or hardened tissues.</li>
+</ol>
+<h3>Notable Features and Anomalies:</h3>
+<ol>
+<li><strong>Surface Irregularities:</strong></li>
+<li>
+<p>The presence of small pits or bumpy textures could indicate biological growth features like muscle attachment sites or pathology, depending on the context of the specimen's origin.</p>
+</li>
+<li>
+<p><strong>Unique Structures:</strong></p>
+</li>
+<li>
+<p>In some views, specific protrusions or unusual formations may be seen. These could represent unique adaptations, evolutionary traits, or signs of growth abnormalities.</p>
+</li>
+<li>
+<p><strong>Anomalies:</strong></p>
+</li>
+<li>
+<p>If any unusual growths or discrepancies in expected anatomical structures are present, these might indicate developmental anomalies, injuries, or pathological conditions.</p>
+</li>
+<li>
+<p><strong>Orientation Differences:</strong></p>
+</li>
+<li>Observing the specimen from multiple angles provides valuable insights into its complexity and reveals features obscured in other views.</li>
+</ol>
+<h3>Conclusion:</h3>
+<p>The 3D X-ray CT analysis reveals a structurally intricate specimen with diverse material properties and noteworthy biological features. The dataset can facilitate further investigations, including functional evaluations and comparisons with other specimens or species. Consistent analysis across various orientations enriches</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
 
 <div class="gallery-item" data-release-id="release-ct-image-analysis-2025-04-07-23-28-32" data-release-tag="ct_image_analysis-2025-04-07_23-28-32">
     <div class="gallery-header">
@@ -429,123 +550,6 @@ Stacktrace:</p>
 </li>
 <li>Consistent features across different orientations provide confidence in their interpretation, while discrepancies can point to interesting aspects of the skull's development or history.</li>
 </ol>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-04-07-16-35-21" data-release-tag="ct_image_analysis-2025-04-07_16-35-21">
-    <div class="gallery-header">
-        <h2>2025/04/07 16:35:21 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-04-07_16-35-21">ct_image_analysis-2025-04-07_16-35-21</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-07_16-35-21/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-07_16-35-21/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-07_16-35-21/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-07_16-35-21/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-04-07_16-31-54</p>
-<p>I can't analyze the images directly, but I can guide you on how to assess 3D X-ray CT scan data, particularly regarding structural characteristics, material composition, and notable features or anomalies.</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li><strong>General Morphology</strong>: </li>
-<li>Look for features such as the shape, size, and contour of the specimen. Analyze how these aspects vary across different views.</li>
-<li>
-<p>Consider dimensions (length, width, height) and any asymmetry.</p>
-</li>
-<li>
-<p><strong>Surface Details</strong>: </p>
-</li>
-<li>Examine surface texture. Are there any grooves, ridges, or bumps?</li>
-<li>
-<p>Determine if there are distinct patterns or markings that could indicate growth lines or wear.</p>
-</li>
-<li>
-<p><strong>Internal Structure</strong>: </p>
-</li>
-<li>If the scans allow, assess any internal cavities or structures. Are there hollow spaces, or is it solid throughout?</li>
-<li>Look for layering within the specimen, which might indicate different growth stages or material properties.</li>
-</ol>
-<h3>Material Composition</h3>
-<ol>
-<li><strong>Density Variation</strong>: </li>
-<li>
-<p>Different materials may appear with varying densities on a CT scan. Assess areas of high and low density and what they may indicate about material composition.</p>
-</li>
-<li>
-<p><strong>Composition Analysis</strong>: </p>
-</li>
-<li>If possible, correlate visual features with known material characteristics (e.g., mineral composition, organic vs. inorganic).</li>
-<li>Analyze whether the materials show signs of degradation or alteration over time.</li>
-</ol>
-<h3>Notable Features or Anomalies</h3>
-<ol>
-<li><strong>Anomalies</strong>: </li>
-<li>Identify any irregularities such as fractures, breaks, or abnormal wear patterns. Such anomalies may provide insights into the specimen's history.</li>
-<li>
-<p>Look for unexpected features that differ from the expected normative patterns for similar specimens.</p>
-</li>
-<li>
-<p><strong>Comparative Analysis</strong>: </p>
-</li>
-<li>
-<p>Compare the different views to note any discrepancies. For example, a structure might appear prominent in one view but not in another, hinting at depth or complexity in the structure.</p>
-</li>
-<li>
-<p><strong>Artifacts</strong>: </p>
-</li>
-<li>Ensure to differentiate between true anatomical features and artifacts introduced by imaging techniques. Consider how the angle and exposure could affect visualization.</li>
-</ol>
-<h3>Conclusion</h3>
-<p>For a thorough analysis, document your findings while rotating through the different views. Consider using software tools that may provide additional analytical capabilities, such as density measurement or comparative modeling against known samples.</p>
 <h3>Orientation Views</h3>
 <p>The following orientation views were captured:
 - Default (Y+ Up)
