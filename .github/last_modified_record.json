@@ -1,12 +1,12 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000731929?locale=en",
-  "id": "000731929",
-  "Object": "ypm:vz:ICH025594",
-  "Taxonomy": "Typhlichthys subterraneus",
+  "title": "Fruit [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000731987?locale=en",
+  "id": "000731987",
+  "Object": "NY:5154165",
+  "Taxonomy": "Bursera tonkinensis",
+  "Element or Part": "Fruit",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Chase Brownstein",
-  "Date Uploaded": "04/20/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Steven Manchester",
+  "Date Uploaded": "04/21/2025",
+  "Publication Status": "Open Download"
 }
