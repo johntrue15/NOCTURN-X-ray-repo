@@ -1,13 +1,12 @@
 {
-  "title": "Entire Specimen [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000728599?locale=en",
-  "id": "000728599",
-  "Object": "YPM:VZ:YPM ICH 004275",
-  "Taxonomy": "Carassius carassius",
-  "Element or Part": "entire specimen",
+  "title": "Fruit [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000732001?locale=en",
+  "id": "000732001",
+  "Object": "NY:04832742",
+  "Taxonomy": "Canarium indicum",
+  "Element or Part": "Fruit",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Nelson Rios",
-  "Date Uploaded": "04/08/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Steven Manchester",
+  "Date Uploaded": "04/21/2025",
+  "Publication Status": "Open Download"
 }
