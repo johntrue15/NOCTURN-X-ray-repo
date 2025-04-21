@@ -1,13 +1,12 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000732241?locale=en",
-  "id": "000732241",
-  "Object": "cumv:herps:R-0012504",
-  "Taxonomy": "Thamnophis elegans",
-  "Element or Part": "Skull",
+  "title": "Fruit [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000732282?locale=en",
+  "id": "000732282",
+  "Object": "NY:NY:04823186",
+  "Taxonomy": "Canarium schweinfurthii",
+  "Element or Part": "Fruit",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Riley Stanton",
+  "Data Manager": "Steven Manchester",
   "Date Uploaded": "04/21/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Publication Status": "Open Download"
 }
