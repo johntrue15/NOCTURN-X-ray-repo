@@ -1,12 +1,12 @@
 {
-  "title": "Fruit [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000732004?locale=en",
-  "id": "000732004",
-  "Object": "NY:04832742",
-  "Taxonomy": "Canarium indicum",
-  "Element or Part": "Fruit",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000732170?locale=en",
+  "id": "000732170",
+  "Object": "cumv:herps:R-0001790",
+  "Taxonomy": "Thamnophis marcianus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Steven Manchester",
+  "Data Manager": "Riley Stanton",
   "Date Uploaded": "04/21/2025",
-  "Publication Status": "Open Download"
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
