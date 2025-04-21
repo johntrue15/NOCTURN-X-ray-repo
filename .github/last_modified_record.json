@@ -1,12 +1,13 @@
 {
-  "title": "Fruit [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000731987?locale=en",
-  "id": "000731987",
-  "Object": "NY:5154165",
-  "Taxonomy": "Bursera tonkinensis",
-  "Element or Part": "Fruit",
+  "title": "Head [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000728635?locale=en",
+  "id": "000728635",
+  "Object": "YPM:VZ:YPM ICH 014143",
+  "Taxonomy": "Steatocranus gibbiceps",
+  "Element or Part": "Head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Steven Manchester",
-  "Date Uploaded": "04/21/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "Nelson Rios",
+  "Date Uploaded": "04/08/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
