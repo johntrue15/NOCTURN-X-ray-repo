@@ -1,12 +1,13 @@
 {
-  "title": "Mandible [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000731837?locale=en",
-  "id": "000731837",
-  "Object": "TTU:TTU-M:80739",
-  "Taxonomy": "Lasiurus borealis",
-  "Element or Part": "Mandible",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000733732?locale=en",
+  "id": "000733732",
+  "Object": "MCZ:Herp:R-8829",
+  "Taxonomy": "Oxyrhopus erdisii",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Sydney Decker",
-  "Date Uploaded": "04/19/2025",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Matt Gage",
+  "Date Uploaded": "04/22/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
