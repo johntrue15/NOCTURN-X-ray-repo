@@ -1,12 +1,13 @@
 {
-  "title": "3rd Cervical Vertebra [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000733825?locale=en",
-  "id": "000733825",
-  "Object": "UF:VP:30005",
-  "Taxonomy": "Titanis walleri",
-  "Element or Part": "3rd Cervical Vertebra",
+  "title": "Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000733846?locale=en",
+  "id": "000733846",
+  "Object": "amnh:mammals:65578",
+  "Taxonomy": "Trichosurus vulpecula",
+  "Element or Part": "mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
+  "Data Manager": "Keegan Selig",
   "Date Uploaded": "04/22/2025",
-  "Publication Status": "Restricted Download"
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined"
 }
