@@ -1,12 +1,12 @@
 {
-  "title": "Fruit [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000732612?locale=en",
-  "id": "000732612",
-  "Object": "NY:04968426",
-  "Taxonomy": "Canarium bacciferum",
-  "Element or Part": "Fruit",
+  "title": "Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000731540?locale=en",
+  "id": "000731540",
+  "Object": "LSUMZ:Mammals:4046",
+  "Taxonomy": "Lasiurus egaDasypterus ega",
+  "Element or Part": "Mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Steven Manchester",
-  "Date Uploaded": "04/21/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "Sydney Decker",
+  "Date Uploaded": "04/18/2025",
+  "Publication Status": "Restricted Download"
 }
