@@ -1,13 +1,13 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000733732?locale=en",
-  "id": "000733732",
-  "Object": "MCZ:Herp:R-8829",
-  "Taxonomy": "Oxyrhopus erdisii",
-  "Element or Part": "skull",
+  "title": "Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000733785?locale=en",
+  "id": "000733785",
+  "Object": "amnh:mammals:65563",
+  "Taxonomy": "Trichosurus vulpecula",
+  "Element or Part": "Mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Matt Gage",
+  "Data Manager": "Keegan Selig",
   "Date Uploaded": "04/22/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined"
 }
