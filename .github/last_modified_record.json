@@ -1,12 +1,12 @@
 {
-  "title": "Dentary Of Sivulliusalmo",
-  "detail_url": "https://www.morphosource.org/concern/media/000690204?locale=en",
-  "id": "000690204",
-  "Object": "UAM:ES:51874",
-  "Taxonomy": "Sivulliusalmo  alaskensis",
-  "Element or Part": "dentary",
+  "title": "2nd Cervical Vertebra [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000733940?locale=en",
+  "id": "000733940",
+  "Object": "UF:VP:30006",
+  "Taxonomy": "Titanis walleri",
+  "Element or Part": "2nd Cervical Vertebra",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Don Brinkman",
-  "Date Uploaded": "12/01/2024",
-  "Publication Status": "Open Download"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "04/22/2025",
+  "Publication Status": "Restricted Download"
 }
