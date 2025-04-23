@@ -1,13 +1,13 @@
 {
-  "title": "Astragalus [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000727901?locale=en",
-  "id": "000727901",
-  "Object": "OUMNH:zc:13804",
-  "Taxonomy": "Rhabdomys pumilio",
-  "Element or Part": "astragalus",
+  "title": "Skull [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000733998?locale=en",
+  "id": "000733998",
+  "Object": "cumv:herps:R-0012510",
+  "Taxonomy": "Thamnophis butleri",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Duncan Murdock",
-  "Date Uploaded": "04/07/2025",
+  "Data Manager": "Riley Stanton",
+  "Date Uploaded": "04/23/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
