@@ -1,12 +1,12 @@
 {
-  "title": "2nd Cervical Vertebra [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000733940?locale=en",
-  "id": "000733940",
-  "Object": "UF:VP:30006",
-  "Taxonomy": "Titanis walleri",
-  "Element or Part": "2nd Cervical Vertebra",
+  "title": "Cranium [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000731719?locale=en",
+  "id": "000731719",
+  "Object": "TTU:TTU-M:25908",
+  "Taxonomy": "Dasypterus intermedius intermedius",
+  "Element or Part": "Cranium",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "04/22/2025",
+  "Data Manager": "Sydney Decker",
+  "Date Uploaded": "04/19/2025",
   "Publication Status": "Restricted Download"
 }
