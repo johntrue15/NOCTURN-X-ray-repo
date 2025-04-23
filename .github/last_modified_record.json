@@ -1,13 +1,13 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000734045?locale=en",
-  "id": "000734045",
-  "Object": "cumv:herps:R-0002232",
-  "Taxonomy": "Liodytes rigida",
-  "Element or Part": "Skull",
+  "title": "Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000734055?locale=en",
+  "id": "000734055",
+  "Object": "amnh:mammals:79813",
+  "Taxonomy": "Phalanger orientalis",
+  "Element or Part": "mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Riley Stanton",
+  "Data Manager": "Keegan Selig",
   "Date Uploaded": "04/23/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined"
 }
