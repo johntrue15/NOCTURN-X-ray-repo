@@ -2,11 +2,121 @@
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-04-23 13:30:38 UTC
+**Last Updated:** 2025-04-23 14:21:13 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-03-30-13-28-55" data-release-tag="ct_image_analysis-2025-03-30_13-28-55">
+    <div class="gallery-header">
+        <h2>2025/03/30 13:28:55 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-30_13-28-55">ct_image_analysis-2025-03-30_13-28-55</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-30_13-28-55/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-30_13-28-55/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-30_13-28-55/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-30_13-28-55/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-03-30_13-25-21</p>
+<p>To analyze the 3D X-ray CT scan data of the cranium specimen from Morphosource.org, let's focus on the following parameters: structural characteristics, material composition, and notable features or anomalies.</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li><strong>Overall Shape and Form</strong>:</li>
+<li>The cranium displays an elongated and somewhat robust form, common in many vertebrate species.</li>
+<li>
+<p>The curvature suggests adaptations possibly related to specific dietary or environmental needs.</p>
+</li>
+<li>
+<p><strong>Major Features</strong>:</p>
+</li>
+<li><strong>Cranial Deformations</strong>: The scans reveal potential indentations and irregularities, suggesting past trauma or natural anatomical variations.</li>
+<li><strong>Frontal and Occipital regions</strong>: Visible transitions in thickness and texture; these might indicate structural adaptations for muscle attachment or organ support.</li>
+<li>
+<p><strong>Foramina and Sinuses</strong>: Visible openings and hollow areas which are typically present for blood vessels and nerves, reflecting the internal complexity of the skull.</p>
+</li>
+<li>
+<p><strong>Orientation</strong>:</p>
+</li>
+<li>Differences in views (lateral, anterior, posterior) allow for observation of unexpected angles that help to better understand its geometry and the relative size of various features.</li>
+</ol>
+<h3>Material Composition</h3>
+<ul>
+<li>The texture depicted appears somewhat porous, suggesting a lightweight material typical of many animal bones. This could indicate a bone composition with a high proportion of spongy or cancellous bone, which offers strength while reducing mass.</li>
+<li>The uniform color and texture suggest mineralization, common in fossilized specimens, where organic material may be replaced with minerals over time.</li>
+</ul>
+<h3>Notable Features or Anomalies</h3>
+<ol>
+<li><strong>Surface Texture</strong>:</li>
+<li>
+<p>The roughness present on the surface can be indicative of biogenic activity or pathological changes, such as lesions or scarring.</p>
+</li>
+<li>
+<p><strong>Possible Anomalies</strong>:</p>
+</li>
+<li>While analyzing different views, disparities in the size or shape of certain features may raise questions about the specimen's history, including previous injuries or disease.</li>
+<li>
+<p>Specific areas show unusual hollows or bulky protrusions that may warrant further investigation for anomalies in development.</p>
+</li>
+<li>
+<p><strong>Color Variations</strong>:</p>
+</li>
+<li>Subtle differences in shading may hint at variations in mineral content or density changes within specific areas of the cranium, possibly indicating regions of wear or alteration over time.</li>
+</ol>
+<h3>Conclusion</h3>
+<p>The CT scans provide insightful views of the cranium's structure, allowing for detailed examination of its features and potential anomalies. The structural complexity suggests adaptations and possible historical injuries, while the material characteristics highlight the intricacies of biological materials in</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
 
 <div class="gallery-item" data-release-id="release-ct-image-analysis-2025-03-29-23-40-47" data-release-tag="ct_image_analysis-2025-03-29_23-40-47">
     <div class="gallery-header">
@@ -345,115 +455,6 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 </ul>
 <h3>Conclusion:</h3>
 <p>These scans provide a rich source for understanding the morphology, functional adaptations, and potential ecological roles of the specimen. Detailed analysis of the various features</p>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-03-26-17-31-37" data-release-tag="ct_image_analysis-2025-03-26_17-31-37">
-    <div class="gallery-header">
-        <h2>2025/03/26 17:31:37 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-03-26_17-31-37">ct_image_analysis-2025-03-26_17-31-37</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-26_17-31-37/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-26_17-31-37/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-26_17-31-37/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-03-26_17-31-37/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-03-26_17-08-17</p>
-<p>Analyzing the 3D X-ray CT scan data of the skull specimen, we can extract several key structural characteristics and features based on the different views:</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li><strong>Overall Morphology</strong>:</li>
-<li>The skull appears to be well-preserved, showing a defined cranial cavity and distinctive features such as zygomatic arches and nasal openings.</li>
-<li>
-<p>The mandible (lower jaw) is separate from the skull, indicating a clear articulation point at the temporomandibular joint.</p>
-</li>
-<li>
-<p><strong>Cranial Features</strong>:</p>
-</li>
-<li>The top view reveals a smooth, elongated shape typical of certain species, indicating adaptation to specific environmental needs.</li>
-<li>
-<p>Notable structures include the orbits, which may show varying sizes depending on the specimen's lineage.</p>
-</li>
-<li>
-<p><strong>Mandibular Structure</strong>:</p>
-</li>
-<li>The mandible exhibits a robust design, potentially hinting at dietary habits and feeding mechanisms.</li>
-<li>It features dental structures that can provide insights into the age and species of the specimen.</li>
-</ol>
-<h3>Material Composition</h3>
-<ul>
-<li>The CT scan likely indicates a high density of mineralized tissues, typical of bone. The light coloration suggests well-developed osseous material, with possible variation in density across regions—key for understanding developmental and evolutionary aspects.</li>
-</ul>
-<h3>Notable Features and Anomalies</h3>
-<ol>
-<li><strong>Surface Textures</strong>:</li>
-<li>
-<p>Several views indicate a textured surface on the skull, which may reflect features such as muscle attachment sites or areas affected by wear, indicating the specimen's life history.</p>
-</li>
-<li>
-<p><strong>Anomalies</strong>:</p>
-</li>
-<li>Should any irregularities present themselves—such as deformities or unusual growths—these could be crucial for studying pathologies or stressors encountered in life.</li>
-<li>
-<p>Certain views might also display artifacts from the scanning process, presenting opportunities to refine imaging techniques.</p>
-</li>
-<li>
-<p><strong>Vascular and Nerve Pathways</strong>:</p>
-</li>
-<li>If visible, it could be interesting to examine any traces of vascular canals or nerve pathways, which can provide insights into the specimen's physiology and health status.</li>
-</ol>
-<h3>Conclusion</h3>
-<p>The 3D X-ray CT scan data from Morphosource.org offers a wealth of information about the specimen’s structural characteristics, material composition, and potential anomalies. Further analysis could involve cross-referencing these features with existing literature to derive comprehensive insights into the organism's biology and evolutionary history.</p>
 <h3>Orientation Views</h3>
 <p>The following orientation views were captured:
 - Default (Y+ Up)
