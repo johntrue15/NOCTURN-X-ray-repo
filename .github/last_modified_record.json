@@ -1,13 +1,13 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000733984?locale=en",
-  "id": "000733984",
-  "Object": "cumv:herps:R-0002165",
-  "Taxonomy": "Nerodia cyclopion",
-  "Element or Part": "Skull",
+  "title": "Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000734060?locale=en",
+  "id": "000734060",
+  "Object": "amnh:mammals:79809",
+  "Taxonomy": "Phalanger orientalis",
+  "Element or Part": "mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Casey Dillman",
+  "Data Manager": "Keegan Selig",
   "Date Uploaded": "04/23/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined"
 }
