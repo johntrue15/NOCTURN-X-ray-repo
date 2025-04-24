@@ -1,12 +1,13 @@
 {
-  "title": "Whole Body [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000056531?locale=en",
-  "id": "000056531",
-  "Object": "nhmuk:zoo:1892.9.9.b2",
-  "Taxonomy": "Arvicanthis niloticus variegatus",
-  "Element or Part": "whole body",
+  "title": "Whole Body In Spirit [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000569472?locale=en",
+  "id": "000569472",
+  "Object": "NHMUK:ZOO:1982.0289-0290",
+  "Taxonomy": "Clethrionomys glareolusMyodes glareolus",
+  "Element or Part": "whole body in spirit",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Roger Benson",
-  "Date Uploaded": "08/15/2018",
-  "Publication Status": "Open Download"
+  "Date Uploaded": "10/07/2023",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
