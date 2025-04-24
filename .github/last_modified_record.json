@@ -1,12 +1,11 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000164545?locale=en",
-  "id": "000164545",
-  "Object": "nhmuk:zoo:1925.5.6.2",
-  "Taxonomy": "Reithrodon auritus",
+  "title": "Basisphenoid",
+  "detail_url": "https://www.morphosource.org/concern/media/000718568?locale=en",
+  "id": "000718568",
+  "Object": "NMW:G:2001.42G.661-662",
+  "Taxonomy": "Mawsoniidae indet.",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Roger Benson",
-  "Date Uploaded": "10/08/2020",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Jacob Quinn",
+  "Date Uploaded": "03/11/2025",
+  "Publication Status": "Open Download"
 }
