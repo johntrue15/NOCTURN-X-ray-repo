@@ -1,11 +1,13 @@
 {
-  "title": "Basisphenoid",
-  "detail_url": "https://www.morphosource.org/concern/media/000718568?locale=en",
-  "id": "000718568",
-  "Object": "NMW:G:2001.42G.661-662",
-  "Taxonomy": "Mawsoniidae indet.",
+  "title": "Whole Body [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000164468?locale=en",
+  "id": "000164468",
+  "Object": "UMMZ:mammals:93493",
+  "Taxonomy": "Chinchilla lanigera",
+  "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jacob Quinn",
-  "Date Uploaded": "03/11/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "UMMZ Division of Mammals",
+  "Date Uploaded": "10/08/2020",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright"
 }
