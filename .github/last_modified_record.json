@@ -1,13 +1,12 @@
 {
-  "title": "Mandible [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000734060?locale=en",
-  "id": "000734060",
-  "Object": "amnh:mammals:79809",
-  "Taxonomy": "Phalanger orientalis",
-  "Element or Part": "mandible",
+  "title": "Element Unspecified [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000598466?locale=en",
+  "id": "000598466",
+  "Object": "AMNH:Mammals:M-54000",
+  "Taxonomy": "Thryonomys swinderianus variegatus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Keegan Selig",
-  "Date Uploaded": "04/23/2025",
+  "Data Manager": "AMNH Mammalogy Department",
+  "Date Uploaded": "01/16/2024",
   "Publication Status": "Open Download",
   "Rights Statement": "Copyright Undetermined"
 }
