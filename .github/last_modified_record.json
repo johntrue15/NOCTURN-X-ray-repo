@@ -1,12 +1,12 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000598466?locale=en",
-  "id": "000598466",
-  "Object": "AMNH:Mammals:M-54000",
-  "Taxonomy": "Thryonomys swinderianus variegatus",
+  "title": "Whole Body [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000056531?locale=en",
+  "id": "000056531",
+  "Object": "nhmuk:zoo:1892.9.9.b2",
+  "Taxonomy": "Arvicanthis niloticus variegatus",
+  "Element or Part": "whole body",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "AMNH Mammalogy Department",
-  "Date Uploaded": "01/16/2024",
-  "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Data Manager": "Roger Benson",
+  "Date Uploaded": "08/15/2018",
+  "Publication Status": "Open Download"
 }
