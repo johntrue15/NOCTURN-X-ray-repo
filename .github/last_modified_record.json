@@ -1,13 +1,13 @@
 {
   "title": "Foot, Hand [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000604744?locale=en",
-  "id": "000604744",
-  "Object": "FMNH:Mammals:70712",
-  "Taxonomy": "Potos flavus",
+  "detail_url": "https://www.morphosource.org/concern/media/000606436?locale=en",
+  "id": "000606436",
+  "Object": "USNM:MAMM:USNM 265588",
+  "Taxonomy": "Gulo gulo luscus",
   "Element or Part": "foot and hand",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Sarah Ouda",
-  "Date Uploaded": "02/16/2024",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Date Uploaded": "02/22/2024",
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined"
 }
