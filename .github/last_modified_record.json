@@ -1,13 +1,13 @@
 {
-  "title": "Whole Body In Spirit [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000569104?locale=en",
-  "id": "000569104",
-  "Object": "UMZC:Vertebrates:E.2087.A",
-  "Taxonomy": "Mus rattusRattus rattusMus gratus",
-  "Element or Part": "whole body in spirit",
+  "title": "Foot, Hand [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000604754?locale=en",
+  "id": "000604754",
+  "Object": "FMNH:Mammals:69620",
+  "Taxonomy": "Potos flavus",
+  "Element or Part": "foot and hand",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Roger Benson",
-  "Date Uploaded": "10/07/2023",
-  "Publication Status": "Open Download",
+  "Data Manager": "Sarah Ouda",
+  "Date Uploaded": "02/16/2024",
+  "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
