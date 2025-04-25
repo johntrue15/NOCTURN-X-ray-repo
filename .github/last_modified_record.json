@@ -1,13 +1,13 @@
 {
-  "title": "Feet, Hand [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000604579?locale=en",
-  "id": "000604579",
-  "Object": "FMNH:Mammals:49060",
-  "Taxonomy": "Vulpes vulpes",
-  "Element or Part": "hand and feet",
+  "title": "Foot, Hand [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000620411?locale=en",
+  "id": "000620411",
+  "Object": "FMNH:Mammals:97868",
+  "Taxonomy": "Felis silvestris",
+  "Element or Part": "foot and hand",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Sharon Grant",
-  "Date Uploaded": "02/15/2024",
+  "Date Uploaded": "04/12/2024",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
