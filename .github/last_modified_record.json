@@ -1,13 +1,13 @@
 {
-  "title": "Calcaneus [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000604469?locale=en",
-  "id": "000604469",
-  "Object": "AMNH:Mammals:M-135966",
-  "Taxonomy": "Bassariscus astutus arizonensis",
-  "Element or Part": "calcaneus",
+  "title": "Hand [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000603482?locale=en",
+  "id": "000603482",
+  "Object": "AMNH:Mammals:M-267607",
+  "Taxonomy": "Potos flavus",
+  "Element or Part": "hand",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Sarah Ouda",
-  "Date Uploaded": "02/15/2024",
+  "Date Uploaded": "02/09/2024",
   "Publication Status": "Open Download",
   "Rights Statement": "Copyright Undetermined"
 }
