@@ -1,13 +1,13 @@
 {
-  "title": "Foot, Hand [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000620411?locale=en",
-  "id": "000620411",
-  "Object": "FMNH:Mammals:97868",
-  "Taxonomy": "Felis silvestris",
-  "Element or Part": "foot and hand",
+  "title": "Whole Body In Spirit [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000569064?locale=en",
+  "id": "000569064",
+  "Object": "UMZC:Vertebrates:E.1908",
+  "Taxonomy": "Graphiurus hueti argenteus",
+  "Element or Part": "whole body in spirit",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Sharon Grant",
-  "Date Uploaded": "04/12/2024",
-  "Publication Status": "Restricted Download",
+  "Data Manager": "Roger Benson",
+  "Date Uploaded": "10/07/2023",
+  "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
