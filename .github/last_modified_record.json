@@ -1,13 +1,12 @@
 {
-  "title": "Whole Body In Spirit [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000569481?locale=en",
-  "id": "000569481",
-  "Object": "NHMUK:ZOO:ZD 1928.9.11.489-496",
-  "Taxonomy": "Desmodillus auricularis",
-  "Element or Part": "whole body in spirit",
+  "title": "Element Unspecified [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000164545?locale=en",
+  "id": "000164545",
+  "Object": "nhmuk:zoo:1925.5.6.2",
+  "Taxonomy": "Reithrodon auritus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Roger Benson",
-  "Date Uploaded": "10/07/2023",
+  "Date Uploaded": "10/08/2020",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
