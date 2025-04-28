@@ -1,13 +1,13 @@
 {
-  "title": "Foot [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000606470?locale=en",
-  "id": "000606470",
-  "Object": "USNM:MAMM:USNM 248690",
-  "Taxonomy": "Felis catus",
-  "Element or Part": "foot",
+  "title": "Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000736028?locale=en",
+  "id": "000736028",
+  "Object": "amnh:mammals:79927",
+  "Taxonomy": "Phalanger orientalis",
+  "Element or Part": "mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Department of Vertebrate Zoology National Museum of Natural History",
-  "Date Uploaded": "02/22/2024",
+  "Data Manager": "Keegan Selig",
+  "Date Uploaded": "04/28/2025",
   "Publication Status": "Open Download",
   "Rights Statement": "Copyright Undetermined"
 }
