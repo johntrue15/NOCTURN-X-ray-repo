@@ -1,13 +1,13 @@
 {
-  "title": "Hand [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000603397?locale=en",
-  "id": "000603397",
-  "Object": "AMNH:Mammals:M-254529",
-  "Taxonomy": "Bassariscus sp.",
-  "Element or Part": "hand",
+  "title": "Foot [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000603187?locale=en",
+  "id": "000603187",
+  "Object": "AMNH:Mammals:M-267608",
+  "Taxonomy": "Potos flavus",
+  "Element or Part": "foot",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Sarah Ouda",
-  "Date Uploaded": "02/09/2024",
+  "Date Uploaded": "02/08/2024",
   "Publication Status": "Open Download",
   "Rights Statement": "Copyright Undetermined"
 }
