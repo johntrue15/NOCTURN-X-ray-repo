@@ -1,13 +1,13 @@
 {
-  "title": "Pedal Intermediate Phalanx 3 [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000601679?locale=en",
-  "id": "000601679",
-  "Object": "AMNH:M:96188",
-  "Taxonomy": "Procyon cancrivorus",
-  "Element or Part": "Pedal intermediate phalanx 3",
+  "title": "Skull [Mesh] [Ct]",
+  "detail_url": "https://www.morphosource.org/concern/media/000736046?locale=en",
+  "id": "000736046",
+  "Object": "YPM:VZ:YPM MAM 007471",
+  "Taxonomy": "Canis lupus familiarisCanis familiarisCanis lupus familiaris saluki",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Alisha Anaya",
-  "Date Uploaded": "02/02/2024",
-  "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Data Manager": "Nelson Rios",
+  "Date Uploaded": "04/28/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
