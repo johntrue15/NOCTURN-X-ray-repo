@@ -1,13 +1,13 @@
 {
-  "title": "Skull [Mesh] [Ct]",
-  "detail_url": "https://www.morphosource.org/concern/media/000736046?locale=en",
-  "id": "000736046",
-  "Object": "YPM:VZ:YPM MAM 007471",
-  "Taxonomy": "Canis lupus familiaris salukiCanis lupus familiarisCanis familiaris",
-  "Element or Part": "skull",
+  "title": "Hand [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000603397?locale=en",
+  "id": "000603397",
+  "Object": "AMNH:Mammals:M-254529",
+  "Taxonomy": "Bassariscus sp.",
+  "Element or Part": "hand",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Laurel Yohe",
-  "Date Uploaded": "04/28/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Sarah Ouda",
+  "Date Uploaded": "02/09/2024",
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined"
 }
