@@ -1,13 +1,13 @@
 {
-  "title": "Foot [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000603187?locale=en",
-  "id": "000603187",
-  "Object": "AMNH:Mammals:M-267608",
-  "Taxonomy": "Potos flavus",
-  "Element or Part": "foot",
+  "title": "Pedal Intermediate Phalanx 3 [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000601679?locale=en",
+  "id": "000601679",
+  "Object": "AMNH:M:96188",
+  "Taxonomy": "Procyon cancrivorus",
+  "Element or Part": "Pedal intermediate phalanx 3",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Sarah Ouda",
-  "Date Uploaded": "02/08/2024",
+  "Data Manager": "Alisha Anaya",
+  "Date Uploaded": "02/02/2024",
   "Publication Status": "Open Download",
   "Rights Statement": "Copyright Undetermined"
 }
