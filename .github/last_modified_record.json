@@ -1,13 +1,13 @@
 {
-  "title": "Skull [Mesh] [Ct]",
-  "detail_url": "https://www.morphosource.org/concern/media/000736046?locale=en",
-  "id": "000736046",
-  "Object": "YPM:VZ:YPM MAM 007471",
-  "Taxonomy": "Canis lupus familiarisCanis familiarisCanis lupus familiaris saluki",
-  "Element or Part": "skull",
+  "title": "Cranial Fragments [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000123447?locale=en",
+  "id": "000123447",
+  "Object": "mef:pv:3809",
+  "Taxonomy": "Manidens condorensis",
+  "Element or Part": "cranial fragments",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Nelson Rios",
-  "Date Uploaded": "04/28/2025",
+  "Data Manager": "Colecci\u00f3n Museo Paleontol\u00f3gico Egidio Feruglio",
+  "Date Uploaded": "06/25/2020",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
