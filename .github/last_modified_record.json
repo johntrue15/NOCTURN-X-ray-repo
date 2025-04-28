@@ -1,13 +1,13 @@
 {
-  "title": "Whole Body In Spirit [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000570315?locale=en",
-  "id": "000570315",
-  "Object": "UMMZ:mammals:167667",
-  "Taxonomy": "Eoglaucomys FIMBRIATUSEoglaucomys fimbriatus",
-  "Element or Part": "whole body in spirit",
+  "title": "Foot [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000606470?locale=en",
+  "id": "000606470",
+  "Object": "USNM:MAMM:USNM 248690",
+  "Taxonomy": "Felis catus",
+  "Element or Part": "foot",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "UMMZ Division of Mammals",
-  "Date Uploaded": "10/07/2023",
+  "Data Manager": "Department of Vertebrate Zoology National Museum of Natural History",
+  "Date Uploaded": "02/22/2024",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "Copyright Undetermined"
 }
