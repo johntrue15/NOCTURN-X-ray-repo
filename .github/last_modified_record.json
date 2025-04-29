@@ -1,13 +1,13 @@
 {
-  "title": "Capitate [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000601219?locale=en",
-  "id": "000601219",
-  "Object": "AMNH:M:96188",
-  "Taxonomy": "Procyon cancrivorus",
-  "Element or Part": "Capitate",
+  "title": "Cone [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000550721?locale=en",
+  "id": "000550721",
+  "Object": "FMNH:Paleobotany:PP 34514",
+  "Taxonomy": "Tetraphyllostrobus broganensis",
+  "Element or Part": "cone",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Alisha Anaya",
-  "Date Uploaded": "02/01/2024",
-  "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Data Manager": "Michael Donovan",
+  "Date Uploaded": "08/21/2023",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
