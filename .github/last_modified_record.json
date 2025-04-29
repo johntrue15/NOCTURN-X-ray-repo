@@ -1,13 +1,13 @@
 {
-  "title": "Element Unspecified [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000707436?locale=en",
-  "id": "000707436",
-  "Object": "NHMUK:PAL:PV RUT 1621",
-  "Taxonomy": "Gephyrosaurus bridensis",
+  "title": "Whole Specimen [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000736141?locale=en",
+  "id": "000736141",
+  "Object": "Ohio State University - Reptile Division, Columbus, OH (OSUM):Reptiles:OSUM Reptiles 1470",
+  "Taxonomy": "Ophisaurus ventralis",
+  "Element or Part": "Whole Specimen",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "NHMUK Fossil Reptiles, Amphibians, and Birds",
-  "Date Uploaded": "02/05/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Data Manager": "Sydney Decker",
+  "Date Uploaded": "04/29/2025",
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
