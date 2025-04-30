@@ -1,13 +1,14 @@
 {
-  "title": "Second Mandibular Molar [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000475116?locale=en",
-  "id": "000475116",
-  "Object": "USNM:MAMM:USNM 335455",
-  "Taxonomy": "Saguinus geoffroyi",
-  "Element or Part": "second mandibular molar",
+  "title": "Cone [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000550721?locale=en",
+  "id": "000550721",
+  "Object": "FMNH:Paleobotany:PP 34514",
+  "Taxonomy": "Tetraphyllostrobus broganensis",
+  "Element or Part": "cone",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Department of Vertebrate Zoology National Museum of Natural History",
-  "Date Uploaded": "10/18/2022",
-  "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Data Manager": "Sharon Grant",
+  "Date Uploaded": "08/21/2023",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
 }
