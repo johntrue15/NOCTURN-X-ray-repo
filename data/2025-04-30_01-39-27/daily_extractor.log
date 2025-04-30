@@ -1,0 +1,24 @@
+2025-04-30 01:39:30,576 - Data directory: data/2025-04-30_01-39-27
+2025-04-30 01:39:30,576 - Output directory: data/2025-04-30_01-39-27
+2025-04-30 01:39:30,576 - Using data directory: data/2025-04-30_01-39-27
+2025-04-30 01:39:30,576 - Looking for previous data in: data
+2025-04-30 01:39:30,577 - Loading previous data from: data/2025-04-29_01-39-57/morphosource_data_complete.json
+2025-04-30 01:39:30,580 - Loaded 769 records from previous data file
+2025-04-30 01:39:30,580 - Latest stored record ID: 000736104
+2025-04-30 01:39:30,580 - Previous record count: 769
+2025-04-30 01:39:30,580 - Fetching page 1
+2025-04-30 01:39:33,402 - Found record 000736150 - Total records: 1
+2025-04-30 01:39:33,403 - Found record 000736149 - Total records: 2
+2025-04-30 01:39:33,403 - Found record 000736141 - Total records: 3
+2025-04-30 01:39:33,403 - Found record 000736136 - Total records: 4
+2025-04-30 01:39:33,404 - Found record 000736112 - Total records: 5
+2025-04-30 01:39:33,404 - Found record 000736104 - Total records: 6
+2025-04-30 01:39:33,404 - Found latest stored record 000736104 - stopping fetch
+2025-04-30 01:39:33,404 - Completed fetch - Found 6 new records
+2025-04-30 01:39:33,404 - Latest webpage record ID: 000736150
+2025-04-30 01:39:33,404 - New records available - latest records differ
+2025-04-30 01:39:33,405 - New records: 6
+2025-04-30 01:39:33,405 - Previous records: 769
+2025-04-30 01:39:33,405 - Combined records: 774
+2025-04-30 01:39:33,417 - Saved 774 records to: data/2025-04-30_01-39-27/morphosource_data_complete.json
+2025-04-30 01:39:33,417 - Created detailed release notes at: data/2025-04-30_01-39-27/release_notes.txt
