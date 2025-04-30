@@ -1,13 +1,13 @@
 {
-  "title": "Mandible [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000737199?locale=en",
-  "id": "000737199",
-  "Object": "amnh:mammals:107241",
-  "Taxonomy": "Hypsiprymnodon moschatus",
-  "Element or Part": "mandible",
+  "title": "Cone [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000550721?locale=en",
+  "id": "000550721",
+  "Object": "FMNH:Paleobotany:PP 34514",
+  "Taxonomy": "Tetraphyllostrobus broganensis",
+  "Element or Part": "cone",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Keegan Selig",
-  "Date Uploaded": "04/30/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Data Manager": "Sharon Grant",
+  "Date Uploaded": "08/21/2023",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
