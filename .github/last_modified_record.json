@@ -1,13 +1,13 @@
 {
-  "title": "Cone [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000550721?locale=en",
-  "id": "000550721",
-  "Object": "FMNH:Paleobotany:PP 34514",
-  "Taxonomy": "Tetraphyllostrobus broganensis",
-  "Element or Part": "cone",
+  "title": "Head And Pectorals [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000737033?locale=en",
+  "id": "000737033",
+  "Object": "USNM:FISH:USNM 118457",
+  "Taxonomy": "Carcharhinus isodon",
+  "Element or Part": "Head and pectorals",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Sharon Grant",
-  "Date Uploaded": "08/21/2023",
+  "Data Manager": "Matthew Girard",
+  "Date Uploaded": "04/30/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "Copyright Undetermined"
 }
