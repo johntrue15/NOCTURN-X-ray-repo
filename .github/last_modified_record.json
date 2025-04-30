@@ -1,13 +1,13 @@
 {
-  "title": "Head [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000737126?locale=en",
-  "id": "000737126",
-  "Object": "USNM:FISH:USNM 32340",
-  "Taxonomy": "Salvelinus fontinalis",
-  "Element or Part": "Head",
+  "title": "Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000737199?locale=en",
+  "id": "000737199",
+  "Object": "amnh:mammals:107241",
+  "Taxonomy": "Hypsiprymnodon moschatus",
+  "Element or Part": "mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Matthew Girard",
+  "Data Manager": "Keegan Selig",
   "Date Uploaded": "04/30/2025",
-  "Publication Status": "Restricted Download",
+  "Publication Status": "Open Download",
   "Rights Statement": "Copyright Undetermined"
 }
