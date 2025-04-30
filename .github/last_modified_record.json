@@ -1,13 +1,14 @@
 {
-  "title": "Cone [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000550721?locale=en",
-  "id": "000550721",
-  "Object": "FMNH:Paleobotany:PP 34514",
-  "Taxonomy": "Tetraphyllostrobus broganensis",
-  "Element or Part": "cone",
+  "title": "Hand [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000606446?locale=en",
+  "id": "000606446",
+  "Object": "USNM:MAMM:USNM 188648",
+  "Taxonomy": "Felis catus",
+  "Element or Part": "hand",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Michael Donovan",
-  "Date Uploaded": "08/21/2023",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Department of Vertebrate Zoology National Museum of Natural History",
+  "Date Uploaded": "02/22/2024",
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined",
+  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
 }
