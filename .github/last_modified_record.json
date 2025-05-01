@@ -1,13 +1,13 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000738339?locale=en",
-  "id": "000738339",
-  "Object": "MCZ:Herp:R-8831",
-  "Taxonomy": "Oxyrhopus marcapatae",
-  "Element or Part": "skull",
+  "title": "Hand [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000738389?locale=en",
+  "id": "000738389",
+  "Object": "AMNH:Mammals:M-196477",
+  "Taxonomy": "Tarsius pumilus",
+  "Element or Part": "hand",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Matt Gage",
+  "Data Manager": "Doug Boyer",
   "Date Uploaded": "05/01/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined"
 }
