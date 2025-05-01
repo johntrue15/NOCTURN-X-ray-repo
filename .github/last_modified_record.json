@@ -1,14 +1,13 @@
 {
-  "title": "Cone [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000550721?locale=en",
-  "id": "000550721",
-  "Object": "FMNH:Paleobotany:PP 34514",
-  "Taxonomy": "Tetraphyllostrobus broganensis",
-  "Element or Part": "cone",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000738339?locale=en",
+  "id": "000738339",
+  "Object": "MCZ:Herp:R-8831",
+  "Taxonomy": "Oxyrhopus marcapatae",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Sharon Grant",
-  "Date Uploaded": "08/21/2023",
+  "Data Manager": "Matt Gage",
+  "Date Uploaded": "05/01/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Rights Statement": "In Copyright"
 }
