@@ -1,13 +1,13 @@
 {
-  "title": "Hand [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000738389?locale=en",
-  "id": "000738389",
-  "Object": "AMNH:Mammals:M-196477",
-  "Taxonomy": "Tarsius pumilus",
-  "Element or Part": "hand",
+  "title": "Skull [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000738978?locale=en",
+  "id": "000738978",
+  "Object": "YPM:VZ:YPM MAM 004268",
+  "Taxonomy": "Chiroderma villosum jesupiChiroderma sp.Taxonomy indet.",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Doug Boyer",
-  "Date Uploaded": "05/01/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Data Manager": "Laurel Yohe",
+  "Date Uploaded": "05/02/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
