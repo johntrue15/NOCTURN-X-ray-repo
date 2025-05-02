@@ -1,13 +1,13 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000738978?locale=en",
-  "id": "000738978",
-  "Object": "YPM:VZ:YPM MAM 004268",
-  "Taxonomy": "Chiroderma villosum jesupiChiroderma sp.Taxonomy indet.",
-  "Element or Part": "skull",
+  "title": "Skull And Pectoral Region [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000738986?locale=en",
+  "id": "000738986",
+  "Object": "SAMA:Herpetology:R43599",
+  "Taxonomy": "Ctenotus olympicus",
+  "Element or Part": "skull and pectoral region",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Laurel Yohe",
+  "Data Manager": "Natasha Stepanova",
   "Date Uploaded": "05/02/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Publication Status": "Open Download",
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
