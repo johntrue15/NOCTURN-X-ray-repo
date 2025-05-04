@@ -1,13 +1,13 @@
 {
-  "title": "Foot  [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000738387?locale=en",
-  "id": "000738387",
-  "Object": "AMNH:Mammals:M-196477",
-  "Taxonomy": "Tarsius pumilus",
-  "Element or Part": "foot",
+  "title": "Skull [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000036371?locale=en",
+  "id": "000036371",
+  "Object": "AMNH:Mammals:M-106953",
+  "Taxonomy": "Hipposideros dyacorum",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Doug Boyer",
-  "Date Uploaded": "05/01/2025",
+  "Data Manager": "AMNH Mammalogy Department",
+  "Date Uploaded": "11/06/2017",
   "Publication Status": "Open Download",
   "Rights Statement": "Copyright Undetermined"
 }
