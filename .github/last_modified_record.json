@@ -1,12 +1,13 @@
 {
-  "title": "Humerus [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000080800?locale=en",
-  "id": "000080800",
-  "Object": "uf:o:41545",
-  "Element or Part": "Humerus",
+  "title": "Skeleton [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000110046?locale=en",
+  "id": "000110046",
+  "Object": "UMZC:Vertebrates:265.A",
+  "Taxonomy": "Phalacrocorax carbo",
+  "Element or Part": "Skeleton",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Edward Stanley",
-  "Date Uploaded": "06/15/2019",
-  "Publication Status": "Restricted Download",
+  "Data Manager": "Roger Benson",
+  "Date Uploaded": "03/14/2020",
+  "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
