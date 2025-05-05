@@ -1,13 +1,13 @@
 {
-  "title": "Second Mandibular Molar [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000471790?locale=en",
-  "id": "000471790",
-  "Object": "USNM:MAMM:USNM 582737",
-  "Taxonomy": "Callimico goeldii",
-  "Element or Part": "second mandibular molar",
+  "title": "Pelvic Region [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000739208?locale=en",
+  "id": "000739208",
+  "Object": "SAMA:Herpetology:R54494",
+  "Taxonomy": "Ctenotus zebrilla",
+  "Element or Part": "pelvic region",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Department of Vertebrate Zoology National Museum of Natural History",
-  "Date Uploaded": "10/05/2022",
+  "Data Manager": "Natasha Stepanova",
+  "Date Uploaded": "05/05/2025",
   "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
