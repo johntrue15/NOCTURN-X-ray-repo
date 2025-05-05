@@ -1,13 +1,13 @@
 {
-  "title": "Skull [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000036437?locale=en",
-  "id": "000036437",
-  "Object": "AMNH:Mammals:M-78416",
-  "Taxonomy": "Macrophyllum macrophyllum",
-  "Element or Part": "skull",
+  "title": "Skull And Pectoral Region [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000739187?locale=en",
+  "id": "000739187",
+  "Object": "SAMA:Herpetology:R53771",
+  "Taxonomy": "Lerista arenicola",
+  "Element or Part": "skull and pectoral region",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "AMNH Mammalogy Department",
-  "Date Uploaded": "11/06/2017",
+  "Data Manager": "Natasha Stepanova",
+  "Date Uploaded": "05/05/2025",
   "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
