@@ -1,13 +1,13 @@
 {
-  "title": "Skeleton [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000109799?locale=en",
-  "id": "000109799",
-  "Object": "NHMUK:ZOO:S/1977.70.3",
-  "Taxonomy": "Passer domesticus",
-  "Element or Part": "Skeleton",
+  "title": "Whole, Dry, Individual [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000423851?locale=en",
+  "id": "000423851",
+  "Object": "NHMUK:ZOO:S/2016.52.1",
+  "Taxonomy": "Balearica pavonina",
+  "Element or Part": "whole, dry, individual",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Roger Benson",
-  "Date Uploaded": "03/13/2020",
+  "Date Uploaded": "02/22/2022",
   "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
