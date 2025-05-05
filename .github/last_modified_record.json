@@ -1,13 +1,12 @@
 {
-  "title": "Mandible [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000739230?locale=en",
-  "id": "000739230",
-  "Object": "amnh:mammals:109838",
-  "Taxonomy": "Cercartetus caudatus",
-  "Element or Part": "Mandible",
+  "title": "Humerus [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000080800?locale=en",
+  "id": "000080800",
+  "Object": "uf:o:41545",
+  "Element or Part": "Humerus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Keegan Selig",
-  "Date Uploaded": "05/05/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Data Manager": "Edward Stanley",
+  "Date Uploaded": "06/15/2019",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright"
 }
