@@ -1,13 +1,13 @@
 {
-  "title": "Pelvic Region [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000739208?locale=en",
-  "id": "000739208",
-  "Object": "SAMA:Herpetology:R54494",
-  "Taxonomy": "Ctenotus zebrilla",
-  "Element or Part": "pelvic region",
+  "title": "Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000739225?locale=en",
+  "id": "000739225",
+  "Object": "amnh:mammals:108197",
+  "Taxonomy": "Petaurus breviceps",
+  "Element or Part": "mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Natasha Stepanova",
+  "Data Manager": "Keegan Selig",
   "Date Uploaded": "05/05/2025",
   "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
+  "Rights Statement": "Copyright Undetermined"
 }
