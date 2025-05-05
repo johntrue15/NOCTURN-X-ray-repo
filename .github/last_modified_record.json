@@ -1,13 +1,13 @@
 {
-  "title": "Mandible [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000739197?locale=en",
-  "id": "000739197",
-  "Object": "amnh:mammals:108087",
-  "Taxonomy": "Spilocuscus maculatus",
-  "Element or Part": "mandible",
+  "title": "Skull And Pectoral Region [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000739204?locale=en",
+  "id": "000739204",
+  "Object": "SAMA:Herpetology:R54494",
+  "Taxonomy": "Ctenotus zebrilla",
+  "Element or Part": "skull and pectoral region",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Keegan Selig",
+  "Data Manager": "Natasha Stepanova",
   "Date Uploaded": "05/05/2025",
   "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Rights Statement": "In Copyright - Non-Commercial Use Permitted"
 }
