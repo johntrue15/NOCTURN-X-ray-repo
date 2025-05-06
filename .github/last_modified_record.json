@@ -1,13 +1,13 @@
 {
-  "title": "Whole, Dry, Individual [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000423851?locale=en",
-  "id": "000423851",
-  "Object": "NHMUK:ZOO:S/2016.52.1",
-  "Taxonomy": "Balearica pavonina",
-  "Element or Part": "whole, dry, individual",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000736136?locale=en",
+  "id": "000736136",
+  "Object": "MCZ:Herp:R-164671",
+  "Taxonomy": "Oxyrhopus leucomelas",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Roger Benson",
-  "Date Uploaded": "02/22/2022",
-  "Publication Status": "Open Download",
+  "Data Manager": "Harvard - Museum of Comparative Zoology",
+  "Date Uploaded": "04/29/2025",
+  "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
