@@ -1,13 +1,13 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000739380?locale=en",
-  "id": "000739380",
-  "Object": "MCZ:Herp:R-17409",
-  "Taxonomy": "Oxyrhopus melanogenys",
+  "title": "Skull [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000728063?locale=en",
+  "id": "000728063",
+  "Object": "YPM:VZ:9658",
+  "Taxonomy": "Canis lupus familiaris Skye Terrior",
   "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Matt Gage",
-  "Date Uploaded": "05/06/2025",
+  "Data Manager": "Nelson Rios",
+  "Date Uploaded": "04/07/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
