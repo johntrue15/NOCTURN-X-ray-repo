@@ -1,13 +1,12 @@
 {
-  "title": "Skeleton [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000110046?locale=en",
-  "id": "000110046",
-  "Object": "UMZC:Vertebrates:265.A",
-  "Taxonomy": "Phalacrocorax carbo",
-  "Element or Part": "Skeleton",
+  "title": "Skull [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000715483?locale=en",
+  "id": "000715483",
+  "Object": "umzc:vertebrates:GG36R3",
+  "Taxonomy": "Gallus gallus",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Roger Benson",
-  "Date Uploaded": "03/14/2020",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Data Manager": "Bassel Arnaout",
+  "Date Uploaded": "03/04/2025",
+  "Publication Status": "Open Download"
 }
