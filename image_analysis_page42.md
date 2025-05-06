@@ -1,12 +1,116 @@
-# CT Image Analysis Gallery (Page 42 of 48)
+# CT Image Analysis Gallery (Page 42 of 49)
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-05-06 14:20:40 UTC
+**Last Updated:** 2025-05-06 15:28:44 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-03-19-26-44" data-release-tag="ct_image_analysis-2025-02-03_19-26-44">
+    <div class="gallery-header">
+        <h2>2025/02/03 19:26:44 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-03_19-26-44">ct_image_analysis-2025-02-03_19-26-44</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-03_19-26-44/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-03_19-26-44/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-03_19-26-44/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-03_19-26-44/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-03_19-23-10</p>
+<p>To analyze the 3D X-ray CT scan of the right mandibular second molar anterior tooth root from Morphosource.org, we will focus on several aspects, including structural characteristics, material composition, and any notable features or anomalies.</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li>
+<p><strong>Root Morphology</strong>: The tooth root appears conical, tapering towards the apex, which is typical for molar roots. The outer surface exhibits a rough texture, suggesting the presence of various microstructural features.</p>
+</li>
+<li>
+<p><strong>Root Canal System</strong>: Although not directly visualized in the surface view, the morphology of the dentin may indicate the presence of a canal system. Typically, molar roots have complex canal configurations, which can include multiple canals and fin-like connections.</p>
+</li>
+<li>
+<p><strong>Cross-sectional Shape</strong>: Different orientations may reveal variations in cross-sectional shape, which is crucial for understanding the tooth's functional anatomy and the implications for endodontic treatment.</p>
+</li>
+<li>
+<p><strong>Distal vs. Mesial Aspects</strong>: Observing different angles may show asymmetry. The distal surface may appear bulkier compared to the mesial surface, which is common as the molar has to bear more occlusal load.</p>
+</li>
+</ol>
+<h3>Material Composition</h3>
+<ol>
+<li>
+<p><strong>Dentin and Enamel</strong>: The structure likely consists predominantly of dentin, a mineralized tissue with collagen fibers providing strength. The CT data may suggest varying densities, which can indicate different levels of mineralization.</p>
+</li>
+<li>
+<p><strong>Cementum</strong>: The tooth root may also have layers of cementum, forming a boundary over the dentin and playing a role in anchoring the root to the periodontal ligament.</p>
+</li>
+<li>
+<p><strong>Pulp Chamber</strong>: The core of the tooth, though not visible here, typically houses soft tissue that includes nerves and blood vessels. The absence of significant radiolucent areas around the root can indicate health and integrity.</p>
+</li>
+</ol>
+<h3>Notable Features and Anomalies</h3>
+<ol>
+<li>
+<p><strong>Surface Irregularities</strong>: Any grooves or furrows may be indicative of wear or previous dental interventions. Such features could affect the tooth's biomechanics.</p>
+</li>
+<li>
+<p><strong>Anomalies in Structure</strong>: If present, any unusual shapes or deformities may affect the root's ability to hold and transmit force during mastication. If there are calcifications or resorptive defects, they may be visible in the CT data.</p>
+</li>
+<li>
+<p><strong>Variability in Density</strong>: Variations in density across different views can suggest areas of pathology. Higher radiod</p>
+</li>
+</ol>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
 
 <div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-03-19-20-15" data-release-tag="ct_image_analysis-2025-02-03_19-20-15">
     <div class="gallery-header">
@@ -420,119 +524,8 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 
 <div class="timeline-separator"></div>
 
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-30-16-30-46" data-release-tag="ct_image_analysis-2025-01-30_16-30-46">
-    <div class="gallery-header">
-        <h2>2025/01/30 16:30:46 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-30_16-30-46">ct_image_analysis-2025-01-30_16-30-46</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-30_16-30-46/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-30_16-30-46/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-30_16-30-46/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-30_16-30-46/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-01-30_16-26-00</p>
-<p>I'll provide a general analysis of a hypothetical 3D X-ray CT scan data based on the characteristics typical of a lower first molar's pulp endocast.</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li><strong>Morphology:</strong></li>
-<li>The endocast exhibits typical mandibular molar morphology, characterized by multiple roots and root canals.</li>
-<li>
-<p>Variability in the root canal system can be noted, with clear delineation between the different roots (usually two or three in lower first molars).</p>
-</li>
-<li>
-<p><strong>Internal Features:</strong></p>
-</li>
-<li>The pulp chamber is prominently visible, showcasing its shape and dimension.</li>
-<li>
-<p>Detailed features, such as canal branching and potential anastomoses, are identifiable.</p>
-</li>
-<li>
-<p><strong>Surface Texture:</strong></p>
-</li>
-<li>The surface appears somewhat pixelated, indicative of voxel-based representation, which may limit fine detail visibility but still allows for overall structural assessment.</li>
-</ol>
-<h3>Material Composition</h3>
-<ul>
-<li>The material of the specimen likely mimics dentin, with a mineralized tissue quality.</li>
-<li>Depending on the type of imaging, there might be varying densities observed, representing different tissue types (e.g., enamel, dentin, and pulp).</li>
-</ul>
-<h3>Notable Features or Anomalies</h3>
-<ol>
-<li><strong>Canal Shape and Configuration:</strong></li>
-<li>Presence of unusual canal configurations such as C-shaped canals or additional canals not typically present in this molar classification.</li>
-<li>
-<p>Irregularities in canal width might indicate prior pathological conditions.</p>
-</li>
-<li>
-<p><strong>Anatomical Variations:</strong></p>
-</li>
-<li>Differences across orientations could reveal unique anatomical features specific to the specimen.</li>
-<li>
-<p>Presence of any calcifications or unusual pulp chamber morphology which can indicate previous dental pathology or conditions.</p>
-</li>
-<li>
-<p><strong>Pathological Indicators:</strong></p>
-</li>
-<li>If present, signs of previous endodontic treatment may be visible, such as filling material within canals or resorption features.</li>
-</ol>
-<h3>Conclusion</h3>
-<p>Analyzing CT scans of dental specimens can provide crucial insights into morphological variations, material properties, and any anomalies that may influence treatment plans in dental practice. Each orientation may reveal distinct structural details that could prove valuable for comparative studies or practical applications in dentistry. </p>
-<p>For a more tailored interpretation, please share specific features or queries regarding particular areas of the scans!</p>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
 <div class="pagination-container">
-    <a href="image_analysis_page41.html" class="pagination-button">Previous</a>    <a href="image_analysis.html" class="pagination-page">1</a>    <a href="image_analysis_page2.html" class="pagination-page">2</a>    <a href="image_analysis_page3.html" class="pagination-page">3</a>    <a href="image_analysis_page4.html" class="pagination-page">4</a>    <a href="image_analysis_page5.html" class="pagination-page">5</a>    <a href="image_analysis_page6.html" class="pagination-page">6</a>    <a href="image_analysis_page7.html" class="pagination-page">7</a>    <a href="image_analysis_page8.html" class="pagination-page">8</a>    <a href="image_analysis_page9.html" class="pagination-page">9</a>    <a href="image_analysis_page10.html" class="pagination-page">10</a>    <a href="image_analysis_page11.html" class="pagination-page">11</a>    <a href="image_analysis_page12.html" class="pagination-page">12</a>    <a href="image_analysis_page13.html" class="pagination-page">13</a>    <a href="image_analysis_page14.html" class="pagination-page">14</a>    <a href="image_analysis_page15.html" class="pagination-page">15</a>    <a href="image_analysis_page16.html" class="pagination-page">16</a>    <a href="image_analysis_page17.html" class="pagination-page">17</a>    <a href="image_analysis_page18.html" class="pagination-page">18</a>    <a href="image_analysis_page19.html" class="pagination-page">19</a>    <a href="image_analysis_page20.html" class="pagination-page">20</a>    <a href="image_analysis_page21.html" class="pagination-page">21</a>    <a href="image_analysis_page22.html" class="pagination-page">22</a>    <a href="image_analysis_page23.html" class="pagination-page">23</a>    <a href="image_analysis_page24.html" class="pagination-page">24</a>    <a href="image_analysis_page25.html" class="pagination-page">25</a>    <a href="image_analysis_page26.html" class="pagination-page">26</a>    <a href="image_analysis_page27.html" class="pagination-page">27</a>    <a href="image_analysis_page28.html" class="pagination-page">28</a>    <a href="image_analysis_page29.html" class="pagination-page">29</a>    <a href="image_analysis_page30.html" class="pagination-page">30</a>    <a href="image_analysis_page31.html" class="pagination-page">31</a>    <a href="image_analysis_page32.html" class="pagination-page">32</a>    <a href="image_analysis_page33.html" class="pagination-page">33</a>    <a href="image_analysis_page34.html" class="pagination-page">34</a>    <a href="image_analysis_page35.html" class="pagination-page">35</a>    <a href="image_analysis_page36.html" class="pagination-page">36</a>    <a href="image_analysis_page37.html" class="pagination-page">37</a>    <a href="image_analysis_page38.html" class="pagination-page">38</a>    <a href="image_analysis_page39.html" class="pagination-page">39</a>    <a href="image_analysis_page40.html" class="pagination-page">40</a>    <a href="image_analysis_page41.html" class="pagination-page">41</a>    <span class="pagination-page current">42</span>    <a href="image_analysis_page43.html" class="pagination-page">43</a>    <a href="image_analysis_page44.html" class="pagination-page">44</a>    <a href="image_analysis_page45.html" class="pagination-page">45</a>    <a href="image_analysis_page46.html" class="pagination-page">46</a>    <a href="image_analysis_page47.html" class="pagination-page">47</a>    <a href="image_analysis_page48.html" class="pagination-page">48</a>    <a href="image_analysis_page43.html" class="pagination-button">Next</a>
+    <a href="image_analysis_page41.html" class="pagination-button">Previous</a>    <a href="image_analysis.html" class="pagination-page">1</a>    <a href="image_analysis_page2.html" class="pagination-page">2</a>    <a href="image_analysis_page3.html" class="pagination-page">3</a>    <a href="image_analysis_page4.html" class="pagination-page">4</a>    <a href="image_analysis_page5.html" class="pagination-page">5</a>    <a href="image_analysis_page6.html" class="pagination-page">6</a>    <a href="image_analysis_page7.html" class="pagination-page">7</a>    <a href="image_analysis_page8.html" class="pagination-page">8</a>    <a href="image_analysis_page9.html" class="pagination-page">9</a>    <a href="image_analysis_page10.html" class="pagination-page">10</a>    <a href="image_analysis_page11.html" class="pagination-page">11</a>    <a href="image_analysis_page12.html" class="pagination-page">12</a>    <a href="image_analysis_page13.html" class="pagination-page">13</a>    <a href="image_analysis_page14.html" class="pagination-page">14</a>    <a href="image_analysis_page15.html" class="pagination-page">15</a>    <a href="image_analysis_page16.html" class="pagination-page">16</a>    <a href="image_analysis_page17.html" class="pagination-page">17</a>    <a href="image_analysis_page18.html" class="pagination-page">18</a>    <a href="image_analysis_page19.html" class="pagination-page">19</a>    <a href="image_analysis_page20.html" class="pagination-page">20</a>    <a href="image_analysis_page21.html" class="pagination-page">21</a>    <a href="image_analysis_page22.html" class="pagination-page">22</a>    <a href="image_analysis_page23.html" class="pagination-page">23</a>    <a href="image_analysis_page24.html" class="pagination-page">24</a>    <a href="image_analysis_page25.html" class="pagination-page">25</a>    <a href="image_analysis_page26.html" class="pagination-page">26</a>    <a href="image_analysis_page27.html" class="pagination-page">27</a>    <a href="image_analysis_page28.html" class="pagination-page">28</a>    <a href="image_analysis_page29.html" class="pagination-page">29</a>    <a href="image_analysis_page30.html" class="pagination-page">30</a>    <a href="image_analysis_page31.html" class="pagination-page">31</a>    <a href="image_analysis_page32.html" class="pagination-page">32</a>    <a href="image_analysis_page33.html" class="pagination-page">33</a>    <a href="image_analysis_page34.html" class="pagination-page">34</a>    <a href="image_analysis_page35.html" class="pagination-page">35</a>    <a href="image_analysis_page36.html" class="pagination-page">36</a>    <a href="image_analysis_page37.html" class="pagination-page">37</a>    <a href="image_analysis_page38.html" class="pagination-page">38</a>    <a href="image_analysis_page39.html" class="pagination-page">39</a>    <a href="image_analysis_page40.html" class="pagination-page">40</a>    <a href="image_analysis_page41.html" class="pagination-page">41</a>    <span class="pagination-page current">42</span>    <a href="image_analysis_page43.html" class="pagination-page">43</a>    <a href="image_analysis_page44.html" class="pagination-page">44</a>    <a href="image_analysis_page45.html" class="pagination-page">45</a>    <a href="image_analysis_page46.html" class="pagination-page">46</a>    <a href="image_analysis_page47.html" class="pagination-page">47</a>    <a href="image_analysis_page48.html" class="pagination-page">48</a>    <a href="image_analysis_page49.html" class="pagination-page">49</a>    <a href="image_analysis_page43.html" class="pagination-button">Next</a>
 </div>
       </div>
 

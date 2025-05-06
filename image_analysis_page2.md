@@ -1,12 +1,119 @@
-# CT Image Analysis Gallery (Page 2 of 48)
+# CT Image Analysis Gallery (Page 2 of 49)
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-05-06 14:20:40 UTC
+**Last Updated:** 2025-05-06 15:28:44 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-04-28-17-01-25" data-release-tag="ct_image_analysis-2025-04-28_17-01-25">
+    <div class="gallery-header">
+        <h2>2025/04/28 17:01:25 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-04-28_17-01-25">ct_image_analysis-2025-04-28_17-01-25</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-28_17-01-25/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-28_17-01-25/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-28_17-01-25/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-28_17-01-25/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-04-28_16-21-47</p>
+<p>To analyze the 3D X-ray CT scan data of the skull specimen from Morphosource.org, we can discuss several aspects of its structural characteristics, material composition, and notable features observed across different orientations.</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li>
+<p><strong>Overall Morphology</strong>: The skull exhibits a generally elongated shape with distinct features such as a prominent snout and well-defined orbits. The palatine and maxillary regions indicate adaptations for specific dietary habits.</p>
+</li>
+<li>
+<p><strong>Cranial Sutures</strong>: The sutures are occasionally visible, indicating the growth lines in the skull. These features might suggest the age or developmental stage of the specimen.</p>
+</li>
+<li>
+<p><strong>Orbits and Nasal Apertures</strong>: The orientation and size of the orbits and nasal openings can provide insights into the sensory capabilities and ecological adaptations of the specimen. Larger orbits may indicate reliance on vision.</p>
+</li>
+<li>
+<p><strong>Palate and Teeth Structure</strong>: Analysis of the dental arrangement visible in the CT, including the type and spacing of teeth, can indicate whether the species is carnivorous, herbivorous, or omnivorous.</p>
+</li>
+</ol>
+<h3>Material Composition</h3>
+<ul>
+<li>The material appears to resemble mineralized bone typical of vertebrates, indicating a dense and robust structure essential for supporting the musculature and protecting vital organs.</li>
+<li>The texture suggests variations in mineral density, potentially influenced by biological factors, which could influence modeling to understand species' living conditions and lifespans.</li>
+</ul>
+<h3>Notable Features and Anomalies</h3>
+<ol>
+<li>
+<p><strong>Cavities and Sinuses</strong>: The presence of sinuses and other cavities might be notable, as they play roles in reducing weight and regulating temperature.</p>
+</li>
+<li>
+<p><strong>Pathological Features</strong>: Any unusual abnormalities, such as deformities or lesions observed in the CT data, can indicate past injuries or diseases affecting the specimen. Such features may also provide insights into ecological pressures on the species.</p>
+</li>
+<li>
+<p><strong>Variations across Views</strong>: Different orientations reveal unique aspects of the skull's structure. For instance:</p>
+</li>
+<li>Views from the top give a great representation of the cranial roof.</li>
+<li>Side views reveal the zygomatic arches and jawline.</li>
+<li>
+<p>Bottom views allow assessment of the dental features and mandible structure.</p>
+</li>
+<li>
+<p><strong>Asymmetries</strong>: Any observable asymmetries in the skull can provide clues related to growth patterns or specific adaptations.</p>
+</li>
+</ol>
+<h3>Conclusion</h3>
+<p>The examination of these CT scans provides rich insights into the structural, material, and ecological attributes of the skull specimen. By utilizing</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
 
 <div class="gallery-item" data-release-id="release-ct-image-analysis-2025-04-23-13-56-01" data-release-tag="ct_image_analysis-2025-04-23_13-56-01">
     <div class="gallery-header">
@@ -451,140 +558,8 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 
 <div class="timeline-separator"></div>
 
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-04-17-21-27-55" data-release-tag="ct_image_analysis-2025-04-17_21-27-55">
-    <div class="gallery-header">
-        <h2>2025/04/17 21:27:55 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-04-17_21-27-55">ct_image_analysis-2025-04-17_21-27-55</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-17_21-27-55/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-17_21-27-55/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-17_21-27-55/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-17_21-27-55/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-04-17_21-24-32</p>
-<p>To analyze the 3D X-ray CT scan data from Morphosource.org, let's break down the potential findings based on the views provided. Here is a detailed analysis of the structural characteristics, material composition, and notable features across the different orientations of the specimen.</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li>
-<p><strong>Overall Form</strong>:</p>
-<ul>
-<li>The specimen appears to have a complex three-dimensional structure, likely indicative of a skull or exoskeletal feature.</li>
-<li>The different views reveal various contours and curvatures typical of biological structures, suggesting adaptation for specific functional requirements (e.g., aerodynamics in case of species capable of flight).</li>
-</ul>
-</li>
-<li>
-<p><strong>Surface Texture</strong>:</p>
-<ul>
-<li>The surface shows a combination of smooth and rough areas, which can indicate varying conditions or functions; smoother areas may correspond to surfaces designed for contact or interface, while rough patches may help with muscle attachment or other biological functions.</li>
-</ul>
-</li>
-<li>
-<p><strong>Cavities and Openings</strong>:</p>
-<ul>
-<li>Notable openings and grooves are visible, likely representing nasal passages, ear cavities, or other anatomical features that allow for sensory or respiratory functions.</li>
-<li>The presence of these cavities is crucial for understanding the functional morphology of the specimen.</li>
-</ul>
-</li>
-<li>
-<p><strong>Symmetry and Bilateral Features</strong>:</p>
-<ul>
-<li>Certain elements seem symmetrical, suggesting that this specimen may exhibit bilateral symmetry typical of many vertebrates.</li>
-<li>Asymmetries could also provide insights into pathological conditions or evolutionary adaptations.</li>
-</ul>
-</li>
-</ol>
-<h3>Material Composition</h3>
-<ol>
-<li>
-<p><strong>Density Variation</strong>:</p>
-<ul>
-<li>Variations in shading or texture may represent differences in material density, suggesting a mix of hard and soft tissues, or mineralization levels in various regions of the structure.</li>
-<li>High-density regions may correspond to bony structures, while low-density areas might indicate soft tissue or air-filled cavities.</li>
-</ul>
-</li>
-<li>
-<p><strong>Potential Mineralization</strong>:</p>
-<ul>
-<li>Areas with significant detail are indicative of mineralized tissues, important for structural integrity and protection of sensitive components.</li>
-</ul>
-</li>
-</ol>
-<h3>Notable Features and Anomalies</h3>
-<ol>
-<li>
-<p><strong>Anomalous Structures</strong>:</p>
-<ul>
-<li>Any unexpected protrusions or irregular surfaces could suggest either developmental anomalies or the remains of healed injuries, which might provide interesting insights into the life history of the specimen.</li>
-</ul>
-</li>
-<li>
-<p><strong>Variability Across Views</strong>:</p>
-<ul>
-<li>Each perspective unveils different aspects of the specimen, which may highlight morphological features not easily visible from a single viewpoint, emphasizing the importance of multiple angles in thorough anatomical analysis.</li>
-</ul>
-</li>
-<li>
-<p><strong>Potential Pathologies</strong>:</p>
-<ul>
-<li>Observations of wear</li>
-</ul>
-</li>
-</ol>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
 <div class="pagination-container">
-    <a href="image_analysis.html" class="pagination-button">Previous</a>    <a href="image_analysis.html" class="pagination-page">1</a>    <span class="pagination-page current">2</span>    <a href="image_analysis_page3.html" class="pagination-page">3</a>    <a href="image_analysis_page4.html" class="pagination-page">4</a>    <a href="image_analysis_page5.html" class="pagination-page">5</a>    <a href="image_analysis_page6.html" class="pagination-page">6</a>    <a href="image_analysis_page7.html" class="pagination-page">7</a>    <a href="image_analysis_page8.html" class="pagination-page">8</a>    <a href="image_analysis_page9.html" class="pagination-page">9</a>    <a href="image_analysis_page10.html" class="pagination-page">10</a>    <a href="image_analysis_page11.html" class="pagination-page">11</a>    <a href="image_analysis_page12.html" class="pagination-page">12</a>    <a href="image_analysis_page13.html" class="pagination-page">13</a>    <a href="image_analysis_page14.html" class="pagination-page">14</a>    <a href="image_analysis_page15.html" class="pagination-page">15</a>    <a href="image_analysis_page16.html" class="pagination-page">16</a>    <a href="image_analysis_page17.html" class="pagination-page">17</a>    <a href="image_analysis_page18.html" class="pagination-page">18</a>    <a href="image_analysis_page19.html" class="pagination-page">19</a>    <a href="image_analysis_page20.html" class="pagination-page">20</a>    <a href="image_analysis_page21.html" class="pagination-page">21</a>    <a href="image_analysis_page22.html" class="pagination-page">22</a>    <a href="image_analysis_page23.html" class="pagination-page">23</a>    <a href="image_analysis_page24.html" class="pagination-page">24</a>    <a href="image_analysis_page25.html" class="pagination-page">25</a>    <a href="image_analysis_page26.html" class="pagination-page">26</a>    <a href="image_analysis_page27.html" class="pagination-page">27</a>    <a href="image_analysis_page28.html" class="pagination-page">28</a>    <a href="image_analysis_page29.html" class="pagination-page">29</a>    <a href="image_analysis_page30.html" class="pagination-page">30</a>    <a href="image_analysis_page31.html" class="pagination-page">31</a>    <a href="image_analysis_page32.html" class="pagination-page">32</a>    <a href="image_analysis_page33.html" class="pagination-page">33</a>    <a href="image_analysis_page34.html" class="pagination-page">34</a>    <a href="image_analysis_page35.html" class="pagination-page">35</a>    <a href="image_analysis_page36.html" class="pagination-page">36</a>    <a href="image_analysis_page37.html" class="pagination-page">37</a>    <a href="image_analysis_page38.html" class="pagination-page">38</a>    <a href="image_analysis_page39.html" class="pagination-page">39</a>    <a href="image_analysis_page40.html" class="pagination-page">40</a>    <a href="image_analysis_page41.html" class="pagination-page">41</a>    <a href="image_analysis_page42.html" class="pagination-page">42</a>    <a href="image_analysis_page43.html" class="pagination-page">43</a>    <a href="image_analysis_page44.html" class="pagination-page">44</a>    <a href="image_analysis_page45.html" class="pagination-page">45</a>    <a href="image_analysis_page46.html" class="pagination-page">46</a>    <a href="image_analysis_page47.html" class="pagination-page">47</a>    <a href="image_analysis_page48.html" class="pagination-page">48</a>    <a href="image_analysis_page3.html" class="pagination-button">Next</a>
+    <a href="image_analysis.html" class="pagination-button">Previous</a>    <a href="image_analysis.html" class="pagination-page">1</a>    <span class="pagination-page current">2</span>    <a href="image_analysis_page3.html" class="pagination-page">3</a>    <a href="image_analysis_page4.html" class="pagination-page">4</a>    <a href="image_analysis_page5.html" class="pagination-page">5</a>    <a href="image_analysis_page6.html" class="pagination-page">6</a>    <a href="image_analysis_page7.html" class="pagination-page">7</a>    <a href="image_analysis_page8.html" class="pagination-page">8</a>    <a href="image_analysis_page9.html" class="pagination-page">9</a>    <a href="image_analysis_page10.html" class="pagination-page">10</a>    <a href="image_analysis_page11.html" class="pagination-page">11</a>    <a href="image_analysis_page12.html" class="pagination-page">12</a>    <a href="image_analysis_page13.html" class="pagination-page">13</a>    <a href="image_analysis_page14.html" class="pagination-page">14</a>    <a href="image_analysis_page15.html" class="pagination-page">15</a>    <a href="image_analysis_page16.html" class="pagination-page">16</a>    <a href="image_analysis_page17.html" class="pagination-page">17</a>    <a href="image_analysis_page18.html" class="pagination-page">18</a>    <a href="image_analysis_page19.html" class="pagination-page">19</a>    <a href="image_analysis_page20.html" class="pagination-page">20</a>    <a href="image_analysis_page21.html" class="pagination-page">21</a>    <a href="image_analysis_page22.html" class="pagination-page">22</a>    <a href="image_analysis_page23.html" class="pagination-page">23</a>    <a href="image_analysis_page24.html" class="pagination-page">24</a>    <a href="image_analysis_page25.html" class="pagination-page">25</a>    <a href="image_analysis_page26.html" class="pagination-page">26</a>    <a href="image_analysis_page27.html" class="pagination-page">27</a>    <a href="image_analysis_page28.html" class="pagination-page">28</a>    <a href="image_analysis_page29.html" class="pagination-page">29</a>    <a href="image_analysis_page30.html" class="pagination-page">30</a>    <a href="image_analysis_page31.html" class="pagination-page">31</a>    <a href="image_analysis_page32.html" class="pagination-page">32</a>    <a href="image_analysis_page33.html" class="pagination-page">33</a>    <a href="image_analysis_page34.html" class="pagination-page">34</a>    <a href="image_analysis_page35.html" class="pagination-page">35</a>    <a href="image_analysis_page36.html" class="pagination-page">36</a>    <a href="image_analysis_page37.html" class="pagination-page">37</a>    <a href="image_analysis_page38.html" class="pagination-page">38</a>    <a href="image_analysis_page39.html" class="pagination-page">39</a>    <a href="image_analysis_page40.html" class="pagination-page">40</a>    <a href="image_analysis_page41.html" class="pagination-page">41</a>    <a href="image_analysis_page42.html" class="pagination-page">42</a>    <a href="image_analysis_page43.html" class="pagination-page">43</a>    <a href="image_analysis_page44.html" class="pagination-page">44</a>    <a href="image_analysis_page45.html" class="pagination-page">45</a>    <a href="image_analysis_page46.html" class="pagination-page">46</a>    <a href="image_analysis_page47.html" class="pagination-page">47</a>    <a href="image_analysis_page48.html" class="pagination-page">48</a>    <a href="image_analysis_page49.html" class="pagination-page">49</a>    <a href="image_analysis_page3.html" class="pagination-button">Next</a>
 </div>
       </div>
 
