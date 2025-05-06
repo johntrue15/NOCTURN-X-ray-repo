@@ -1,13 +1,13 @@
 {
-  "title": "2 Articulated Caudal Vertebrae [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000728576?locale=en",
-  "id": "000728576",
-  "Object": "MCZ:Herp:R-4042",
-  "Taxonomy": "Crocodylus rhombifer",
-  "Element or Part": "2 articulated caudal vertebrae",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000739380?locale=en",
+  "id": "000739380",
+  "Object": "MCZ:Herp:R-17409",
+  "Taxonomy": "Oxyrhopus melanogenys",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Harvard - Museum of Comparative Zoology",
-  "Date Uploaded": "04/08/2025",
+  "Data Manager": "Matt Gage",
+  "Date Uploaded": "05/06/2025",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
