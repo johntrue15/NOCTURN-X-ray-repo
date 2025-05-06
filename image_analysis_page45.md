@@ -2,11 +2,123 @@
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-05-06 19:16:07 UTC
+**Last Updated:** 2025-05-06 20:23:11 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-28-18-25-18" data-release-tag="ct_image_analysis-2025-01-28_18-25-18">
+    <div class="gallery-header">
+        <h2>2025/01/28 18:25:18 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-28_18-25-18">ct_image_analysis-2025-01-28_18-25-18</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-28_18-25-18/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-28_18-25-18/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-28_18-25-18/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-28_18-25-18/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-01-28_18-22-13</p>
+<p>To analyze the 3D X-ray CT scan data of the lower first molar pulp endocast, we will examine structural characteristics, potential material composition, and notable features or anomalies visible from the provided images. </p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li><strong>Shape and Morphology</strong>:</li>
+<li>
+<p>The specimen exhibits an elongated structure typical of a tooth's internal pulp chamber. It features a complex, continuous morphology that suggests adapted functionalities for its role in housing soft tissue and blood vessels.</p>
+</li>
+<li>
+<p><strong>Surface Texture</strong>:</p>
+</li>
+<li>
+<p>The surfaces appear relatively smooth with subtle intricacies, indicating the presence of dentin and enamel remnants in the model. There are areas with ‘pixelation,’ likely due to the resolution of the scan, showing the limitations of the imaging technique regarding finer details.</p>
+</li>
+<li>
+<p><strong>Curvature and Twists</strong>:</p>
+</li>
+<li>Observations reveal variable curvatures within the pulp cavity, which may indicate the natural variances in root canal anatomy. The twists and turns could affect clinical considerations during endodontic treatments.</li>
+</ol>
+<h3>Material Composition</h3>
+<ol>
+<li><strong>Enamel and Dentin</strong>:</li>
+<li>
+<p>The endocast predominantly represents the internal architecture of the pulp and surrounding materials which may consist of calcified tissues such as dentin. The absence of surface detail suggests the original mineralized structure might have been altered or removed, leaving behind the cavity structure.</p>
+</li>
+<li>
+<p><strong>Organic Components</strong>:</p>
+</li>
+<li>While the visible structure is mineralized, the original tissue would have included organic materials like collagen which is not visible post-imaging.</li>
+</ol>
+<h3>Notable Features or Anomalies</h3>
+<ol>
+<li><strong>Variability in Pulp Canal Anatomy</strong>:</li>
+<li>
+<p>The varying widths and branching patterns within the canal system may point to anatomical variations, which are significant for procedures such as root canal therapy.</p>
+</li>
+<li>
+<p><strong>Anomalies</strong>:</p>
+</li>
+<li>
+<p>Any irregularities, such as abrupt changes in canal diameter or unusual branching, would be critical in understanding potential complications during dental procedures.</p>
+</li>
+<li>
+<p><strong>Potential Pathologies</strong>:</p>
+</li>
+<li>If any areas appear hypo- or hyperdense, they could hint at previous pathological conditions, such as caries or abscesses, though the current imaging does not display these distinctly.</li>
+</ol>
+<h3>Conclusion</h3>
+<p>The 3D X-ray CT data provides a detailed look at the internal architecture of the lower first molar pulp endocast. This information is crucial for educational and clinical applications, particularly in understanding the anatomical complexities and variations that can impact dental treatments. Further detailed examination at higher</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
 
 <div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-28-15-40-47" data-release-tag="ct_image_analysis-2025-01-28_15-40-47">
     <div class="gallery-header">
@@ -386,115 +498,6 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 </ol>
 <h3>Conclusion:</h3>
 <p>The analysis of the 3D CT scans provides a comprehensive understanding of the skull's structural characteristics, material composition, and any notable features or anomalies. Such detailed observations are vital for further</p>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-25-01-39-43" data-release-tag="ct_image_analysis-2025-01-25_01-39-43">
-    <div class="gallery-header">
-        <h2>2025/01/25 01:39:43 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-25_01-39-43">ct_image_analysis-2025-01-25_01-39-43</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-39-43/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-39-43/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-39-43/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-25_01-39-43/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-01-23_16-11-56</p>
-<p>Analyzing the provided 3D X-ray CT scan images reveals several structural characteristics and notable features of the specimen.</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li><strong>Morphology</strong></li>
-<li>The overall structure appears to be a skull, showing intricate design and multidimensional features that suggest complex functionalities.</li>
-<li>
-<p>Different colored regions represent distinct components of the skull, likely corresponding to various bones or anatomical features.</p>
-</li>
-<li>
-<p><strong>Orientation Views</strong></p>
-</li>
-<li>The various views (frontal, lateral, superior, etc.) highlight the symmetry and specific morphology of the skull.</li>
-<li>The scans display the overlapping of different sections, allowing for a comprehensive understanding of the connections between structures (e.g., sutures) that are usually obscured in two-dimensional images.</li>
-</ol>
-<h3>Material Composition</h3>
-<ul>
-<li><strong>Density Variations</strong></li>
-<li>The differences in color coding in the images may reflect variations in material density, a common indicator used in CT scans to differentiate between bone, cartilage, and other tissues.</li>
-<li><strong>Bone Structure</strong></li>
-<li>Features such as the contours and thickness of bone surfaces indicate well-preserved osseous tissue, essential for understanding the specimen's biological background.</li>
-</ul>
-<h3>Notable Features</h3>
-<ol>
-<li><strong>Anomalies</strong></li>
-<li>
-<p>Any notable anomalies or pathologies are not explicitly describable without more detailed information, but variations in bone structure or alignment might indicate previous trauma or developmental abnormalities.</p>
-</li>
-<li>
-<p><strong>Hollow Spaces &amp; Fenestrae</strong></p>
-</li>
-<li>
-<p>The presence of hollow spaces suggests the area for sinuses or other cavities, which may play roles in respiration, resonance, or weight reduction.</p>
-</li>
-<li>
-<p><strong>Articulations</strong></p>
-</li>
-<li>Connection points for jaw articulation and other anatomical interactions are evident, suggesting functional adaptability for feeding or predation.</li>
-</ol>
-<h3>Cross-Sectional Insights</h3>
-<ul>
-<li>Viewing from different orientations reveals how certain elements, such as nasal passages or teeth, interact with the overall architecture of the skull.</li>
-<li>Certain views may emphasize the intricate details of dental structures, providing insight into dietary habits or evolutionary adaptations.</li>
-</ul>
-<h3>Conclusion</h3>
-<p>Overall, the 3D X-ray CT scans of the skull provide valuable insights into the structural and functional anatomy. Each view uncovers unique aspects, highlighting the importance of 3D imaging in biological and anatomical research. Further analysis with specific software could provide more detailed quantitative data regarding dimensions and structural integrity.</p>
 <h3>Orientation Views</h3>
 <p>The following orientation views were captured:
 - Default (Y+ Up)

@@ -2,11 +2,122 @@
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-05-06 19:16:07 UTC
+**Last Updated:** 2025-05-06 20:23:11 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-16-03-47-54" data-release-tag="ct_image_analysis-2025-02-16_03-47-54">
+    <div class="gallery-header">
+        <h2>2025/02/16 03:47:54 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-16_03-47-54">ct_image_analysis-2025-02-16_03-47-54</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-16_03-47-54/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-16_03-47-54/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-16_03-47-54/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-16_03-47-54/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-16_03-44-13</p>
+<p>To conduct a detailed analysis of the 3D X-ray CT scan data from Morphosource.org focusing on the "Reticulate Nummulites," we will examine the structural characteristics, material composition, and any notable features or anomalies visible across different views.</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li><strong>General Shape and Size</strong>:</li>
+<li>The specimen appears to have an elongated, flat, and disc-like shape, which is characteristic of nummulites, a type of foraminifera.</li>
+<li>
+<p>The overall dimensions suggest it is around 44-52 cm in length, indicating a sizable specimen.</p>
+</li>
+<li>
+<p><strong>Surface Topography</strong>:</p>
+</li>
+<li>The surface exhibits a series of lobes and flat areas that indicate the complex internal structure typical of nummulites.</li>
+<li>
+<p>The segmentation could suggest various developmental stages or morphological adaptations.</p>
+</li>
+<li>
+<p><strong>Orientation Variability</strong>:</p>
+</li>
+<li>Different orientations highlight the three-dimensional nature and bulk of the specimen.</li>
+<li>Notable views from the top and side reveal the layering and internal architectural complexity.</li>
+</ol>
+<h3>Material Composition</h3>
+<ul>
+<li><strong>Mineral Composition</strong>:</li>
+<li>While the CT scan does not provide compositional data directly, it is likely that the structure is primarily composed of calcium carbonate (aragonite or calcite), common in foraminiferal tests.</li>
+<li>Some areas might exhibit varying densities, hinting at differences in mineralization or the presence of organic materials, especially if any remnants of soft tissue are present.</li>
+</ul>
+<h3>Notable Features and Anomalies</h3>
+<ol>
+<li><strong>Anomalies in Structure</strong>:</li>
+<li>There are visible separations and fractures in the structures, which may indicate areas of repair or stress, possibly suggesting environmental impacts during the specimen's life.</li>
+<li>
+<p>Any irregularities in the surface shapes could denote biological interactions or the effects of external forces post-mortem.</p>
+</li>
+<li>
+<p><strong>Porosity</strong>:</p>
+</li>
+<li>
+<p>The test appears to have varying degrees of porosity, an important feature for understanding the species' ecology, including its ability to interact with its environment, such as gas exchange.</p>
+</li>
+<li>
+<p><strong>Internal Features</strong>:</p>
+</li>
+<li>While not all internal structures may be visible, any layering or partitioning observed can provide insights into the growth patterns and life history of the organism.</li>
+</ol>
+<h3>Conclusion</h3>
+<p>This analysis highlights the intricacies of the "Reticulate Nummulites" through advanced CT imaging, emphasizing the significance of both structural forms and potential anomalies in understanding the evolutionary and ecological dynamics of foraminifera</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
 
 <div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-16-03-37-55" data-release-tag="ct_image_analysis-2025-02-16_03-37-55">
     <div class="gallery-header">
@@ -381,106 +492,6 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 </li>
 <li>Different viewpoints may reveal new surfaces or angles that could display additional texture or defects not visible from other angles, underscoring the importance of multi</li>
 </ol>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-15-21-05-24" data-release-tag="ct_image_analysis-2025-02-15_21-05-24">
-    <div class="gallery-header">
-        <h2>2025/02/15 21:05:24 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-15_21-05-24">ct_image_analysis-2025-02-15_21-05-24</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_21-05-24/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_21-05-24/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_21-05-24/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-15_21-05-24/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-15_21-01-53</p>
-<p>To analyze 3D X-ray CT scan data of the specimen from Morphosource.org (Reticulate Nummulites), let's consider the following structural characteristics, material composition, and notable features observed across the different orientations.</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li>
-<p><strong>Overall Shape</strong>: The specimen exhibits a generally irregular and somewhat rounded morphology, distributed across a three-dimensional space. This suggests it may belong to a class of organisms with a robust and possibly segmented structure.</p>
-</li>
-<li>
-<p><strong>Surface Texture</strong>: The surface appears to have various textures, suggesting different material densities or compositional variances. Some regions seem smoother, while others exhibit roughness or distinct textural patterns, indicating possible growth features or environmental interactions.</p>
-</li>
-<li>
-<p><strong>Connectivity</strong>: There are visible points of connectivity among the structures, which may represent biological functions such as nutrient channels or structural supports. The orientation affects how prominent these connections appear.</p>
-</li>
-</ol>
-<h3>Material Composition</h3>
-<ol>
-<li>
-<p><strong>Mineral Composition</strong>: Since this is a geological specimen, the material may include calcite or aragonite, common mineral forms found in such biogenic structures. The uniform color and texture hint at a consistent mineral composition throughout.</p>
-</li>
-<li>
-<p><strong>Porosity</strong>: The appearance suggests varying levels of porosity, which could indicate past environmental stress, growth patterns, or the organism's metabolic processes. Higher porosity might correlate with areas historically exposed to water or sediments.</p>
-</li>
-</ol>
-<h3>Notable Features &amp; Anomalies</h3>
-<ol>
-<li>
-<p><strong>Anomalous Structures</strong>: There are sections of the structure that appear significantly different in shape or texture from the rest. These deviations may point toward abnormal growths or responses to environmental factors, possibly revealing insights into the organism's life history or reactions to external stressors.</p>
-</li>
-<li>
-<p><strong>Orientation Effects</strong>: Changing the orientation dramatically alters the visibility of certain features. For example, some structures may become more pronounced from specific angles, allowing for a better understanding of their arrangement and interaction.</p>
-</li>
-<li>
-<p><strong>Dimensionality</strong>: The 3D nature of the scans allows the assessment of the specimen's volumetric features, which may uncover complexities not visible in traditional 2D imaging, such as internal cavities or layered formations.</p>
-</li>
-</ol>
-<h3>Conclusion</h3>
-<p>Overall, this detailed assessment of the 3D X-ray CT scan data highlights important morphological and compositional aspects of the specimen. These features can serve as a crucial foundation for further biological or geological research, linking the physical structure with historical environmental conditions or evolutionary processes. Further analysis could involve comparing these observations to</p>
 <h3>Orientation Views</h3>
 <p>The following orientation views were captured:
 - Default (Y+ Up)

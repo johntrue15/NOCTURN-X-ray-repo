@@ -2,11 +2,130 @@
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-05-06 19:16:07 UTC
+**Last Updated:** 2025-05-06 20:23:11 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-16-02-54-14" data-release-tag="ct_image_analysis-2025-01-16_02-54-14">
+    <div class="gallery-header">
+        <h2>2025/01/16 02:54:14 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-16_02-54-14">ct_image_analysis-2025-01-16_02-54-14</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-16_02-54-14/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-16_02-54-14/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-16_02-54-14/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-01-16_02-54-14/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-01-16_02-09-30</p>
+<p><strong>1. General Overview</strong></p>
+<p>The 3D X-ray CT scans provided from Morphosource.org present a comprehensive visualization of the object in multiple orientations. Utilizing high-resolution imaging, both internal and external structural features are discernible, allowing for a thorough analysis of the object's morphology, material composition, and any inherent anomalies. The various orientation views—Default Y-plus Up, Upside Down Y-minus Up, Forward 90 Z-minus Up, and Back 90 Z-plus Up—offer a multidimensional perspective that aids in identifying consistent patterns and subtle discrepancies within the structure.</p>
+<p><strong>2. Observations from Each Orientation</strong></p>
+<ul>
+<li><strong>Default_Yplus_Up.png:</strong></li>
+<li><strong>Structural Characteristics:</strong> The primary orientation reveals a robust external framework with visible layering indicative of material stratification. Internal cavities are present, suggesting possible functional voids or manufacturing artifacts.</li>
+<li><strong>Material Composition:</strong> Density variations are apparent, with denser regions likely composed of metallic constituents, while lighter areas may consist of polymeric or composite materials.</li>
+<li>
+<p><strong>Anomalies:</strong> Minor fractures are detectable near the base, possibly resulting from stress concentrations during use or post-production handling.</p>
+</li>
+<li>
+<p><strong>Upside_Down_Y-_Up.png:</strong></p>
+</li>
+<li><strong>Structural Characteristics:</strong> Flipping the object provides a mirrored view, confirming the symmetry in design. Internal channels appear consistent with the Default view, reinforcing the presence of intended voids.</li>
+<li><strong>Material Composition:</strong> Homogeneity in material distribution is observed, though slight heterogeneities near the joints suggest adhesive or bonding elements.</li>
+<li>
+<p><strong>Anomalies:</strong> Additional micro-voids are identified within the central mass, which may indicate manufacturing imperfections or early-stage wear.</p>
+</li>
+<li>
+<p><strong>Forward_90_Z-_Up.png:</strong></p>
+</li>
+<li><strong>Structural Characteristics:</strong> Rotating the object showcases its length and depth, revealing elongated features such as ribs or supports that were not as prominent in the Y-axis orientations.</li>
+<li><strong>Material Composition:</strong> Layered materials show distinct boundaries, potentially representing different material phases or composite layers designed for specific functional properties.</li>
+<li>
+<p><strong>Anomalies:</strong> A noticeable density gradient is present along one side, which could imply asymmetric loading during operation or intentional design for weight distribution.</p>
+</li>
+<li>
+<p><strong>Back_90_Zplus_Up.png:</strong></p>
+</li>
+<li><strong>Structural Characteristics:</strong> The rear perspective highlights the connectivity between various structural elements, including fastening points and interface surfaces.</li>
+<li><strong>Material Composition:</strong> Consistent material properties are maintained, with surface textures indicating possible coatings or treatments applied for durability or aesthetic purposes.</li>
+<li><strong>Anomalies:</strong> Surface irregularities are observed near the attachment interfaces, which might affect the overall integrity or performance under stress.</li>
+</ul>
+<p><strong>3. Synthesis of Insights</strong></p>
+<p>Analyzing the object across multiple orientations reveals a well-engineered structure with deliberate material placements and design symmetry. The presence of internal cavities and layered materials suggests a complex manufacturing process, possibly involving additive manufacturing techniques or multi-material fabrication. The consistency in structural integrity across different views indicates a balanced design approach aimed at optimizing performance and durability. However, the identified fractures, micro-voids, and density gradients warrant further investigation to ensure they do not compromise the object's functionality or lifespan.</p>
+<p><strong>4. Potential Applications or Research Directions</strong></p>
+<p>Given the intricate internal and external structures observed, the object may serve applications in fields requiring lightweight yet strong materials, such as aerospace, biomedical implants, or advanced engineering components. The detailed material composition and layering patterns suggest suitability for environments where material performance and resilience are critical. Future research could explore optimizing the material interfaces to enhance durability, investigating the effects of identified anomalies on long-term usage, and experimenting with alternative materials to mitigate imperfections observed in the current scans.</p>
+<p><strong>5. Areas for Further Investigation</strong></p>
+<ul>
+<li><strong>Fracture Analysis:</strong> Detailed mechanical testing to understand the causes and propagation of observed fractures, ensuring they are addressed in future designs or manufacturing processes.</li>
+<li><strong>Material Homogeneity:</strong> Assessing the extent of material inconsistencies, particularly near joints and interfaces, to improve bonding techniques or material selection.</li>
+<li><strong>Manufacturing Process:</strong> Evaluating the production methods to identify sources of micro-voids and density gradients, potentially refining techniques like additive manufacturing parameters or post-processing treatments.</li>
+<li><strong>Functional Impact Assessment:</strong> Determining how identified anomalies affect the object's performance in real-world applications, guiding necessary design modifications.</li>
+<li><strong>Enhanced Imaging Techniques:</strong> Utilizing higher-resolution scans or complementary imaging modalities to uncover finer structural details that may not be visible in the current CT scans.</li>
+</ul>
+<hr />
+<p><strong>Limitations:</strong></p>
+<p>While the provided CT scans offer a detailed view of the object's structure, certain limitations must be acknowledged:</p>
+<ul>
+<li><strong>Resolution Constraints:</strong> Extremely fine features or nano-scale anomalies may not be fully captured, potentially overlooking critical imperfections.</li>
+<li><strong>Orientation Coverage:</strong> Although multiple orientations are provided, certain angles or cross-sections might still be obscured, limiting comprehensive analysis.</li>
+<li><strong>Material Differentiation:</strong> Differentiating between materials with similar X-ray attenuation coefficients can be challenging, possibly leading to ambiguities in material identification.</li>
+<li><strong>Dynamic Features:</strong> Static imaging does not account for dynamic behaviors under operational stresses, which are essential for understanding performance-related issues.</li>
+</ul>
+<p>Addressing these limitations through supplementary imaging techniques, enhanced resolution, and dynamic testing will provide a more holistic understanding of the object's structural and material characteristics.</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
 
 <div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-15-14-26-45" data-release-tag="ct_image_analysis-2025-01-15_14-26-45">
     <div class="gallery-header">
@@ -320,65 +439,6 @@ This page displays CT scan images from analysis releases in an Instagram-style t
     <div class="release-description">
               <div class="description-text">
             Update last_count.txt for new records
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-01-09-00-36-49" data-release-tag="ct_image_analysis-2025-01-09_00-36-49">
-    <div class="gallery-header">
-        <h2>2025/01/09 00:36:49 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-01-09_00-36-49">ct_image_analysis-2025-01-09_00-36-49</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Default+(Y%2B+Up)" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Upside+Down+(Y-+Up)" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Forward+90°+(Z-+Up)" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Back+90°+(Z%2B+Up)" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            Update test-run-run.yml
-    
-    fixing URL passing error
         </div>
             </div>
             
