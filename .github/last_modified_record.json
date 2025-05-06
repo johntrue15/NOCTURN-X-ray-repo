@@ -1,13 +1,12 @@
 {
   "title": "Skeleton [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000523393?locale=en",
-  "id": "000523393",
-  "Object": "UMZC:Vertebrates:412.A",
-  "Taxonomy": "Caloenas nicobarica",
+  "detail_url": "https://www.morphosource.org/concern/media/000432667?locale=en",
+  "id": "000432667",
+  "Object": "UMZC:Vertebrates:298.a",
+  "Taxonomy": "Fulica atra",
   "Element or Part": "skeleton",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "Roger Benson",
-  "Date Uploaded": "05/12/2023",
-  "Publication Status": "Open Download",
-  "Rights Statement": "In Copyright"
+  "Date Uploaded": "03/28/2022",
+  "Publication Status": "Open Download"
 }
