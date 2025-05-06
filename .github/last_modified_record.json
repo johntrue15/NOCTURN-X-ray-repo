@@ -1,13 +1,13 @@
 {
-  "title": "Humerus [CTImageSeries] [Etc]",
-  "detail_url": "https://www.morphosource.org/concern/media/000080960?locale=en",
-  "id": "000080960",
-  "Object": "uf:o:48305",
-  "Taxonomy": "Accipiter cooperi",
-  "Element or Part": "Humerus",
+  "title": "Skeleton [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000523393?locale=en",
+  "id": "000523393",
+  "Object": "UMZC:Vertebrates:412.A",
+  "Taxonomy": "Caloenas nicobarica",
+  "Element or Part": "skeleton",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Edward Stanley",
-  "Date Uploaded": "06/15/2019",
-  "Publication Status": "Restricted Download",
+  "Data Manager": "Roger Benson",
+  "Date Uploaded": "05/12/2023",
+  "Publication Status": "Open Download",
   "Rights Statement": "In Copyright"
 }
