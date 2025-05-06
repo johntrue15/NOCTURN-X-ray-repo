@@ -1,13 +1,13 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000728063?locale=en",
-  "id": "000728063",
-  "Object": "YPM:VZ:9658",
-  "Taxonomy": "Canis lupus familiaris Skye Terrior",
-  "Element or Part": "skull",
+  "title": "Humerus [CTImageSeries] [Etc]",
+  "detail_url": "https://www.morphosource.org/concern/media/000080960?locale=en",
+  "id": "000080960",
+  "Object": "uf:o:48305",
+  "Taxonomy": "Accipiter cooperi",
+  "Element or Part": "Humerus",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Nelson Rios",
-  "Date Uploaded": "04/07/2025",
+  "Data Manager": "Edward Stanley",
+  "Date Uploaded": "06/15/2019",
   "Publication Status": "Restricted Download",
   "Rights Statement": "In Copyright"
 }
