@@ -1,12 +1,13 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000715339?locale=en",
-  "id": "000715339",
-  "Object": "umzc:vertebrates:GG35R1",
-  "Taxonomy": "Gallus gallus",
-  "Element or Part": "Skull",
+  "title": "Whole [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000739489?locale=en",
+  "id": "000739489",
+  "Object": "csiro:ichthyology",
+  "Taxonomy": "Neotrygon romeoi",
+  "Element or Part": "whole",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Bassel Arnaout",
-  "Date Uploaded": "03/03/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "Helen O'Neill",
+  "Date Uploaded": "05/07/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "No Copyright - Non-Commercial Use Only"
 }
