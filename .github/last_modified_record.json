@@ -1,13 +1,12 @@
 {
-  "title": "Mandible [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000739514?locale=en",
-  "id": "000739514",
-  "Object": "amnh:mammals:109844",
-  "Taxonomy": "Cercartetus caudatus",
-  "Element or Part": "mandible",
+  "title": "Berthasaura Dentary",
+  "detail_url": "https://www.morphosource.org/concern/media/000703609?locale=en",
+  "id": "000703609",
+  "Object": "MPCO:V 0121",
+  "Taxonomy": "Berthasaura sp.",
+  "Element or Part": "Berthasaura dentary",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Keegan Selig",
-  "Date Uploaded": "05/07/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Data Manager": "Rafael Delcourt",
+  "Date Uploaded": "01/20/2025",
+  "Publication Status": "Restricted Download"
 }
