@@ -2,11 +2,102 @@
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-05-07 05:20:56 UTC
+**Last Updated:** 2025-05-07 06:30:25 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
 <div class="gallery-container">
+
+<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-10-17-50-32" data-release-tag="ct_image_analysis-2025-02-10_17-50-32">
+    <div class="gallery-header">
+        <h2>2025/02/10 17:50:32 UTC</h2>
+        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-10_17-50-32">ct_image_analysis-2025-02-10_17-50-32</a></h3>
+    </div>
+    
+    <div class="image-grid">
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_17-50-32/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_17-50-32/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_17-50-32/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+        </div>
+              <div class="image-item">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_17-50-32/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+        </div>
+            </div>
+    
+    <div class="release-description">
+              <div class="description-text">
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-10_17-46-44</p>
+<p>To provide a detailed analysis based on the 3D X-ray CT scan data of the specimen, it is necessary to take into account the presented images' structural characteristics and notable features:</p>
+<ol>
+<li><strong>Structural Characteristics</strong>:</li>
+<li><strong>Morphology</strong>: The scan demonstrates a complex, bony structure, consistent with a calcaneum, or heel bone. Each view presents a unique angle, allowing for a comprehensive examination of its three-dimensional shape.</li>
+<li>
+<p><strong>Projections and Conformations</strong>: Notable projections can be observed; for example, the posterior part shows a robust area that likely serves as an attachment point for ligaments or tendons. The anterior portion appears broader, potentially indicating its interaction with neighboring bones.</p>
+</li>
+<li>
+<p><strong>Material Composition</strong>:</p>
+</li>
+<li>
+<p><strong>Density Variation</strong>: The images appear to reflect varying densities, suggesting differences in mineralization across distinct regions of the calcaneum, which could influence its mechanical properties. High-density regions may correspond to areas of compressive stress, whereas lower-density regions might indicate areas subject to less biomechanical load.</p>
+</li>
+<li>
+<p><strong>Notable Features</strong>:</p>
+</li>
+<li><strong>Surface Texture</strong>: The surface of the specimen exhibits a distinct texture, hinting at the natural wear patterns typical in skeletal remains. These surface features might provide insights into the specimen's life history and environmental conditions.</li>
+<li>
+<p><strong>Anomalies</strong>: Comparisons across the orientations may reveal any irregular formations or abnormalities that could suggest pathological changes, previous trauma, or interesting evolutionary adaptations.</p>
+</li>
+<li>
+<p><strong>Orientation Insights</strong>:</p>
+</li>
+<li><strong>Different Views</strong>: The varying orientations allow the identification of anatomical landmarks, such as the sustentaculum tali, which is critical for understanding the calcaneum’s articulating surfaces with adjacent bones.</li>
+<li><strong>Geometric Analysis</strong>: When viewed from different angles, changes in outline and contour provide valuable insights into the functional mechanical aspects of this specimen, which could be relevant for studies in biomechanics or comparative anatomy.</li>
+</ol>
+<p>Overall, a thorough examination of these scans reveals a wealth of information regarding the morphological, compositional, and historical attributes of the calcaneum, each view offering unique insights critical for further research.</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
+        </div>
+            </div>
+            
+    <!-- Rating and Comments Section -->
+    <div class="rating-container">
+        <div class="star-rating">
+            <span class="rating-label">Rate this analysis:</span>
+            <div class="stars" data-rating="0">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+        </div>
+        
+        <div class="comments-section">
+            <h4>Leave a Comment</h4>
+            <form class="comment-form">
+                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <div class="status-message" style="display: none;"></div>
+            
+            <div class="comment-list">
+                <!-- Comments will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="timeline-separator"></div>
 
 <div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-10-17-37-09" data-release-tag="ct_image_analysis-2025-02-10_17-37-09">
     <div class="gallery-header">
@@ -438,108 +529,6 @@ This page displays CT scan images from analysis releases in an Instagram-style t
 <li>No significant pathological anomalies appear evident in the current views, such as fractures, bone lesions, or unusual growths.</li>
 <li>If observed, specific areas of increased roughness</li>
 </ol>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
-        </div>
-            </div>
-            
-    <!-- Rating and Comments Section -->
-    <div class="rating-container">
-        <div class="star-rating">
-            <span class="rating-label">Rate this analysis:</span>
-            <div class="stars" data-rating="0">
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-                <span class="star">★</span>
-            </div>
-        </div>
-        
-        <div class="comments-section">
-            <h4>Leave a Comment</h4>
-            <form class="comment-form">
-                <textarea placeholder="Share your thoughts on this analysis..."></textarea>
-                <button type="submit">Submit</button>
-            </form>
-            <div class="status-message" style="display: none;"></div>
-            
-            <div class="comment-list">
-                <!-- Comments will be loaded here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="timeline-separator"></div>
-
-<div class="gallery-item" data-release-id="release-ct-image-analysis-2025-02-10-16-43-45" data-release-tag="ct_image_analysis-2025-02-10_16-43-45">
-    <div class="gallery-header">
-        <h2>2025/02/10 16:43:45 UTC</h2>
-        <h3><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-02-10_16-43-45">ct_image_analysis-2025-02-10_16-43-45</a></h3>
-    </div>
-    
-    <div class="image-grid">
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_16-43-45/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_16-43-45/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_16-43-45/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
-        </div>
-              <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-10_16-43-45/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
-        </div>
-            </div>
-    
-    <div class="release-description">
-              <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-10_16-40-12</p>
-<p>To analyze the provided 3D X-ray CT scan data, we can observe the specimen, identified as the astragalus, from several orientations. Here is a detailed analysis of the structural characteristics, material composition, and notable features:</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li>
-<p><strong>Morphology</strong>: The astragalus appears to have a complex morphology typical of tarsal bones, characterized by a rounded body and articulate surfaces for joint connection. The general structure displays a robust design suited for load-bearing functions in locomotion.</p>
-</li>
-<li>
-<p><strong>Articular Surfaces</strong>: The bone features distinct articulate surfaces that likely accommodate the tibia and other tarsal bones. The curvature of these surfaces allows for smooth motion and stability within the ankle joint.</p>
-</li>
-<li>
-<p><strong>Contours and Projections</strong>:</p>
-</li>
-<li><strong>Projections</strong>: The bone shows various projections, which serve as attachment points for ligaments and tendons. These features may also assist in load distribution during movement.</li>
-<li><strong>Notable Curvature</strong>: The curvature seen in the dorsal and ventral views suggests adaptation for specific biomechanical functions.</li>
-</ol>
-<h3>Material Composition</h3>
-<ol>
-<li>
-<p><strong>Osteological Composition</strong>: The CT scan suggests that the bone is primarily composed of mineralized tissue, indicating a typical bony structure that consists of both compact and trabecular (spongy) bone.</p>
-</li>
-<li>
-<p><strong>Density Variation</strong>: Variations in density across different views might indicate regions subject to more stress, as demonstrated by thicker cortical bone at certain spots.</p>
-</li>
-</ol>
-<h3>Notable Features</h3>
-<ol>
-<li>
-<p><strong>Foramina</strong>: Some images display small cavities or foramina, often associated with blood vessels and nerves, suggesting a vascularized area typical for bone functionality.</p>
-</li>
-<li>
-<p><strong>Surface Texture</strong>: The outer surface shows a relatively smooth texture which is crucial for articulation without excessive friction, likely aiding durability during movement.</p>
-</li>
-<li>
-<p><strong>Anomalies</strong>: If visible, any irregularities such as asymmetry, unexpected protrusions, or surface damage could suggest pathologies or past trauma, although these are not specifically indicated in the current views.</p>
-</li>
-</ol>
-<h3>Summary</h3>
-<p>Overall, the analysis of the 3D views highlights the astragalus’s well-adapted structure for mobility and weight-bearing, alongside essential features that facilitate its functional roles in the skeletal system. Further investigation of the density and any anomalies could provide valuable insights into the specimen's health and history.</p>
 <h3>Orientation Views</h3>
 <p>The following orientation views were captured:
 - Default (Y+ Up)
