@@ -1,12 +1,13 @@
 {
   "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000715339?locale=en",
-  "id": "000715339",
-  "Object": "umzc:vertebrates:GG35R1",
-  "Taxonomy": "Gallus gallus",
-  "Element or Part": "Skull",
+  "detail_url": "https://www.morphosource.org/concern/media/000739496?locale=en",
+  "id": "000739496",
+  "Object": "UCM:ES:UCM:FossilVert:123127",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Bassel Arnaout",
-  "Date Uploaded": "03/03/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "Jacob Van Veldhuizen",
+  "Date Uploaded": "05/07/2025",
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
 }
