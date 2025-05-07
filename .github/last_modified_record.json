@@ -1,13 +1,13 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000739496?locale=en",
-  "id": "000739496",
-  "Object": "UCM:ES:UCM:FossilVert:123127",
-  "Element or Part": "skull",
+  "title": "Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000739514?locale=en",
+  "id": "000739514",
+  "Object": "amnh:mammals:109844",
+  "Taxonomy": "Cercartetus caudatus",
+  "Element or Part": "mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jacob Van Veldhuizen",
+  "Data Manager": "Keegan Selig",
   "Date Uploaded": "05/07/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined"
 }
