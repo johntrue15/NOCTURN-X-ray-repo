@@ -1,12 +1,12 @@
 {
-  "title": "Head [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000739906?locale=en",
-  "id": "000739906",
-  "Object": "UF:Fish:248543",
-  "Taxonomy": "Schistura sp.",
-  "Element or Part": "Head",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000739493?locale=en",
+  "id": "000739493",
+  "Object": "ZMNH:M12414",
+  "Taxonomy": "Psittacosaurus sp.",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
-  "Date Uploaded": "05/08/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "Asato Ishikawa",
+  "Date Uploaded": "05/07/2025",
+  "Publication Status": "Restricted Download"
 }
