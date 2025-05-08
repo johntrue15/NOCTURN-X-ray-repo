@@ -1,13 +1,13 @@
 {
-  "title": "Pedal Proximal Phalanx 1 [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000601840?locale=en",
-  "id": "000601840",
-  "Object": "AMNH:M:96188",
-  "Taxonomy": "Procyon cancrivorus",
-  "Element or Part": "Pedal proximal phalanx 1",
+  "title": "Foot [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000603472?locale=en",
+  "id": "000603472",
+  "Object": "AMNH:Mammals:M-267607",
+  "Taxonomy": "Potos flavus",
+  "Element or Part": "foot",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "AMNH Mammalogy Department",
-  "Date Uploaded": "02/02/2024",
+  "Date Uploaded": "02/09/2024",
   "Publication Status": "Open Download",
   "Rights Statement": "Copyright Undetermined"
 }
