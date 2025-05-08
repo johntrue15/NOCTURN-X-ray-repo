@@ -1,13 +1,12 @@
 {
-  "title": "Hand [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000604542?locale=en",
-  "id": "000604542",
-  "Object": "AMNH:Mammals:M-135963",
-  "Taxonomy": "Bassariscus astutus arizonensis",
-  "Element or Part": "hand",
+  "title": "Head [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000739679?locale=en",
+  "id": "000739679",
+  "Object": "UF:Fish:185743",
+  "Taxonomy": "Schistura magnifluvis",
+  "Element or Part": "Head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "AMNH Mammalogy Department",
-  "Date Uploaded": "02/15/2024",
-  "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Data Manager": "Digital Imaging Florida Museum",
+  "Date Uploaded": "05/08/2025",
+  "Publication Status": "Open Download"
 }
