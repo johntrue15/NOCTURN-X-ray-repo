@@ -1,13 +1,13 @@
 {
-  "title": "Distal Phalanx [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000384156?locale=en",
-  "id": "000384156",
-  "Object": "USNM:PAL:USNM PAL442229",
-  "Taxonomy": "Nannodectes intermedius",
-  "Element or Part": "Distal Phalanx",
+  "title": "Skull [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000739565?locale=en",
+  "id": "000739565",
+  "Object": "UCM:ES:UCM:FossilVert:123127",
+  "Element or Part": "skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Douglas Boyer",
-  "Date Uploaded": "09/20/2021",
+  "Data Manager": "Jacob Van Veldhuizen",
+  "Date Uploaded": "05/08/2025",
   "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright"
+  "Rights Statement": "In Copyright",
+  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
 }
