@@ -1,13 +1,13 @@
 {
-  "title": "Manual Proximal Phalanx 4 [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000601331?locale=en",
-  "id": "000601331",
+  "title": "Cuboid [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000601560?locale=en",
+  "id": "000601560",
   "Object": "AMNH:M:96188",
   "Taxonomy": "Procyon cancrivorus",
-  "Element or Part": "Manual proximal phalanx 4",
+  "Element or Part": "Cuboid",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
   "Data Manager": "AMNH Mammalogy Department",
-  "Date Uploaded": "02/01/2024",
+  "Date Uploaded": "02/02/2024",
   "Publication Status": "Open Download",
   "Rights Statement": "Copyright Undetermined"
 }
