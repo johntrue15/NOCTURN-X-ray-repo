@@ -1,13 +1,13 @@
 {
-  "title": "Skull [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000739565?locale=en",
-  "id": "000739565",
-  "Object": "UCM:ES:UCM:FossilVert:123127",
-  "Element or Part": "skull",
+  "title": "Manual Proximal Phalanx 4 [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000601331?locale=en",
+  "id": "000601331",
+  "Object": "AMNH:M:96188",
+  "Taxonomy": "Procyon cancrivorus",
+  "Element or Part": "Manual proximal phalanx 4",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Jacob Van Veldhuizen",
-  "Date Uploaded": "05/08/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "In Copyright",
-  "CC License": "Creative Commons BY-NC Attribution-NonCommercial 4.0 International"
+  "Data Manager": "AMNH Mammalogy Department",
+  "Date Uploaded": "02/01/2024",
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined"
 }
