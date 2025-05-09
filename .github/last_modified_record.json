@@ -1,11 +1,13 @@
 {
-  "title": "Element Unspecified [Mesh] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000703194?locale=en",
-  "id": "000703194",
-  "Object": "NMK S 180",
-  "Taxonomy": "Protorosaurus speneri",
+  "title": "Mandible [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000739999?locale=en",
+  "id": "000739999",
+  "Object": "amnh:mammals:153054",
+  "Taxonomy": "Dendrolagus lumholtzi",
+  "Element or Part": "mandible",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Gabriela Sobral",
-  "Date Uploaded": "01/17/2025",
-  "Publication Status": "Open Download"
+  "Data Manager": "Keegan Selig",
+  "Date Uploaded": "05/09/2025",
+  "Publication Status": "Open Download",
+  "Rights Statement": "Copyright Undetermined"
 }
