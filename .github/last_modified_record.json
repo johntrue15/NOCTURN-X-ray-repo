@@ -1,12 +1,13 @@
 {
-  "title": "Head [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000740093?locale=en",
-  "id": "000740093",
-  "Object": "ROM:Fishes:70466",
-  "Taxonomy": "Homalopteroides weberi",
-  "Element or Part": "Head",
+  "title": "Entire Specimen [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000740142?locale=en",
+  "id": "000740142",
+  "Object": "USNM:FISH:USNM 238960",
+  "Taxonomy": "Oxyurichthys uronema",
+  "Element or Part": "entire specimen",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Digital Imaging Florida Museum",
+  "Data Manager": "Diane Pitassy",
   "Date Uploaded": "05/09/2025",
-  "Publication Status": "Restricted Download"
+  "Publication Status": "Restricted Download",
+  "Rights Statement": "Copyright Undetermined"
 }
