@@ -1,13 +1,12 @@
 {
-  "title": "Mandible [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000740014?locale=en",
-  "id": "000740014",
-  "Object": "amnh:mammals:153364",
-  "Taxonomy": "Ailurops ursinus",
-  "Element or Part": "mandible",
+  "title": "Skull [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000739493?locale=en",
+  "id": "000739493",
+  "Object": "ZMNH:M12414",
+  "Taxonomy": "Psittacosaurus sp.",
+  "Element or Part": "Skull",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Keegan Selig",
-  "Date Uploaded": "05/09/2025",
-  "Publication Status": "Open Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Data Manager": "Asato Ishikawa",
+  "Date Uploaded": "05/07/2025",
+  "Publication Status": "Restricted Download"
 }
