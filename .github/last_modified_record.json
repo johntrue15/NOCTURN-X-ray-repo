@@ -1,13 +1,11 @@
 {
-  "title": "Entire Specimen [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000740208?locale=en",
-  "id": "000740208",
-  "Object": "USNM:FISH:USNM 393729",
-  "Taxonomy": "Homaloptera stephensoniHomalopteroides stephensoniHomalopteroides weberi",
-  "Element or Part": "entire specimen",
+  "title": "Head [CTImageSeries] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000740292?locale=en",
+  "id": "000740292",
+  "Object": "zrc:fish:7156",
+  "Element or Part": "Head",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Diane Pitassy",
+  "Data Manager": "Digital Imaging Florida Museum",
   "Date Uploaded": "05/09/2025",
-  "Publication Status": "Restricted Download",
-  "Rights Statement": "Copyright Undetermined"
+  "Publication Status": "Restricted Download"
 }
