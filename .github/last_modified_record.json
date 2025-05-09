@@ -1,12 +1,11 @@
 {
-  "title": "Skull [CTImageSeries] [CT]",
-  "detail_url": "https://www.morphosource.org/concern/media/000739493?locale=en",
-  "id": "000739493",
-  "Object": "ZMNH:M12414",
-  "Taxonomy": "Psittacosaurus sp.",
-  "Element or Part": "Skull",
+  "title": "Element Unspecified [Mesh] [CT]",
+  "detail_url": "https://www.morphosource.org/concern/media/000703194?locale=en",
+  "id": "000703194",
+  "Object": "NMK S 180",
+  "Taxonomy": "Protorosaurus speneri",
   "Modality": "X-Ray Computed Tomography (CT/microCT)",
-  "Data Manager": "Asato Ishikawa",
-  "Date Uploaded": "05/07/2025",
-  "Publication Status": "Restricted Download"
+  "Data Manager": "Gabriela Sobral",
+  "Date Uploaded": "01/17/2025",
+  "Publication Status": "Open Download"
 }
