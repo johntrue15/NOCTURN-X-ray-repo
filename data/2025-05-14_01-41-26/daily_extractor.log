@@ -1,0 +1,32 @@
+2025-05-14 01:41:31,065 - Data directory: data/2025-05-14_01-41-26
+2025-05-14 01:41:31,065 - Output directory: data/2025-05-14_01-41-26
+2025-05-14 01:41:31,065 - Using data directory: data/2025-05-14_01-41-26
+2025-05-14 01:41:31,065 - Looking for previous data in: data
+2025-05-14 01:41:31,067 - Loading previous data from: data/2025-05-13_01-42-23/morphosource_data_complete.json
+2025-05-14 01:41:31,070 - Loaded 922 records from previous data file
+2025-05-14 01:41:31,070 - Latest stored record ID: 000740736
+2025-05-14 01:41:31,070 - Previous record count: 922
+2025-05-14 01:41:31,070 - Fetching page 1
+2025-05-14 01:41:34,124 - Found record 000740994 - Total records: 1
+2025-05-14 01:41:34,125 - Found record 000740974 - Total records: 2
+2025-05-14 01:41:34,125 - Found record 000740970 - Total records: 3
+2025-05-14 01:41:34,125 - Found record 000740966 - Total records: 4
+2025-05-14 01:41:34,126 - Found record 000740928 - Total records: 5
+2025-05-14 01:41:34,126 - Found record 000740909 - Total records: 6
+2025-05-14 01:41:34,126 - Found record 000740904 - Total records: 7
+2025-05-14 01:41:34,126 - Found record 000740899 - Total records: 8
+2025-05-14 01:41:34,127 - Found record 000740893 - Total records: 9
+2025-05-14 01:41:34,127 - Found record 000740890 - Total records: 10
+2025-05-14 01:41:34,128 - Found record 000740878 - Total records: 11
+2025-05-14 01:41:34,128 - Found record 000740846 - Total records: 12
+2025-05-14 01:41:34,128 - Found record 000740842 - Total records: 13
+2025-05-14 01:41:34,129 - Found record 000740736 - Total records: 14
+2025-05-14 01:41:34,129 - Found latest stored record 000740736 - stopping fetch
+2025-05-14 01:41:34,129 - Completed fetch - Found 14 new records
+2025-05-14 01:41:34,129 - Latest webpage record ID: 000740994
+2025-05-14 01:41:34,129 - New records available - latest records differ
+2025-05-14 01:41:34,130 - New records: 14
+2025-05-14 01:41:34,130 - Previous records: 922
+2025-05-14 01:41:34,130 - Combined records: 935
+2025-05-14 01:41:34,144 - Saved 935 records to: data/2025-05-14_01-41-26/morphosource_data_complete.json
+2025-05-14 01:41:34,144 - Created detailed release notes at: data/2025-05-14_01-41-26/release_notes.txt
