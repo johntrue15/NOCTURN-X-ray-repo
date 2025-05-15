@@ -1,0 +1,31 @@
+2025-05-15 01:39:34,719 - Data directory: data/2025-05-15_01-39-31
+2025-05-15 01:39:34,719 - Output directory: data/2025-05-15_01-39-31
+2025-05-15 01:39:34,719 - Using data directory: data/2025-05-15_01-39-31
+2025-05-15 01:39:34,719 - Looking for previous data in: data
+2025-05-15 01:39:34,720 - Loading previous data from: data/2025-05-14_01-41-26/morphosource_data_complete.json
+2025-05-15 01:39:34,723 - Loaded 935 records from previous data file
+2025-05-15 01:39:34,724 - Latest stored record ID: 000740994
+2025-05-15 01:39:34,724 - Previous record count: 935
+2025-05-15 01:39:34,724 - Fetching page 1
+2025-05-15 01:39:38,531 - Found record 000741225 - Total records: 1
+2025-05-15 01:39:38,531 - Found record 000741223 - Total records: 2
+2025-05-15 01:39:38,532 - Found record 000741220 - Total records: 3
+2025-05-15 01:39:38,532 - Found record 000741212 - Total records: 4
+2025-05-15 01:39:38,532 - Found record 000741209 - Total records: 5
+2025-05-15 01:39:38,533 - Found record 000741199 - Total records: 6
+2025-05-15 01:39:38,533 - Found record 000741193 - Total records: 7
+2025-05-15 01:39:38,533 - Found record 000741184 - Total records: 8
+2025-05-15 01:39:38,534 - Found record 000741179 - Total records: 9
+2025-05-15 01:39:38,534 - Found record 000741165 - Total records: 10
+2025-05-15 01:39:38,534 - Found record 000741151 - Total records: 11
+2025-05-15 01:39:38,534 - Found record 000741124 - Total records: 12
+2025-05-15 01:39:38,535 - Found record 000740994 - Total records: 13
+2025-05-15 01:39:38,535 - Found latest stored record 000740994 - stopping fetch
+2025-05-15 01:39:38,535 - Completed fetch - Found 13 new records
+2025-05-15 01:39:38,535 - Latest webpage record ID: 000741225
+2025-05-15 01:39:38,535 - New records available - latest records differ
+2025-05-15 01:39:38,536 - New records: 13
+2025-05-15 01:39:38,537 - Previous records: 935
+2025-05-15 01:39:38,537 - Combined records: 947
+2025-05-15 01:39:38,550 - Saved 947 records to: data/2025-05-15_01-39-31/morphosource_data_complete.json
+2025-05-15 01:39:38,551 - Created detailed release notes at: data/2025-05-15_01-39-31/release_notes.txt
