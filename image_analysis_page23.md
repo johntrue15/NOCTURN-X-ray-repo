@@ -2,7 +2,7 @@
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-06-06 13:32:26 UTC
+**Last Updated:** 2025-06-06 14:20:53 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
