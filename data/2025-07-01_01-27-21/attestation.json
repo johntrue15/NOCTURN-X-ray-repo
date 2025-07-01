@@ -1,0 +1,28 @@
+{
+  "_type": "https://in-toto.io/Statement/v0.1",
+  "subject": [
+    {
+      "name": "morphosource_data_complete.json",
+      "digest": {
+        "sha256": "ad24c75032fd03be625ed5ebce5ce325b3bea46c0456f7dc84c434c181a62118"
+      }
+    }
+  ],
+  "predicateType": "https://in-toto.io/attestation/release/v0.1",
+  "predicate": {
+    "purl": "pkg:github/johntrue15/NOCTURN-X-ray-repo",
+    "version": "9ca92f6b5883472229ed6c75bda00460afd10d47",
+    "metadata": {
+      "buildInvocationId": "15987478045",
+      "completeness": {
+        "parameters": true,
+        "environment": true,
+        "materials": true
+      },
+      "stats": {
+        "total_records": "107625",
+        "modified_records": "0"
+      }
+    }
+  }
+}
