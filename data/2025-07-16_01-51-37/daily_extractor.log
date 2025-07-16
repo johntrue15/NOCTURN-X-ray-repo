@@ -1,0 +1,31 @@
+2025-07-16 01:51:40,704 - Data directory: data/2025-07-16_01-51-37
+2025-07-16 01:51:40,704 - Output directory: data/2025-07-16_01-51-37
+2025-07-16 01:51:40,704 - Using data directory: data/2025-07-16_01-51-37
+2025-07-16 01:51:40,704 - Looking for previous data in: data
+2025-07-16 01:51:40,706 - Loading previous data from: data/2025-07-15_01-54-51/morphosource_data_complete.json
+2025-07-16 01:51:41,148 - Loaded 107774 records from previous data file
+2025-07-16 01:51:41,148 - Latest stored record ID: 000762318
+2025-07-16 01:51:41,148 - Previous record count: 107774
+2025-07-16 01:51:41,148 - Fetching page 1
+2025-07-16 01:51:49,359 - Found record 000764490 - Total records: 1
+2025-07-16 01:51:49,360 - Found record 000764489 - Total records: 2
+2025-07-16 01:51:49,360 - Found record 000764418 - Total records: 3
+2025-07-16 01:51:49,361 - Found record 000764341 - Total records: 4
+2025-07-16 01:51:49,361 - Found record 000762438 - Total records: 5
+2025-07-16 01:51:49,361 - Found record 000762437 - Total records: 6
+2025-07-16 01:51:49,362 - Found record 000762418 - Total records: 7
+2025-07-16 01:51:49,362 - Found record 000762417 - Total records: 8
+2025-07-16 01:51:49,362 - Found record 000762410 - Total records: 9
+2025-07-16 01:51:49,363 - Found record 000762409 - Total records: 10
+2025-07-16 01:51:49,363 - Found record 000762385 - Total records: 11
+2025-07-16 01:51:49,363 - Found record 000762330 - Total records: 12
+2025-07-16 01:51:49,364 - Found record 000762318 - Total records: 13
+2025-07-16 01:51:49,364 - Found latest stored record 000762318 - stopping fetch
+2025-07-16 01:51:49,364 - Completed fetch - Found 13 new records
+2025-07-16 01:51:49,364 - Latest webpage record ID: 000764490
+2025-07-16 01:51:49,364 - New records available - latest records differ
+2025-07-16 01:51:49,527 - New records: 13
+2025-07-16 01:51:49,527 - Previous records: 107774
+2025-07-16 01:51:49,527 - Combined records: 107786
+2025-07-16 01:51:51,057 - Saved 107786 records to: data/2025-07-16_01-51-37/morphosource_data_complete.json
+2025-07-16 01:51:51,057 - Created detailed release notes at: data/2025-07-16_01-51-37/release_notes.txt
