@@ -1,0 +1,33 @@
+2025-08-12 01:45:06,028 - Data directory: data/2025-08-12_01-45-04
+2025-08-12 01:45:06,028 - Output directory: data/2025-08-12_01-45-04
+2025-08-12 01:45:06,028 - Using data directory: data/2025-08-12_01-45-04
+2025-08-12 01:45:06,028 - Looking for previous data in: data
+2025-08-12 01:45:06,030 - Loading previous data from: data/2025-08-11_01-56-12/morphosource_data_complete.json
+2025-08-12 01:45:06,472 - Loaded 108058 records from previous data file
+2025-08-12 01:45:06,473 - Latest stored record ID: 000769379
+2025-08-12 01:45:06,473 - Previous record count: 108058
+2025-08-12 01:45:06,473 - Fetching page 1
+2025-08-12 01:45:12,181 - Found record 000769657 - Total records: 1
+2025-08-12 01:45:12,182 - Found record 000769495 - Total records: 2
+2025-08-12 01:45:12,182 - Found record 000769490 - Total records: 3
+2025-08-12 01:45:12,182 - Found record 000769487 - Total records: 4
+2025-08-12 01:45:12,183 - Found record 000769483 - Total records: 5
+2025-08-12 01:45:12,183 - Found record 000769482 - Total records: 6
+2025-08-12 01:45:12,183 - Found record 000769474 - Total records: 7
+2025-08-12 01:45:12,184 - Found record 000769471 - Total records: 8
+2025-08-12 01:45:12,184 - Found record 000769468 - Total records: 9
+2025-08-12 01:45:12,184 - Found record 000769462 - Total records: 10
+2025-08-12 01:45:12,185 - Found record 000769457 - Total records: 11
+2025-08-12 01:45:12,185 - Found record 000769451 - Total records: 12
+2025-08-12 01:45:12,185 - Found record 000769445 - Total records: 13
+2025-08-12 01:45:12,186 - Found record 000769436 - Total records: 14
+2025-08-12 01:45:12,186 - Found record 000769379 - Total records: 15
+2025-08-12 01:45:12,186 - Found latest stored record 000769379 - stopping fetch
+2025-08-12 01:45:12,186 - Completed fetch - Found 15 new records
+2025-08-12 01:45:12,186 - Latest webpage record ID: 000769657
+2025-08-12 01:45:12,187 - New records available - latest records differ
+2025-08-12 01:45:12,346 - New records: 15
+2025-08-12 01:45:12,346 - Previous records: 108058
+2025-08-12 01:45:12,346 - Combined records: 108072
+2025-08-12 01:45:13,883 - Saved 108072 records to: data/2025-08-12_01-45-04/morphosource_data_complete.json
+2025-08-12 01:45:13,883 - Created detailed release notes at: data/2025-08-12_01-45-04/release_notes.txt
