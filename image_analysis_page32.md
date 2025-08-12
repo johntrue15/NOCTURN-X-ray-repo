@@ -2,7 +2,7 @@
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-08-12 06:34:18 UTC
+**Last Updated:** 2025-08-12 07:22:27 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
@@ -347,78 +347,22 @@ This page displays CT scan images from analysis releases in an Instagram-style t
     
     <div class="image-grid">
               <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-07_13-00-06/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
+            <img src="https://via.placeholder.com/800x600.png?text=Default+(Y%2B+Up)" alt="CT Image 1" loading="lazy">
         </div>
               <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-07_13-00-06/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
+            <img src="https://via.placeholder.com/800x600.png?text=Upside+Down+(Y-+Up)" alt="CT Image 2" loading="lazy">
         </div>
               <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-07_13-00-06/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
+            <img src="https://via.placeholder.com/800x600.png?text=Forward+90°+(Z-+Up)" alt="CT Image 3" loading="lazy">
         </div>
               <div class="image-item">
-            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-02-07_13-00-06/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
+            <img src="https://via.placeholder.com/800x600.png?text=Back+90°+(Z%2B+Up)" alt="CT Image 4" loading="lazy">
         </div>
             </div>
     
     <div class="release-description">
               <div class="description-text">
-            <p>Analysis for MorphoSource release: morphosource-updates-2025-02-07_12-56-07</p>
-<p>To conduct a thorough analysis of the 3D X-ray CT scan data representing the "Left Maxillary Second Molar Treatment, Anterior Subalveolar Bone Root," we can consider the following aspects based on the provided orientations of the specimen:</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li><strong>Geometric Form</strong>:</li>
-<li>The specimen exhibits a roughly irregular shape, characteristic of a molar root structure, which may suggest a high degree of surface complexity. </li>
-<li>
-<p>Notable variations in surface texture can indicate variations in bone density and structural integrity.</p>
-</li>
-<li>
-<p><strong>Orientation</strong>:</p>
-</li>
-<li>
-<p>Different views highlight different cross-sections and curvature of the molar root, allowing for an assessment of how root morphology influences surrounding alveolar bone.</p>
-</li>
-<li>
-<p><strong>Surface Contours</strong>:</p>
-</li>
-<li>The surface appears to show variations indicative of biological processes, such as resorption or deposition patterns, often observed in dental roots and surrounding alveolar structures.</li>
-</ol>
-<h3>Material Composition</h3>
-<ol>
-<li><strong>Bone Density</strong>:</li>
-<li>
-<p>The tonal variations across the model can provide insights into the density of the bone. Denser areas may correlate with areas of intact bone structure, while lighter areas might indicate areas of resorption or lower density.</p>
-</li>
-<li>
-<p><strong>Mineralization</strong>:</p>
-</li>
-<li>The apparent homogeneity in coloration suggests a consistent mineral composition, typical of mineralized biological tissues. </li>
-</ol>
-<h3>Notable Features and Anomalies</h3>
-<ol>
-<li><strong>Anomalies</strong>:</li>
-<li>
-<p>Any irregularities in the surface may signal anatomical variation or pathological conditions, such as carious lesions or periodontal disease impacts. Specific features, such as pits or grooves, could denote areas that require further investigation.</p>
-</li>
-<li>
-<p><strong>Surface Texture</strong>:</p>
-</li>
-<li>
-<p>The texture may vary significantly across the model; areas of roughness might correlate with sites of higher metabolic activity or stress through functional forces, while smoother areas could indicate regions less subjected to dynamic changes.</p>
-</li>
-<li>
-<p><strong>Surrounding Structures</strong>:</p>
-</li>
-<li>Assessing the relationship between the root and adjacent alveolar bone can provide insights into the remodeling process associated with dental treatments, highlighting how treatments might influence bone health.</li>
-</ol>
-<h3>Summary</h3>
-<p>In summary, the analysis suggests that this specimen displays a complex structure informed by its biological function. A detailed examination of the differing views can provide insights into both its anatomical features and material properties, while any observed anomalies underscore the importance of considering variations that could have clinical implications. Future investigations using advanced imaging techniques or histological evaluations could further clarify these findings.</p>
-<h3>Orientation Views</h3>
-<p>The following orientation views were captured:
-- Default (Y+ Up)
-- Upside Down (Y- Up)
-- Forward 90° (Z- Up)
-- Back 90° (Z+ Up)</p>
-<p>See attached images for details.</p>
+            Update last_count.txt for new records
         </div>
             </div>
             
