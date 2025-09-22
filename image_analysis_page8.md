@@ -2,7 +2,7 @@
 
 This page displays CT scan images from analysis releases in an Instagram-style timeline.
 
-**Last Updated:** 2025-09-22 19:17:04 UTC
+**Last Updated:** 2025-09-22 20:22:28 UTC
 
 <link rel="stylesheet" href="assets/css/gallery.css">
 
@@ -130,22 +130,83 @@ This page displays CT scan images from analysis releases in an Instagram-style t
     
     <div class="image-grid">
               <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Default+(Y%2B+Up)" alt="CT Image 1" loading="lazy">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-05_01-47-38/Default_Yplus_Up.png" alt="CT Image 1" loading="lazy">
         </div>
               <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Upside+Down+(Y-+Up)" alt="CT Image 2" loading="lazy">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-05_01-47-38/Upside_Down_Y-_Up.png" alt="CT Image 2" loading="lazy">
         </div>
               <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Forward+90°+(Z-+Up)" alt="CT Image 3" loading="lazy">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-05_01-47-38/Forward_90_Z-_Up.png" alt="CT Image 3" loading="lazy">
         </div>
               <div class="image-item">
-            <img src="https://via.placeholder.com/800x600.png?text=Back+90°+(Z%2B+Up)" alt="CT Image 4" loading="lazy">
+            <img src="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/download/ct_image_analysis-2025-04-05_01-47-38/Back_90_Zplus_Up.png" alt="CT Image 4" loading="lazy">
         </div>
             </div>
     
     <div class="release-description">
               <div class="description-text">
-            Update last_count.txt for new records
+            <p>Analysis for MorphoSource release: morphosource-updates-2025-04-05_01-43-26</p>
+<p>Analyzing the 3D X-ray CT scan data based on the provided images involves observing various structural characteristics, potential material compositions, and notable features across different orientations of the specimen—likely a skull from the context.</p>
+<h3>Structural Characteristics</h3>
+<ol>
+<li><strong>Overall Shape</strong>:</li>
+<li>The specimen exhibits a somewhat rounded dorsal aspect with distinct suture lines typical of cranial anatomy.</li>
+<li>
+<p>The ventral aspect appears to have a defined protrusion, potentially indicative of jaw structure or anchorage for muscular attachments.</p>
+</li>
+<li>
+<p><strong>Sutures and Joints</strong>:</p>
+</li>
+<li>Visible cranial sutures suggest fusion points between different bone elements. The patterns of these sutures can reveal the developmental stage of the specimen.</li>
+<li>
+<p>Any irregularities in the sutures may indicate pathological conditions or developmental anomalies.</p>
+</li>
+<li>
+<p><strong>Foramina and Other Openings</strong>:</p>
+</li>
+<li>Several foramina are likely present. These openings are crucial for the passage of nerves and blood vessels.</li>
+<li>Observing the size and placement of these openings can provide insights into the sensory and motor functionalities of the specimen.</li>
+</ol>
+<h3>Material Composition</h3>
+<ol>
+<li><strong>Bone Density</strong>:</li>
+<li>Given the nature of CT scans, the density variations across the specimen can be observed, which may suggest different regions of the bone (e.g., cortical vs. trabecular bone).</li>
+<li>
+<p>Typical bone composition involves calcium phosphate; thus, denser areas may correlate with high mineral content.</p>
+</li>
+<li>
+<p><strong>Surface Texture</strong>:</p>
+</li>
+<li>The texture appears somewhat rough, indicative of the natural bone surface presented in the scan. This could point to growth patterns, environmental adaptations, or wear over time.</li>
+</ol>
+<h3>Notable Features and Anomalies</h3>
+<ol>
+<li><strong>Anomalies</strong>:</li>
+<li>Irregularities or fractures may be present in some images, which can suggest past trauma or pathological conditions affecting bone growth or structure.</li>
+<li>
+<p>The presence of asymmetries or irregular growth patterns may indicate developmental anomalies or specific adaptations to environmental pressures.</p>
+</li>
+<li>
+<p><strong>Variability Across Views</strong>:</p>
+</li>
+<li>Different orientations provide a comprehensive view of the morphology, revealing structures that may not be apparent from a single perspective.</li>
+<li>
+<p>The dorsal views may showcase features like the cranial vault, while the ventral views provide insight into the mandible and related structures.</p>
+</li>
+<li>
+<p><strong>Potential Pathologies</strong>:</p>
+</li>
+<li>Any unusual markings or unusual densities can hint at conditions like osteoarthritis, periostitis, or other forms of bone pathology.</li>
+</ol>
+<h3>Summary</h3>
+<p>The 3D X</p>
+<h3>Orientation Views</h3>
+<p>The following orientation views were captured:
+- Default (Y+ Up)
+- Upside Down (Y- Up)
+- Forward 90° (Z- Up)
+- Back 90° (Z+ Up)</p>
+<p>See attached images for details.</p>
         </div>
             </div>
             
