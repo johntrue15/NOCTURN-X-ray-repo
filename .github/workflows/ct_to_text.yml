@@ -47,9 +47,9 @@ jobs:
           
           # Extract and store release info
           echo "release_tag=$(echo $release | jq -r .tag_name)" >> "$GITHUB_OUTPUT"
-          echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$release" | jq -r .body >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+          
+          # Write release body directly to file to avoid command injection
+          echo "$release" | jq -r .body > release_body.txt
 
       # -------------------------------------------------------
       # 5. Check if it's a morphosource release
@@ -170,14 +170,12 @@ jobs:
           steps.check_morpho.outputs.is_morphosource == 'true' &&
           steps.check_analysis.outputs.has_analysis != 'true'
         run: |
-          # Write release body to temp file using printf to avoid command injection
-          printf '%s\n' "${{ steps.fetch_release.outputs.release_body }}" > temp_release.txt
-          
+          # Use the release_body.txt file created in step 4
           # Check if release body contains "New Record #" entries OR JSON API data
-          if grep -q "^New Record #[0-9]" temp_release.txt; then
+          if grep -q "^New Record #[0-9]" release_body.txt; then
             echo "Release contains detailed record data"
             echo "has_records=true" >> "$GITHUB_OUTPUT"
-          elif grep -q "### Full API JSON for latest record" temp_release.txt; then
+          elif grep -q "### Full API JSON for latest record" release_body.txt; then
             echo "Release contains API JSON record data"
             echo "has_records=true" >> "$GITHUB_OUTPUT"
           else
@@ -195,8 +193,7 @@ jobs:
           steps.check_analysis.outputs.has_analysis != 'true' &&
           steps.check_records.outputs.has_records == 'true'
         run: |
-          # Write release body to temp file using printf to avoid command injection
-          printf '%s\n' "${{ steps.fetch_release.outputs.release_body }}" > temp_release.txt
+          # Use the release_body.txt file created in step 4
           
           # Debug: Show contents of blacklist file
           echo "=== Blacklist Contents ==="
@@ -223,7 +220,7 @@ jobs:
             echo "Checking for: '$line'"
             
             # Use grep with exact line matching and word boundaries
-            if grep -F -x "$line" temp_release.txt; then
+            if grep -F -x "$line" release_body.txt; then
               echo "Blacklisted data manager found: $line"
               echo "is_blacklisted=true" >> "$GITHUB_OUTPUT"
               exit 0
@@ -233,10 +230,10 @@ jobs:
           # Debug: If no match found, show the release body
           echo "=== Release Body Contents ==="
           echo "First 10 lines of release body:"
-          head -n 10 temp_release.txt
+          head -n 10 release_body.txt
           echo "..."
           echo "Data Manager lines:"
-          grep "Data Manager:" temp_release.txt
+          grep "Data Manager:" release_body.txt || echo "No 'Data Manager:' lines found"
           echo "==========================="
           
           echo "No blacklisted data managers found"
@@ -270,9 +267,7 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          # Write the release body to a file using printf to avoid command injection
-          printf '%s\n' "${{ steps.fetch_release.outputs.release_body }}" > release_body.txt
-
+          # Use the release_body.txt file created in step 4
           # Run your custom Python script
           python .github/scripts/ct_to_text.py release_body.txt > ct_output.txt
 
