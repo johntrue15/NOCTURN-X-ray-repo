@@ -1,0 +1,605 @@
+name: Update README
+
+on:
+  workflow_run:
+    workflows: 
+      - "Parse MorphoSource Data"  # Trigger on MorphoSource updates
+    types: [completed]
+  workflow_dispatch:  # Keep manual trigger for testing
+
+jobs:
+  check-updates:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
+    outputs:
+      should_update: ${{ steps.check-update.outputs.last_count_updated || steps.manual-trigger.outputs.last_count_updated }}
+      ms_tag: ${{ steps.get-latest-tags.outputs.ms_tag }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: main  # Explicitly checkout the main branch
+      
+      - name: List files to verify checkout
+        run: |
+          echo "Listing repository files:"
+          ls -la
+          echo "Checking for last_count.txt:"
+          if [ -f "last_count.txt" ]; then
+            echo "last_count.txt exists"
+            cat last_count.txt
+          else
+            echo "last_count.txt does not exist"
+            # Try to fetch the latest changes
+            git fetch origin main
+            git checkout origin/main -- last_count.txt || true
+            if [ -f "last_count.txt" ]; then
+              echo "Successfully retrieved last_count.txt from origin/main"
+              cat last_count.txt
+            else
+              echo "Could not retrieve last_count.txt"
+            fi
+          fi
+      
+      - name: Check if last_count.txt was updated
+        id: check-update
+        if: github.event_name == 'workflow_run'
+        run: |
+          # Get the workflow commit hash
+          WORKFLOW_COMMIT="${{ github.event.workflow_run.head_sha }}"
+          echo "Workflow commit: $WORKFLOW_COMMIT"
+          
+          # Fetch the commit to ensure we have it locally
+          git fetch origin $WORKFLOW_COMMIT
+          
+          # Check if last_count.txt exists
+          if [ -f "last_count.txt" ]; then
+            # Get the file's last modification time
+            FILE_MTIME=$(stat -c %Y last_count.txt)
+            CURRENT_TIME=$(date +%s)
+            TIME_DIFF=$((CURRENT_TIME - FILE_MTIME))
+            
+            echo "Last count file modification time: $(date -d @$FILE_MTIME)"
+            echo "Current time: $(date -d @$CURRENT_TIME)"
+            echo "Time difference: $TIME_DIFF seconds"
+            
+            # If the file was modified within the last 10 minutes (600 seconds), consider it updated
+            # This is more reliable than checking commits when workflows trigger each other
+            if [ $TIME_DIFF -lt 600 ]; then
+              echo "last_count_updated=true" >> $GITHUB_OUTPUT
+              echo "last_count.txt was updated recently (within the last 10 minutes)"
+            else
+              # Fallback to commit check
+              echo "File not modified recently, checking commits..."
+              
+              # Check if last_count.txt was modified in the commit
+              if git show --name-only $WORKFLOW_COMMIT | grep -q "last_count.txt"; then
+                echo "last_count_updated=true" >> $GITHUB_OUTPUT
+                echo "last_count.txt was updated in the triggering workflow run"
+              else
+                # Alternative check: look at the most recent commit that modified last_count.txt
+                LAST_COMMIT=$(git log -n 1 --pretty=format:%H -- last_count.txt)
+                LAST_COMMIT_TIME=$(git show -s --format=%ct $LAST_COMMIT)
+                COMMIT_TIME_DIFF=$((CURRENT_TIME - LAST_COMMIT_TIME))
+                
+                echo "Last commit that modified last_count.txt: $LAST_COMMIT"
+                echo "Last commit time: $(date -d @$LAST_COMMIT_TIME)"
+                echo "Time since last commit: $COMMIT_TIME_DIFF seconds"
+                
+                # If the last commit was within the last hour (3600 seconds), consider it updated
+                if [ $COMMIT_TIME_DIFF -lt 3600 ]; then
+                  echo "last_count_updated=true" >> $GITHUB_OUTPUT
+                  echo "last_count.txt was updated in a recent commit (within the last hour)"
+                else
+                  echo "last_count_updated=false" >> $GITHUB_OUTPUT
+                  echo "last_count.txt was not updated recently"
+                fi
+              fi
+            fi
+          else
+            echo "last_count.txt file not found"
+            echo "last_count_updated=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Set update flag for manual trigger
+        id: manual-trigger
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "last_count_updated=true" >> $GITHUB_OUTPUT
+          echo "Manual trigger detected, setting update flag to true"
+      
+      - name: Get latest MorphoSource tag
+        id: get-latest-tags
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the latest MorphoSource release tag
+          latest_ms_tag=$(gh release list --limit 10 | grep "morphosource-updates-" | head -n 1 | cut -f3 || echo "")
+          echo "ms_tag=$latest_ms_tag" >> $GITHUB_OUTPUT
+          echo "Latest MorphoSource tag: $latest_ms_tag"
+      
+      - name: Debug outputs
+        run: |
+          echo "Should update: ${{ steps.check-update.outputs.last_count_updated || steps.manual-trigger.outputs.last_count_updated }}"
+          echo "MS tag: ${{ steps.get-latest-tags.outputs.ms_tag }}"
+
+  update-readme-morphosource:
+    needs: check-updates
+    if: needs.check-updates.outputs.should_update == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug inputs
+        run: |
+          echo "Should update from previous job: ${{ needs.check-updates.outputs.should_update }}"
+          echo "MS tag from previous job: ${{ needs.check-updates.outputs.ms_tag }}"
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Update README with MorphoSource data
+        id: update-ms
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Function to get release info (both body and url)
+          get_release_info() {
+            local tag=$1
+            if [ -n "$tag" ]; then
+              local info=$(gh release view "$tag" --json body,url,name -q '{"body":.body,"url":.url,"name":.name}')
+              local body=$(echo "$info" | jq -r .body)
+              local url=$(echo "$info" | jq -r .url)
+              local name=$(echo "$info" | jq -r .name)
+              printf "%s\n\n%s\n%s" "[View $name on GitHub]($url)" "\`\`\`" "$body"
+              echo -e "\n\`\`\`"
+            else
+              echo -e "\`\`\`\nNo release found\n\`\`\`"
+            fi
+          }
+
+          # Get MorphoSource release info
+          ms_tag="${{ needs.check-updates.outputs.ms_tag }}"
+          ms_info=$(get_release_info "$ms_tag")
+          
+          # Format the recent activity
+          recent_activity=$(gh release list --limit 5 | while IFS=$'\t' read -r title status tag date; do
+            printf "%s (%s)\\n" "$title" "$date"
+          done || echo "No recent activity")
+
+          cat > README.md << EOL
+          # NOCTURN X-ray Repository
+
+          This repository automatically tracks and analyzes X-ray CT data from MorphoSource, providing multiple layers of analysis through automated workflows.
+
+          ## Documentation
+
+          - [Project Overview and Setup](docs/index.md) - Introduction, project structure, and getting started
+          - [Workflow Dependencies](docs/dependencies.md) - Detailed mapping of workflows and their associated scripts
+          - [Raspberry Pi Installation](docs/Raspi.md) - Guide for setting up NOCTURN on a Raspberry Pi
+
+          ## Latest Analysis Results
+
+          ### MorphoSource Updates
+          ${ms_info}
+
+          ### CT Analysis
+          \`\`\`
+          Waiting for CT analysis to complete...
+          \`\`\`
+
+          ### CT Slice Analysis
+          \`\`\`
+          Waiting for CT slice analysis to complete...
+          \`\`\`
+
+          ## Workflow Overview
+
+          This repository uses several automated workflows to analyze X-ray CT data. For a complete list of workflows and their dependencies, see our [Workflow Dependencies](docs/dependencies.md) documentation.
+
+          ### Main Workflows
+
+          1. **Parse MorphoSource Data** (\`parse_morphosource.yml\`)
+             - Runs every 5 minutes
+             - Scrapes MorphoSource for new X-ray CT records
+             - Creates releases with new record details
+             - Triggers subsequent analysis workflows
+
+          2. **CT to Text Analysis** (\`ct_to_text.yml\`)
+             - Triggered by MorphoSource updates
+             - Analyzes CT metadata using AI
+             - Generates detailed descriptions of specimens
+
+          3. **CT Slice Analysis** (\`combined_ct_images_to_text.yml\`)
+             - Analyzes 2D slices and 3D reconstructions
+             - Checks image URLs and captures screenshots
+             - Provides comprehensive visual analysis
+
+          ### Supporting Workflows
+
+          - **Daily Check** (\`daily.yml\`): Daily verification of data consistency
+          - **Monthly Collection** (\`monthly.yml\`): Monthly data aggregation
+          - **Error Cleanup** (\`cleanup_ct_error_releases.yml\`): Maintains release quality
+          - **Wiki Generation** (\`wiki-generation.yml\`): Updates documentation
+
+          ## Installation
+
+          For detailed installation instructions:
+          - Standard setup: See our [Project Overview](docs/index.md#installation)
+          - Raspberry Pi setup: Follow our [Raspberry Pi Guide](docs/Raspi.md#installation)
+
+          ## Recent Activity
+
+          \`\`\`
+          ${recent_activity}
+          \`\`\`
+
+          ## Contributing
+
+          Please see our [Project Overview](docs/index.md#contributing) for guidelines on contributing to this project.
+
+          ---
+          Last updated: $(date -u "+%Y-%m-%d %H:%M:%S UTC")
+          EOL
+          
+          # Commit the initial README with MorphoSource data
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          git commit -m "Update README with MorphoSource analysis results" || true
+          
+          # Instead of rebasing (which can cause conflicts), fetch and reset to origin/main first
+          git fetch origin main
+          git reset --soft origin/main
+          git add README.md
+          git commit -m "Update README with MorphoSource analysis results" || true
+          git push || true
+          
+          # Store the MorphoSource tag for subsequent jobs
+          echo "$ms_tag" > ms_tag.txt
+
+      - name: Upload MorphoSource tag
+        uses: actions/upload-artifact@v4
+        with:
+          name: ms-tag
+          path: ms_tag.txt
+          retention-days: 1
+
+  update-readme-ct-analysis:
+    needs: [check-updates, update-readme-morphosource]
+    if: needs.check-updates.outputs.should_update == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug inputs
+        run: |
+          echo "Should update from check-updates job: ${{ needs.check-updates.outputs.should_update }}"
+          echo "MS tag from check-updates job: ${{ needs.check-updates.outputs.ms_tag }}"
+
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Download MorphoSource tag
+        uses: actions/download-artifact@v4
+        with:
+          name: ms-tag
+
+      - name: Debug MorphoSource tag
+        run: |
+          echo "Content of ms_tag.txt:"
+          cat ms_tag.txt || echo "File not found"
+          ls -la
+
+      - name: Wait for CT analysis
+        if: github.event_name != 'workflow_dispatch'
+        run: |
+          # Wait for CT analysis to complete (30-60 seconds)
+          echo "Waiting 60 seconds for CT analysis to complete..."
+          sleep 60
+      
+      - name: Skip waiting (manual trigger)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "Manual trigger detected, skipping wait period"
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Update README with CT analysis
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Function to get release info (both body and url)
+          get_release_info() {
+            local tag=$1
+            if [ -n "$tag" ]; then
+              local info=$(gh release view "$tag" --json body,url,name -q '{"body":.body,"url":.url,"name":.name}')
+              local body=$(echo "$info" | jq -r .body)
+              local url=$(echo "$info" | jq -r .url)
+              local name=$(echo "$info" | jq -r .name)
+              printf "%s\n\n%s\n%s" "[View $name on GitHub]($url)" "\`\`\`" "$body"
+              echo -e "\n\`\`\`"
+            else
+              echo -e "\`\`\`\nNo release found\n\`\`\`"
+            fi
+          }
+
+          # Get the MorphoSource tag
+          ms_tag=$(cat ms_tag.txt)
+          
+          # Get the latest CT analysis tag
+          latest_ct_tag=$(gh release list --limit 10 | grep "ct_to_text_analysis-" | head -n 1 | cut -f3 || echo "")
+          
+          # Get release info
+          ms_info=$(get_release_info "$ms_tag")
+          ct_info=$(get_release_info "$latest_ct_tag")
+          
+          # Instead of using sed, recreate the entire README
+          cat > README.md << EOL
+          # NOCTURN X-ray Repository
+
+          This repository automatically tracks and analyzes X-ray CT data from MorphoSource, providing multiple layers of analysis through automated workflows.
+
+          ## Documentation
+
+          - [Project Overview and Setup](docs/index.md) - Introduction, project structure, and getting started
+          - [Workflow Dependencies](docs/dependencies.md) - Detailed mapping of workflows and their associated scripts
+          - [Raspberry Pi Installation](docs/Raspi.md) - Guide for setting up NOCTURN on a Raspberry Pi
+
+          ## Latest Analysis Results
+
+          ### MorphoSource Updates
+          ${ms_info}
+
+          ### CT Analysis
+          ${ct_info}
+
+          ### CT Slice Analysis
+          \`\`\`
+          Waiting for CT slice analysis to complete...
+          \`\`\`
+
+          ## Workflow Overview
+
+          This repository uses several automated workflows to analyze X-ray CT data. For a complete list of workflows and their dependencies, see our [Workflow Dependencies](docs/dependencies.md) documentation.
+
+          ### Main Workflows
+
+          1. **Parse MorphoSource Data** (\`parse_morphosource.yml\`)
+             - Runs every 5 minutes
+             - Scrapes MorphoSource for new X-ray CT records
+             - Creates releases with new record details
+             - Triggers subsequent analysis workflows
+
+          2. **CT to Text Analysis** (\`ct_to_text.yml\`)
+             - Triggered by MorphoSource updates
+             - Analyzes CT metadata using AI
+             - Generates detailed descriptions of specimens
+
+          3. **CT Slice Analysis** (\`combined_ct_images_to_text.yml\`)
+             - Analyzes 2D slices and 3D reconstructions
+             - Checks image URLs and captures screenshots
+             - Provides comprehensive visual analysis
+
+          ### Supporting Workflows
+
+          - **Daily Check** (\`daily.yml\`): Daily verification of data consistency
+          - **Monthly Collection** (\`monthly.yml\`): Monthly data aggregation
+          - **Error Cleanup** (\`cleanup_ct_error_releases.yml\`): Maintains release quality
+          - **Wiki Generation** (\`wiki-generation.yml\`): Updates documentation
+
+          ## Installation
+
+          For detailed installation instructions:
+          - Standard setup: See our [Project Overview](docs/index.md#installation)
+          - Raspberry Pi setup: Follow our [Raspberry Pi Guide](docs/Raspi.md#installation)
+
+          ## Recent Activity
+
+          \`\`\`
+          $(gh release list --limit 5 | while IFS=$'\t' read -r title status tag date; do
+            printf "%s (%s)\\n" "$title" "$date"
+          done || echo "No recent activity")
+          \`\`\`
+
+          ## Contributing
+
+          Please see our [Project Overview](docs/index.md#contributing) for guidelines on contributing to this project.
+
+          ---
+          Last updated: $(date -u "+%Y-%m-%d %H:%M:%S UTC")
+          EOL
+          
+          # Commit and push changes
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          git commit -m "Update README with CT analysis results" || true
+          
+          # Instead of rebasing (which can cause conflicts), fetch and reset to origin/main first
+          git fetch origin main
+          git reset --soft origin/main
+          git add README.md
+          git commit -m "Update README with CT analysis results" || true
+          git push || true
+
+  update-readme-ct-slice-analysis:
+    needs: [check-updates, update-readme-morphosource, update-readme-ct-analysis]
+    if: needs.check-updates.outputs.should_update == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug inputs
+        run: |
+          echo "Should update from check-updates job: ${{ needs.check-updates.outputs.should_update }}"
+          echo "MS tag from check-updates job: ${{ needs.check-updates.outputs.ms_tag }}"
+
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Download MorphoSource tag
+        uses: actions/download-artifact@v4
+        with:
+          name: ms-tag
+
+      - name: Debug MorphoSource tag
+        run: |
+          echo "Content of ms_tag.txt:"
+          cat ms_tag.txt || echo "File not found"
+          ls -la
+
+      - name: Wait for CT slice analysis
+        if: github.event_name != 'workflow_dispatch'
+        run: |
+          # Wait for CT slice analysis to complete (may take longer)
+          echo "Waiting 2 minutes for CT slice analysis to complete..."
+          sleep 120
+      
+      - name: Skip waiting (manual trigger)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "Manual trigger detected, skipping wait period"
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Update README with CT slice analysis
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Function to get release info (both body and url)
+          get_release_info() {
+            local tag=$1
+            if [ -n "$tag" ]; then
+              local info=$(gh release view "$tag" --json body,url,name -q '{"body":.body,"url":.url,"name":.name}')
+              local body=$(echo "$info" | jq -r .body)
+              local url=$(echo "$info" | jq -r .url)
+              local name=$(echo "$info" | jq -r .name)
+              printf "%s\n\n%s\n%s" "[View $name on GitHub]($url)" "\`\`\`" "$body"
+              echo -e "\n\`\`\`"
+            else
+              echo -e "\`\`\`\nNo release found\n\`\`\`"
+            fi
+          }
+
+          # Get the MorphoSource tag
+          ms_tag=$(cat ms_tag.txt)
+          
+          # Get the latest release tags
+          latest_ct_tag=$(gh release list --limit 10 | grep "ct_to_text_analysis-" | head -n 1 | cut -f3 || echo "")
+          latest_slice_tag=$(gh release list --limit 10 | grep "ct_slice_analysis-" | head -n 1 | cut -f3 || echo "")
+          latest_image_tag=$(gh release list --limit 10 | grep "ct_image_analysis-" | head -n 1 | cut -f3 || echo "")
+          
+          # Determine which tag to use for slice analysis (either ct_slice_analysis or ct_image_analysis)
+          slice_tag="$latest_slice_tag"
+          if [ -z "$slice_tag" ]; then
+            slice_tag="$latest_image_tag"
+          fi
+          
+          # Get release info
+          ms_info=$(get_release_info "$ms_tag")
+          ct_info=$(get_release_info "$latest_ct_tag")
+          slice_info=$(get_release_info "$slice_tag")
+          
+          # Format the recent activity
+          recent_activity=$(gh release list --limit 5 | while IFS=$'\t' read -r title status tag date; do
+            printf "%s (%s)\\n" "$title" "$date"
+          done || echo "No recent activity")
+          
+          # Update README with all analysis data
+          cat > README.md << EOL
+          # NOCTURN X-ray Repository
+
+          This repository automatically tracks and analyzes X-ray CT data from MorphoSource, providing multiple layers of analysis through automated workflows.
+
+          ## Documentation
+
+          - [Project Overview and Setup](docs/index.md) - Introduction, project structure, and getting started
+          - [Workflow Dependencies](docs/dependencies.md) - Detailed mapping of workflows and their associated scripts
+          - [Raspberry Pi Installation](docs/Raspi.md) - Guide for setting up NOCTURN on a Raspberry Pi
+
+          ## Latest Analysis Results
+
+          ### MorphoSource Updates
+          ${ms_info}
+
+          ### CT Analysis
+          ${ct_info}
+
+          ### CT Slice Analysis
+          ${slice_info}
+
+          ## Workflow Overview
+
+          This repository uses several automated workflows to analyze X-ray CT data. For a complete list of workflows and their dependencies, see our [Workflow Dependencies](docs/dependencies.md) documentation.
+
+          ### Main Workflows
+
+          1. **Parse MorphoSource Data** (\`parse_morphosource.yml\`)
+             - Runs every 5 minutes
+             - Scrapes MorphoSource for new X-ray CT records
+             - Creates releases with new record details
+             - Triggers subsequent analysis workflows
+
+          2. **CT to Text Analysis** (\`ct_to_text.yml\`)
+             - Triggered by MorphoSource updates
+             - Analyzes CT metadata using AI
+             - Generates detailed descriptions of specimens
+
+          3. **CT Slice Analysis** (\`combined_ct_images_to_text.yml\`)
+             - Analyzes 2D slices and 3D reconstructions
+             - Checks image URLs and captures screenshots
+             - Provides comprehensive visual analysis
+
+          ### Supporting Workflows
+
+          - **Daily Check** (\`daily.yml\`): Daily verification of data consistency
+          - **Monthly Collection** (\`monthly.yml\`): Monthly data aggregation
+          - **Error Cleanup** (\`cleanup_ct_error_releases.yml\`): Maintains release quality
+          - **Wiki Generation** (\`wiki-generation.yml\`): Updates documentation
+
+          ## Installation
+
+          For detailed installation instructions:
+          - Standard setup: See our [Project Overview](docs/index.md#installation)
+          - Raspberry Pi setup: Follow our [Raspberry Pi Guide](docs/Raspi.md#installation)
+
+          ## Recent Activity
+
+          \`\`\`
+          ${recent_activity}
+          \`\`\`
+
+          ## Contributing
+
+          Please see our [Project Overview](docs/index.md#contributing) for guidelines on contributing to this project.
+
+          ---
+          Last updated: $(date -u "+%Y-%m-%d %H:%M:%S UTC")
+          EOL
+          
+          # Commit and push final changes
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          
+          # Only commit if there are changes
+          if ! git diff --quiet || ! git diff --staged --quiet; then
+            # Instead of rebasing (which can cause conflicts), fetch and reset to origin/main first
+            git fetch origin main
+            git reset --soft origin/main
+            git add README.md
+            git commit -m "Update README with all analysis results" || true
+            git push || true
+          fi

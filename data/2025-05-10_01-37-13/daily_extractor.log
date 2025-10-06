@@ -1,0 +1,65 @@
+2025-05-10 01:37:17,571 - Data directory: data/2025-05-10_01-37-13
+2025-05-10 01:37:17,571 - Output directory: data/2025-05-10_01-37-13
+2025-05-10 01:37:17,571 - Using data directory: data/2025-05-10_01-37-13
+2025-05-10 01:37:17,571 - Looking for previous data in: data
+2025-05-10 01:37:17,572 - Loading previous data from: data/2025-05-09_01-40-58/morphosource_data_complete.json
+2025-05-10 01:37:17,575 - Loaded 855 records from previous data file
+2025-05-10 01:37:17,575 - Latest stored record ID: 000739906
+2025-05-10 01:37:17,575 - Previous record count: 855
+2025-05-10 01:37:17,575 - Fetching page 1
+2025-05-10 01:37:20,593 - Found record 000740292 - Total records: 1
+2025-05-10 01:37:20,594 - Found record 000740291 - Total records: 2
+2025-05-10 01:37:20,594 - Found record 000740284 - Total records: 3
+2025-05-10 01:37:20,594 - Found record 000740283 - Total records: 4
+2025-05-10 01:37:20,595 - Found record 000740276 - Total records: 5
+2025-05-10 01:37:20,595 - Found record 000740275 - Total records: 6
+2025-05-10 01:37:20,595 - Found record 000740269 - Total records: 7
+2025-05-10 01:37:20,596 - Found record 000740266 - Total records: 8
+2025-05-10 01:37:20,596 - Found record 000740258 - Total records: 9
+2025-05-10 01:37:20,597 - Found record 000740256 - Total records: 10
+2025-05-10 01:37:20,597 - Found record 000740247 - Total records: 11
+2025-05-10 01:37:20,597 - Found record 000740246 - Total records: 12
+2025-05-10 01:37:20,598 - Found record 000740239 - Total records: 13
+2025-05-10 01:37:20,598 - Found record 000740238 - Total records: 14
+2025-05-10 01:37:20,598 - Found record 000740231 - Total records: 15
+2025-05-10 01:37:20,599 - Found record 000740230 - Total records: 16
+2025-05-10 01:37:20,599 - Found record 000740219 - Total records: 17
+2025-05-10 01:37:20,599 - Found record 000740208 - Total records: 18
+2025-05-10 01:37:20,600 - Found record 000740204 - Total records: 19
+2025-05-10 01:37:20,600 - Found record 000740199 - Total records: 20
+2025-05-10 01:37:20,601 - Found record 000740195 - Total records: 21
+2025-05-10 01:37:20,601 - Found record 000740194 - Total records: 22
+2025-05-10 01:37:20,601 - Found record 000740189 - Total records: 23
+2025-05-10 01:37:20,602 - Found record 000740184 - Total records: 24
+2025-05-10 01:37:20,602 - Found record 000740177 - Total records: 25
+2025-05-10 01:37:20,602 - Found record 000740172 - Total records: 26
+2025-05-10 01:37:20,603 - Found record 000740169 - Total records: 27
+2025-05-10 01:37:20,603 - Found record 000740166 - Total records: 28
+2025-05-10 01:37:20,604 - Found record 000740159 - Total records: 29
+2025-05-10 01:37:20,604 - Found record 000740155 - Total records: 30
+2025-05-10 01:37:20,604 - Found record 000740151 - Total records: 31
+2025-05-10 01:37:20,605 - Found record 000740147 - Total records: 32
+2025-05-10 01:37:20,605 - Found record 000740142 - Total records: 33
+2025-05-10 01:37:20,605 - Found record 000740138 - Total records: 34
+2025-05-10 01:37:20,606 - Found record 000740136 - Total records: 35
+2025-05-10 01:37:20,606 - Found record 000740130 - Total records: 36
+2025-05-10 01:37:20,606 - Found record 000740124 - Total records: 37
+2025-05-10 01:37:20,607 - Found record 000740116 - Total records: 38
+2025-05-10 01:37:20,607 - Found record 000740093 - Total records: 39
+2025-05-10 01:37:20,608 - Found record 000740089 - Total records: 40
+2025-05-10 01:37:20,608 - Found record 000740084 - Total records: 41
+2025-05-10 01:37:20,608 - Found record 000740074 - Total records: 42
+2025-05-10 01:37:20,609 - Found record 000740069 - Total records: 43
+2025-05-10 01:37:20,609 - Found record 000740061 - Total records: 44
+2025-05-10 01:37:20,609 - Found record 000740014 - Total records: 45
+2025-05-10 01:37:20,610 - Found record 000739999 - Total records: 46
+2025-05-10 01:37:20,610 - Found record 000739906 - Total records: 47
+2025-05-10 01:37:20,610 - Found latest stored record 000739906 - stopping fetch
+2025-05-10 01:37:20,610 - Completed fetch - Found 47 new records
+2025-05-10 01:37:20,610 - Latest webpage record ID: 000740292
+2025-05-10 01:37:20,611 - New records available - latest records differ
+2025-05-10 01:37:20,613 - New records: 47
+2025-05-10 01:37:20,613 - Previous records: 855
+2025-05-10 01:37:20,613 - Combined records: 901
+2025-05-10 01:37:20,627 - Saved 901 records to: data/2025-05-10_01-37-13/morphosource_data_complete.json
+2025-05-10 01:37:20,627 - Created detailed release notes at: data/2025-05-10_01-37-13/release_notes.txt

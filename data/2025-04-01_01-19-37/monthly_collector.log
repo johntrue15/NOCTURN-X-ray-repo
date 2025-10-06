@@ -1,0 +1,14 @@
+2025-04-01 01:19:37,891 - INFO - Initialized collector with output directory: data/2025-04-01_01-19-37
+2025-04-01 01:19:37,891 - INFO - Processing page 1
+2025-04-01 01:22:29,099 - INFO - Processing page 2
+2025-04-01 01:23:19,846 - INFO - Processing page 3
+2025-04-01 01:25:20,530 - INFO - Processing page 4
+2025-04-01 01:28:23,572 - INFO - Processing page 5
+2025-04-01 01:30:46,468 - INFO - Analysis complete:
+2025-04-01 01:30:46,468 - INFO - - Existing records: 0
+2025-04-01 01:30:46,468 - INFO - - New records: 400
+2025-04-01 01:30:46,468 - INFO - - Modified records: 0
+2025-04-01 01:30:46,468 - INFO - - Removed records: 0
+2025-04-01 01:30:46,469 - INFO - Validation passed - saving new dataset
+2025-04-01 01:30:46,475 - INFO - Collection complete. Total records: 400
+2025-04-01 01:30:46,475 - INFO - Modified records: 0

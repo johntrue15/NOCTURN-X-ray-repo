@@ -1,0 +1,15 @@
+build:
+  # Use the gh-pages branch for GitHub Pages
+  source: gh-pages
+  # Builds from the gh-pages branch
+
+# Production URL for GitHub Pages
+url: https://johntrue15.github.io/NOCTURN-X-ray-repo/
+
+# Configuration settings
+settings:
+  # Set to use custom domain if needed
+  # domain: example.com
+  
+  # Enhanced security setting
+  https_only: true 

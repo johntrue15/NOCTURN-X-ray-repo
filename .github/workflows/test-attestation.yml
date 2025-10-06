@@ -1,0 +1,263 @@
+name: Test Attestation Generation
+
+on:
+  workflow_dispatch:  # Manual trigger only
+
+permissions:
+  contents: write
+  id-token: write
+  actions: write
+  attestations: write
+
+env:
+  MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+  WORKFLOW_PAT: ${{ secrets.WORKFLOW_PAT }}
+
+jobs:
+  test-attestation:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        
+      - name: Create test file
+        run: |
+          mkdir -p test_data
+          echo "This is a test file for attestation" > test_data/test_subject.txt
+          echo "Created test file at test_data/test_subject.txt"
+      
+      - name: Generate Timestamp
+        id: timestamp
+        run: |
+          TS=$(date +'%Y-%m-%d_%H-%M-%S')
+          echo "timestamp=$TS" >> $GITHUB_OUTPUT
+          echo "Generated timestamp: $TS"
+      
+      # Test 1: Simple Attestation - Default Token
+      - name: Test 1 - Simple Attestation (Default Token)
+        id: attestation_1
+        continue-on-error: true
+        uses: actions/attest@v2
+        with:
+          subject-path: test_data/test_subject.txt
+          predicate-type: 'https://slsa.dev/provenance/v1'
+          predicate: |
+            {
+              "buildDefinition": {
+                "buildType": "https://github.com/Attestations/GitHubHostedActions@v1",
+                "externalParameters": {
+                  "workflow": {
+                    "ref": "${{ github.ref }}",
+                    "repository": "${{ github.repository }}"
+                  }
+                },
+                "internalParameters": {
+                  "github": {
+                    "event_name": "${{ github.event_name }}"
+                  }
+                },
+                "resolvedDependencies": []
+              },
+              "runDetails": {
+                "builder": {
+                  "id": "https://github.com/Attestations/GitHubHostedActions@v1"
+                },
+                "metadata": {
+                  "invocationId": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                }
+              }
+            }
+      
+      # Test 2: Simple Attestation - MY_GITHUB_TOKEN  
+      - name: Test 2 - Simple Attestation (MY_GITHUB_TOKEN)
+        id: attestation_2
+        continue-on-error: true
+        uses: actions/attest@v2
+        env:
+          GITHUB_TOKEN: ${{ env.MY_GITHUB_TOKEN }}
+        with:
+          subject-path: test_data/test_subject.txt
+          predicate-type: 'https://slsa.dev/provenance/v1'
+          predicate: |
+            {
+              "buildDefinition": {
+                "buildType": "https://github.com/Attestations/GitHubHostedActions@v1",
+                "externalParameters": {
+                  "workflow": {
+                    "ref": "${{ github.ref }}",
+                    "repository": "${{ github.repository }}"
+                  }
+                },
+                "internalParameters": {
+                  "github": {
+                    "event_name": "${{ github.event_name }}"
+                  }
+                },
+                "resolvedDependencies": []
+              },
+              "runDetails": {
+                "builder": {
+                  "id": "https://github.com/Attestations/GitHubHostedActions@v1"
+                },
+                "metadata": {
+                  "invocationId": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                }
+              }
+            }
+      
+      # Test 3: Simple Attestation - WORKFLOW_PAT
+      - name: Test 3 - Simple Attestation (WORKFLOW_PAT)
+        id: attestation_3
+        continue-on-error: true
+        uses: actions/attest@v2
+        env:
+          GITHUB_TOKEN: ${{ env.WORKFLOW_PAT }}
+        with:
+          subject-path: test_data/test_subject.txt
+          predicate-type: 'https://slsa.dev/provenance/v1'
+          predicate: |
+            {
+              "buildDefinition": {
+                "buildType": "https://github.com/Attestations/GitHubHostedActions@v1",
+                "externalParameters": {
+                  "workflow": {
+                    "ref": "${{ github.ref }}",
+                    "repository": "${{ github.repository }}"
+                  }
+                },
+                "internalParameters": {
+                  "github": {
+                    "event_name": "${{ github.event_name }}"
+                  }
+                },
+                "resolvedDependencies": []
+              },
+              "runDetails": {
+                "builder": {
+                  "id": "https://github.com/Attestations/GitHubHostedActions@v1"
+                },
+                "metadata": {
+                  "invocationId": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                }
+              }
+            }
+      
+      # Test 4: In-toto Release Format - Default Token
+      - name: Test 4 - In-toto Release Format (Default Token)
+        id: attestation_4
+        continue-on-error: true
+        uses: actions/attest@v2
+        with:
+          subject-path: test_data/test_subject.txt
+          predicate-type: 'https://in-toto.io/Statement/v1'
+          predicate: |
+            {
+              "predicateType": "https://slsa.dev/provenance/v1",
+              "subject": [],
+              "predicate": {
+                "buildDefinition": {
+                  "buildType": "https://github.com/Attestations/GitHubHostedActions@v1",
+                  "externalParameters": {
+                    "workflow": {
+                      "ref": "${{ github.ref }}",
+                      "repository": "${{ github.repository }}"
+                    }
+                  },
+                  "internalParameters": {
+                    "github": {
+                      "event_name": "${{ github.event_name }}"
+                    }
+                  },
+                  "resolvedDependencies": []
+                },
+                "runDetails": {
+                  "builder": {
+                    "id": "https://github.com/Attestations/GitHubHostedActions@v1"
+                  },
+                  "metadata": {
+                    "invocationId": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                }
+              }
+            }
+            
+      # Test 5: Minimal In-toto Format - Default Token
+      - name: Test 5 - Minimal In-toto Format (Default Token)
+        id: attestation_5
+        continue-on-error: true
+        uses: actions/attest@v2
+        with:
+          subject-path: test_data/test_subject.txt
+          predicate-type: 'https://in-toto.io/Statement/v1'
+          predicate: |
+            {
+              "predicateType": "custom",
+              "subject": [],
+              "predicate": { 
+                "test_info": {
+                  "type": "test_attestation",
+                  "timestamp": "${{ steps.timestamp.outputs.timestamp }}"
+                }
+              }
+            }
+      
+      # Create a report of the results
+      - name: Generate Results Report
+        run: |
+          mkdir -p test_results
+          
+          echo "# Attestation Test Results - ${{ steps.timestamp.outputs.timestamp }}" > test_results/report.md
+          echo "" >> test_results/report.md
+          
+          echo "## Test 1 - Simple Attestation (Default Token)" >> test_results/report.md
+          echo "* Status: ${{ steps.attestation_1.outcome }}" >> test_results/report.md
+          if [[ "${{ steps.attestation_1.outcome }}" == "success" ]]; then
+            echo "* Attestation URL: ${{ steps.attestation_1.outputs.attestation-url }}" >> test_results/report.md
+          else
+            echo "* Failed to generate attestation" >> test_results/report.md
+          fi
+          
+          echo "" >> test_results/report.md
+          echo "## Test 2 - Simple Attestation (MY_GITHUB_TOKEN)" >> test_results/report.md
+          echo "* Status: ${{ steps.attestation_2.outcome }}" >> test_results/report.md
+          if [[ "${{ steps.attestation_2.outcome }}" == "success" ]]; then
+            echo "* Attestation URL: ${{ steps.attestation_2.outputs.attestation-url }}" >> test_results/report.md
+          else
+            echo "* Failed to generate attestation" >> test_results/report.md
+          fi
+          
+          echo "" >> test_results/report.md
+          echo "## Test 3 - Simple Attestation (WORKFLOW_PAT)" >> test_results/report.md
+          echo "* Status: ${{ steps.attestation_3.outcome }}" >> test_results/report.md
+          if [[ "${{ steps.attestation_3.outcome }}" == "success" ]]; then
+            echo "* Attestation URL: ${{ steps.attestation_3.outputs.attestation-url }}" >> test_results/report.md
+          else
+            echo "* Failed to generate attestation" >> test_results/report.md
+          fi
+          
+          echo "" >> test_results/report.md
+          echo "## Test 4 - In-toto Release Format (Default Token)" >> test_results/report.md
+          echo "* Status: ${{ steps.attestation_4.outcome }}" >> test_results/report.md
+          if [[ "${{ steps.attestation_4.outcome }}" == "success" ]]; then
+            echo "* Attestation URL: ${{ steps.attestation_4.outputs.attestation-url }}" >> test_results/report.md
+          else
+            echo "* Failed to generate attestation" >> test_results/report.md
+          fi
+          
+          echo "" >> test_results/report.md
+          echo "## Test 5 - Minimal In-toto Format (Default Token)" >> test_results/report.md
+          echo "* Status: ${{ steps.attestation_5.outcome }}" >> test_results/report.md
+          if [[ "${{ steps.attestation_5.outcome }}" == "success" ]]; then
+            echo "* Attestation URL: ${{ steps.attestation_5.outputs.attestation-url }}" >> test_results/report.md
+          else
+            echo "* Failed to generate attestation" >> test_results/report.md
+          fi
+          
+          cat test_results/report.md
+          
+      - name: Upload Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: attestation-test-results-${{ steps.timestamp.outputs.timestamp }}
+          path: test_results/report.md 

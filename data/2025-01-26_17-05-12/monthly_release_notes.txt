@@ -1,0 +1,13 @@
+# Monthly MorphoSource Collection Report
+
+Collection Date: 2025-01-26 18:34:32
+
+## Summary
+- Total Records: 104398
+- New Records: 104398
+- Modified Records: 0
+- Removed Records: 0
+
+## Attestations
+Dataset Attestation: https://github.com/johntrue15/NOCTURN-X-ray-repo/attestations/4631331
+

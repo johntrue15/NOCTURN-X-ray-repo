@@ -1,0 +1,69 @@
+name: Wiki Generation
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Runs weekly on Sunday at midnight
+  workflow_dispatch:      # Allows manual trigger
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  generate-wiki:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: read
+      pull-requests: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all tags and branches
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install PyGithub semver
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+
+      - name: Clone Wiki
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" wiki || {
+            echo "Wiki not initialized - creating first page"
+            cd wiki
+            git init
+            echo "# Project Wiki" > Home.md
+            git add Home.md
+            git commit -m "Initialize wiki"
+            git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git"
+            git push -u origin master
+          }
+
+      - name: Generate Wiki Content
+        run: |
+          python .github/scripts/release_analysis.py \
+            --token "${{ secrets.GITHUB_TOKEN }}" \
+            --repository "$GITHUB_REPOSITORY" \
+            --wiki-dir "wiki" \
+            --debug
+
+      - name: Commit and Push Wiki Changes
+        run: |
+          cd wiki
+          git add .
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update release summaries [skip ci]" && git push)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

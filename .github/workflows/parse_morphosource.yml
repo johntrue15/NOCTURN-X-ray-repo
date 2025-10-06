@@ -3,7 +3,7 @@ name: Parse MorphoSource Data
 on:
   schedule:
     # Runs every 5 minutes (adjust as needed)
-    - cron: "*/5 * * * *"
+    #- cron: "*/5 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -18,6 +18,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           persist-credentials: true
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -38,7 +39,12 @@ jobs:
           git config user.email "actions@github.com"
           git add .github/last_count.txt
           git commit -m "Update last_count.txt for new records"
-          git push
+          
+          # Pull latest changes with rebase to avoid merge commits
+          git pull --rebase origin main
+          
+          # Push with force-with-lease for safety (prevents overwriting others' changes)
+          git push --force-with-lease
 
       - name: Generate Timestamp
         id: gen_ts

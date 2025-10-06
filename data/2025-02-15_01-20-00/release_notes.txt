@@ -1,0 +1,30 @@
+# Daily Check Report
+
+## Record Changes
+Latest Record ID: 000710344
+Previous Record ID: 000709984
+
+Total Records: 105193
+Previous Records: 105182
+New Records Added: 12
+
+### New Record IDs:
+- 000710344: Whole Body [CTImageSeries] [CT]
+- 000710330: Whole Body [CTImageSeries] [CT]
+- 000710313: Whole Body [CTImageSeries] [CT]
+- 000710276: Whole Body [CTImageSeries] [CT]
+- 000710235: Whole Body [CTImageSeries] [CT]
+- 000710218: Whole Body [CTImageSeries] [CT]
+- 000710213: Whole Body [CTImageSeries] [CT]
+- 000710207: Whole Body [CTImageSeries] [CT]
+- 000710201: Whole Body [CTImageSeries] [CT]
+- 000710179: Pl Ys Of The Full Cranium, Parabasisphenoid And Internal Carotids [Mesh] [CT]
+... and 2 more
+
+## Data Comparison
+Previous records: 105182
+Current records: 105193
+Difference: 11
+
+## Attestation
+Daily Dataset: https://github.com/johntrue15/NOCTURN-X-ray-repo/attestations/4997163

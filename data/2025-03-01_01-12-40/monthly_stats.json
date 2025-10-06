@@ -1,0 +1,12 @@
+{
+  "total_records": 105000,
+  "modified_records": 0,
+  "new_records": 105000,
+  "collection_date": "2025-03-01T02:51:59.990005",
+  "pages_processed": 1050,
+  "error_count": 0,
+  "checkpoint_status": {
+    "last_successful_page": 1050,
+    "last_successful_id": "000000339"
+  }
+}

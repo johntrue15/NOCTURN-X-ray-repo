@@ -1,0 +1,133 @@
+name: Issue Workflow Dependency Check
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  check-dependencies:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install PyYAML PyGithub
+
+      - name: Check for workflow dependencies
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          cat > check_dependencies.py << 'EOL'
+          import os
+          import re
+          from github import Github
+
+          def read_dependencies_file():
+              with open('docs/dependencies.md', 'r') as f:
+                  content = f.read()
+              return content
+
+          def extract_workflow_names(text):
+              # Find all workflow filenames in quotes
+              workflow_matches = re.finditer(r'["\']([^"\']*\.yml)["\']', text)
+              return [match.group(1) for match in workflow_matches]
+
+          def find_workflow_info(content, workflow_name):
+              # Find the section for this workflow
+              workflow_title = re.search(rf'### [^(]+ \(`{workflow_name}`\)', content)
+              if not workflow_title:
+                  return None
+                  
+              # Get the workflow's display name
+              display_name = re.match(r'### ([^(]+)', workflow_title.group(0)).group(1).strip()
+              
+              # Find the section content
+              section = re.search(rf'{re.escape(workflow_title.group(0))}.*?(?=###|$)', content, re.DOTALL)
+              if not section:
+                  return None
+                  
+              info = {
+                  'name': display_name,
+                  'scripts': [],
+                  'triggers': [],
+                  'triggered_by': []
+              }
+              
+              # Extract required scripts
+              scripts_section = re.search(r'Required Scripts:(.*?)(?=\n\n|$)', section.group(0), re.DOTALL)
+              if scripts_section:
+                  info['scripts'] = re.findall(r'- `\.github/scripts/(.+?)`', scripts_section.group(1))
+              
+              # Extract triggers
+              triggers_section = re.search(r'Triggers Workflows:(.*?)(?=\n\n|$)', section.group(0), re.DOTALL)
+              if triggers_section:
+                  info['triggers'] = re.findall(r'- `(.+?)`', triggers_section.group(1))
+              
+              # Extract triggered by
+              triggered_section = re.search(r'Triggered by:(.*?)(?=\n\n|$)', section.group(0), re.DOTALL)
+              if triggered_section:
+                  info['triggered_by'] = re.findall(r'- `(.+?)`', triggered_section.group(1))
+              
+              return info
+
+          def check_issue_for_workflows():
+              # Initialize GitHub client
+              gh = Github(os.environ['GITHUB_TOKEN'])
+              repo = gh.get_repo(os.environ['GITHUB_REPOSITORY'])
+              issue = repo.get_issue(number=int(os.environ['ISSUE_NUMBER']))
+              
+              # Find all workflow files mentioned in the issue
+              workflows = extract_workflow_names(issue.title + '\n' + (issue.body or ''))
+              if not workflows:
+                  return
+              
+              # Read dependencies file
+              deps_content = read_dependencies_file()
+              
+              # Build comment for each workflow
+              comment = "### Workflow Dependencies\n\n"
+              for workflow in workflows:
+                  info = find_workflow_info(deps_content, workflow)
+                  if info:
+                      comment += f"#### {info['name']} (`{workflow}`)\n\n"
+                      
+                      if info['scripts']:
+                          comment += "**Required Scripts:**\n"
+                          for script in info['scripts']:
+                              comment += f"- `.github/scripts/{script}`\n"
+                          comment += "\n"
+                          
+                      if info['triggers']:
+                          comment += "**Triggers:**\n"
+                          for trigger in info['triggers']:
+                              comment += f"- `{trigger}`\n"
+                          comment += "\n"
+                          
+                      if info['triggered_by']:
+                          comment += "**Triggered By:**\n"
+                          for trigger in info['triggered_by']:
+                              comment += f"- `{trigger}`\n"
+                          comment += "\n"
+              
+              if len(comment) > len("### Workflow Dependencies\n\n"):
+                  comment += "\nPlease ensure any changes consider these dependencies."
+                  issue.create_comment(comment)
+
+          if __name__ == '__main__':
+              check_issue_for_workflows()
+          EOL
+          
+          python check_dependencies.py

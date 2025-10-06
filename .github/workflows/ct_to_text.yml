@@ -1,99 +1,235 @@
-name: CT to Text
+name: CT to Text Analysis
 
 on:
-  workflow_run:
-    # Must match the 'name:' from your parse_morphosource_data.yml
-    workflows: ["Parse MorphoSource Data"]
-    types: [completed]
+  release:
+    types: [published]
+  workflow_dispatch:
 
 jobs:
-  ct_text_job:
+  analyze_ct:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-
+    permissions:
+      contents: write
+    
     steps:
       # -------------------------------------------------------
-      # 1. Check out your repository
+      # 1. Checkout repository
       # -------------------------------------------------------
-      - name: Check out repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       # -------------------------------------------------------
-      # 2. Set up Python
+      # 2. Setup Python
       # -------------------------------------------------------
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
-
+          python-version: '3.10'
+          
       # -------------------------------------------------------
       # 3. Install Dependencies
       # -------------------------------------------------------
-      - name: Install Dependencies
-        run: pip install requests beautifulsoup4 openai
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openai
 
       # -------------------------------------------------------
-      # 4. Fetch Latest Release (multi-line safe)
+      # 4. Get latest release
       # -------------------------------------------------------
-      - name: Fetch Latest Release
+      - name: Fetch latest release
         id: fetch_release
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          echo "Fetching the latest release from this repo..."
-          response=$(curl -sSL -H "Authorization: Bearer $GITHUB_TOKEN" \
-            https://api.github.com/repos/${{ github.repository }}/releases/latest)
-
-          # (Optional) Save JSON for debugging
-          echo "$response" > latest_release.json
-
-          # Extract fields
-          body=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['body'])")
-          tag_name=$(echo "$response" | python -c "import sys, json; print(json.load(sys.stdin)['tag_name'])")
-
-          echo "Found release tag_name=$tag_name"
-
-          # Store them as outputs for subsequent steps
-          # Use multi-line safe approach for release_body
+          # Get the latest release
+          release=$(gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/releases/latest)
+          
+          # Extract and store release info
+          echo "release_tag=$(echo $release | jq -r .tag_name)" >> "$GITHUB_OUTPUT"
           echo "release_body<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$body" >> "$GITHUB_OUTPUT"
+          echo "$release" | jq -r .body >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
-          # tag_name should be a single line
-          echo "release_tag=$tag_name" >> "$GITHUB_OUTPUT"
-
       # -------------------------------------------------------
-      # 5. Check if morphosource-updates
+      # 5. Check if it's a morphosource release
       # -------------------------------------------------------
-      - name: Check if morphosource-updates
+      - name: Check if morphosource release
         id: check_morpho
         run: |
-          TAG_NAME="${{ steps.fetch_release.outputs.release_tag }}"
-          echo "Found TAG_NAME=$TAG_NAME"
-
-          if [[ "$TAG_NAME" == morphosource-updates-* ]]; then
+          MS_TAG="${{ steps.fetch_release.outputs.release_tag }}"
+          if [[ "$MS_TAG" =~ ^morphosource-updates-[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}-[0-9]{2}-[0-9]{2}$ ]]; then
+            echo "Found MorphoSource release: $MS_TAG"
             echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
+            echo "ms_tag=$MS_TAG" >> "$GITHUB_OUTPUT"
           else
+            echo "Not a MorphoSource release: $MS_TAG"
             echo "is_morphosource=false" >> "$GITHUB_OUTPUT"
           fi
 
       # -------------------------------------------------------
-      # 6. Generate Timestamp (Only if it's morphosource-updates)
+      # 6. Extract timestamp if morphosource
+      # -------------------------------------------------------
+      - name: Extract morphosource timestamp
+        id: extract_ts
+        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        run: |
+          MS_TAG="${{ steps.check_morpho.outputs.ms_tag }}"
+          MS_TIME="${MS_TAG#morphosource-updates-}"
+          # Clean the timestamp to match CT analysis format
+          MS_TIME_CLEAN=$(echo "$MS_TIME" | sed 's/[-_]//g')
+          echo "MS_TIME=$MS_TIME" >> "$GITHUB_ENV"
+          echo "MS_TIME_CLEAN=$MS_TIME_CLEAN" >> "$GITHUB_ENV"
+          echo "timestamp=$MS_TIME" >> "$GITHUB_OUTPUT"
+
+      # -------------------------------------------------------
+      # 7. Check for existing analysis
+      # -------------------------------------------------------
+      - name: Check for existing analysis
+        id: check_analysis
+        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Log what we're checking for
+          echo "Checking for analysis of MorphoSource release: ${{ steps.check_morpho.outputs.ms_tag }}"
+          echo "Release timestamp: $MS_TIME"
+          
+          # Get all CT to Text releases
+          echo "=== All CT to Text releases ==="
+          gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/releases | \
+          jq -r '.[] | select(.tag_name | startswith("ct_to_text_analysis-")) | { tag_name, created_at }'
+          echo "=============================="
+          
+          echo "Cleaned morphosource timestamp: $MS_TIME_CLEAN"
+          
+          # Check for existing analyses after this timestamp
+          response=$(gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/releases)
+          
+          # Debug each release's timestamp comparison
+          echo "=== Timestamp Comparisons ==="
+          echo "$response" | jq -r --arg ms_time "$MS_TIME_CLEAN" '
+            .[] | 
+            select(.tag_name | startswith("ct_to_text_analysis-")) |
+            . as $release |
+            {
+              "tag": .tag_name,
+              "timestamp": (.tag_name[21:] | gsub("[-_]"; "")),
+              "morphosource_time": $ms_time,
+              "is_after": ((.tag_name[21:] | gsub("[-_]"; "")) >= $ms_time)
+            }'
+          echo "=============================="
+          
+          # Count matching analyses with fixed comparison
+          has_analysis=$(echo "$response" | jq -r --arg ms_time "$MS_TIME_CLEAN" '
+            [.[] | 
+            select(
+              (.tag_name | startswith("ct_to_text_analysis-")) and
+              ((.tag_name[21:] | gsub("[-_]"; "")) >= $ms_time)
+            )] | length')
+          
+          echo "Number of matching analyses found: $has_analysis"
+          
+          # Debug: Show matching releases
+          echo "=== Matching CT to Text releases ==="
+          echo "$response" | jq -r --arg ms_time "$MS_TIME_CLEAN" '.[] | 
+            select(
+              (.tag_name | startswith("ct_to_text_analysis-")) and
+              ((.tag_name[21:] | gsub("[-_]"; "")) >= $ms_time)
+            ) | {
+              tag_name, 
+              created_at,
+              "timestamp": (.tag_name[21:] | gsub("[-_]"; ""))
+            }'
+          echo "=============================="
+          
+          if [ "$has_analysis" -gt "0" ]; then
+            echo "CT to Text analysis already exists for $MS_TAG"
+            echo "has_analysis=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No existing CT to Text analysis found for $MS_TAG"
+            echo "has_analysis=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # -------------------------------------------------------
+      # 8. Check Blacklist
+      # -------------------------------------------------------
+      - name: Check Blacklist
+        id: check_blacklist
+        if: |
+          steps.check_morpho.outputs.is_morphosource == 'true' &&
+          steps.check_analysis.outputs.has_analysis != 'true'
+        run: |
+          # Write release body to temp file
+          echo "${{ steps.fetch_release.outputs.release_body }}" > temp_release.txt
+          
+          # Debug: Show contents of blacklist file
+          echo "=== Blacklist Contents ==="
+          cat .github/blacklist.txt
+          echo "=========================="
+          
+          # Debug: Show what we're searching for
+          echo "=== Searching Release Body For ==="
+          while IFS= read -r line || [[ -n "$line" ]]; do
+            [[ $line =~ ^#.*$ || -z $line ]] && continue
+            # Trim whitespace
+            line=$(echo "$line" | sed -e 's/[[:space:]]*$//')
+            echo "Looking for: '$line'"
+          done < .github/blacklist.txt
+          echo "=============================="
+          
+          # Check if any blacklisted data managers are in the release
+          while IFS= read -r line || [[ -n "$line" ]]; do
+            # Skip comments and empty lines
+            [[ $line =~ ^#.*$ || -z $line ]] && continue
+            
+            # Trim whitespace
+            line=$(echo "$line" | sed -e 's/[[:space:]]*$//')
+            echo "Checking for: '$line'"
+            
+            # Use grep with exact line matching and word boundaries
+            if grep -F -x "$line" temp_release.txt; then
+              echo "Blacklisted data manager found: $line"
+              echo "is_blacklisted=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          done < .github/blacklist.txt
+          
+          # Debug: If no match found, show the release body
+          echo "=== Release Body Contents ==="
+          echo "First 10 lines of release body:"
+          head -n 10 temp_release.txt
+          echo "..."
+          echo "Data Manager lines:"
+          grep "Data Manager:" temp_release.txt
+          echo "==========================="
+          
+          echo "No blacklisted data managers found"
+          echo "is_blacklisted=false" >> "$GITHUB_OUTPUT"
+
+      # -------------------------------------------------------
+      # 9. Generate Timestamp
       # -------------------------------------------------------
       - name: Generate Timestamp
         id: gen_ts
-        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        if: |
+          steps.check_morpho.outputs.is_morphosource == 'true' &&
+          steps.check_analysis.outputs.has_analysis != 'true' &&
+          steps.check_blacklist.outputs.is_blacklisted != 'true'
         run: |
           # Example format: YYYY-MM-DD_HH-MM-SS
           TS=$(date +'%Y-%m-%d_%H-%M-%S')
           echo "timestamp=$TS" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 7. Run CT to Text (Only if it's morphosource-updates)
+      # 10. Run CT to Text
       # -------------------------------------------------------
       - name: Run CT to Text
         id: ct2text
-        if: steps.check_morpho.outputs.is_morphosource == 'true'
+        if: |
+          steps.check_morpho.outputs.is_morphosource == 'true' &&
+          steps.check_analysis.outputs.has_analysis != 'true' &&
+          steps.check_blacklist.outputs.is_blacklisted != 'true'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
@@ -109,13 +245,16 @@ jobs:
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 8. Create or Update Release with AI Summary
+      # 11. Create or Update Release with AI Summary
       # -------------------------------------------------------
       - name: Create or Update Release with AI Summary
-        if: steps.check_morpho.outputs.is_morphosource == 'true'
-        uses: actions/create-release@v1
+        if: |
+          steps.check_morpho.outputs.is_morphosource == 'true' &&
+          steps.check_analysis.outputs.has_analysis != 'true' &&
+          steps.check_blacklist.outputs.is_blacklisted != 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+        uses: actions/create-release@v1
         with:
           tag_name: "ct_to_text_analysis-${{ steps.gen_ts.outputs.timestamp }}"
           release_name: "CT to Text Analysis #${{ steps.gen_ts.outputs.timestamp }}"
@@ -124,7 +263,16 @@ jobs:
           prerelease: false
 
       # -------------------------------------------------------
-      # 9. Fallback step if not morphosource-updates
+      # 12. Log Blacklisted Release
+      # -------------------------------------------------------
+      - name: Log Blacklisted Release
+        if: steps.check_blacklist.outputs.is_blacklisted == 'true'
+        run: |
+          echo "Release skipped due to blacklisted data manager"
+          echo "Release tag: ${{ steps.fetch_release.outputs.release_tag }}"
+
+      # -------------------------------------------------------
+      # 13. Fallback step if not morphosource-updates
       # -------------------------------------------------------
       - name: No new morphosource release
         if: steps.check_morpho.outputs.is_morphosource == 'false'

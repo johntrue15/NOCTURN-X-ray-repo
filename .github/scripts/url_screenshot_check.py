@@ -68,18 +68,20 @@ def check_for_server_error(driver):
             return True
         return False
 
-def handle_media_error(url, driver):
+def handle_media_error(url, driver, error_type="media_error", error_message=None):
     """Handle media error case and create status file"""
     file_id = extract_id_from_url(url)
     status_data = {
-        'status': 'media_error',
+        'status': error_type,
         'url': url,
         'file_id': file_id,
         'timestamp': datetime.now().isoformat()
     }
+    if error_message:
+        status_data['error_message'] = error_message
     
     # Save the error state screenshot
-    error_file = f"{file_id}.png"
+    error_file = os.path.join('screenshots', f"error_{file_id}.png")
     try:
         driver.save_screenshot(error_file)
         logging.info(f"Error state screenshot saved to {error_file}")
@@ -89,7 +91,7 @@ def handle_media_error(url, driver):
     # Save status file
     with open('url_check_status.json', 'w') as f:
         json.dump(status_data, f, indent=2)
-    logging.info("Status file saved")
+    logging.info(f"Status file saved with {error_type}")
     
     return True
 
@@ -106,7 +108,7 @@ def handle_server_error(url, driver=None):
     
     # Try to save error screenshot if driver is available
     if driver:
-        error_file = f"error_{file_id}_500.png"
+        error_file = os.path.join('screenshots', f"error_{file_id}_500.png")
         try:
             driver.save_screenshot(error_file)
             logging.info(f"500 error screenshot saved as {error_file}")
@@ -122,8 +124,8 @@ def handle_server_error(url, driver=None):
 
 def take_screenshot(url):
     file_id = extract_id_from_url(url)
-    output_file = f"{file_id}.png"
-    error_file = f"error_{file_id}.png"
+    output_file = os.path.join('screenshots', f"{file_id}.png")
+    error_file = os.path.join('screenshots', f"error_{file_id}.png")
     max_retries = 3
     server_error_count = 0
 
@@ -145,13 +147,19 @@ def take_screenshot(url):
                 time.sleep(5)
                 continue
             
-            # Check for the not-ready message
+            # Check for error messages
             try:
                 not_ready = driver.find_element(By.CSS_SELECTOR, 'div.not-ready')
-                if "Media preview currently unavailable" in not_ready.text:
+                error_text = not_ready.text
+                
+                if "Media preview currently unavailable" in error_text:
                     logging.info("morphosource media error")
                     print("morphosource media error")
-                    return handle_media_error(url, driver)
+                    return handle_media_error(url, driver, "media_error", error_text)
+                elif "No file uploaded" in error_text:
+                    logging.info("morphosource no file error")
+                    print("morphosource no file error")
+                    return handle_media_error(url, driver, "no_file_error", error_text)
             except NoSuchElementException:
                 pass
             

@@ -1,0 +1,30 @@
+2025-09-25 01:28:08,084 - Data directory: data/2025-09-25_01-28-06
+2025-09-25 01:28:08,085 - Output directory: data/2025-09-25_01-28-06
+2025-09-25 01:28:08,085 - Using data directory: data/2025-09-25_01-28-06
+2025-09-25 01:28:08,085 - Looking for previous data in: data
+2025-09-25 01:28:08,087 - Loading previous data from: data/2025-09-24_01-27-26/morphosource_data_complete.json
+2025-09-25 01:28:08,512 - Loaded 108697 records from previous data file
+2025-09-25 01:28:08,513 - Latest stored record ID: 000780405
+2025-09-25 01:28:08,513 - Previous record count: 108697
+2025-09-25 01:28:08,513 - Fetching page 1
+2025-09-25 01:28:21,654 - Found record 000780507 - Total records: 1
+2025-09-25 01:28:21,654 - Found record 000780491 - Total records: 2
+2025-09-25 01:28:21,655 - Found record 000780481 - Total records: 3
+2025-09-25 01:28:21,655 - Found record 000780463 - Total records: 4
+2025-09-25 01:28:21,655 - Found record 000780459 - Total records: 5
+2025-09-25 01:28:21,656 - Found record 000780455 - Total records: 6
+2025-09-25 01:28:21,656 - Found record 000780442 - Total records: 7
+2025-09-25 01:28:21,656 - Found record 000780438 - Total records: 8
+2025-09-25 01:28:21,657 - Found record 000780432 - Total records: 9
+2025-09-25 01:28:21,657 - Found record 000780428 - Total records: 10
+2025-09-25 01:28:21,657 - Found record 000780425 - Total records: 11
+2025-09-25 01:28:21,658 - Found record 000780405 - Total records: 12
+2025-09-25 01:28:21,658 - Found latest stored record 000780405 - stopping fetch
+2025-09-25 01:28:21,658 - Completed fetch - Found 12 new records
+2025-09-25 01:28:21,659 - Latest webpage record ID: 000780507
+2025-09-25 01:28:21,659 - New records available - latest records differ
+2025-09-25 01:28:21,809 - New records: 12
+2025-09-25 01:28:21,809 - Previous records: 108697
+2025-09-25 01:28:21,809 - Combined records: 108708
+2025-09-25 01:28:23,399 - Saved 108708 records to: data/2025-09-25_01-28-06/morphosource_data_complete.json
+2025-09-25 01:28:23,399 - Created detailed release notes at: data/2025-09-25_01-28-06/release_notes.txt

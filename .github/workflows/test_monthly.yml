@@ -1,0 +1,212 @@
+name: Test Monthly Collection
+on:
+  workflow_dispatch:
+    inputs:
+      record_count:
+        description: 'Number of test records to generate'
+        required: true
+        default: '5'
+        type: string
+
+permissions:
+  contents: write
+  id-token: write
+  actions: read
+  attestations: write
+
+jobs:
+  test-collection:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Configure Git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+
+    - name: Set timestamp
+      id: timestamp
+      run: |
+        TIMESTAMP=$(date +'%Y-%m-%d_%H-%M-%S')
+        echo "timestamp=$TIMESTAMP" >> $GITHUB_ENV
+        echo "Timestamp set to: $TIMESTAMP"
+
+    - name: Create data directories
+      run: |
+        mkdir -p "data/${{ env.timestamp }}"
+
+    - name: Run test collection
+      id: collect
+      run: |
+        echo "::group::Starting Test Collection"
+        echo "Run ID: ${{ github.run_id }}"
+        echo "Timestamp: ${{ env.timestamp }}"
+        echo "Records to generate: ${{ github.event.inputs.record_count }}"
+        echo "::endgroup::"
+        
+        python .github/scripts/test_monthly.py \
+          --output-dir "data/${{ env.timestamp }}" \
+          --record-count "${{ github.event.inputs.record_count }}" \
+          2>&1 | tee collection_log.txt
+        
+        if [ -f "data/${{ env.timestamp }}/monthly_stats.json" ]; then
+          echo "total_records=$(jq '.total_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
+          echo "modified_records=$(jq '.modified_records' "data/${{ env.timestamp }}/monthly_stats.json")" >> $GITHUB_OUTPUT
+        else
+          echo "Warning: monthly_stats.json not found"
+          find data -type f -name "monthly_stats.json"
+        fi
+
+    - name: Generate Collection Summary
+      if: always()
+      run: |
+        echo "::group::Collection Summary"
+        echo "Total Records: ${{ steps.collect.outputs.total_records || 'N/A' }}"
+        echo "Modified Records: ${{ steps.collect.outputs.modified_records || 'N/A' }}"
+        echo "::endgroup::"
+
+    - name: Generate Attestation
+      id: attest
+      if: success() && hashFiles('data/${{ env.timestamp }}/morphosource_data_complete.json') != ''
+      uses: actions/attest@v2.1.0
+      with:
+        subject-path: data/${{ env.timestamp }}/morphosource_data_complete.json
+        predicate-type: 'https://in-toto.io/attestation/release/v0.1'
+        show-summary: true
+        predicate: |
+          {
+            "purl": "pkg:github/${{ github.repository }}",
+            "version": "${{ github.sha }}",
+            "metadata": {
+              "buildInvocationId": "${{ github.run_id }}",
+              "completeness": {
+                "parameters": true,
+                "environment": true,
+                "materials": true
+              },
+              "test_parameters": {
+                "record_count": "${{ github.event.inputs.record_count }}"
+              },
+              "stats": {
+                "total_records": "${{ steps.collect.outputs.total_records }}",
+                "modified_records": "${{ steps.collect.outputs.modified_records }}"
+              }
+            }
+          }
+
+    - name: Save Attestation and Update Release Notes
+      if: success()
+      run: |
+        # Debug step execution
+        echo "Starting Save Attestation step..."
+        
+        # Get attestation ID from URL in output
+        ATT_URL="${{ steps.attest.outputs.attestation-url }}"
+        ATT_ID=$(echo "$ATT_URL" | grep -o '[0-9]*$' || true)
+        
+        echo "Attestation URL: $ATT_URL"
+        echo "Attestation ID: $ATT_ID"
+        
+        if [ -z "$ATT_ID" ]; then
+          echo "Error: Could not extract attestation ID"
+          exit 1
+        fi
+        
+        # Fetch the attestation page and extract SHA256
+        DIGEST=$(curl -s "$ATT_URL" | grep -A2 "Subjects" | grep "sha256:" | sed 's/.*sha256:\([a-f0-9]\{64\}\).*/\1/')
+        echo "SHA256 Digest: $DIGEST"
+        
+        # Validate that we got a proper SHA256 (64 hex characters)
+        if ! [[ $DIGEST =~ ^[a-f0-9]{64}$ ]]; then
+          echo "Error: Invalid SHA256 digest format"
+          exit 1
+        fi
+        
+        # Update the attestation file with the extracted digest
+        jq --arg digest "$DIGEST" \
+           '.subject[0].digest.sha256 = $digest' \
+           "data/${{ env.timestamp }}/attestation.json" > temp.json && \
+        mv temp.json "data/${{ env.timestamp }}/attestation.json"
+        
+        # Create attestation URL
+        COMPLETE_URL="https://github.com/${{ github.repository }}/attestations/${ATT_ID}"
+        
+        # Create attestation section content
+        ATTESTATION_CONTENT="Dataset Attestation: ${COMPLETE_URL}"
+        
+        # Replace placeholder in release notes
+        sed -i "s|<!-- ATTESTATION_URLS -->|${ATTESTATION_CONTENT}|" "data/${{ env.timestamp }}/monthly_release_notes.txt"
+        
+        echo "Updated release notes with attestation URLs:"
+        cat "data/${{ env.timestamp }}/monthly_release_notes.txt"
+        
+        # Verify attestation file exists and show contents
+        echo "Attestation file contents:"
+        cat "data/${{ env.timestamp }}/attestation.json" || echo "Attestation file not created!"
+
+    - name: Create Status Files
+      if: always()
+      run: |
+        echo "::group::Creating Status Files"
+        jq -n \
+          --arg status "${{ job.status }}" \
+          --arg timestamp "${{ env.timestamp }}" \
+          --arg run_id "${{ github.run_id }}" \
+          --arg record_count "${{ github.event.inputs.record_count }}" \
+          '{status: $status, timestamp: $timestamp, run_id: $run_id, test_records: $record_count}' \
+          > "data/${{ env.timestamp }}/run_status.json"
+        echo "::endgroup::"
+
+    - name: Commit data files
+      if: always()
+      run: |
+        echo "::group::Files to be committed"
+        git add -f "data/${{ env.timestamp }}/"
+        git status
+        echo "::endgroup::"
+        
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Test: MorphoSource data [${{ env.timestamp }}]"
+          git push origin HEAD:main
+        fi
+
+    - name: Create Release
+      if: success() && hashFiles('data/${{ env.timestamp }}/morphosource_data_complete.json') != ''
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        name: "Test Monthly Collection #${{ env.timestamp }}"
+        tag_name: "test-monthly-${{ env.timestamp }}"
+        body_path: data/${{ env.timestamp }}/monthly_release_notes.txt
+        files: |
+          data/${{ env.timestamp }}/morphosource_data_complete.json
+          data/${{ env.timestamp }}/monthly_stats.json
+          data/${{ env.timestamp }}/run_status.json
+          data/${{ env.timestamp }}/attestation.json
+          data/${{ env.timestamp }}/test_collection.log
+
+    - name: Upload logs
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-monthly-logs-${{ env.timestamp }}
+        path: |
+          data/${{ env.timestamp }}/*
+          collection_log.txt

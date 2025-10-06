@@ -1,0 +1,30 @@
+# Daily Check Report
+
+## Record Changes
+Latest Record ID: 000709198
+Previous Record ID: 000708101
+
+Total Records: 105116
+Previous Records: 104947
+New Records Added: 170
+
+### New Record IDs:
+- 000709198: Reticulate Nummulites
+- 000709193: Head [CTImageSeries] [CT]
+- 000709188: Entire Specimen [CTImageSeries] [CT]
+- 000709187: Head [CTImageSeries] [CT]
+- 000709180: Entire Specimen [CTImageSeries] [CT]
+- 000709179: Head [CTImageSeries] [CT]
+- 000709172: Entire Specimen [CTImageSeries] [CT]
+- 000709171: Head [CTImageSeries] [CT]
+- 000709164: Entire Specimen [CTImageSeries] [CT]
+- 000709163: P [CTImageSeries] [CT]
+... and 160 more
+
+## Data Comparison
+Previous records: 104947
+Current records: 105116
+Difference: 169
+
+## Attestation
+Daily Dataset: https://github.com/johntrue15/NOCTURN-X-ray-repo/attestations/4903707

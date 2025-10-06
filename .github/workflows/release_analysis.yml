@@ -1,0 +1,167 @@
+name: Release Analysis and Wiki Generation
+
+on:
+ # schedule:
+ #   - cron: '0 0 * * 0'  # Runs weekly on Sunday at midnight
+  workflow_dispatch:      # Allows manual trigger
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+jobs:
+  analyze-releases:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: read
+      pull-requests: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all tags and branches
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install PyGithub semver anthropic openai
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+
+      - name: Clone Wiki
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" wiki || {
+            echo "Wiki not initialized - creating first page"
+            cd wiki
+            git init
+            echo "# Project Wiki" > Home.md
+            git add Home.md
+            git commit -m "Initialize wiki"
+            git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git"
+            git push -u origin master
+          }
+
+      - name: Generate Initial Wiki Content
+        run: |
+          python .github/scripts/release_analysis.py \
+            --token "${{ secrets.GITHUB_TOKEN }}" \
+            --repository "$GITHUB_REPOSITORY" \
+            --wiki-dir "wiki" \
+            --debug
+
+      - name: Prepare Release Data for Analysis
+        if: success()
+        run: |
+          # Get latest release summary file using proper date sorting
+          LATEST_RELEASE=$(find wiki -name "Releases-*.md" | sort -r | head -1)
+          if [ -f "$LATEST_RELEASE" ]; then
+            echo "Found latest release file: $LATEST_RELEASE"
+            # Get the week's date from filename
+            WEEK_DATE=$(echo "$LATEST_RELEASE" | grep -o '[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}')
+            echo "Processing week of $WEEK_DATE"
+            # Create release summary with relevant content
+            {
+              echo "# Release Summary for $WEEK_DATE"
+              echo "Content extracted from wiki page:"
+              echo "----------------------------------------"
+              cat "$LATEST_RELEASE"
+            } > release_summary.txt
+            echo "Created release_summary.txt with content from $LATEST_RELEASE"
+            echo "File contents:"
+            head -n 20 release_summary.txt
+          else
+            echo "No release summary files found"
+            exit 1
+          fi
+
+      - name: Run AI Analysis
+        if: success()
+        run: |
+          # Create output directory for artifacts
+          mkdir -p analysis_outputs
+          # Run analyzer and redirect logs
+          python .github/scripts/release_analyzer.py \
+            --openai-key "${{ secrets.OPENAI_API_KEY }}" \
+            --anthropic-key "${{ secrets.ANTHROPIC_API_KEY }}" \
+            --debug 2>&1 | tee analysis_outputs/analysis.log
+          # Copy all relevant files to output directory
+          cp release_summary.txt analysis_outputs/
+          cp claude_prompt.txt analysis_outputs/
+          cp openai_prompt.txt analysis_outputs/
+
+      - name: Upload Analysis Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-analysis-artifacts
+          path: |
+            analysis_outputs/
+          retention-days: 90
+
+      - name: Generate Enhanced Index
+        if: success()
+        run: |
+          python3 << 'EOF'
+          from pathlib import Path
+          import json
+          import os
+          
+          def merge_wiki_content():
+              try:
+                  # Read AI analysis results
+                  ai_content = ""
+                  if os.path.exists('claude_prompt.txt'):
+                      with open('claude_prompt.txt', 'r') as f:
+                          ai_content += "\n## AI Analysis\n\n### Claude's Analysis\n" + f.read()
+                  
+                  if os.path.exists('openai_prompt.txt'):
+                      with open('openai_prompt.txt', 'r') as f:
+                          ai_content += "\n### OpenAI's Analysis\n" + f.read()
+                  
+                  # Read existing index
+                  wiki_dir = Path('wiki')
+                  index_path = wiki_dir / "Release-Summaries.md"
+                  
+                  if index_path.exists():
+                      with open(index_path, 'r') as f:
+                          content = f.read()
+                      
+                      # Insert AI content after the intro but before the summaries list
+                      parts = content.split("## Weekly Summaries")
+                      if len(parts) == 2:
+                          new_content = parts[0] + ai_content + "\n\n## Weekly Summaries" + parts[1]
+                      else:
+                          new_content = content + ai_content
+                      
+                      # Write updated content
+                      with open(index_path, 'w') as f:
+                          f.write(new_content)
+                  
+                  return True
+              except Exception as e:
+                  print(f"Error merging wiki content: {str(e)}")
+                  return False
+          
+          success = merge_wiki_content()
+          exit(0 if success else 1)
+          EOF
+
+      - name: Commit and Push Wiki Changes
+        run: |
+          cd wiki
+          git add .
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update release summaries with AI analysis [skip ci]" && git push)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

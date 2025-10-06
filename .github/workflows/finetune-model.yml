@@ -1,0 +1,133 @@
+name: Fine-tune Model from Reactions
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Run weekly on Sunday at midnight
+  workflow_dispatch:
+    inputs:
+      model_type:
+        description: 'Type of model to fine-tune (2d, 3d, or both)'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - '2d'
+          - '3d'
+          - 'both'
+
+jobs:
+  prepare-data:
+    runs-on: ubuntu-latest
+    outputs:
+      has_2d_data: ${{ steps.check_data.outputs.has_2d_data }}
+      has_3d_data: ${{ steps.check_data.outputs.has_3d_data }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytz
+          
+      - name: Check for fine-tuning data
+        id: check_data
+        run: |
+          # Create directories if they don't exist
+          mkdir -p data/finetune/2d
+          mkdir -p data/finetune/3d
+          
+          # Combine all reaction data into 2D and 3D datasets
+          python .github/scripts/prepare_finetune_data.py
+          
+          # Check if we have enough data for fine-tuning
+          if [ -f "data/finetune/2d/training.jsonl" ] && [ $(cat data/finetune/2d/training.jsonl | wc -l) -gt 10 ]; then
+            echo "has_2d_data=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_2d_data=false" >> $GITHUB_OUTPUT
+          fi
+          
+          if [ -f "data/finetune/3d/training.jsonl" ] && [ $(cat data/finetune/3d/training.jsonl | wc -l) -gt 10 ]; then
+            echo "has_3d_data=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_3d_data=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload fine-tuning data
+        uses: actions/upload-artifact@v4
+        with:
+          name: finetune-data
+          path: data/finetune/
+          retention-days: 7
+
+  finetune-2d-model:
+    needs: prepare-data
+    if: |
+      needs.prepare-data.outputs.has_2d_data == 'true' &&
+      (github.event.inputs.model_type == '2d' || github.event.inputs.model_type == 'both' || github.event.inputs.model_type == '')
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Download fine-tuning data
+        uses: actions/download-artifact@v4
+        with:
+          name: finetune-data
+          path: data/finetune/
+          
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openai
+
+      - name: Fine-tune 2D model
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python .github/scripts/finetune_model.py --type 2d
+
+  finetune-3d-model:
+    needs: prepare-data
+    if: |
+      needs.prepare-data.outputs.has_3d_data == 'true' &&
+      (github.event.inputs.model_type == '3d' || github.event.inputs.model_type == 'both' || github.event.inputs.model_type == '')
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Download fine-tuning data
+        uses: actions/download-artifact@v4
+        with:
+          name: finetune-data
+          path: data/finetune/
+          
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install openai
+
+      - name: Fine-tune 3D model
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python .github/scripts/finetune_model.py --type 3d 

@@ -1,0 +1,461 @@
+name: Daily MorphoSource Check
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs daily at midnight UTC
+  workflow_dispatch:  # Allows manual trigger
+
+permissions:
+  contents: write
+  id-token: write
+  actions: write
+  checks: write
+  attestations: write
+
+env:
+  MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+  WORKFLOW_PAT: ${{ secrets.WORKFLOW_PAT }}
+
+jobs:
+  daily-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for git operations
+      
+      - name: Identify Workflow Trigger
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "This is a manual workflow run triggered by ${{ github.actor }}"
+            echo "MANUAL=true" >> $GITHUB_ENV
+          else
+            echo "This is a scheduled workflow run"
+            echo "MANUAL=false" >> $GITHUB_ENV
+          fi
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4
+          sudo apt-get update && sudo apt-get install -y jq
+          
+      - name: Generate Timestamp
+        id: timestamp
+        run: |
+          TS=$(date +'%Y-%m-%d_%H-%M-%S')
+          echo "timestamp=$TS" >> $GITHUB_OUTPUT
+          echo "Generated timestamp: $TS"
+
+      - name: Find Latest Data Directory
+        id: find-latest
+        run: |
+          # First try to find morphosource_data_complete.json
+          LATEST_DIR=$(find data -maxdepth 2 -type f -name "morphosource_data_complete.json" -exec dirname {} \; | sort -r | head -n1 || echo "")
+          if [ ! -z "$LATEST_DIR" ]; then
+            echo "Found latest data directory: $LATEST_DIR with morphosource_data_complete.json"
+            echo "dir=$LATEST_DIR" >> $GITHUB_OUTPUT
+            echo "filename=morphosource_data_complete.json" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # If not found, try updated_morphosource_data.json
+          LATEST_DIR=$(find data -maxdepth 2 -type f -name "updated_morphosource_data.json" -exec dirname {} \; | sort -r | head -n1 || echo "")
+          if [ ! -z "$LATEST_DIR" ]; then
+            echo "Found latest data directory: $LATEST_DIR with updated_morphosource_data.json"
+            echo "dir=$LATEST_DIR" >> $GITHUB_OUTPUT
+            echo "filename=updated_morphosource_data.json" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          echo "No data files found"
+          exit 1
+            
+      - name: Check for Failed Workflow Artifacts
+        id: check_failed_artifacts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Checking for artifacts from previously failed workflows..."
+          
+          # Create directory for current run
+          mkdir -p data/${{ steps.timestamp.outputs.timestamp }}
+          
+          # Get recent workflow runs with a failed status
+          gh api \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            repos/${{ github.repository }}/actions/runs?status=failure&per_page=10 > failed_runs.json
+          
+          # Extract run IDs from the failed runs
+          FAILED_RUN_IDS=$(jq -r '.workflow_runs[] | select(.name == "Daily MorphoSource Check") | .id' failed_runs.json)
+          echo "Found failed run IDs: $FAILED_RUN_IDS"
+          
+          # Flag to track if we found and processed any artifacts
+          FOUND_ARTIFACTS=false
+          PROCESSED_COUNT=0
+          
+          # Process each failed run in reverse order (newest first)
+          for RUN_ID in $FAILED_RUN_IDS; do
+            echo "Checking for artifacts from run ID: $RUN_ID"
+            
+            # Get artifacts for this run
+            gh api \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              repos/${{ github.repository }}/actions/runs/$RUN_ID/artifacts > artifacts.json
+            
+            # Look for daily-logs artifacts
+            ARTIFACT_NAMES=$(jq -r '.artifacts[] | select(.name | startswith("daily-logs-")) | .name' artifacts.json)
+            
+            for ARTIFACT_NAME in $ARTIFACT_NAMES; do
+              echo "Found artifact: $ARTIFACT_NAME"
+              
+              # Extract timestamp from artifact name
+              TIMESTAMP=$(echo $ARTIFACT_NAME | sed 's/daily-logs-//')
+              
+              # Check if we already have a directory for this timestamp
+              if [ -d "data/$TIMESTAMP" ]; then
+                echo "Directory data/$TIMESTAMP already exists, skipping..."
+                continue
+              fi
+              
+              # Get artifact ID
+              ARTIFACT_ID=$(jq -r ".artifacts[] | select(.name == \"$ARTIFACT_NAME\") | .id" artifacts.json)
+              echo "Artifact ID: $ARTIFACT_ID"
+              
+              # Create a directory for this artifact
+              mkdir -p "data/$TIMESTAMP"
+              
+              # Download the artifact
+              echo "Downloading artifact $ARTIFACT_NAME from run $RUN_ID..."
+              gh api \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                repos/${{ github.repository }}/actions/artifacts/$ARTIFACT_ID/zip > artifact.zip
+              
+              # Extract the artifact to the appropriate directory
+              unzip -o artifact.zip -d "data/$TIMESTAMP"
+              rm artifact.zip
+              
+              echo "Successfully extracted artifact to data/$TIMESTAMP"
+              
+              # Check if the directory contains morphosource_data_complete.json
+              if [ -f "data/$TIMESTAMP/morphosource_data_complete.json" ]; then
+                echo "Found morphosource_data_complete.json in data/$TIMESTAMP"
+                FOUND_ARTIFACTS=true
+                PROCESSED_COUNT=$((PROCESSED_COUNT + 1))
+                
+                # Create or update release notes
+                {
+                  echo "# Recovered Data from Failed Run"
+                  echo "This data was recovered from a previously failed workflow run (ID: $RUN_ID)"
+                  echo "Timestamp: $TIMESTAMP"
+                  echo "Recovery Date: $(date +'%Y-%m-%d %H:%M:%S')"
+                } > "data/$TIMESTAMP/recovery_info.txt"
+                
+                # Only process the most recent 3 artifacts
+                if [ $PROCESSED_COUNT -ge 3 ]; then
+                  echo "Processed $PROCESSED_COUNT artifacts, stopping search"
+                  break 2
+                fi
+              fi
+            done
+          done
+          
+          if [ "$FOUND_ARTIFACTS" = true ]; then
+            echo "Successfully recovered artifacts from failed workflow runs"
+            echo "found_artifacts=true" >> $GITHUB_OUTPUT
+          else
+            echo "No recoverable artifacts found from failed workflow runs"
+            echo "found_artifacts=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run Daily Check
+        id: daily_check
+        continue-on-error: true
+        run: |
+          mkdir -p data/${{ steps.timestamp.outputs.timestamp }}
+          python .github/scripts/daily.py \
+            --data-dir data/${{ steps.timestamp.outputs.timestamp }} \
+            --output-dir data/${{ steps.timestamp.outputs.timestamp }}
+
+      - name: Check Data File
+        id: check-data
+        run: |
+          DATA_FILE="data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json"
+          if [ ! -f "$DATA_FILE" ]; then
+            echo "No data file found at $DATA_FILE"
+            echo "has_data=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          echo "has_data=true" >> $GITHUB_OUTPUT
+
+      # Create Attestation for Successful Run
+      - name: Create Attestation for Dataset (Success)
+        id: create_attestation_success
+        if: steps.check-data.outputs.has_data == 'true' && steps.daily_check.outcome == 'success'
+        uses: actions/attest@v2
+        with:
+          subject-path: data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json
+          predicate-type: 'https://in-toto.io/Statement/v1'
+          predicate: |
+            {
+              "predicateType": "https://in-toto.io/attestation/release/v0.1",
+              "subject": [],
+              "predicate": {
+                "purl": "pkg:github/${{ github.repository }}",
+                "version": "${{ github.sha }}",
+                "metadata": {
+                  "buildInvocationId": "${{ github.run_id }}",
+                  "completeness": {
+                    "parameters": true,
+                    "environment": true,
+                    "materials": true
+                  },
+                  "daily_info": {
+                    "type": "daily_check",
+                    "timestamp": "${{ steps.timestamp.outputs.timestamp }}",
+                    "previous_data": "${{ steps.find-latest.outputs.dir }}",
+                    "current_data": "data/${{ steps.timestamp.outputs.timestamp }}",
+                    "workflow_status": "success"
+                  }
+                }
+              }
+            }
+
+      # Create Attestation for Failed Run
+      - name: Generate Attestation for Failed Run
+        id: create_attestation_failure
+        if: steps.check-data.outputs.has_data == 'true' && steps.daily_check.outcome != 'success'
+        uses: actions/attest@v2
+        with:
+          subject-path: data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json
+          predicate-type: 'https://in-toto.io/Statement/v1'
+          predicate: |
+            {
+              "predicateType": "https://in-toto.io/attestation/release/v0.1",
+              "subject": [],
+              "predicate": {
+                "purl": "pkg:github/${{ github.repository }}",
+                "version": "${{ github.sha }}",
+                "metadata": {
+                  "buildInvocationId": "${{ github.run_id }}",
+                  "completeness": {
+                    "parameters": true,
+                    "environment": true,
+                    "materials": true
+                  },
+                  "daily_info": {
+                    "type": "daily_check",
+                    "timestamp": "${{ steps.timestamp.outputs.timestamp }}",
+                    "previous_data": "${{ steps.find-latest.outputs.dir }}",
+                    "current_data": "data/${{ steps.timestamp.outputs.timestamp }}",
+                    "workflow_status": "failure"
+                  }
+                }
+              }
+            }
+
+      # Create metadata JSON for successful run
+      - name: Create Daily Info JSON (Success)
+        if: steps.daily_check.outcome == 'success' && steps.check-data.outputs.has_data == 'true'
+        id: create-daily-info-success
+        run: |
+          # Create daily info JSON with all the metadata we need
+          cat > "data/${{ steps.timestamp.outputs.timestamp }}/daily_info.json" << EOF
+          {
+            "type": "daily_check",
+            "run_id": "${{ github.run_id }}",
+            "timestamp": "${{ steps.timestamp.outputs.timestamp }}",
+            "previous_data": "${{ steps.find-latest.outputs.dir }}",
+            "current_data": "data/${{ steps.timestamp.outputs.timestamp }}",
+            "repository": "${{ github.repository }}",
+            "workflow": "${{ github.workflow }}",
+            "trigger_type": "${{ env.MANUAL == 'true' && 'manual' || 'scheduled' }}",
+            "actor": "${{ github.actor }}",
+            "artifacts_recovered": "${{ steps.check_failed_artifacts.outputs.found_artifacts }}",
+            "attestation_url": "${{ steps.create_attestation_success.outputs.attestation-url }}"
+          }
+          EOF
+          
+          echo "Created daily_info.json with metadata for successful run"
+          echo "daily_info_path=data/${{ steps.timestamp.outputs.timestamp }}/daily_info.json" >> $GITHUB_OUTPUT
+
+      # Save release notes for successful run
+      - name: Save Release Notes (Success)
+        if: steps.daily_check.outcome == 'success' && steps.check-data.outputs.has_data == 'true'
+        run: |
+          # Get record counts for comparison
+          PREV_COUNT=$(jq length "${{ steps.find-latest.outputs.dir }}/${{ steps.find-latest.outputs.filename }}")
+          CURR_COUNT=$(jq length "data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json")
+          
+          # Create release notes with counts
+          {
+            echo "# Daily MorphoSource Check - ${{ steps.timestamp.outputs.timestamp }}"
+            echo ""
+            echo "## Run Information"
+            if [[ "$MANUAL" == "true" ]]; then
+              echo "* Trigger: Manual (triggered by ${{ github.actor }})"
+            else
+              echo "* Trigger: Scheduled"
+            fi
+            echo "* Run ID: ${{ github.run_id }}"
+            echo "* Workflow Run: [View on GitHub](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+            echo ""
+            echo "## Data Comparison"
+            echo "* Previous records: $PREV_COUNT"
+            echo "* Current records: $CURR_COUNT"
+            echo "* Difference: $((CURR_COUNT - PREV_COUNT))"
+            
+            # Add information about recovered artifacts if any were found
+            if [[ "${{ steps.check_failed_artifacts.outputs.found_artifacts }}" == "true" ]]; then
+              echo ""
+              echo "## Recovered Artifacts"
+              echo "* Artifacts were successfully recovered from previous failed workflow runs"
+              echo "* To see which artifacts were recovered, check the workflow logs"
+            fi
+            
+            # Add attestation section
+            echo ""
+            echo "## Attestation"
+            echo "* Daily Dataset: ${{ steps.create_attestation_success.outputs.attestation-url }}"
+          } > "data/${{ steps.timestamp.outputs.timestamp }}/release_notes.txt"
+
+      # Fallback for failed workflow but with data
+      - name: Create Daily Info JSON (Failure Fallback)
+        if: steps.daily_check.outcome != 'success' && steps.check-data.outputs.has_data == 'true'
+        id: create-daily-info-fallback
+        run: |
+          # Create daily info JSON with all the metadata we need
+          cat > "data/${{ steps.timestamp.outputs.timestamp }}/daily_info.json" << EOF
+          {
+            "type": "daily_check",
+            "run_id": "${{ github.run_id }}",
+            "timestamp": "${{ steps.timestamp.outputs.timestamp }}",
+            "previous_data": "${{ steps.find-latest.outputs.dir }}",
+            "current_data": "data/${{ steps.timestamp.outputs.timestamp }}",
+            "repository": "${{ github.repository }}",
+            "workflow": "${{ github.workflow }}",
+            "trigger_type": "${{ env.MANUAL == 'true' && 'manual' || 'scheduled' }}",
+            "actor": "${{ github.actor }}",
+            "artifacts_recovered": "${{ steps.check_failed_artifacts.outputs.found_artifacts }}",
+            "attestation_url": "${{ steps.create_attestation_failure.outputs.attestation-url }}"
+          }
+          EOF
+          
+          echo "Created daily_info.json with metadata for failed run"
+          echo "daily_info_path=data/${{ steps.timestamp.outputs.timestamp }}/daily_info.json" >> $GITHUB_OUTPUT
+
+      - name: Save Release Notes (Failure Fallback)
+        if: steps.daily_check.outcome != 'success' && steps.check-data.outputs.has_data == 'true'
+        run: |
+          # Get record counts for comparison
+          PREV_COUNT=$(jq length "${{ steps.find-latest.outputs.dir }}/${{ steps.find-latest.outputs.filename }}")
+          CURR_COUNT=$(jq length "data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json")
+          
+          # Create release notes with counts
+          {
+            echo "# Daily MorphoSource Check - ${{ steps.timestamp.outputs.timestamp }}"
+            echo ""
+            echo "## Run Information"
+            if [[ "$MANUAL" == "true" ]]; then
+              echo "* Trigger: Manual (triggered by ${{ github.actor }})"
+            else
+              echo "* Trigger: Scheduled"
+            fi
+            echo "* Run ID: ${{ github.run_id }}"
+            echo "* Workflow Run: [View on GitHub](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+            echo "* Status: Failed but data was collected successfully"
+            echo ""
+            echo "## Data Comparison"
+            echo "* Previous records: $PREV_COUNT"
+            echo "* Current records: $CURR_COUNT"
+            echo "* Difference: $((CURR_COUNT - PREV_COUNT))"
+            
+            # Add information about recovered artifacts if any were found
+            if [[ "${{ steps.check_failed_artifacts.outputs.found_artifacts }}" == "true" ]]; then
+              echo ""
+              echo "## Recovered Artifacts"
+              echo "* Artifacts were successfully recovered from previous failed workflow runs"
+              echo "* To see which artifacts were recovered, check the workflow logs"
+            fi
+            
+            # Add attestation section
+            echo ""
+            echo "## Attestation"
+            echo "* Daily Dataset: ${{ steps.create_attestation_failure.outputs.attestation-url }}"
+          } > "data/${{ steps.timestamp.outputs.timestamp }}/release_notes.txt"
+
+      - name: Commit and Push Changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Function to attempt commit and push with pull/rebase strategy
+          push_changes() {
+            local attempt=$1
+            echo "Push attempt $attempt:"
+            
+            git pull --rebase origin main || return 1
+            
+            git add "data/${{ steps.timestamp.outputs.timestamp }}/"
+            
+            if git diff --staged --quiet; then
+              echo "No changes to commit"
+              return 0
+            fi
+            
+            git commit -m "Daily check data [${{ steps.timestamp.outputs.timestamp }}]" || return 1
+            git push origin HEAD:main || return 1
+            
+            return 0
+          }
+          
+          max_attempts=3
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            if push_changes $attempt; then
+              echo "Successfully pushed changes on attempt $attempt"
+              exit 0
+            fi
+            
+            echo "Push failed on attempt $attempt of $max_attempts"
+            if [ $attempt -lt $max_attempts ]; then
+              sleep_time=$((5 * attempt))
+              echo "Waiting ${sleep_time} seconds before retry..."
+              sleep $sleep_time
+            fi
+            
+            attempt=$((attempt + 1))
+          done
+          
+          echo "Failed to push changes after $max_attempts attempts"
+          exit 1
+
+      - name: Create Release
+        if: always()
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: "Daily Check #${{ steps.timestamp.outputs.timestamp }}"
+          tag_name: "daily-${{ steps.timestamp.outputs.timestamp }}"
+          body_path: data/${{ steps.timestamp.outputs.timestamp }}/release_notes.txt
+          files: |
+            data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json
+            data/${{ steps.timestamp.outputs.timestamp }}/daily_info.json
+
+      - name: Upload Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-logs-${{ steps.timestamp.outputs.timestamp }}
+          path: data/${{ steps.timestamp.outputs.timestamp }}/*

@@ -1,0 +1,74 @@
+name: Save User Ratings
+
+on:
+  repository_dispatch:
+    types: [save-rating]
+
+jobs:
+  save-rating:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+      
+      - name: Get current ratings
+        id: ratings
+        run: |
+          mkdir -p assets/data
+          if [ -f "assets/data/ratings.json" ]; then
+            echo "EXISTING_RATINGS=true" >> $GITHUB_ENV
+            cat assets/data/ratings.json
+          else
+            echo "EXISTING_RATINGS=false" >> $GITHUB_ENV
+            echo '{"ratings":[]}' > assets/data/ratings.json
+          fi
+      
+      - name: Add new rating
+        run: |
+          echo "Adding new rating for ${{ github.event.client_payload.releaseTag }}"
+          
+          # Extract payload data
+          RELEASE_ID="${{ github.event.client_payload.releaseId }}"
+          RELEASE_TAG="${{ github.event.client_payload.releaseTag }}"
+          RATING="${{ github.event.client_payload.rating }}"
+          COMMENT="${{ github.event.client_payload.comment }}"
+          TIMESTAMP="${{ github.event.client_payload.timestamp }}"
+          
+          # Safely escape the comment to avoid JSON parsing issues
+          COMMENT_ESCAPED=$(echo -n "$COMMENT" | jq -aRs .)
+          
+          # Create the new rating JSON object using jq
+          NEW_RATING=$(jq -n \
+            --arg id "$RELEASE_ID" \
+            --arg tag "$RELEASE_TAG" \
+            --argjson rating "$RATING" \
+            --arg comment "$COMMENT" \
+            --arg timestamp "$TIMESTAMP" \
+            '{
+              "releaseId": $id,
+              "releaseTag": $tag,
+              "rating": $rating,
+              "comment": $comment,
+              "timestamp": $timestamp
+            }')
+          
+          # Use jq to append to the ratings array
+          jq --argjson newRating "$NEW_RATING" '.ratings += [$newRating]' assets/data/ratings.json > temp.json
+          mv temp.json assets/data/ratings.json
+      
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          
+          git add assets/data/ratings.json
+          git commit -m "Add rating for ${{ github.event.client_payload.releaseTag }}"
+          git push
+      
+      - name: Summary
+        run: |
+          echo "::notice title=Rating Saved::Successfully saved rating for ${{ github.event.client_payload.releaseTag }}" 

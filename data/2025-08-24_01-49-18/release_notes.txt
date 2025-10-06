@@ -1,0 +1,15 @@
+# Daily MorphoSource Check - 2025-08-24_01-49-18
+
+## Run Information
+* Trigger: Scheduled
+* Run ID: 17182635077
+* Workflow Run: [View on GitHub](https://github.com/johntrue15/NOCTURN-X-ray-repo/actions/runs/17182635077)
+* Status: Failed but data was collected successfully
+
+## Data Comparison
+* Previous records: 108133
+* Current records: 108138
+* Difference: 5
+
+## Attestation
+* Daily Dataset: https://github.com/johntrue15/NOCTURN-X-ray-repo/attestations/9964729

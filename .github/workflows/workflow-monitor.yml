@@ -1,0 +1,156 @@
+name: Workflow Monitor
+
+on:
+  workflow_run:
+    workflows: ["*"]  # Monitor all workflows
+    types: [completed]
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    # Run on any failure, including if conclusion is 'failure', 'timed_out', 'cancelled'
+    if: |
+      github.event.workflow_run.conclusion != 'success' && 
+      github.event.workflow_run.conclusion != 'skipped'
+    permissions:
+      issues: write
+      contents: read
+      actions: read
+      
+    steps:
+      - name: Debug Event Info
+        run: |
+          echo "Workflow Run Details:"
+          echo "Name: ${{ github.event.workflow_run.name }}"
+          echo "Conclusion: ${{ github.event.workflow_run.conclusion }}"
+          echo "Status: ${{ github.event.workflow_run.status }}"
+          echo "ID: ${{ github.event.workflow_run.id }}"
+          echo "URL: ${{ github.event.workflow_run.html_url }}"
+          echo "Head Branch: ${{ github.event.workflow_run.head_branch }}"
+          echo "Head SHA: ${{ github.event.workflow_run.head_sha }}"
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download workflow logs
+        uses: actions/github-script@v7
+        id: get-logs
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          result-encoding: string
+          script: |
+            try {
+              const logs = await github.rest.actions.downloadWorkflowRunLogs({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: context.payload.workflow_run.id
+              });
+              return logs.url || '';
+            } catch (error) {
+              return '';
+            }
+
+      - name: Manage issues
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const logsUrl = `${{ steps.get-logs.outputs.result }}`;
+            const TRACKING_ISSUE_NUMBER = 43;
+            
+            async function createSubIssue(mainIssueNumber) {
+              const workflowRun = context.payload.workflow_run;
+              
+              // First check if a sub-issue already exists for this workflow run
+              const { data: existingIssues } = await github.rest.issues.listForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                labels: ['workflow-failure'],
+                per_page: 100
+              });
+              
+              const existingIssue = existingIssues.find(issue => 
+                issue.body?.includes(`Run ID: ${workflowRun.id}`)
+              );
+              
+              if (existingIssue) {
+                console.log(`Found existing issue #${existingIssue.number} for workflow run ${workflowRun.id}`);
+                return existingIssue;
+              }
+              
+              const body = `
+              ## Workflow Failure Details
+              Parent issue: #${mainIssueNumber}
+              
+              ### Failed Workflow
+              - **Workflow:** ${workflowRun.name}
+              - **Run ID:** ${workflowRun.id}
+              - **Branch:** ${workflowRun.head_branch || 'N/A'}
+              - **Commit:** ${workflowRun.head_sha || 'N/A'}
+              - **Failed at:** ${new Date(workflowRun.updated_at).toISOString()}
+              - **Conclusion:** ${workflowRun.conclusion}
+              
+              ### Links
+              - [Failed Workflow Run](${workflowRun.html_url})
+              ${logsUrl ? `- [Download Logs](${logsUrl})` : ''}
+              
+              ### Action Items
+              - [ ] Investigate failure cause
+              - [ ] Fix underlying issue
+              - [ ] Re-run workflow
+              - [ ] Mark as resolved in main tracking issue
+              `;
+              
+              const { data: newIssue } = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `⚠️ Workflow Failure: ${workflowRun.name}`,
+                body: body,
+                labels: ['workflow-failure']
+              });
+              
+              return newIssue;
+            }
+            
+            // Main execution
+            try {
+              console.log('Starting workflow monitor...');
+              
+              // Get the tracking issue
+              const { data: mainIssue } = await github.rest.issues.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: TRACKING_ISSUE_NUMBER
+              });
+              
+              // Create or get existing sub-issue
+              const subIssue = await createSubIssue(TRACKING_ISSUE_NUMBER);
+              
+              // Only update main issue if this is a new sub-issue
+              if (!mainIssue.body.includes(subIssue.html_url)) {
+                const newEntry = `- [${subIssue.title}](${subIssue.html_url}) - ${new Date().toISOString().split('T')[0]}`;
+                const updatedBody = mainIssue.body.replace(
+                  'No active failures yet.',
+                  newEntry
+                );
+                
+                await github.rest.issues.update({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: TRACKING_ISSUE_NUMBER,
+                  body: updatedBody
+                });
+              }
+              
+              console.log('Successfully processed workflow failure');
+            } catch (error) {
+              console.error('Fatal error in workflow monitor:', error);
+              core.setFailed(`Workflow monitor failed: ${error.message}`);
+            }
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Workflow monitor failed to process failure notification"
+          exit 1

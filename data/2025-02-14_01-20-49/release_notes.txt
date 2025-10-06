@@ -1,0 +1,21 @@
+# Daily Check Report
+
+## Record Changes
+Latest Record ID: 000709984
+Previous Record ID: 000709702
+
+Total Records: 105182
+Previous Records: 105181
+New Records Added: 2
+
+### New Record IDs:
+- 000709984: Whole Body [CTImageSeries] [CT]
+- 000709702: Reticulate Nummulites
+
+## Data Comparison
+Previous records: 105181
+Current records: 105182
+Difference: 1
+
+## Attestation
+Daily Dataset: https://github.com/johntrue15/NOCTURN-X-ray-repo/attestations/4975421

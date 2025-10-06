@@ -1,199 +1,117 @@
-# NSF NOCTURN Metadata
+# NOCTURN X-ray Repository
 
-Welcome to the **NOCTURN Metadata** project! This repository is dedicated to streamlining non-clinical tomographic imaging workflows across various facilities, while keeping each facility’s code and configurations separated into their own Git branches.
+This repository automatically tracks and analyzes X-ray CT data from MorphoSource, providing multiple layers of analysis through automated workflows.
 
-## Table of Contents
+## GitHub Pages
 
-1. [Overview](#overview)
-2. [Project Structure](#project-structure)
-3. [Installation](#installation)
-4. [Usage](#usage)
-5. [Branch Strategy](#branch-strategy)
-6. [Contributing](#contributing)
-7. [License](#license)
+📊 [View Release Dashboard](https://johntrue15.github.io/NOCTURN-X-ray-repo/) - Interactive dashboard showing the latest release information, updated hourly.
 
----
+## Documentation
 
-## Overview
+- [Project Overview and Setup](docs/index.md) - Introduction, project structure, and getting started
+- [Workflow Dependencies](docs/dependencies.md) - Detailed mapping of workflows and their associated scripts
+- [Raspberry Pi Installation](docs/Raspi.md) - Guide for setting up NOCTURN on a Raspberry Pi
 
-The **NOCTURN Metadata** project aims to:
-- Automate the collection and processing of X-ray Computed Tomography (CT) imaging data.
-- Provide facility-specific configurations in separate branches.
-- Centralize shared code and actions in the main branch, making collaboration seamless.
+## Latest Analysis Results
 
----
+### MorphoSource Updates
+[View MorphoSource Updates #2025-02-26_18-21-42 on GitHub](https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/morphosource-updates-2025-02-26_18-21-42)
 
-## Project Structure
+```
+A new increase in X-ray Computed Tomography records was found on MorphoSource.
 
-```plaintext
+We found 1 new record(s) (old record value: 105255).
 
-my-nocturn-xray-repo/
-├─ README.md                   # General project overview
-├─ docs/                       # Documentation files
-│   └─ index.md
-├─ agent/                      # Core agent code for processing
-│   └─ main_agent.py
-├─ .github/
-│   └─ workflows/
-│       └─ agent_actions.yml   # GitHub Actions workflow
-├─ facility-1-branch           # Branch in GitHub (not a folder)
-├─ facility-2-branch           # Branch in GitHub (not a folder)
-└─ facility-n-branch           # Branch in GitHub (not a folder)
+New Record #105256 Title: P3115
+Detail Page URL: https://www.morphosource.org/concern/media/000713521?locale=en
+Object: uf:uf
+Taxonomy: Crocodilia indet.
+Element or Part: tooth
+Data Manager: Mitchell Riegler
+Date Uploaded: 02/26/2025
+Publication Status: Restricted Download
 ```
 
+### CT Analysis
+[View CT to Text Analysis #2025-02-26_18-22-13 on GitHub](https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-02-26_18-22-13)
+
+```
+The recently released CT scan of a Crocodilia indeterminate (Crocodilia indet.) tooth offers a fascinating glimpse into the intricate anatomy of these ancient reptiles. Crocodilians, encompassing modern alligators, crocodiles, and their relatives, are renowned for their powerful jaws and sharp teeth, essential for their predatory lifestyle. This high-resolution scan allows scientists to examine the tooth's internal structure without damaging the specimen, revealing details such as enamel thickness, dentine composition, and the presence of any microscopic wear patterns.
+
+One of the notable morphological features visible through the CT scanning process is the complexity of the tooth's root structure. Understanding the root morphology can provide insights into the attachment strength and longevity of the tooth, shedding light on how these animals efficiently capture and process their prey. Additionally, the scan may reveal growth patterns or incremental lines within the tooth, which can be analyzed to infer the age, growth rates, and even the environmental conditions the individual experienced during its lifetime.
+
+This non-destructive imaging technique not only preserves the integrity of the fossil but also opens doors to comparative studies with both extinct and extant crocodilian species. By comparing the morphological features revealed in the CT scan, researchers can trace evolutionary adaptations that have allowed crocodilians to thrive in diverse habitats for millions of years. Ultimately, such detailed internal views enhance our understanding of crocodilian biology and evolution, contributing to the broader knowledge of reptilian development and ecological success.
+```
+
+### CT Slice Analysis
+[View CT Slice Analysis #2025-02-26_18-45-11 on GitHub](https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_slice_analysis-2025-02-26_18-45-11)
+
+```
+Analysis for MorphoSource release: morphosource-updates-2025-02-26_18-21-42
 
 
+CT Slice Analysis:
+=================
+The CT slice images you provided appear to depict specific specimens, possibly teeth or tooth-like structures, as suggested by their shape and outlines. Each slice shows varying levels of detail, with the object prominently displayed in the center against a black background, which aids in visualization.
+
+1. **First Image**: The object at the center is somewhat pointed, indicating it may be a tooth's crown. There is a smooth contour toward the tip.
+
+2. **Subsequent Images**: As you progress through the images, the shape and position of the object gradually change, possibly illustrating the three-dimensional structure of the specimen from different angles. The consistency in color and textural details hints at a solid material, likely indicative of dental anatomy.
+
+3. **Overall Characteristics**: The grading of transparency and shading across the slices illustrates the internal composition, possibly displaying density differences within the material.
+
+These slices can be valuable for scientific studies, such as anatomical research or for identifying species based on dental morphology.
+--------------------------------------------------------------------------------
+```
+
+## Workflow Overview
+
+This repository uses several automated workflows to analyze X-ray CT data. For a complete list of workflows and their dependencies, see our [Workflow Dependencies](docs/dependencies.md) documentation.
+
+### Main Workflows
+
+1. **Parse MorphoSource Data** (`parse_morphosource.yml`)
+   - Runs every 5 minutes
+   - Scrapes MorphoSource for new X-ray CT records
+   - Creates releases with new record details
+   - Triggers subsequent analysis workflows
+
+2. **CT to Text Analysis** (`ct_to_text.yml`)
+   - Triggered by MorphoSource updates
+   - Analyzes CT metadata using AI
+   - Generates detailed descriptions of specimens
+
+3. **CT Slice Analysis** (`combined_ct_images_to_text.yml`)
+   - Analyzes 2D slices and 3D reconstructions
+   - Checks image URLs and captures screenshots
+   - Provides comprehensive visual analysis
+
+### Supporting Workflows
+
+- **Daily Check** (`daily.yml`): Daily verification of data consistency
+- **Monthly Collection** (`monthly.yml`): Monthly data aggregation
+- **Error Cleanup** (`cleanup_ct_error_releases.yml`): Maintains release quality
+- **Wiki Generation** (`wiki-generation.yml`): Updates documentation
 
 ## Installation
 
-This section describes how to install and configure **NOCTURN Metadata Parser** on a Raspberry Pi using an `.iso` file. This method provides a quick, standardized setup with minimal manual steps.
+For detailed installation instructions:
+- Standard setup: See our [Project Overview](docs/index.md#installation)
+- Raspberry Pi setup: Follow our [Raspberry Pi Guide](docs/Raspi.md#installation)
 
-### Prerequisites
-- **Raspberry Pi** (Pi 3, Pi 4, or similar)  
-- **SD Card** (16 GB or larger)  
-- **Raspberry Pi Imager** SD card flashing tool (https://www.raspberrypi.com/software/) 
-- **Windows machine** with a shared folder (read-only) for metadata   (e.g. .pca file)
-- **Network Connectivity** (Ethernet or Wi-Fi)
+## Recent Activity
 
----
-
-### Step 1: Download the Raspberry Pi ISO
-
-1. Go to this repository’s **[Releases](../../releases)** page (or wherever the `.iso` is hosted).  
-2. Download the latest `.iso` file (for example, `nocturn-xray-raspi.iso`).
-
----
-
-### Step 2: Flash the ISO to an SD Card
-
-1. Insert your SD card into your computer.  
-2. Open **Raspberry Pi Imager** (or another flashing tool).  
-3. Select the downloaded `.iso` file as the **source**.  
-4. Choose the SD card as the **target**.  
-5. Click **Write** (or equivalent) to begin flashing.  
-6. Wait until the process completes, eject SD card.
-
----
-
-### Step 3: Configure the Pi via the `.txt` Template
-
-1. Locate the `facility-config-template.txt` file in this repository (e.g., under `docs/` or `config/`).  
-2. Click **Download** on `facility-config-template.txt`.  
-3. Open the file in a text editor and fill in the required fields, for example:
-
-   ```plaintext
-   # Facility Configuration for Nocturn Xray
-
-   # GitHub Repository (for logging, updates, etc.)
-   GITHUB_REPO_URL=https://github.com/johntrue15/NOCTURN-X-ray-repo/tree/American-Museum-of-Natural-History
-
-   # Facility Name
-   FACILITY_NAME=American-Museum-of-Natural-History
-
-   # X-ray User ORCID
-   XRAY_USER_ORCID=0000-0001-2345-6789
-
-   # iDigBio / Morphosource Mapping Fields
-   IDIGBIO_COLLECTION_CODE=XYZ
-   MORPHOSOURCE_PROJECT=MyMorphoProject
-
-   # Windows Shared Folder Path (UNC)
-   SHARED_FOLDER_PATH=//WINDOWS-MACHINE/MySharedFolder
-
-   # Additional notes:
-   # This folder should contain the metadata files that the Pi will read.
-   # The Pi will only need "read" permissions.
-   ```
-
-
-4. Save the file as a `.txt` into the shared folder on the CT Workstation.
-
----
-
-### Step 4: Set Up a Read-Only Shared Folder on Windows
-
-1. **Create** a folder on your Windows machine (e.g., `C:\NocturnXrayData`).  
-2. Right-click → **Properties** → **Sharing** tab → **Advanced Sharing**.  
-3. Check **Share this folder**, and give it a share name (e.g., `MySharedFolder`).  
-4. Click **Permissions** and ensure **Read** is enabled (and **Write** is disabled if you only want read-only access).  
-5. Make sure your Windows network settings allow the Pi to see shared folders (enable Network Discovery).  
-6. Note the UNC path: `\\YOUR-WINDOWS-MACHINE\MySharedFolder`. In your `.txt` config, you might use `//YOUR-WINDOWS-MACHINE/MySharedFolder` for the Pi.
-
----
-
-### Step 5: Insert the SD Card and Power On
-
-1. Safely **eject** the SD card from the flashing computer.  
-2. Insert the SD card into your Raspberry Pi.  
-3. Connect the Pi to the network (Ethernet or configured Wi-Fi).  
-4. **Power on** the Pi.  
-5. It will automatically:  
-   - **Read** the `facility-config-template.txt`.  
-   - **Mount** the shared folder in read-only mode.  
-   - **Start** Xray processing tasks using metadata from the shared folder.
-
----
-
-## Usage
-
-After **Installation**, you can perform a quick test to ensure your Raspberry Pi is reading the shared folder and publishing metadata correctly:
-
-1. **Place a `.pca` file** in your Windows shared folder.  
-   - For instance, use a copy of a `.pca` file.
-
-2. **Wait** a few moments while the Raspberry Pi detects and processes the `.pca` file.  
-   - Under normal operation, the Pi will automatically pick up new files in the shared folder.
-
-3. **Check** your facility branch in GitHub.  
-   - The Pi should publish metadata (or logs) related to the `.pca` file to your designated branch.  
-   - The exact commit message or metadata structure may depend on your facility’s configuration.
-
-4. **Verify** everything ran smoothly:  
-   - Look for any resulting metadata in your GitHub repository (e.g., a JSON file, CSV, or updated logs).
-
-5. **Troubleshoot** if needed:  
-   - Ensure the Pi is connected to your network and can access the shared folder.  
-   - Check logs on the Pi (if accessible) to confirm the `.pca` file was detected and processed.  
-   - Make sure your branch permissions (and any GitHub tokens or credentials) allow the Pi to push changes.
-
-This simple test verifies the end-to-end workflow:  
-- The Pi has read access to the shared folder.  
-- Your facility branch in GitHub is updated with metadata for each `.pca` file.  
-- Nocturn Xray can automatically handle imaging data with minimal manual intervention.
-
-
----
-
-## Branch Strategy
-
-We maintain separate branches for each facility:
-
-- **main**: Shared resources and base functionality, including CI/CD workflows.  
-- **facility-1-branch**, **facility-2-branch**, etc.  
-  - Contain facility-specific customizations.  
-  - Merge or rebase from `main` to keep updated with new changes.  
-  - If a facility adds a general improvement, open a Pull Request back into `main`.
-
----
+```
+MorphoSource Modified Record #2025-02-26_18-49-39 ()
+CT Slice Analysis #2025-02-26_18-45-11 (2025-02-26T18:50:43Z)
+CT Slice Analysis #2025-02-26_18-24-28 ()
+CT to Text Analysis #2025-02-26_18-22-13 ()
+MorphoSource Updates #2025-02-26_18-21-42 ()
+```
 
 ## Contributing
 
-1. **Fork** this repository.  
-2. **Create** a new branch for your facility (e.g., `main/University-of-...`).  
-3. **Commit** your changes and push to your fork.  
-4. **Open a Pull Request** into `main`.  
-
-We welcome enhancements, bug fixes, and feedback! Check out our **Code of Conduct** if applicable.
+Please see our [Project Overview](docs/index.md#contributing) for guidelines on contributing to this project.
 
 ---
-
-## License
-
-This project is licensed under the [MIT License](LICENSE). By contributing, you agree that your contributions will be licensed under MIT as well.
-
----
-
-<p align="center">
-  <i>Thank you for installing and using NOCTURN Metadata Parser! We hope this streamlined Raspberry Pi setup accelerates your imaging workflows.</i>
-</p>
-
+Last updated: 2025-02-26 19:02:14 UTC

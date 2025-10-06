@@ -1,0 +1,30 @@
+# Daily Check Report
+
+## Record Changes
+Latest Record ID: 000708101
+Previous Record ID: 000708053
+
+Total Records: 104947
+Previous Records: 104818
+New Records Added: 104920
+
+### New Record IDs:
+- 000708101: Head [CTImageSeries] [CT]
+- 000708090: Head [CTImageSeries] [CT]
+- 000708075: Head [CTImageSeries] [CT]
+- 000707996: Right Mandibular Second Molar Treatment Anterior Tooth Root
+- 000707992: Right Mandibular Second Molar Post Treatment Alveolar Subbone Root
+- 000707988: Right Mandibular Second Molar Treatment Anterior Subalveolar Bone Root
+- 000707984: Right Mandibular Second Molar Post Treatment Teeth
+- 000707980: Right Mandibular Second Molar Pre Treatment Teeth
+- 000707975: Right Mandibular Second Molar Treatment Anterior Tooth Root
+- 000707971: Right Mandibular Second Molar Post Treatment Alveolar Subbone Root
+... and 104910 more
+
+## Data Comparison
+Previous records: 104818
+Current records: 104947
+Difference: 129
+
+## Attestation
+Daily Dataset: https://github.com/johntrue15/NOCTURN-X-ray-repo/attestations/4881042

@@ -24,12 +24,14 @@ jobs:
       has_analysis: ${{ steps.check_existing.outputs.has_analysis }}
       release_body: ${{ steps.fetch_release.outputs.release_body }}
       release_tag: ${{ steps.fetch_release.outputs.release_tag }}
+      has_other_runs: ${{ steps.check_runs.outputs.has_other_runs }}
     steps:
       - name: Check out repo
         uses: actions/checkout@v3
 
       - name: Check for running workflows
         id: check_runs
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         run: |
@@ -40,25 +42,39 @@ jobs:
           
           echo "Current workflow ID: $workflow_id"
           
+          # Get current run ID
+          current_run_id=${{ github.run_id }}
+          echo "Current run ID: $current_run_id"
+          
           # Get running/queued workflows excluding the current run
           running_workflows=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?status=in_progress&per_page=100" | \
-            jq -r ".workflow_runs | length")
+            jq -r ".workflow_runs | map(select(.id != $current_run_id)) | length")
             
           queued_workflows=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/actions/workflows/$workflow_id/runs?status=queued&per_page=100" | \
-            jq -r ".workflow_runs | length")
+            jq -r ".workflow_runs | map(select(.id != $current_run_id)) | length")
           
           total_workflows=$((running_workflows + queued_workflows))
-          echo "Found $running_workflows running and $queued_workflows queued workflows"
+          echo "Found $running_workflows other running and $queued_workflows queued workflows (excluding current)"
           
-          # Only proceed if this is the only workflow (count of 1 includes this run)
-          if [ "$total_workflows" -le 1 ]; then
-            echo "No other workflows running or queued, proceeding"
+          # Set output for subsequent steps
+          echo "has_other_runs=$([[ "$total_workflows" -gt 0 ]] && echo 'true' || echo 'false')" >> "$GITHUB_OUTPUT"
+          
+          # Only proceed if there are no other instances of this workflow running
+          if [ "$total_workflows" -eq 0 ]; then
+            echo "No other instances of this workflow running or queued, proceeding"
+            exit 0
           else
-            echo "Other workflows are already running or queued, skipping"
+            echo "Other instances of this workflow are already running or queued, skipping"
             exit 1
           fi
+
+      - name: Skip if other runs detected
+        if: steps.check_runs.outputs.has_other_runs == 'true'
+        run: |
+          echo "Other workflow runs detected, skipping this run"
+          exit 0
 
       - name: Fetch Latest MorphoSource Release
         id: fetch_release
@@ -157,7 +173,8 @@ jobs:
     needs: check_and_analyze
     if: |
       needs.check_and_analyze.outputs.is_morphosource == 'true' &&
-      needs.check_and_analyze.outputs.has_analysis != 'true'
+      needs.check_and_analyze.outputs.has_analysis != 'true' &&
+      needs.check_and_analyze.outputs.has_other_runs != 'true'
     runs-on: ubuntu-22.04
     outputs:
       has_media_error: ${{ steps.url_check.outputs.has_media_error }}
@@ -190,16 +207,21 @@ jobs:
           echo "${{ needs.check_and_analyze.outputs.release_body }}" > release_body.txt
           
       - name: Create Screenshots Directory
-        run: mkdir -p screenshots
+        run: |
+          mkdir -p screenshots
+          chmod 777 screenshots
 
       - name: Run URL check
         id: url_check
         run: |
           python .github/scripts/url_screenshot_check.py release_body.txt || true
           
+          # Move any screenshots that might have been created in root to screenshots dir
+          mv -f *.png screenshots/ 2>/dev/null || true
+          
           if [ -f "url_check_status.json" ]; then
             status=$(cat url_check_status.json | jq -r .status)
-            if [ "$status" = "media_error" ]; then
+            if [ "$status" = "media_error" ] || [ "$status" = "no_file_error" ]; then
               echo "has_media_error=true" >> "$GITHUB_OUTPUT"
               echo "has_server_error=false" >> "$GITHUB_OUTPUT"
             elif [ "$status" = "server_error" ]; then
@@ -242,6 +264,7 @@ jobs:
     if: |
       needs.check_and_analyze.outputs.is_morphosource == 'true' &&
       needs.check_and_analyze.outputs.has_analysis != 'true' &&
+      needs.check_and_analyze.outputs.has_other_runs != 'true' &&
       needs.url_check.outputs.has_media_error != 'true' &&
       needs.url_check.outputs.has_server_error != 'true' &&
       needs.url_check.outputs.has_mesh == 'true'
@@ -381,6 +404,7 @@ jobs:
     if: |
       needs.check_and_analyze.outputs.is_morphosource == 'true' &&
       needs.check_and_analyze.outputs.has_analysis != 'true' &&
+      needs.check_and_analyze.outputs.has_other_runs != 'true' &&
       needs.url_check.outputs.has_media_error != 'true' &&
       needs.url_check.outputs.has_server_error != 'true' &&
       needs.url_check.outputs.has_volumetric_images == 'true'
@@ -463,6 +487,7 @@ jobs:
     if: |
       always() && 
       needs.check_and_analyze.outputs.is_morphosource == 'true' &&
+      needs.check_and_analyze.outputs.has_other_runs != 'true' &&
       (failure() || 
        needs.url_check.outputs.has_media_error == 'true' || 
        needs.url_check.outputs.has_server_error == 'true')

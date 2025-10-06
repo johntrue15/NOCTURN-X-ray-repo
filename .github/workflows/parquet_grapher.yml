@@ -1,0 +1,56 @@
+name: Parquet Data Grapher
+
+on:
+  workflow_dispatch:
+    inputs:
+      timestamp_dir:
+        description: 'Timestamp directory containing parquet files'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  create-graphs:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas pyarrow matplotlib seaborn
+          
+      - name: Generate Timestamp
+        id: timestamp
+        run: echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
+        
+      - name: Create Graphs
+        run: |
+          python .github/scripts/parquet_grapher.py \
+            --input-file data/parquet/${{ inputs.timestamp_dir }}/morphosource_data_*.parquet \
+            --output-dir data/graphs/${{ steps.timestamp.outputs.timestamp }} \
+            --log-file data/graphs/${{ steps.timestamp.outputs.timestamp }}/grapher.log
+            
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: data-graphs-${{ steps.timestamp.outputs.timestamp }}
+          path: data/graphs/${{ steps.timestamp.outputs.timestamp }}
+          
+      - name: Commit and Push Changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add data/graphs/${{ steps.timestamp.outputs.timestamp }}
+          git commit -m "Add data graphs [${{ steps.timestamp.outputs.timestamp }}]"
+          git push 

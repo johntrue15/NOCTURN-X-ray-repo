@@ -1,0 +1,152 @@
+name: Check Modified MorphoSource Records
+
+on:
+  workflow_run:
+    workflows: 
+      - "Parse MorphoSource Data"  # Trigger after Parse MorphoSource completes
+    types: [completed]
+  workflow_dispatch:  # Allow manual triggering for testing
+
+permissions:
+  contents: write
+
+jobs:
+  check_modified_records:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+          ref: main  # Explicitly checkout the main branch
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Check for recent MorphoSource releases
+        id: check_recent
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if there was a recent MorphoSource release in the last 5 minutes
+          CURRENT_TIME=$(date +%s)
+          RECENT_RELEASE=$(gh release list --limit 5 | grep "morphosource-updates-" | head -n 1)
+          
+          if [ -n "$RECENT_RELEASE" ]; then
+            echo "Found recent MorphoSource release: $RECENT_RELEASE"
+            
+            # Extract the release date directly from the GitHub CLI output
+            # The format is typically: title status tag date
+            RELEASE_DATE=$(echo "$RECENT_RELEASE" | awk '{print $NF}')
+            echo "Release date from GitHub: $RELEASE_DATE"
+            
+            # Extract the tag from the release info
+            RELEASE_TAG=$(echo "$RECENT_RELEASE" | awk '{print $3}')
+            echo "Release tag: $RELEASE_TAG"
+            
+            # Convert the ISO 8601 date to timestamp
+            if [[ "$OSTYPE" == "darwin"* ]]; then
+              # macOS date command
+              RELEASE_TIMESTAMP=$(date -j -f "%Y-%m-%dT%H:%M:%SZ" "$RELEASE_DATE" +%s 2>/dev/null || echo "0")
+            else
+              # Linux date command
+              RELEASE_TIMESTAMP=$(date -d "$RELEASE_DATE" +%s 2>/dev/null || echo "0")
+            fi
+            
+            # If the timestamp conversion failed, try to extract it from the tag
+            if [ "$RELEASE_TIMESTAMP" = "0" ]; then
+              echo "Date conversion failed, trying to extract from tag..."
+              # Extract timestamp from tag (format: morphosource-updates-YYYY-MM-DD_HH-MM-SS)
+              TAG_DATE=$(echo "$RELEASE_TAG" | sed 's/morphosource-updates-//')
+              # Convert to a format that date can understand
+              FORMATTED_DATE=$(echo "$TAG_DATE" | sed 's/_/ /' | sed 's/-/:/5' | sed 's/-/:/4')
+              
+              if [[ "$OSTYPE" == "darwin"* ]]; then
+                # macOS date command
+                RELEASE_TIMESTAMP=$(date -j -f "%Y-%m-%d %H:%M:%S" "$FORMATTED_DATE" +%s 2>/dev/null || echo "0")
+              else
+                # Linux date command
+                RELEASE_TIMESTAMP=$(date -d "$FORMATTED_DATE" +%s 2>/dev/null || echo "0")
+              fi
+              echo "Timestamp from tag: $RELEASE_TIMESTAMP"
+            fi
+            
+            echo "Current timestamp: $CURRENT_TIME"
+            echo "Release timestamp: $RELEASE_TIMESTAMP"
+            
+            # Calculate time difference in seconds
+            TIME_DIFF=$((CURRENT_TIME - RELEASE_TIMESTAMP))
+            echo "Time difference: $TIME_DIFF seconds"
+            
+            # If release was within the last 5 minutes (300 seconds), we'll check if it's the same record
+            if [ $TIME_DIFF -lt 300 ] || [ "$RELEASE_TIMESTAMP" = "0" ]; then
+              # If timestamp is 0, both methods failed, so we'll assume it's recent as a safety measure
+              if [ "$RELEASE_TIMESTAMP" = "0" ]; then
+                echo "WARNING: Could not determine release timestamp. Assuming it's recent as a precaution."
+              fi
+              echo "skip_check=true" >> $GITHUB_OUTPUT
+              echo "recent_release=$RELEASE_TAG" >> $GITHUB_OUTPUT
+              echo "Recent MorphoSource release detected, will check if it's the same record"
+            else
+              echo "skip_check=false" >> $GITHUB_OUTPUT
+              echo "No recent MorphoSource release detected within the last 5 minutes"
+            fi
+          else
+            echo "skip_check=false" >> $GITHUB_OUTPUT
+            echo "No recent MorphoSource releases found"
+          fi
+
+      - name: Run Modified Records Checker
+        id: checker
+        if: steps.check_recent.outputs.skip_check != 'true'
+        run: python .github/scripts/check_modified_morphosource.py
+
+      - name: Run Modified Records Checker with Recent Release Comparison
+        id: checker_with_comparison
+        if: steps.check_recent.outputs.skip_check == 'true' && steps.check_recent.outputs.recent_release != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RECENT_RELEASE_TAG: ${{ steps.check_recent.outputs.recent_release }}
+        run: python .github/scripts/check_modified_morphosource.py
+
+      - name: Commit updated last_modified_record.json
+        if: (steps.checker.outputs.is_modified == 'true' || steps.checker_with_comparison.outputs.is_modified == 'true')
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .github/last_modified_record.json
+          git commit -m "Update last_modified_record.json for modified record"
+          
+          # Pull latest changes with rebase to avoid merge commits
+          git pull --rebase origin main
+          
+          # Push with force-with-lease for safety (prevents overwriting others' changes)
+          git push --force-with-lease
+
+      - name: Generate Timestamp
+        id: gen_ts
+        if: (steps.checker.outputs.is_modified == 'true' || steps.checker_with_comparison.outputs.is_modified == 'true')
+        run: |
+          # Format: YYYY-MM-DD_HH-MM-SS
+          TS=$(date +'%Y-%m-%d_%H-%M-%S')
+          echo "timestamp=$TS" >> $GITHUB_OUTPUT
+
+      - name: Create Release for Modified Record
+        if: (steps.checker.outputs.is_modified == 'true' || steps.checker_with_comparison.outputs.is_modified == 'true')
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: morphosource-modified-${{ steps.gen_ts.outputs.timestamp }}
+          release_name: "MorphoSource Modified Record #${{ steps.gen_ts.outputs.timestamp }}"
+          body: ${{ steps.checker.outputs.details || steps.checker_with_comparison.outputs.details }}
+          draft: false
+          prerelease: false 

@@ -1,0 +1,30 @@
+# Daily Check Report
+
+## Record Changes
+Latest Record ID: 000707996
+Previous Record ID: 000707576
+
+Total Records: 104817
+Previous Records: 104722
+New Records Added: 96
+
+### New Record IDs:
+- 000707996: Right Mandibular Second Molar Treatment Anterior Tooth Root
+- 000707992: Right Mandibular Second Molar Post Treatment Alveolar Subbone Root
+- 000707988: Right Mandibular Second Molar Treatment Anterior Subalveolar Bone Root
+- 000707984: Right Mandibular Second Molar Post Treatment Teeth
+- 000707980: Right Mandibular Second Molar Pre Treatment Teeth
+- 000707975: Right Mandibular Second Molar Treatment Anterior Tooth Root
+- 000707971: Right Mandibular Second Molar Post Treatment Alveolar Subbone Root
+- 000707967: Right Mandibular Second Molar Treatment Anterior Subalveolar Bone Root
+- 000707963: Right Mandibular Second Molar Post Treatment Teeth
+- 000707959: Right Mandibular Second Molar Pre Treatment Teeth
+... and 86 more
+
+## Data Comparison
+Previous records: 104722
+Current records: 104817
+Difference: 95
+
+## Attestation
+Daily Dataset: https://github.com/johntrue15/NOCTURN-X-ray-repo/attestations/4861588

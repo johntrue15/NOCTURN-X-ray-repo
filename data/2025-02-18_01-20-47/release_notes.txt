@@ -1,0 +1,24 @@
+# Daily Check Report
+
+## Record Changes
+Latest Record ID: 000710938
+Previous Record ID: 000710657
+
+Total Records: 105235
+Previous Records: 105231
+New Records Added: 5
+
+### New Record IDs:
+- 000710938: Sacrum [Mesh] [CT]
+- 000710933: Hamate [Mesh] [CT]
+- 000710900: Head [CTImageSeries] [CT]
+- 000710899: Entire Specimen [CTImageSeries] [CT]
+- 000710657: Reticulate Nummulites From Tdp 12/26/1 44 55 Cm
+
+## Data Comparison
+Previous records: 105231
+Current records: 105235
+Difference: 4
+
+## Attestation
+Daily Dataset: https://github.com/johntrue15/NOCTURN-X-ray-repo/attestations/5035442

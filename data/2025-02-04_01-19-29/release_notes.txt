@@ -1,0 +1,30 @@
+# Daily Check Report
+
+## Record Changes
+Latest Record ID: 000706626
+Previous Record ID: 000706045
+
+Total Records: 104578
+Previous Records: 104530
+New Records Added: 49
+
+### New Record IDs:
+- 000706626: Tadpole [CTImageSeries] [CT]
+- 000706615: Element Unspecified [CTImageSeries] [CT]
+- 000706584: Anterior [CTImageSeries] [CT]
+- 000706554: Right Mandibular Second Molar Treatment Anterior Tooth Root
+- 000706550: Right Mandibular Second Molar Post Treatment Alveolar Subbone Root
+- 000706544: Right Mandibular Second Molar Treatment Anterior Subalveolar Bone Root
+- 000706537: Right Mandibular Second Molar Post Treatment Teeth
+- 000706528: Right Mandibular Second Molar Pre Treatment Teeth
+- 000706524: Left Mandibular Third Molar Treatment Anterior Tooth Root
+- 000706520: Left Mandibular Third Molar Post Treatment Alveolar Subbone Root
+... and 39 more
+
+## Data Comparison
+Previous records: 104530
+Current records: 104578
+Difference: 48
+
+## Attestation
+Daily Dataset: https://github.com/johntrue15/NOCTURN-X-ray-repo/attestations/4777577

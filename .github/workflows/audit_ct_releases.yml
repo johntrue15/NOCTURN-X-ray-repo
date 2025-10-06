@@ -1,0 +1,270 @@
+name: Audit CT Text Releases
+
+on:
+  workflow_dispatch:
+    inputs:
+      days_to_check:
+        description: 'Number of days to look back (max 100)'
+        required: true
+        default: '30'
+        type: string
+      delete_duplicates:
+        description: 'Delete duplicate releases (must run audit first)'
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  audit_releases:
+    runs-on: ubuntu-latest
+    if: ${{ !inputs.delete_duplicates }}
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install Dependencies
+        run: pip install pandas requests
+
+      - name: Create Python Script
+        run: |
+          cat > analyze_releases.py << 'EOF'
+          import json,sys,os,requests,pandas as pd,re
+          from datetime import datetime,timedelta
+          
+          def extract_identifiers(body):
+              if not body:
+                  return None
+              record_nums = re.findall(r'Record #(\d+)', body)
+              specimen_ids = re.findall(r'(?:Object|Specimen):\s*([A-Z]+:[A-Za-z]+:\d+)', body)
+              all_ids = record_nums + specimen_ids
+              unique_ids = list(dict.fromkeys(all_ids))
+              return ','.join(unique_ids) if unique_ids else None
+          
+          def extract_commit_hash(body):
+              if not body:
+                  return "unknown"
+              # Look for the commit hash line
+              lines = body.split("\n")
+              for line in lines:
+                  # Look for a line that contains just a 7-character hex string
+                  line = line.strip()
+                  if len(line) == 7 and all(c in "0123456789abcdef" for c in line):
+                      print(f"Found commit hash: {line}")  # Debug
+                      return line
+              print(f"No commit hash found in body:\n{body}")  # Debug
+              return "unknown"
+          
+          token=os.environ["GITHUB_TOKEN"]
+          headers={"Authorization":f"Bearer {token}"}
+          days=int(os.environ["DAYS"])
+          end_date=datetime.now()
+          start_date=end_date-timedelta(days=days)
+          releases=[]
+          page=1
+          while True:
+              r=requests.get(f"https://api.github.com/repos/{os.environ['GITHUB_REPOSITORY']}/releases?per_page=100&page={page}",headers=headers)
+              if not r.ok or not r.json():break
+              batch=[]
+              for rel in r.json():
+                  if not rel["tag_name"].startswith("ct_to_text_analysis-"):continue
+                  created=datetime.strptime(rel["created_at"],"%Y-%m-%dT%H:%M:%SZ")
+                  if created < start_date:break
+                  
+                  print(f"\nProcessing release: {rel['tag_name']}")  # Debug
+                  
+                  # Extract commit hash from target_commitish if available
+                  commit = rel.get("target_commitish", "unknown")
+                  if len(commit) > 7:  # If it's a full SHA, take first 7 chars
+                      commit = commit[:7]
+                  
+                  morpho_ref=next((line for line in rel["body"].split("\n") if "morphosource-updates-" in line),"No reference found")
+                  body_escaped = rel["body"].replace("\n", "\\n") if rel["body"] else ""
+                  identifiers = extract_identifiers(rel["body"])
+                  
+                  print(f"Extracted data:")  # Debug
+                  print(f"  Commit: {commit}")
+                  print(f"  Identifiers: {identifiers}")
+                  
+                  batch.append({
+                      "ct_release": rel["tag_name"],
+                      "created_at": rel["created_at"],
+                      "morphosource_ref": morpho_ref,
+                      "commit": commit,
+                      "identifiers": identifiers,
+                      "release_body": body_escaped
+                  })
+              if not batch:break
+              releases.extend(batch)
+              page+=1
+          
+          df=pd.DataFrame(releases)
+          df["date"]=pd.to_datetime(df["created_at"])
+          
+          # Remove the exact duplicates check since we only care about commits
+          
+          # Group by commit to find all duplicates
+          commit_groups = df.groupby("commit")
+          duplicates_to_delete = []
+          kept_releases = []
+          
+          for commit, group in commit_groups:
+              if len(group) > 1 and commit != "unknown":  # Only process groups with multiple releases and valid commits
+                  # Sort by created_at to keep the first release
+                  sorted_group = group.sort_values("created_at")
+                  kept_release = sorted_group.iloc[0]
+                  kept_releases.append(kept_release)
+                  # Mark all others as duplicates to delete
+                  duplicates = sorted_group.iloc[1:]
+                  duplicates_to_delete.extend(duplicates.to_dict('records'))
+          
+          if duplicates_to_delete:
+              # Save list of releases to delete
+              dupes_df = pd.DataFrame(duplicates_to_delete)
+              dupes_df.to_csv("releases_to_delete.csv", index=False, quoting=1)
+              
+              # Save list of releases to keep
+              kept_df = pd.DataFrame(kept_releases)
+              kept_df.to_csv("releases_to_keep.csv", index=False, quoting=1)
+              
+              print("\nFound duplicate releases:")
+              print(f"\nTotal unique commits with duplicates: {len([c for c,g in commit_groups if len(g)>1 and c!='unknown'])}")
+              print(f"Total duplicate releases to delete: {len(duplicates_to_delete)}")
+              print(f"Releases to keep: {len(kept_releases)}")
+              
+              print("\nExample duplicates:")
+              for commit, group in commit_groups:
+                  if len(group) > 1 and commit != "unknown":
+                      print(f"\nCommit: {commit}")
+                      print(f"  Keeping: {group.iloc[0]['ct_release']} ({group.iloc[0]['created_at']})")
+                      print(f"  Deleting {len(group)-1} duplicates:")
+                      for _, dupe in group.iloc[1:].iterrows():
+                          print(f"    - {dupe['ct_release']} ({dupe['created_at']})")
+          else:
+              print("\nNo exact duplicates found")
+          
+          # After creating dataframe
+          print("\nDataFrame contents:")  # Debug
+          print(df[["ct_release", "commit", "identifiers"]].to_string())
+          EOF
+
+      - name: Run Analysis
+        id: analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          DAYS: ${{ inputs.days_to_check }}
+        run: |
+          python3 analyze_releases.py
+          if [ -f "releases_to_delete.csv" ]; then
+            echo "has_duplicates=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_duplicates=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload Results
+        if: steps.analyze.outputs.has_duplicates == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: duplicate-releases-report
+          path: |
+            releases_to_delete.csv
+            releases_to_keep.csv
+          retention-days: 90
+
+      - name: Display Summary
+        if: steps.analyze.outputs.has_duplicates == 'true'
+        run: |
+          echo "=== Duplicate Releases Report ==="
+          echo "Full details available in the artifacts section"
+          echo ""
+          echo "Preview of duplicates (showing time differences):"
+          head -n 5 releases_to_delete.csv
+
+  delete_releases:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.delete_duplicates }}
+    steps:
+      - name: Install jq
+        run: sudo apt-get install jq
+
+      - name: Download Previous Audit Results
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          name: duplicate-releases-report
+          workflow: audit_ct_releases.yml
+          path: ./audit
+          search_artifacts: true
+          if_no_artifact_found: error
+
+      - name: Delete Duplicate Releases
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          echo "Reading releases to delete from previous audit..."
+          
+          # Get all releases with pagination
+          echo "Fetching all releases..."
+          page=1
+          rm -f releases.json  # Clear any existing file
+          total_releases=0
+          
+          while true; do
+            echo "Fetching page $page..."
+            response=$(curl -s \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/${{ github.repository }}/releases?per_page=100&page=${page}")
+            
+            # Check if we got any releases
+            batch_count=$(echo "$response" | jq '. | length')
+            echo "Found $batch_count releases on page $page"
+            
+            if [ "$batch_count" -eq "0" ]; then
+              break
+            fi
+            
+            # Debug: Show releases with their commit hashes
+            echo "$response" | jq -r '.[] | "\(.tag_name) - Commit: \(.body | capture("(?m)^[0-9a-f]{7}").string // "unknown")"'
+            
+            # Append to our releases file
+            if [ "$page" -eq "1" ]; then
+              echo "$response" > releases.json
+            else
+              # Combine the arrays
+              jq -s '.[0] + .[1]' releases.json <(echo "$response") > releases.tmp
+              mv releases.tmp releases.json
+            fi
+            
+            total_releases=$((total_releases + batch_count))
+            ((page++))
+          done
+          
+          echo "Total releases found: $total_releases"
+          echo "Found releases (first 5):"
+          jq -r '.[].tag_name' releases.json | head -n 5
+          
+          # Process the CSV, removing all quotes and getting just the tag names
+          echo "Processing releases to delete..."
+          sed 1d ./audit/releases_to_delete.csv | cut -d',' -f1 | tr -d '"' | while read -r release_tag; do
+            if [[ -n "$release_tag" ]]; then  # Skip empty lines
+              echo "Processing release: $release_tag"
+              release_id=$(jq -r --arg tag "$release_tag" '.[] | select(.tag_name==$tag) | .id' releases.json)
+              
+              if [[ -n "$release_id" && "$release_id" != "null" ]]; then
+                echo "Found ID $release_id for release $release_tag"
+                echo "Deleting release $release_tag (ID: $release_id)..."
+                curl -X DELETE \
+                  -H "Authorization: Bearer $GITHUB_TOKEN" \
+                  -H "Accept: application/vnd.github.v3+json" \
+                  "https://api.github.com/repos/${{ github.repository }}/releases/$release_id"
+                echo "Deleted."
+                sleep 1
+              else
+                echo "Could not find release ID for $release_tag, skipping..."
+              fi
+            fi
+          done 
