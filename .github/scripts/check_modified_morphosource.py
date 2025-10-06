@@ -1,139 +1,48 @@
 #!/usr/bin/env python3
 import os
-import requests
-from bs4 import BeautifulSoup
-import time
 import sys
-from urllib3.util.retry import Retry
-from requests.adapters import HTTPAdapter
-import random
 import json
+import time
+import random
+from morphosource_api import MorphoSourceAPI, MorphoSourceAPIError, MorphoSourceTemporarilyUnavailable
 
-# URL sorted by modification date (descending)
-SEARCH_URL = (
-    "https://www.morphosource.org/catalog/media?locale=en"
-    "&q=X-Ray+Computed+Tomography&search_field=all_fields"
-    "&sort=system_modified_dtsi+desc"
-)
-BASE_URL = "https://www.morphosource.org"
 LAST_MODIFIED_FILE = ".github/last_modified_record.json"
 
-class MorphoSourceTemporarilyUnavailable(Exception):
-    """Custom exception for when MorphoSource is temporarily unavailable"""
-    pass
-
-def create_session():
-    """Create a requests session with retry strategy"""
-    session = requests.Session()
-    
-    # More conservative retry strategy
-    retry_strategy = Retry(
-        total=3,  # total number of retries
-        backoff_factor=5,  # will wait 5, 10, 20 seconds between retries
-        status_forcelist=[429, 500, 502, 503, 504],  # status codes to retry on
-        allowed_methods=["GET"],  # only retry GET requests
-        respect_retry_after_header=True,  # honor server's retry-after header
-        raise_on_status=True
-    )
-    
-    # Create adapter with shorter timeouts
-    adapter = HTTPAdapter(
-        max_retries=retry_strategy,
-        pool_connections=1,  # reduce concurrent connections
-        pool_maxsize=1
-    )
-    
-    session.mount("http://", adapter)
-    session.mount("https://", adapter)
-    
-    return session
-
-def check_for_server_error(response_text, response_status):
-    """Enhanced check for server issues"""
-    # Check for specific error page
-    if "MorphoSource temporarily unavailable (500)" in response_text:
-        raise MorphoSourceTemporarilyUnavailable("MorphoSource is temporarily unavailable (500 error)")
-    
-    # Check for very slow responses (indicated by minimal content)
-    if len(response_text.strip()) < 100:
-        raise MorphoSourceTemporarilyUnavailable("MorphoSource returned minimal content - possible server issues")
-    
-    # Check for error status codes
-    if response_status >= 400:
-        raise MorphoSourceTemporarilyUnavailable(f"MorphoSource returned error status {response_status}")
-
 def get_top_modified_record(max_retries=3):
-    """Get the most recently modified record from MorphoSource"""
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-    }
-    
-    session = create_session()
+    """Get the most recently modified record from MorphoSource using the API"""
+    api = MorphoSourceAPI()
     
     for attempt in range(max_retries):
         try:
-            # Shorter initial timeout
-            response = session.get(
-                SEARCH_URL, 
-                headers=headers, 
-                timeout=(5, 30)  # (connect timeout, read timeout)
-            )
-            response.raise_for_status()
+            # Use API to get the most recently modified record
+            api_record = api.get_latest_modified_record(query="X-Ray Computed Tomography")
+            
+            if not api_record:
+                raise ValueError("No records found in API response")
+            
+            # Normalize the record to match the old scraping format
+            normalized = api.normalize_record(api_record)
+            
+            # Convert to the format expected by the rest of the script
+            record = {
+                "id": normalized["id"],
+                "title": normalized["title"],
+                "detail_url": normalized["detail_url"]
+            }
+            
+            # Add metadata fields directly to record (old format)
+            for key, value in normalized["metadata"].items():
+                record[key] = value
             
             # Debug output
-            print(f"Response status code: {response.status_code}", file=sys.stderr)
-            print(f"Response size: {len(response.text)} bytes", file=sys.stderr)
-            print("First 500 characters of response:", response.text[:500], file=sys.stderr)
-            
-            # Enhanced error checking
-            check_for_server_error(response.text, response.status_code)
-            
-            soup = BeautifulSoup(response.text, "html.parser")
-            
-            # Get the first (most recently modified) record
-            record_element = soup.select_one("div#search-results li.document.blacklight-media")
-            
-            if not record_element:
-                raise ValueError("No records found in search results")
-                
-            record = {}
-            
-            # 1) Title & detail link
-            title_el = record_element.select_one("h3.search-result-title a")
-            if title_el:
-                record["title"] = title_el.get_text(strip=True)
-                record["detail_url"] = BASE_URL + title_el.get("href", "")
-                # Extract ID from URL - try multiple patterns
-                import re
-                if match := re.search(r'/media/(\d+)', record["detail_url"]):
-                    record["id"] = match.group(1)
-                elif match := re.search(r'/concern/media/(\w+)', record["detail_url"]):
-                    record["id"] = match.group(1)
-                else:
-                    record["id"] = "unknown"
-            else:
-                record["title"] = "No Title"
-                record["detail_url"] = None
-                record["id"] = "unknown"
-
-            # 2) Additional metadata from dt/dd pairs
-            metadata_dl = record_element.select_one("div.metadata dl.dl-horizontal")
-            if metadata_dl:
-                items = metadata_dl.select("div.index-field-item")
-                for item in items:
-                    dt = item.select_one("dt")
-                    dd = item.select_one("dd")
-                    if dt and dd:
-                        field_name = dt.get_text(strip=True).rstrip(":")
-                        field_value = dd.get_text(strip=True)
-                        record[field_name] = field_value
+            print(f"Retrieved most recently modified record via API: {record['id']}", file=sys.stderr)
             
             return record
             
-        except (requests.RequestException, MorphoSourceTemporarilyUnavailable) as e:
+        except MorphoSourceTemporarilyUnavailable as e:
             print(f"Request failed (attempt {attempt + 1}/{max_retries}): {e}", file=sys.stderr)
             if attempt < max_retries - 1:
-                # Longer backoff with more jitter
+                # Longer backoff with jitter
                 sleep_time = (5 ** (attempt + 1)) + random.uniform(0, 5)
                 print(f"Backing off for {sleep_time:.1f} seconds...", file=sys.stderr)
                 time.sleep(sleep_time)
@@ -142,6 +51,17 @@ def get_top_modified_record(max_retries=3):
             # On final failure, write to GitHub output and exit gracefully
             write_github_output(False, f"MorphoSource appears to be having issues. Error: {str(e)}")
             sys.exit(0)  # Exit gracefully to prevent GitHub Action failure
+        except MorphoSourceAPIError as e:
+            print(f"API error (attempt {attempt + 1}/{max_retries}): {e}", file=sys.stderr)
+            if attempt < max_retries - 1:
+                sleep_time = (5 ** (attempt + 1)) + random.uniform(0, 5)
+                print(f"Backing off for {sleep_time:.1f} seconds...", file=sys.stderr)
+                time.sleep(sleep_time)
+                continue
+            
+            # On final failure, write to GitHub output and exit gracefully
+            write_github_output(False, f"API error: {str(e)}")
+            sys.exit(0)
 
     raise ValueError("Failed to get top modified record after all retries")
 
