@@ -3,6 +3,7 @@
 import os
 import re
 import sys
+import json
 
 try:
     from openai import OpenAI
@@ -16,15 +17,96 @@ OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 # Regex to detect lines like "New Record #104236 Title: Endocast [Mesh] [CT]"
 RE_RECORD_HEADER = re.compile(r'^New Record #(\d+)\s+Title:\s*(.*)$', re.IGNORECASE)
 
+def extract_json_from_body(body: str):
+    """
+    Extracts JSON data from a MorphoSource API release body.
+    The JSON is typically in a markdown code block like:
+    ```json
+    { ... }
+    ```
+    
+    Returns the parsed JSON dict or None if not found.
+    """
+    # Look for JSON code block
+    json_start = body.find("```json")
+    if json_start == -1:
+        return None
+    
+    # Find the end of the code block
+    json_end = body.find("```", json_start + 7)
+    if json_end == -1:
+        return None
+    
+    # Extract the JSON content
+    json_str = body[json_start + 7:json_end].strip()
+    
+    try:
+        return json.loads(json_str)
+    except json.JSONDecodeError as e:
+        print(f"Warning: Failed to parse JSON from release body: {e}", file=sys.stderr)
+        return None
+
+def is_api_release(body: str):
+    """Check if this is a MorphoSource API release (has JSON data)"""
+    return "### Full API JSON for latest record" in body
+
+def parse_api_record(body: str):
+    """
+    Parses a MorphoSource API release body to extract record information.
+    
+    Returns a dict with record information or None if parsing fails.
+    """
+    json_data = extract_json_from_body(body)
+    if not json_data:
+        return None
+    
+    # Extract metadata from the release body (outside JSON)
+    lines = body.splitlines()
+    record_id = None
+    record_title = None
+    detail_url = None
+    
+    for line in lines:
+        line = line.strip()
+        if line.startswith("- **id:**"):
+            # Extract ID from: - **id:** `000620417`
+            record_id = line.split("`")[1] if "`" in line else None
+        elif line.startswith("- **title:**"):
+            # Extract title from: - **title:** Head, Mouthparts...
+            record_title = line.split("**title:**", 1)[1].strip()
+        elif line.startswith("- **detail page:**"):
+            # Extract URL from: - **detail page:** https://...
+            detail_url = line.split("**detail page:**", 1)[1].strip()
+    
+    # Build a record dict similar to the old format
+    record = {
+        "record_number": record_id or json_data.get("id", "N/A"),
+        "title": record_title or json_data.get("title_tesim", ["N/A"])[0] if isinstance(json_data.get("title_tesim"), list) else "N/A",
+        "detail_url": detail_url,
+        "api_data": json_data  # Include the full API JSON for analysis
+    }
+    
+    return record
+
 def parse_records_from_body(body: str):
     """
     Parses the release body, looking for lines like:
       New Record #XXXX Title: ...
     Then captures subsequent lines of the form 'Key: Value'
     
+    Also handles API releases with JSON data.
+    
     Returns a list of dicts, each representing a record's data.
     Skips records with invalid record numbers.
     """
+    # Check if this is an API release with JSON
+    if is_api_release(body):
+        api_record = parse_api_record(body)
+        if api_record and api_record.get("record_number", "").replace("N/A", ""):
+            return [api_record]
+        return []
+    
+    # Original parsing logic for traditional releases
     records = []
     lines = body.splitlines()
     current_record = {}
@@ -97,6 +179,7 @@ def parse_records_from_body(body: str):
 def generate_text_for_records(records):
     """
     Calls the o1-mini model to generate descriptions for valid records.
+    Handles both traditional records and API records with JSON data.
     """
     if not OPENAI_API_KEY:
         return "Error: OPENAI_API_KEY is missing."
@@ -116,18 +199,41 @@ def generate_text_for_records(records):
         user_content.append(f" - Title: {rec.get('title','N/A')}")
         user_content.append(f" - URL: {rec.get('detail_url','N/A')}")
 
-        for field in [
-            "Object",
-            "Taxonomy",
-            "Element or Part",
-            "Data Manager",
-            "Date Uploaded",
-            "Publication Status",
-            "Rights Statement",
-            "CC License",
-        ]:
-            if field in rec:
-                user_content.append(f" - {field}: {rec[field]}")
+        # Check if this is an API record with JSON data
+        if "api_data" in rec:
+            user_content.append("\nAPI Data:")
+            api_data = rec["api_data"]
+            
+            # Extract relevant fields from API JSON
+            for key, value in api_data.items():
+                # Skip internal/technical fields
+                if key.startswith("system_") or key.startswith("has_") or key.startswith("is"):
+                    continue
+                if key in ["id", "accessControl_ssim", "depositor_ssim", "depositor_tesim"]:
+                    continue
+                
+                # Format the value nicely
+                if isinstance(value, list):
+                    if value:
+                        value_str = ", ".join(str(v) for v in value)
+                        user_content.append(f" - {key}: {value_str}")
+                elif value:
+                    user_content.append(f" - {key}: {value}")
+        else:
+            # Traditional record format
+            for field in [
+                "Object",
+                "Taxonomy",
+                "Element or Part",
+                "Data Manager",
+                "Date Uploaded",
+                "Publication Status",
+                "Rights Statement",
+                "CC License",
+            ]:
+                if field in rec:
+                    user_content.append(f" - {field}: {rec[field]}")
+        
         user_content.append("")  # Blank line separator
 
     # Add instructions for a ~200-word multi-paragraph summary
