@@ -3,29 +3,22 @@
 Queries:
   https://www.morphosource.org/api/media?utf8=✓&search_field=all_fields&q=<QUERY>
 
-Parses:
-  response.pages.total_count
-  response.media[0] (latest record from this page)
+Outputs:
+  - count (current total_count)
+  - old_count (baseline)
+  - delta (count - old_count, or =count if baseline missing)
+  - new_data ("true" if delta>0 OR first run; else "false")
+  - latest_id, latest_title
+  - baseline_source ("last_count.txt" | "count_outfile" | "missing")
 
 Writes:
   - .github/last_count.txt (state)
-  - morphosource_xray_count.txt (plain-text total)
-
-Exports step outputs to GITHUB_OUTPUT:
-  new_data, details, count, old_count, delta, latest_id, latest_title
-
-Release body (details) includes:
-  - Summary (query, counts)
-  - Link to the media detail page
-  - A pretty JSON dump of the latest record (truncated if necessary)
+  - morphosource_xray_count.txt (current count)
+  - Rich release body with latest record JSON (truncated)
 """
 
-import os
-import sys
-import time
-import json
-import requests
-from typing import Optional, Dict, Any
+import os, sys, time, json, requests
+from typing import Optional, Dict, Any, Tuple
 
 BASE_URL        = os.getenv("BASE_URL", "https://www.morphosource.org/api/media").strip()
 QUERY           = os.getenv("QUERY", "X-ray")
@@ -38,13 +31,11 @@ API_KEY         = os.getenv("MORPHOSOURCE_API_KEY", "").strip()
 TIMEOUT = (5, 30)
 MAX_TRIES = 4
 RETRY_STATUS = {429, 500, 502, 503, 504}
-
-MAX_JSON_CHARS = 60000  # keep GH release under limits
+MAX_JSON_CHARS = 60000
 
 def gh_set_outputs(**kv):
     path = os.environ.get("GITHUB_OUTPUT")
-    if not path:
-        return
+    if not path: return
     with open(path, "a") as fh:
         for k, v in kv.items():
             if isinstance(v, str) and "\n" in v:
@@ -52,12 +43,24 @@ def gh_set_outputs(**kv):
             else:
                 fh.write(f"{k}={v}\n")
 
-def load_last_count() -> int:
-    try:
-        with open(LAST_COUNT_FILE, "r") as f:
-            return int(f.read().strip())
-    except Exception:
-        return 0
+def load_baseline() -> Tuple[Optional[int], str]:
+    """Return (count, source)."""
+    # 1) Prefer last_count.txt
+    if os.path.exists(LAST_COUNT_FILE):
+        try:
+            with open(LAST_COUNT_FILE, "r") as f:
+                return int(f.read().strip()), "last_count.txt"
+        except Exception:
+            pass
+    # 2) Fallback to previous plain-text count file
+    if os.path.exists(COUNT_OUTFILE):
+        try:
+            with open(COUNT_OUTFILE, "r") as f:
+                return int(f.read().strip()), "count_outfile"
+        except Exception:
+            pass
+    # 3) Missing baseline altogether
+    return None, "missing"
 
 def save_last_count(n: int):
     os.makedirs(os.path.dirname(LAST_COUNT_FILE), exist_ok=True)
@@ -70,8 +73,7 @@ def save_count_txt(n: int):
 
 def headers() -> Dict[str, str]:
     h = {"Accept": "application/json"}
-    if API_KEY:
-        h["Authorization"] = f"Bearer {API_KEY}"
+    if API_KEY: h["Authorization"] = f"Bearer {API_KEY}"
     return h
 
 def request_with_backoff(url: str, params: dict) -> Optional[requests.Response]:
@@ -88,10 +90,8 @@ def request_with_backoff(url: str, params: dict) -> Optional[requests.Response]:
             print(f"[warn] network error (try {tries}/{MAX_TRIES}), sleeping {sleep}s", file=sys.stderr)
             time.sleep(sleep)
             continue
-
         if r.status_code < 400:
             return r
-
         if r.status_code in RETRY_STATUS and tries < MAX_TRIES:
             ra = r.headers.get("Retry-After")
             try:
@@ -99,9 +99,7 @@ def request_with_backoff(url: str, params: dict) -> Optional[requests.Response]:
             except ValueError:
                 sleep = min(60, 2 ** tries)
             print(f"[warn] HTTP {r.status_code} (try {tries}/{MAX_TRIES}) sleeping {sleep}s", file=sys.stderr)
-            time.sleep(sleep)
-            continue
-
+            time.sleep(sleep); continue
         print(f"[error] HTTP {r.status_code}: {r.text[:300]}", file=sys.stderr)
         return None
     return None
@@ -118,17 +116,11 @@ def extract_total_count(payload: Dict[str, Any]) -> Optional[int]:
 def get_first_media(payload: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     try:
         media = payload.get("response", {}).get("media", [])
-        if isinstance(media, list) and media:
-            # Take the first item from this page (page 1)
-            return media[0]
-        return None
+        return media[0] if isinstance(media, list) and media else None
     except Exception:
         return None
 
 def first_text(record: Dict[str, Any], *keys):
-    """
-    Convenience: return first string for any *_tesim fields (list) or direct string field.
-    """
     for k in keys:
         if k in record:
             v = record[k]
@@ -141,19 +133,13 @@ def first_text(record: Dict[str, Any], *keys):
     return ""
 
 def main():
-    params = {
-        "utf8": UTF8_CHK,          # must be ✓
-        "search_field": SEARCH_FIELD,
-        "q": QUERY,
-        # NOTE: we rely on page=1 default; if API adds paging params later, we can set them here.
-    }
-
+    params = {"utf8": UTF8_CHK, "search_field": SEARCH_FIELD, "q": QUERY}
     r = request_with_backoff(BASE_URL, params)
     if not r:
         msg = f"Failed to query MorphoSource API at {BASE_URL}"
         print("[error]", msg, file=sys.stderr)
         gh_set_outputs(new_data="false", details=msg)
-        sys.exit(0)  # don't fail cron
+        sys.exit(0)
 
     print(f"[debug] GET {r.url} -> {r.status_code}", file=sys.stderr)
     try:
@@ -173,24 +159,31 @@ def main():
         sys.exit(0)
 
     latest = get_first_media(data)
-    latest_id = latest.get("id") if isinstance(latest, dict) else None
+    latest_id = latest.get("id") if isinstance(latest, dict) else ""
     latest_title = ""
     if latest:
-        # Try a few common title fields
         latest_title = (first_text(latest, "title_ssi", "title_tesim") or
                         first_text(latest, "short_title_tesim") or
-                        f"Media {latest_id or ''}").strip()
+                        f"Media {latest_id}").strip()
 
-    # Persist count files
+    # Persist current count to file
     save_count_txt(total)
-    old = load_last_count()
-    delta = total - old
 
-    # Always update local state (keeps manual dispatch in sync)
+    # Load baseline (handles missing .txt case)
+    old, baseline_source = load_baseline()
+    if old is None:
+        delta = total
+        new_data = True  # force a release on missing baseline
+        old_count_out = "0"
+    else:
+        delta = total - old
+        new_data = delta > 0
+        old_count_out = str(old)
+
+    # Update durable baseline (so next run is differential)
     save_last_count(total)
 
-    # Build a pretty JSON block for the latest record
-    latest_json_block = ""
+    # Pretty JSON for latest record (truncated)
     if latest:
         raw = json.dumps(latest, indent=2, ensure_ascii=False)
         if len(raw) > MAX_JSON_CHARS:
@@ -199,15 +192,15 @@ def main():
     else:
         latest_json_block = "_No media records returned on page 1._"
 
-    # Detail page URL (public UI)
     detail_url = f"https://www.morphosource.org/concern/media/{latest_id}" if latest_id else "(unknown)"
 
     body = "\n".join([
         f"Queried **/api/media** with: `utf8=✓&search_field={SEARCH_FIELD}&q={QUERY}`",
         f"**total_count**: **{total}**",
         "",
-        f"Previous recorded total: {old}",
-        f"New records since last run: **{delta}**",
+        f"Baseline source: _{baseline_source}_",
+        f"Previous recorded total: {old_count_out}",
+        f"New records since baseline: **{delta}**",
         "",
         "## Latest record (from this API page)",
         f"- **id:** `{latest_id}`",
@@ -218,15 +211,21 @@ def main():
         latest_json_block,
     ])
 
+    # Emit outputs
     gh_set_outputs(
-        new_data="true" if delta > 0 else "false",
+        new_data="true" if new_data else "false",
         details=body,
         count=str(total),
-        old_count=str(old),
+        old_count=old_count_out,
         delta=str(delta),
-        latest_id=str(latest_id or ""),
+        latest_id=str(latest_id),
         latest_title=latest_title,
+        baseline_source=baseline_source,
+        first_run="true" if old is None else "false",
     )
+
+    # Log current count for visibility
+    print(f"[info] Current total_count: {total} | Baseline: {old_count_out} ({baseline_source}) | Δ: {delta}", file=sys.stderr)
 
 if __name__ == "__main__":
     main()
