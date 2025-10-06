@@ -41,22 +41,24 @@ Daily and monthly workflows need access to recent data directories for compariso
 - `keep_recent`: Number of recent directories to keep uncompressed (default: 3)
 
 **Actions**:
-1. Identifies all data directories sorted by timestamp
-2. Keeps N most recent directories uncompressed
-3. Moves older directories to a temporary location
-4. Creates compressed archive: `data_archive.tar.gz`
-5. Removes archived directories from git tracking
-6. Creates extraction script and documentation
-7. Commits and pushes changes
+1. Sets up Git LFS for handling large files
+2. Identifies all data directories sorted by timestamp
+3. Keeps N most recent directories uncompressed
+4. Moves older directories to a temporary location
+5. Creates compressed archive: `data_archive.tar.gz`
+6. Removes archived directories from git tracking
+7. Creates extraction script and documentation
+8. Commits and pushes changes (with Git LFS handling the large archive)
 
 ### Generated Files
 
 When run, the workflow creates:
 
-1. **`data_archive.tar.gz`**: Compressed archive of historical data
+1. **`data_archive.tar.gz`**: Compressed archive of historical data (managed by Git LFS)
 2. **`extract-data-archive.sh`**: Script to extract archived data locally
 3. **`DATA_ARCHIVE_README.md`**: Documentation for the archive
 4. **Updated `.gitignore`**: Comments explaining the archive strategy
+5. **`.gitattributes`**: Configures Git LFS to track the archive file
 
 ## Usage
 
@@ -161,8 +163,14 @@ Run the compression workflow when:
 
 ### Git Operations
 - Archived directories removed from git tracking
-- Archive file added to repository
+- Archive file added to repository via Git LFS (handles files >100 MB)
 - Atomic commit with descriptive message
+
+### Git LFS (Large File Storage)
+- The archive file is tracked using Git LFS to handle files exceeding GitHub's 100 MB limit
+- Git LFS stores large files outside the main repository
+- The workflow automatically configures and uses Git LFS
+- `.gitattributes` file configures LFS tracking for `data_archive.tar.gz`
 
 ## Troubleshooting
 
@@ -174,6 +182,7 @@ The workflow includes retry logic. If it fails, check for:
 - Concurrent pushes from other workflows
 - Network issues
 - Permission problems
+- Git LFS quota (GitHub provides 1 GB free storage per month)
 
 ### "Extraction failed"
 Ensure `data_archive.tar.gz` exists and is not corrupted:
