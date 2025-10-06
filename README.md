@@ -12,6 +12,7 @@ This repository automatically tracks and analyzes X-ray CT data from MorphoSourc
 - [Workflow Dependencies](docs/dependencies.md) - Detailed mapping of workflows and their associated scripts
 - [Data Compression Strategy](docs/data-compression-strategy.md) - How historical data is compressed to optimize GitHub Actions performance
 - [MorphoSource API Migration](docs/morphosource_api_migration.md) - Technical details about the migration from web scraping to API
+- [CT to Text API Support](docs/ct_to_text_api_support.md) - How CT to Text workflow handles both traditional and API-based releases
 - [Raspberry Pi Installation](docs/Raspi.md) - Guide for setting up NOCTURN on a Raspberry Pi
 
 ## Latest Analysis Results
@@ -89,7 +90,8 @@ This repository uses several automated workflows to analyze X-ray CT data. For a
    - Triggered by MorphoSource updates and API releases
    - Analyzes CT metadata using AI
    - Generates detailed descriptions of specimens
-   - Skips API releases without detailed record data
+   - Supports both traditional and JSON API release formats
+   - Passes full API JSON data to ChatGPT for comprehensive analysis
 
 4. **CT Slice Analysis** (`combined_ct_images_to_text.yml`)
    - Analyzes 2D slices and 3D reconstructions
