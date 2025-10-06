@@ -105,7 +105,7 @@ jobs:
           
           # Create compressed archive
           cd /tmp
-          tar -czf data_archive.tar.gz --use-compress-program="gzip -${{ inputs.compression_level || 6 }}" old_data/
+          tar -cf data_archive.tar.gz --use-compress-program="gzip -${{ inputs.compression_level || 6 }}" old_data/
           cd -
           
           # Move archive to repository
