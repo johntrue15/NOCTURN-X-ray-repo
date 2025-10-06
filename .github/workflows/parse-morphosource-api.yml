@@ -1,13 +1,12 @@
-name: Parse MorphoSource API
+name: Parse MorphoSource API (total_count)
 
 on:
   schedule:
-    # Every 5 minutes (match your scraper cadence)
-    - cron: "*/5 * * * *"
+    - cron: "*/5 * * * *"   # every 5 minutes
   workflow_dispatch:
     inputs:
       query:
-        description: 'Search term for /api/media (free text)'
+        description: 'Free-text q= for /api/media'
         required: false
         default: 'X-ray'
 
@@ -17,7 +16,6 @@ permissions:
 jobs:
   api_query_and_release:
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -29,44 +27,51 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install deps
         run: pip install requests
 
       - name: Run API Query
         id: api
         env:
-          MORPHOSOURCE_API_KEY: ${{ secrets.MORPHOSOURCE_API_KEY }} # optional
-          QUERY: ${{ github.event.inputs.query || 'X-ray' }}
+          # Endpoint + params must match your structure
           BASE_URL: https://www.morphosource.org/api/media
+          QUERY: ${{ github.event.inputs.query || 'X-ray' }}
+          UTF8_CHK: "✓"
+          SEARCH_FIELD: all_fields
+
+          # Files
           LAST_COUNT_FILE: .github/last_count.txt
           COUNT_OUTFILE: morphosource_xray_count.txt
+
+          # Optional auth if you have one (not required for public search)
+          MORPHOSOURCE_API_KEY: ${{ secrets.MORPHOSOURCE_API_KEY }}
         run: |
           python .github/scripts/parse_morphosource_api.py
 
       - name: Commit updated count files
         if: steps.api.outputs.new_data == 'true'
+        env:
+          COUNT: ${{ steps.api.outputs.count }}
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add .github/last_count.txt morphosource_xray_count.txt
-          git commit -m "Update MorphoSource API count to ${COUNT}"
+          git commit -m "MorphoSource API total_count -> ${COUNT}"
           git push
-        env:
-          COUNT: ${{ steps.api.outputs.count }}
 
       - name: Generate Timestamp
         id: gen_ts
         if: steps.api.outputs.new_data == 'true'
         run: echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
 
-      - name: Create or Update Release
+      - name: Create Release (only when increased)
         if: steps.api.outputs.new_data == 'true'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
           tag_name: morphosource-api-${{ steps.gen_ts.outputs.timestamp }}
-          release_name: "MorphoSource API Update #${{ steps.gen_ts.outputs.timestamp }}"
+          release_name: "MorphoSource API Update • ${{ steps.gen_ts.outputs.timestamp }}"
           body: ${{ steps.api.outputs.details }}
           draft: false
           prerelease: false
