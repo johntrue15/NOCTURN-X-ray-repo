@@ -2,6 +2,22 @@
 
 This document shows the relationships between GitHub Actions workflows and their associated Python scripts.
 
+## Important Note: MorphoSource API Migration
+
+**All MorphoSource-related workflows now use the official MorphoSource API instead of web scraping.**
+
+The repository requires a `MORPHOSOURCE_API_KEY` secret to be configured in GitHub Actions. See the [API Migration Guide](API-Migration.md) for setup instructions.
+
+**Updated Scripts:**
+- `scrape_morphosource.py` - Now uses MorphoSource API
+- `daily.py` - Now uses MorphoSource API
+- `monthly.py` - Now uses MorphoSource API
+- `check_modified_morphosource.py` - Now uses MorphoSource API
+- `morphosource_api.py` - New API client library
+
+**Archived Code:**
+The original web scraping implementations are preserved in the `Pre-Bot-Era/` directory.
+
 ## Scheduled Workflows
 
 ### GitHub Pages Content Generation (`github-pages.yml`)

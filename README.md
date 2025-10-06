@@ -11,6 +11,7 @@ This repository automatically tracks and analyzes X-ray CT data from MorphoSourc
 - [Project Overview and Setup](docs/index.md) - Introduction, project structure, and getting started
 - [Workflow Dependencies](docs/dependencies.md) - Detailed mapping of workflows and their associated scripts
 - [Raspberry Pi Installation](docs/Raspi.md) - Guide for setting up NOCTURN on a Raspberry Pi
+- [API Migration Guide](docs/API-Migration.md) - Information about the transition from web scraping to MorphoSource API
 
 ## Latest Analysis Results
 
@@ -95,9 +96,12 @@ This repository uses several automated workflows to analyze X-ray CT data. For a
 
 ## Installation
 
+**Important**: This repository now uses the MorphoSource API. You'll need to obtain an API key from MorphoSource.org and configure it as a GitHub secret named `MORPHOSOURCE_API_KEY`. See our [API Migration Guide](docs/API-Migration.md) for detailed instructions.
+
 For detailed installation instructions:
 - Standard setup: See our [Project Overview](docs/index.md#installation)
 - Raspberry Pi setup: Follow our [Raspberry Pi Guide](docs/Raspi.md#installation)
+- API Configuration: Follow our [API Migration Guide](docs/API-Migration.md#setup-requirements)
 
 ## Recent Activity
 

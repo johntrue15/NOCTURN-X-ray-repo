@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Test data
+test_data/
+test_output/
+test_monthly/
+*.log
+
+# API Keys and Secrets (should never be committed!)
+.env
+*.key
+*_key.txt
+secrets.yml
+secrets.json
+
+# Temporary files
+*.tmp
+*.bak
+.cache/
