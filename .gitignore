@@ -48,3 +48,6 @@ htmlcov/
 *.bak
 .temp/
 temp/
+
+# Archived data directories (older data compressed in data_archive.tar.gz)
+# Recent data directories are kept for workflow compatibility
