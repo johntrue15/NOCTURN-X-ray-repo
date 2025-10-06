@@ -17,6 +17,9 @@ This document shows the relationships between GitHub Actions workflows and their
 
 **Required Scripts:**
 - `.github/scripts/daily.py`
+- `.github/scripts/morphosource_api.py` (API client module)
+
+**Note:** Migrated from web scraping to MorphoSource JSON API to improve reliability and avoid bot detection.
 
 
 ---
@@ -37,6 +40,9 @@ This document shows the relationships between GitHub Actions workflows and their
 
 **Required Scripts:**
 - `.github/scripts/monthly.py`
+- `.github/scripts/morphosource_api.py` (API client module)
+
+**Note:** Migrated from web scraping to MorphoSource JSON API to improve reliability and avoid bot detection.
 
 
 ---
@@ -147,6 +153,9 @@ This document shows the relationships between GitHub Actions workflows and their
 **Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/scrape_morphosource.py`
+- `.github/scripts/morphosource_api.py` (API client module)
+
+**Note:** Migrated from web scraping to MorphoSource JSON API to improve reliability and avoid bot detection.
 
 ### Release Analysis and Wiki Generation (`release_analysis.yml`)
 **Manual trigger available**
@@ -286,6 +295,18 @@ This section shows which workflows use each script:
 **Used in Workflows:**
 - `monthly.yml`
 
+**Dependencies:**
+- `morphosource_api.py`
+
+### morphosource_api.py
+**Used by Scripts:**
+- `scrape_morphosource.py`
+- `daily.py`
+- `monthly.py`
+- `check_modified_morphosource.py`
+
+**Description:** Python API client for accessing MorphoSource data. Provides structured access to the MorphoSource JSON API, replacing previous web scraping approach. Includes retry logic, rate limiting, and error handling.
+
 ### parquet_grapher.py
 **Used in Workflows:**
 - `parquet_grapher.yml`
@@ -310,6 +331,11 @@ This section shows which workflows use each script:
 ### scrape_morphosource.py
 **Used in Workflows:**
 - `parse_morphosource.yml`
+
+**Dependencies:**
+- `morphosource_api.py` (API client module)
+
+**Note:** Migrated from web scraping to MorphoSource JSON API to improve reliability and avoid bot detection.
 
 ### selenium_fullscreen_test2D.py
 **Used in Workflows:**

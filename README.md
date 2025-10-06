@@ -10,6 +10,7 @@ This repository automatically tracks and analyzes X-ray CT data from MorphoSourc
 
 - [Project Overview and Setup](docs/index.md) - Introduction, project structure, and getting started
 - [Workflow Dependencies](docs/dependencies.md) - Detailed mapping of workflows and their associated scripts
+- [MorphoSource API Migration](docs/morphosource_api_migration.md) - Technical details about the migration from web scraping to API
 - [Raspberry Pi Installation](docs/Raspi.md) - Guide for setting up NOCTURN on a Raspberry Pi
 
 ## Latest Analysis Results
@@ -72,9 +73,10 @@ This repository uses several automated workflows to analyze X-ray CT data. For a
 
 1. **Parse MorphoSource Data** (`parse_morphosource.yml`)
    - Runs every 5 minutes
-   - Scrapes MorphoSource for new X-ray CT records
+   - Uses MorphoSource JSON API to fetch new X-ray CT records
    - Creates releases with new record details
    - Triggers subsequent analysis workflows
+   - **Note:** Migrated from web scraping to API for improved reliability
 
 2. **CT to Text Analysis** (`ct_to_text.yml`)
    - Triggered by MorphoSource updates
