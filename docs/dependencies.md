@@ -28,6 +28,16 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ---
 
+### Parse MorphoSource API (`parse-morphosource-api.yml`)
+
+**Schedule:** Every 5 minutes
+
+**Required Scripts:**
+- `.github/scripts/parse_morphosource_api.py`
+
+
+---
+
 ### GitHub Pages Content Generation (`github-pages.yml`)
 
 **Schedule:** Cron: 0 * * * *
@@ -312,6 +322,10 @@ This section shows which workflows use each script:
 ### parquet_processor.py
 **Used in Workflows:**
 - `parquet_processor.yml`
+
+### parse_morphosource_api.py
+**Used in Workflows:**
+- `parse-morphosource-api.yml`
 
 ### prepare_finetune_data.py
 **Used in Workflows:**
