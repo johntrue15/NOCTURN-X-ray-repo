@@ -1,3 +1,5 @@
+import requests
+from bs4 import BeautifulSoup
 import json
 from datetime import datetime
 import time
@@ -6,7 +8,6 @@ import sys
 import logging
 import argparse
 from pathlib import Path
-from morphosource_api import MorphoSourceAPIClient
 
 def setup_logging(log_dir):
     """Configure logging for release notes creation"""
@@ -22,8 +23,8 @@ def setup_logging(log_dir):
     return logging.getLogger(__name__)
 
 class DailyMorphoSourceExtractor:
-    def __init__(self, api_client: MorphoSourceAPIClient, data_dir: str = 'data'):
-        self.api_client = api_client
+    def __init__(self, base_url: str, data_dir: str = 'data'):
+        self.base_url = base_url
         self.data_dir = data_dir
         self.setup_logging()
         self.setup_directories()
@@ -37,25 +38,28 @@ class DailyMorphoSourceExtractor:
         os.makedirs(self.data_dir, exist_ok=True)
 
     def get_all_records(self, latest_stored_id: str = None) -> list:
-        """Get all records from the API until we hit the latest stored record"""
+        """Get all records from the webpage until we hit the latest stored record"""
         try:
             records = []
             page = 1
             found_latest = False
             
             while True:
-                self.logger.info(f"Fetching page {page} from API")
+                url = f"{self.base_url}&page={page}"
+                self.logger.info(f"Fetching page {page}")
                 
-                # Get records from API
-                result = self.api_client.search_media(page=page, per_page=100)
-                api_records = result.get('data', result.get('results', []))
+                response = requests.get(url)
+                if response.status_code != 200:
+                    raise Exception(f"Failed to fetch page {page}: {response.status_code}")
                 
-                if not api_records:
+                soup = BeautifulSoup(response.text, 'html.parser')
+                record_elements = soup.find_all('div', class_='search-result-wrapper')
+                
+                if not record_elements:
                     break
                     
-                for api_record in api_records:
-                    # Convert API format to legacy format
-                    record = self.api_client.parse_record_to_legacy_format(api_record)
+                for elem in record_elements:
+                    record = self.parse_record(elem)
                     records.append(record)
                     self.logger.info(f"Found record {record['id']} - Total records: {len(records)}")
                     
@@ -67,19 +71,15 @@ class DailyMorphoSourceExtractor:
                 
                 if found_latest:
                     break
-                
-                # Check if there are more pages
-                if len(api_records) < 100:
-                    break
                     
                 page += 1
-                time.sleep(0.5)  # Rate limiting
+                time.sleep(1)  # Be nice to the server
                 
             self.logger.info(f"Completed fetch - Found {len(records)} new records")
             return records
             
         except Exception as e:
-            self.logger.error(f"Error getting records from API: {e}")
+            self.logger.error(f"Error getting records: {e}")
             raise
 
     def load_stored_records(self) -> list:
@@ -118,7 +118,34 @@ class DailyMorphoSourceExtractor:
             self.logger.error(f"Error loading stored records: {e}")
             raise
 
-    # Removed parse_record method as it's now handled by API client
+    def parse_record(self, record_elem) -> dict:
+        try:
+            title_elem = record_elem.find('div', class_='search-results-title-row')
+            title = title_elem.get_text(strip=True) if title_elem else ""
+            
+            link_elem = record_elem.find('a', href=True)
+            record_url = f"https://www.morphosource.org{link_elem['href']}" if link_elem else ""
+            record_id = record_url.split('/')[-1].split('?')[0] if record_url else ""
+            
+            metadata = {}
+            fields = record_elem.find_all('div', class_='index-field-item')
+            for field in fields:
+                field_text = field.get_text(strip=True)
+                if ':' in field_text:
+                    key, value = field_text.split(':', 1)
+                    metadata[key.strip()] = value.strip()
+            
+            return {
+                'title': title,
+                'url': record_url,
+                'id': record_id,
+                'metadata': metadata,
+                'scraped_date': datetime.now().isoformat()
+            }
+            
+        except Exception as e:
+            self.logger.error(f"Error parsing record: {e}")
+            raise
 
     def records_match(self, record1: dict, record2: dict) -> bool:
         if not record1 or not record2:
@@ -336,11 +363,6 @@ def main():
     args = parser.parse_args()
     
     try:
-        # Get API key from environment
-        api_key = os.environ.get('MORPHOSOURCE_API_KEY')
-        if not api_key:
-            raise ValueError("MORPHOSOURCE_API_KEY environment variable not set")
-        
         # Validate directories
         if not args.data_dir:
             raise ValueError("data-dir cannot be empty")
@@ -359,12 +381,9 @@ def main():
             create_no_changes_release_notes(args.output_dir, args.data_dir, logger)
             return 0
             
-        # Initialize API client
-        api_client = MorphoSourceAPIClient(api_key)
-        logger.info("MorphoSource API client initialized")
-        
         # Normal daily check flow
-        extractor = DailyMorphoSourceExtractor(api_client, data_dir=args.data_dir)
+        base_url = "https://www.morphosource.org/catalog/media?locale=en&per_page=100&q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc"
+        extractor = DailyMorphoSourceExtractor(base_url, data_dir=args.data_dir)
         result = extractor.run()
         
         # Create daily info regardless of result

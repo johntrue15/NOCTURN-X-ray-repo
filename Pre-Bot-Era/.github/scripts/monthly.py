@@ -1,3 +1,5 @@
+import requests
+from bs4 import BeautifulSoup
 import json
 from datetime import datetime
 import time
@@ -5,12 +7,11 @@ import os
 import sys
 import logging
 import argparse
-from morphosource_api import MorphoSourceAPIClient
 
 class MonthlyMorphoSourceCollector:
-    def __init__(self, api_client: MorphoSourceAPIClient, data_dir: str = 'data'):
-        """Initialize collector with API client and output directory."""
-        self.api_client = api_client
+    def __init__(self, base_url: str, data_dir: str = 'data'):
+        """Initialize collector with base URL and output directory."""
+        self.base_url = base_url
         self.data_dir = data_dir
         
         # Ensure data directory exists
@@ -186,7 +187,34 @@ class MonthlyMorphoSourceCollector:
                         f"[View]({new_record['url']}) |\n"
                     )
 
-    # Removed parse_record method as it's now handled by API client
+    def parse_record(self, record_elem):
+        """Parse a single record from the page"""
+        try:
+            title_elem = record_elem.find('div', class_='search-results-title-row')
+            title = title_elem.get_text(strip=True) if title_elem else ""
+            
+            link_elem = record_elem.find('a', href=True)
+            record_url = f"https://www.morphosource.org{link_elem['href']}" if link_elem else ""
+            record_id = record_url.split('/')[-1].split('?')[0] if record_url else ""
+            
+            metadata = {}
+            fields = record_elem.find_all('div', class_='index-field-item')
+            for field in fields:
+                field_text = field.get_text(strip=True)
+                if ':' in field_text:
+                    key, value = field_text.split(':', 1)
+                    metadata[key.strip()] = value.strip()
+            
+            return {
+                'title': title,
+                'url': record_url,
+                'id': record_id,
+                'metadata': metadata,
+                'scraped_date': datetime.now().isoformat()
+            }
+        except Exception as e:
+            self.logger.error(f"Error parsing record: {e}")
+            raise
 
     def check_for_modifications(self, record):
         """Check if a record has been modified compared to previous version"""
@@ -223,46 +251,67 @@ class MonthlyMorphoSourceCollector:
             self.logger.info(f"Saved stats to {self.stats_path}")
 
     def collect_all_records(self):
-        """Collect all records from MorphoSource using API"""
+        """Collect all records from MorphoSource"""
         self.last_page_processed = 0
         self.last_successful_page = 0
         self.last_successful_id = None
         self.error_count = 0
+        page = 1
         
-        def progress_callback(page, total_pages, records_so_far):
-            """Callback for progress updates"""
-            self.logger.info(
-                f"Progress - Page: {page}/{total_pages}, "
-                f"Records: {records_so_far}"
-            )
-            
-            # Checkpoint logging
-            if page % 5 == 0:
-                self.save_stats()  # Save intermediate stats
-        
-        try:
-            # Use API to get all records
-            api_records = self.api_client.get_all_xray_ct_records(
-                progress_callback=progress_callback
-            )
-            
-            # Convert API records to legacy format and check for modifications
-            for api_record in api_records:
-                try:
-                    record = self.api_client.parse_record_to_legacy_format(api_record)
-                    self.check_for_modifications(record)
-                    self.all_records.append(record)
-                    self.last_successful_id = record['id']
-                except Exception as e:
+        while True:
+            try:
+                url = f"{self.base_url}&page={page}"
+                self.logger.info(f"Processing page {page}")
+                
+                response = requests.get(url)
+                if response.status_code != 200:
                     self.error_count += 1
-                    self.logger.error(f"Error processing record: {e}")
+                    self.logger.error(f"Failed to fetch page {page}: {response.status_code}")
+                    if self.error_count >= 5:  # Max consecutive errors
+                        break
                     continue
-            
-            self.logger.info(f"Collection complete - Total records: {len(self.all_records)}")
-            
-        except Exception as e:
-            self.logger.error(f"Error collecting records from API: {e}")
-            raise
+                
+                soup = BeautifulSoup(response.text, 'html.parser')
+                records = soup.find_all('div', class_='search-result-wrapper')
+                
+                if not records:
+                    break
+                
+                page_records = []
+                for record_elem in records:
+                    try:
+                        record = self.parse_record(record_elem)
+                        self.check_for_modifications(record)
+                        page_records.append(record)
+                        self.last_successful_id = record['id']
+                    except Exception as e:
+                        self.error_count += 1
+                        self.logger.error(f"Error parsing record on page {page}: {e}")
+                        continue
+                
+                # Only add records if page was successful
+                self.all_records.extend(page_records)
+                self.last_successful_page = page
+                self.error_count = 0  # Reset error count after successful page
+                
+                # Checkpoint logging
+                if page % 5 == 0:
+                    self.logger.info(
+                        f"Checkpoint - Page: {page}, "
+                        f"Records: {len(self.all_records)}, "
+                        f"Last ID: {self.last_successful_id}"
+                    )
+                    self.save_stats()  # Save intermediate stats
+                
+                page += 1
+                self.last_page_processed = page
+                time.sleep(2)  # Rate limiting
+                
+            except Exception as e:
+                self.error_count += 1
+                self.logger.error(f"Error processing page {page}: {e}")
+                if self.error_count >= 5:  # Max consecutive errors
+                    break
 
     def run(self):
         """Run the monthly collection process"""
@@ -317,19 +366,12 @@ def main():
                       help='Directory to store output files')
     args = parser.parse_args()
 
-    # Get API key from environment
-    api_key = os.environ.get('MORPHOSOURCE_API_KEY')
-    if not api_key:
-        print("Error: MORPHOSOURCE_API_KEY environment variable not set")
-        sys.exit(1)
-
     # Create output directory if it doesn't exist
     os.makedirs(args.output_dir, exist_ok=True)
 
-    # Initialize API client
-    api_client = MorphoSourceAPIClient(api_key)
+    base_url = "https://www.morphosource.org/catalog/media?locale=en&per_page=100&q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc"
     
-    collector = MonthlyMorphoSourceCollector(api_client, data_dir=args.output_dir)
+    collector = MonthlyMorphoSourceCollector(base_url, data_dir=args.output_dir)
     total_records = collector.run()
     
     print(f"Total records collected: {total_records}")

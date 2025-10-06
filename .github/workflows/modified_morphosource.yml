@@ -107,6 +107,8 @@ jobs:
       - name: Run Modified Records Checker
         id: checker
         if: steps.check_recent.outputs.skip_check != 'true'
+        env:
+          MORPHOSOURCE_API_KEY: ${{ secrets.MORPHOSOURCE_API_KEY }}
         run: python .github/scripts/check_modified_morphosource.py
 
       - name: Run Modified Records Checker with Recent Release Comparison
@@ -115,6 +117,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RECENT_RELEASE_TAG: ${{ steps.check_recent.outputs.recent_release }}
+          MORPHOSOURCE_API_KEY: ${{ secrets.MORPHOSOURCE_API_KEY }}
         run: python .github/scripts/check_modified_morphosource.py
 
       - name: Commit updated last_modified_record.json

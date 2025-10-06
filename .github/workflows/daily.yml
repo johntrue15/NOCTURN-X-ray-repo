@@ -181,6 +181,8 @@ jobs:
       - name: Run Daily Check
         id: daily_check
         continue-on-error: true
+        env:
+          MORPHOSOURCE_API_KEY: ${{ secrets.MORPHOSOURCE_API_KEY }}
         run: |
           mkdir -p data/${{ steps.timestamp.outputs.timestamp }}
           python .github/scripts/daily.py \

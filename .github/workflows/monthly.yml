@@ -63,6 +63,7 @@ jobs:
       env:
         GITHUB_RUN_ID: ${{ github.run_id }}
         GITHUB_REPOSITORY: ${{ github.repository }}
+        MORPHOSOURCE_API_KEY: ${{ secrets.MORPHOSOURCE_API_KEY }}
       run: |
         echo "::group::Starting Collection"
         echo "Run ID: ${{ github.run_id }}"

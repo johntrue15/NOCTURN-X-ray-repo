@@ -30,6 +30,8 @@ jobs:
 
       - name: Run Scraper
         id: scraper
+        env:
+          MORPHOSOURCE_API_KEY: ${{ secrets.MORPHOSOURCE_API_KEY }}
         run: python .github/scripts/scrape_morphosource.py
 
       - name: Commit updated last_count.txt
