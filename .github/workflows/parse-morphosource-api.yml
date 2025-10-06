@@ -2,7 +2,7 @@ name: Parse MorphoSource API (total_count + latest record)
 
 on:
   schedule:
-    - cron: "*/5 * * * *"   # every 5 minutes
+    - cron: "*/5 * * * *"
   workflow_dispatch:
     inputs:
       query:
@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: true
-          fetch-depth: 0   # needed for pull/rebase
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -39,7 +39,6 @@ jobs:
       - name: Run API Query
         id: api
         env:
-          # Endpoint + params must match your structure
           BASE_URL: https://www.morphosource.org/api/media
           QUERY: ${{ github.event.inputs.query || 'X-ray' }}
           UTF8_CHK: "✓"
@@ -49,10 +48,22 @@ jobs:
           LAST_COUNT_FILE: .github/last_count.txt
           COUNT_OUTFILE: morphosource_xray_count.txt
 
-          # Optional auth (public search usually works without it)
           MORPHOSOURCE_API_KEY: ${{ secrets.MORPHOSOURCE_API_KEY }}
         run: |
           python .github/scripts/parse_morphosource_api.py
+
+      - name: Job summary
+        run: |
+          {
+            echo "### MorphoSource API summary"
+            echo ""
+            echo "- Query: \`${{ github.event.inputs.query || 'X-ray' }}\`"
+            echo "- Current total_count: **${{ steps.api.outputs.count }}**"
+            echo "- Previous: **${{ steps.api.outputs.old_count }}** (source: _${{ steps.api.outputs.baseline_source }}_)"
+            echo "- Δ since baseline: **${{ steps.api.outputs.delta }}**"
+            echo "- Latest media id: \`${{ steps.api.outputs.latest_id }}\`"
+            echo "- Latest title: ${{ steps.api.outputs.latest_title }}"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Commit updated count files (safe rebase)
         if: steps.api.outputs.new_data == 'true'
@@ -66,15 +77,12 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
 
-          # Ensure we’re on main and up-to-date metadata-wise
           git checkout main
           git fetch origin main
 
-          # Stage and commit our generated files (may noop if identical)
           git add "$LAST_COUNT_FILE" "$COUNT_OUTFILE" || true
           git commit -m "MorphoSource API total_count -> ${COUNT}" || echo "No local changes to commit."
 
-          # Rebase onto the latest remote; on conflict for our two files, prefer current run
           set +e
           git pull --rebase --autostash origin main
           REBASE_STATUS=$?
@@ -86,7 +94,6 @@ jobs:
           fi
           set -e
 
-          # Push safely (only if remote unchanged since fetch)
           git push --force-with-lease origin HEAD:main
 
       - name: Generate Timestamp
@@ -94,7 +101,7 @@ jobs:
         if: steps.api.outputs.new_data == 'true'
         run: echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
 
-      - name: Create Release (only when increased)
+      - name: Create Release (on increase or first-run)
         if: steps.api.outputs.new_data == 'true'
         uses: actions/create-release@v1
         env:
