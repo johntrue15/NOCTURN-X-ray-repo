@@ -1,0 +1,335 @@
+name: Compress Data Directory
+
+on:
+  workflow_dispatch:  # Manual trigger only
+    inputs:
+      compression_level:
+        description: 'Compression level (1-9, where 9 is best compression)'
+        required: false
+        default: '6'
+        type: choice
+        options:
+          - '1'
+          - '3'
+          - '6'
+          - '9'
+      keep_recent:
+        description: 'Number of most recent data directories to keep uncompressed'
+        required: false
+        default: '3'
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  compress-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history needed for proper git operations
+      
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Check if data directory exists
+        id: check-data
+        run: |
+          if [ -d "data" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Data directory found"
+            du -sh data/
+            echo "Number of subdirectories: $(find data -mindepth 1 -maxdepth 1 -type d | wc -l)"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "No data directory found"
+          fi
+      
+      - name: Identify directories to compress
+        if: steps.check-data.outputs.exists == 'true'
+        id: identify
+        run: |
+          KEEP_COUNT=${{ inputs.keep_recent || 3 }}
+          echo "Keeping $KEEP_COUNT most recent directories uncompressed"
+          
+          # Get all data directories sorted by name (which includes timestamp)
+          ALL_DIRS=$(find data -mindepth 1 -maxdepth 1 -type d | sort -r)
+          TOTAL_DIRS=$(echo "$ALL_DIRS" | wc -l)
+          
+          echo "Total directories: $TOTAL_DIRS"
+          
+          if [ $TOTAL_DIRS -le $KEEP_COUNT ]; then
+            echo "Not enough directories to compress (need more than $KEEP_COUNT)"
+            echo "compress=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Keep the most recent N directories
+          DIRS_TO_KEEP=$(echo "$ALL_DIRS" | head -n $KEEP_COUNT)
+          DIRS_TO_COMPRESS=$(echo "$ALL_DIRS" | tail -n +$((KEEP_COUNT + 1)))
+          
+          echo "Directories to keep uncompressed:"
+          echo "$DIRS_TO_KEEP"
+          echo ""
+          echo "Directories to compress ($(echo "$DIRS_TO_COMPRESS" | wc -l) total):"
+          echo "$DIRS_TO_COMPRESS" | head -5
+          if [ $(echo "$DIRS_TO_COMPRESS" | wc -l) -gt 5 ]; then
+            echo "... and $(($(echo "$DIRS_TO_COMPRESS" | wc -l) - 5)) more"
+          fi
+          
+          echo "compress=true" >> $GITHUB_OUTPUT
+          echo "$DIRS_TO_COMPRESS" > /tmp/dirs_to_compress.txt
+      
+      - name: Compress old data directories
+        if: steps.check-data.outputs.exists == 'true' && steps.identify.outputs.compress == 'true'
+        run: |
+          echo "Compressing old data directories with compression level ${{ inputs.compression_level || 6 }}..."
+          
+          # Create temporary directory for data to compress
+          mkdir -p /tmp/old_data
+          
+          # Move old directories to temp location
+          while IFS= read -r dir; do
+            if [ -d "$dir" ]; then
+              dirname=$(basename "$dir")
+              echo "Moving $dirname to archive..."
+              mv "$dir" "/tmp/old_data/"
+            fi
+          done < /tmp/dirs_to_compress.txt
+          
+          # Create compressed archive
+          cd /tmp
+          tar -czf data_archive.tar.gz --use-compress-program="gzip -${{ inputs.compression_level || 6 }}" old_data/
+          cd -
+          
+          # Move archive to repository
+          mv /tmp/data_archive.tar.gz data_archive.tar.gz
+          
+          echo "Compression complete. Archive details:"
+          ls -lh data_archive.tar.gz
+          
+          # Calculate and display compression ratio
+          ORIGINAL_SIZE=$(du -sb /tmp/old_data/ | cut -f1)
+          COMPRESSED_SIZE=$(stat -c%s data_archive.tar.gz)
+          RATIO=$(echo "scale=2; ($COMPRESSED_SIZE * 100) / $ORIGINAL_SIZE" | bc)
+          
+          echo "Original size: $(du -sh /tmp/old_data/ | cut -f1)"
+          echo "Compressed size: $(du -sh data_archive.tar.gz | cut -f1)"
+          echo "Compression ratio: ${RATIO}%"
+          
+          # Clean up temp directory
+          rm -rf /tmp/old_data
+      
+      - name: Update .gitignore
+        if: steps.check-data.outputs.exists == 'true' && steps.identify.outputs.compress == 'true'
+        run: |
+          # Add archived data pattern to gitignore if not already present
+          if ! grep -q "^# Archived data directories" .gitignore 2>/dev/null; then
+            echo "" >> .gitignore
+            echo "# Archived data directories (older data compressed in data_archive.tar.gz)" >> .gitignore
+            echo "# Recent data directories are kept for workflow compatibility" >> .gitignore
+            echo "Updated .gitignore with archive information"
+          fi
+      
+      - name: Remove compressed directories from git
+        if: steps.check-data.outputs.exists == 'true' && steps.identify.outputs.compress == 'true'
+        run: |
+          # Remove old data directories from git tracking
+          while IFS= read -r dir; do
+            if [ ! -d "$dir" ]; then
+              dirname=$(basename "$dir")
+              echo "Removing $dirname from git..."
+              git rm -r --cached "data/$dirname" 2>/dev/null || echo "Not in git: data/$dirname"
+            fi
+          done < /tmp/dirs_to_compress.txt
+          
+          # Stage the compressed archive
+          git add data_archive.tar.gz
+          git add .gitignore
+          git add data/
+      
+      - name: Create extraction script
+        if: steps.check-data.outputs.exists == 'true' && steps.identify.outputs.compress == 'true'
+        run: |
+          cat > extract-data-archive.sh << 'EOFSCRIPT'
+          #!/bin/bash
+          # Script to extract the compressed historical data archive
+          
+          if [ ! -f "data_archive.tar.gz" ]; then
+              echo "Error: data_archive.tar.gz not found"
+              exit 1
+          fi
+          
+          # Create data directory if it doesn't exist
+          mkdir -p data
+          
+          echo "Extracting historical data from data_archive.tar.gz..."
+          tar -xzf data_archive.tar.gz -C /tmp/
+          
+          # Move extracted directories to data/
+          if [ -d "/tmp/old_data" ]; then
+              mv /tmp/old_data/* data/
+              rm -rf /tmp/old_data
+              echo "Extraction complete!"
+              echo "Historical data restored to: $(pwd)/data/"
+              echo ""
+              echo "Data directories now available:"
+              ls -1 data/ | head -10
+              if [ $(ls -1 data/ | wc -l) -gt 10 ]; then
+                  echo "... and $(($(ls -1 data/ | wc -l) - 10)) more"
+              fi
+          else
+              echo "Error: Extraction failed"
+              exit 1
+          fi
+          EOFSCRIPT
+          
+          chmod +x extract-data-archive.sh
+          git add extract-data-archive.sh
+      
+      - name: Create README for data archive
+        if: steps.check-data.outputs.exists == 'true' && steps.identify.outputs.compress == 'true'
+        run: |
+          cat > DATA_ARCHIVE_README.md << 'EOFREADME'
+          # Data Directory Archive
+          
+          This repository uses a hybrid approach to manage historical data efficiently while maintaining workflow compatibility.
+          
+          ## Data Organization Strategy
+          
+          To optimize GitHub Actions checkout performance while keeping workflows functional:
+          
+          - **Recent data**: The most recent data directories are kept uncompressed in the `data/` directory
+          - **Historical data**: Older data directories are compressed in `data_archive.tar.gz`
+          
+          This approach:
+          - Reduces repository size significantly (from ~10GB to a fraction of that)
+          - Keeps checkout times fast for GitHub Actions
+          - Maintains workflow compatibility (daily/monthly workflows can access recent data)
+          - Preserves all historical data in the archive
+          
+          ## Current State
+          
+          - **Uncompressed**: The most recent data directories in `data/`
+          - **Archived**: Historical data in `data_archive.tar.gz`
+          
+          ## Extracting Historical Data
+          
+          If you need to work with historical data locally, run:
+          
+          ```bash
+          ./extract-data-archive.sh
+          ```
+          
+          Or manually extract:
+          
+          ```bash
+          tar -xzf data_archive.tar.gz -C /tmp/
+          mv /tmp/old_data/* data/
+          ```
+          
+          ## For Workflow Maintainers
+          
+          Most workflows don't need historical data. They work with the recent data that's already uncompressed. However, if a workflow needs access to archived data, add:
+          
+          ```yaml
+          - name: Extract historical data archive
+            if: hashFiles('data_archive.tar.gz') != ''
+            run: |
+              echo "Extracting historical data..."
+              tar -xzf data_archive.tar.gz -C /tmp/
+              mv /tmp/old_data/* data/ 2>/dev/null || true
+          ```
+          
+          ## Archive Information
+          
+          - **Archive file**: `data_archive.tar.gz`
+          - **Last updated**: See git commit history
+          
+          ## Updating the Archive
+          
+          To re-compress and update the archive:
+          
+          1. Go to Actions tab in GitHub
+          2. Select "Compress Data Directory" workflow
+          3. Click "Run workflow"
+          4. Optionally adjust compression level and number of recent directories to keep
+          
+          The workflow will:
+          - Keep the N most recent data directories uncompressed
+          - Compress older directories into `data_archive.tar.gz`
+          - Remove compressed directories from git to save space
+          EOFREADME
+          
+          git add DATA_ARCHIVE_README.md
+      
+      - name: Commit changes
+        if: steps.check-data.outputs.exists == 'true' && steps.identify.outputs.compress == 'true'
+        run: |
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            KEEP_COUNT=${{ inputs.keep_recent || 3 }}
+            ARCHIVED_COUNT=$(cat /tmp/dirs_to_compress.txt | wc -l)
+            
+            git commit -m "Compress old data directories to improve checkout performance
+
+          - Archived $ARCHIVED_COUNT older data directories into data_archive.tar.gz
+          - Kept $KEEP_COUNT most recent directories for workflow compatibility
+          - Added extraction script (extract-data-archive.sh)
+          - Added documentation (DATA_ARCHIVE_README.md)
+
+          This reduces repository size and improves GitHub Actions checkout times
+          while maintaining workflow functionality."
+            
+            # Push with retry logic
+            for i in {1..3}; do
+              if git push origin HEAD:main; then
+                echo "Successfully pushed changes"
+                break
+              else
+                echo "Push failed, attempt $i of 3"
+                if [ $i -lt 3 ]; then
+                  sleep 5
+                  git pull --rebase origin main
+                fi
+              fi
+            done
+          fi
+      
+      - name: Summary
+        if: steps.check-data.outputs.exists == 'true'
+        run: |
+          echo "## Compression Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.identify.outputs.compress }}" == "true" ]; then
+            ARCHIVED_COUNT=$(cat /tmp/dirs_to_compress.txt | wc -l)
+            KEEP_COUNT=${{ inputs.keep_recent || 3 }}
+            
+            echo "✅ Data directories compressed successfully" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Archived:** $ARCHIVED_COUNT old data directories" >> $GITHUB_STEP_SUMMARY
+            echo "**Kept uncompressed:** $KEEP_COUNT most recent directories" >> $GITHUB_STEP_SUMMARY
+            echo "**Archive file:** data_archive.tar.gz" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Benefits:**" >> $GITHUB_STEP_SUMMARY
+            echo "- ⚡ Faster GitHub Actions checkout times" >> $GITHUB_STEP_SUMMARY
+            echo "- 💾 Reduced repository size" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Workflows remain functional (recent data still accessible)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Next steps:**" >> $GITHUB_STEP_SUMMARY
+            echo "1. Future checkouts will be much faster" >> $GITHUB_STEP_SUMMARY
+            echo "2. Workflows continue to work with recent data" >> $GITHUB_STEP_SUMMARY
+            echo "3. Use \`./extract-data-archive.sh\` to extract historical data locally when needed" >> $GITHUB_STEP_SUMMARY
+            echo "4. See DATA_ARCHIVE_README.md for more information" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ No compression needed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Not enough data directories to compress (minimum required: ${{ inputs.keep_recent || 3 }})" >> $GITHUB_STEP_SUMMARY
+          fi
