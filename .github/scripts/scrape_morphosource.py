@@ -1,121 +1,29 @@
 #!/usr/bin/env python3
 import os
-import requests
-from bs4 import BeautifulSoup
-import time
 import sys
-from urllib3.util.retry import Retry
-from requests.adapters import HTTPAdapter
-import random
+from morphosource_api import MorphoSourceAPI, MorphoSourceAPIError, MorphoSourceTemporarilyUnavailable
 
-SEARCH_URL = (
-    "https://www.morphosource.org/catalog/media?locale=en"
-    "&q=X-Ray+Computed+Tomography&search_field=all_fields"
-    "&sort=system_create_dtsi+desc"
-)
-BASE_URL = "https://www.morphosource.org"
 LAST_COUNT_FILE = ".github/last_count.txt"
 
-class MorphoSourceTemporarilyUnavailable(Exception):
-    """Custom exception for when MorphoSource is temporarily unavailable"""
-    pass
-
-def create_session():
-    """Create a requests session with retry strategy"""
-    session = requests.Session()
-    
-    # More conservative retry strategy
-    retry_strategy = Retry(
-        total=3,  # total number of retries
-        backoff_factor=5,  # will wait 5, 10, 20 seconds between retries
-        status_forcelist=[429, 500, 502, 503, 504],  # status codes to retry on
-        allowed_methods=["GET"],  # only retry GET requests
-        respect_retry_after_header=True,  # honor server's retry-after header
-        raise_on_status=True
-    )
-    
-    # Create adapter with shorter timeouts
-    adapter = HTTPAdapter(
-        max_retries=retry_strategy,
-        pool_connections=1,  # reduce concurrent connections
-        pool_maxsize=1
-    )
-    
-    session.mount("http://", adapter)
-    session.mount("https://", adapter)
-    
-    return session
-
-def check_for_server_error(response_text, response_status):
-    """Enhanced check for server issues"""
-    # Check for specific error page
-    if "MorphoSource temporarily unavailable (500)" in response_text:
-        raise MorphoSourceTemporarilyUnavailable("MorphoSource is temporarily unavailable (500 error)")
-    
-    # Check for very slow responses (indicated by minimal content)
-    if len(response_text.strip()) < 100:
-        raise MorphoSourceTemporarilyUnavailable("MorphoSource returned minimal content - possible server issues")
-    
-    # Check for error status codes
-    if response_status >= 400:
-        raise MorphoSourceTemporarilyUnavailable(f"MorphoSource returned error status {response_status}")
-
 def get_current_record_count(max_retries=3):
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-    }
-    
-    session = create_session()
+    """Get the current total count of X-ray CT records using the API"""
+    api = MorphoSourceAPI()
     
     for attempt in range(max_retries):
         try:
-            # Shorter initial timeout
-            response = session.get(
-                SEARCH_URL, 
-                headers=headers, 
-                timeout=(5, 30)  # (connect timeout, read timeout)
-            )
-            response.raise_for_status()
+            # Use API to get total count
+            count = api.get_total_count(query="X-Ray Computed Tomography")
             
             # Debug output
-            print(f"Response status code: {response.status_code}", file=sys.stderr)
-            print(f"Response size: {len(response.text)} bytes", file=sys.stderr)
-            print("First 500 characters of response:", response.text[:500], file=sys.stderr)
+            print(f"API returned count: {count}", file=sys.stderr)
+            return count
             
-            # Enhanced error checking
-            check_for_server_error(response.text, response.status_code)
-            
-            soup = BeautifulSoup(response.text, "html.parser")
-            
-            # Try multiple methods to find the count
-            # Method 1: Meta tag
-            meta_tag = soup.find("meta", {"name": "totalResults"})
-            if meta_tag and meta_tag.get("content"):
-                return int(meta_tag["content"])
-                
-            # Method 2: Search results count text
-            results_text = soup.select_one("div.page-links")
-            if results_text:
-                text = results_text.get_text()
-                import re
-                if match := re.search(r'(\d+)\s+results?', text):
-                    return int(match.group(1))
-            
-            # Method 3: Count actual results
-            results = soup.select("div#search-results li.document.blacklight-media")
-            if results:
-                return len(results)
-                
-            if attempt < max_retries - 1:
-                time.sleep(5)  # Wait before retry
-                continue
-            
-            raise ValueError("Could not find result count using any method")
-            
-        except (requests.RequestException, MorphoSourceTemporarilyUnavailable) as e:
+        except MorphoSourceTemporarilyUnavailable as e:
             print(f"Request failed (attempt {attempt + 1}/{max_retries}): {e}", file=sys.stderr)
             if attempt < max_retries - 1:
-                # Longer backoff with more jitter
+                import time
+                import random
+                # Longer backoff with jitter
                 sleep_time = (5 ** (attempt + 1)) + random.uniform(0, 5)
                 print(f"Backing off for {sleep_time:.1f} seconds...", file=sys.stderr)
                 time.sleep(sleep_time)
@@ -124,6 +32,19 @@ def get_current_record_count(max_retries=3):
             # On final failure, write to GitHub output and exit gracefully
             write_github_output(False, f"MorphoSource appears to be having issues. Error: {str(e)}")
             sys.exit(0)  # Exit gracefully to prevent GitHub Action failure
+        except MorphoSourceAPIError as e:
+            print(f"API error (attempt {attempt + 1}/{max_retries}): {e}", file=sys.stderr)
+            if attempt < max_retries - 1:
+                import time
+                import random
+                sleep_time = (5 ** (attempt + 1)) + random.uniform(0, 5)
+                print(f"Backing off for {sleep_time:.1f} seconds...", file=sys.stderr)
+                time.sleep(sleep_time)
+                continue
+            
+            # On final failure, write to GitHub output and exit gracefully
+            write_github_output(False, f"API error: {str(e)}")
+            sys.exit(0)
 
     raise ValueError("Failed to get record count after all retries")
 
@@ -143,64 +64,40 @@ def save_last_count(count):
 
 def parse_top_records(n=3):
     """
-    Grabs the first n <li class="document blacklight-media"> from the search results
-    (descending by creation date). Returns a list of dicts containing relevant metadata.
+    Get the first n records (descending by creation date) using the API.
+    Returns a list of dicts containing relevant metadata.
     """
-    session = create_session()
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-    }
+    api = MorphoSourceAPI()
     
     try:
-        resp = session.get(
-            SEARCH_URL, 
-            headers=headers, 
-            timeout=(5, 30)  # Match the timeout used in get_current_record_count
-        )
-        resp.raise_for_status()
+        # Use API to get latest records
+        api_records = api.get_latest_records(n=n, query="X-Ray Computed Tomography")
+        
+        # Normalize records to match the old scraping format
+        records = []
+        for api_record in api_records:
+            normalized = api.normalize_record(api_record)
+            
+            # Convert to the format expected by the release message
+            record = {
+                "title": normalized["title"],
+                "detail_url": normalized["detail_url"]
+            }
+            
+            # Add metadata fields directly to record (old format)
+            for key, value in normalized["metadata"].items():
+                record[key] = value
+            
+            records.append(record)
         
         # Debug output
-        print(f"Response status code: {resp.status_code}", file=sys.stderr)
-        print(f"Response size: {len(resp.text)} bytes", file=sys.stderr)
+        print(f"Retrieved {len(records)} records via API", file=sys.stderr)
         
-        # Enhanced error checking
-        check_for_server_error(resp.text, resp.status_code)
-        
-        soup = BeautifulSoup(resp.text, "html.parser")
-        
-        li_list = soup.select("div#search-results li.document.blacklight-media")[:n]
-        records = []
-        for li in li_list:
-            record = {}
-
-            # 1) Title & detail link
-            title_el = li.select_one("h3.search-result-title a")
-            if title_el:
-                record["title"] = title_el.get_text(strip=True)
-                record["detail_url"] = BASE_URL + title_el.get("href", "")
-            else:
-                record["title"] = "No Title"
-                record["detail_url"] = None
-
-            # 2) Additional metadata from dt/dd pairs
-            metadata_dl = li.select_one("div.metadata dl.dl-horizontal")
-            if metadata_dl:
-                items = metadata_dl.select("div.index-field-item")
-                for item in items:
-                    dt = item.select_one("dt")
-                    dd = item.select_one("dd")
-                    if dt and dd:
-                        field_name = dt.get_text(strip=True).rstrip(":")
-                        field_value = dd.get_text(strip=True)
-                        record[field_name] = field_value
-
-            records.append(record)
-
         return records
 
-    except (requests.RequestException, MorphoSourceTemporarilyUnavailable) as e:
-        print(f"Request failed while parsing records: {e}", file=sys.stderr)
-        write_github_output(False, f"MorphoSource appears to be having issues while parsing records. Error: {str(e)}")
+    except MorphoSourceAPIError as e:
+        print(f"API error while fetching records: {e}", file=sys.stderr)
+        write_github_output(False, f"MorphoSource API error while fetching records. Error: {str(e)}")
         sys.exit(0)  # Exit gracefully to prevent GitHub Action failure
 
 def format_release_message(new_records, old_count, records):
