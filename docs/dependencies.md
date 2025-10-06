@@ -11,22 +11,22 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ---
 
-### Daily MorphoSource Check (`daily.yml`)
-
-**Schedule:** Daily at midnight
-
-**Required Scripts:**
-- `.github/scripts/daily.py`
-
-
----
-
 ### Release Reactions Collector (`release-reactions.yml`)
 
 **Schedule:** Daily at midnight
 
 **Required Scripts:**
 - `.github/scripts/collect_reactions.py`
+
+
+---
+
+### Daily MorphoSource Check (`daily.yml`)
+
+**Schedule:** Daily at midnight
+
+**Required Scripts:**
+- `.github/scripts/daily.py`
 
 
 ---
@@ -48,16 +48,6 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ---
 
-### Wiki Generation (`wiki-generation.yml`)
-
-**Schedule:** Weekly on Sunday at midnight
-
-**Required Scripts:**
-- `.github/scripts/release_analysis.py`
-
-
----
-
 ### Fine-tune Model from Reactions (`finetune-model.yml`)
 
 **Schedule:** Weekly on Sunday at midnight
@@ -65,6 +55,16 @@ This document shows the relationships between GitHub Actions workflows and their
 **Required Scripts:**
 - `.github/scripts/finetune_model.py`
 - `.github/scripts/prepare_finetune_data.py`
+
+
+---
+
+### Wiki Generation (`wiki-generation.yml`)
+
+**Schedule:** Weekly on Sunday at midnight
+
+**Required Scripts:**
+- `.github/scripts/release_analysis.py`
 
 
 ---

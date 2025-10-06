@@ -1,5 +1,3 @@
-import requests
-from bs4 import BeautifulSoup
 import json
 from datetime import datetime
 import time
@@ -8,6 +6,7 @@ import sys
 import logging
 import argparse
 from pathlib import Path
+from morphosource_api import MorphoSourceAPI, MorphoSourceAPIError, MorphoSourceTemporarilyUnavailable
 
 def setup_logging(log_dir):
     """Configure logging for release notes creation"""
@@ -23,9 +22,9 @@ def setup_logging(log_dir):
     return logging.getLogger(__name__)
 
 class DailyMorphoSourceExtractor:
-    def __init__(self, base_url: str, data_dir: str = 'data'):
-        self.base_url = base_url
+    def __init__(self, data_dir: str = 'data'):
         self.data_dir = data_dir
+        self.api = MorphoSourceAPI()
         self.setup_logging()
         self.setup_directories()
         self.latest_webpage_record = None
@@ -38,42 +37,65 @@ class DailyMorphoSourceExtractor:
         os.makedirs(self.data_dir, exist_ok=True)
 
     def get_all_records(self, latest_stored_id: str = None) -> list:
-        """Get all records from the webpage until we hit the latest stored record"""
+        """Get all records from the API until we hit the latest stored record"""
         try:
             records = []
             page = 1
             found_latest = False
+            per_page = 100
             
             while True:
-                url = f"{self.base_url}&page={page}"
-                self.logger.info(f"Fetching page {page}")
+                self.logger.info(f"Fetching page {page} via API")
                 
-                response = requests.get(url)
-                if response.status_code != 200:
-                    raise Exception(f"Failed to fetch page {page}: {response.status_code}")
-                
-                soup = BeautifulSoup(response.text, 'html.parser')
-                record_elements = soup.find_all('div', class_='search-result-wrapper')
-                
-                if not record_elements:
-                    break
+                try:
+                    # Use API to fetch records
+                    result = self.api.search_media(
+                        query="X-Ray Computed Tomography",
+                        sort="system_create_dtsi desc",
+                        page=page,
+                        per_page=per_page
+                    )
                     
-                for elem in record_elements:
-                    record = self.parse_record(elem)
-                    records.append(record)
-                    self.logger.info(f"Found record {record['id']} - Total records: {len(records)}")
+                    api_records = result['data']
                     
-                    # Stop if we hit the latest stored record
-                    if latest_stored_id and record['id'] == latest_stored_id:
-                        self.logger.info(f"Found latest stored record {latest_stored_id} - stopping fetch")
-                        found_latest = True
+                    if not api_records:
                         break
-                
-                if found_latest:
-                    break
                     
-                page += 1
-                time.sleep(1)  # Be nice to the server
+                    for api_record in api_records:
+                        # Normalize the record
+                        normalized = self.api.normalize_record(api_record)
+                        
+                        # Convert to the format expected by the rest of the code
+                        record = {
+                            'id': normalized['id'],
+                            'title': normalized['title'],
+                            'url': normalized['url'],
+                            'metadata': normalized['metadata'],
+                            'scraped_date': datetime.now().isoformat()
+                        }
+                        
+                        records.append(record)
+                        self.logger.info(f"Found record {record['id']} - Total records: {len(records)}")
+                        
+                        # Stop if we hit the latest stored record
+                        if latest_stored_id and record['id'] == latest_stored_id:
+                            self.logger.info(f"Found latest stored record {latest_stored_id} - stopping fetch")
+                            found_latest = True
+                            break
+                    
+                    if found_latest:
+                        break
+                    
+                    # Check if we've reached the last page
+                    if page >= result['meta']['total_pages']:
+                        break
+                    
+                    page += 1
+                    time.sleep(2)  # Rate limiting
+                    
+                except MorphoSourceAPIError as e:
+                    self.logger.error(f"API error on page {page}: {e}")
+                    raise
                 
             self.logger.info(f"Completed fetch - Found {len(records)} new records")
             return records
@@ -118,34 +140,7 @@ class DailyMorphoSourceExtractor:
             self.logger.error(f"Error loading stored records: {e}")
             raise
 
-    def parse_record(self, record_elem) -> dict:
-        try:
-            title_elem = record_elem.find('div', class_='search-results-title-row')
-            title = title_elem.get_text(strip=True) if title_elem else ""
-            
-            link_elem = record_elem.find('a', href=True)
-            record_url = f"https://www.morphosource.org{link_elem['href']}" if link_elem else ""
-            record_id = record_url.split('/')[-1].split('?')[0] if record_url else ""
-            
-            metadata = {}
-            fields = record_elem.find_all('div', class_='index-field-item')
-            for field in fields:
-                field_text = field.get_text(strip=True)
-                if ':' in field_text:
-                    key, value = field_text.split(':', 1)
-                    metadata[key.strip()] = value.strip()
-            
-            return {
-                'title': title,
-                'url': record_url,
-                'id': record_id,
-                'metadata': metadata,
-                'scraped_date': datetime.now().isoformat()
-            }
-            
-        except Exception as e:
-            self.logger.error(f"Error parsing record: {e}")
-            raise
+    # parse_record method is no longer needed as the API client handles normalization
 
     def records_match(self, record1: dict, record2: dict) -> bool:
         if not record1 or not record2:
@@ -382,8 +377,7 @@ def main():
             return 0
             
         # Normal daily check flow
-        base_url = "https://www.morphosource.org/catalog/media?locale=en&per_page=100&q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc"
-        extractor = DailyMorphoSourceExtractor(base_url, data_dir=args.data_dir)
+        extractor = DailyMorphoSourceExtractor(data_dir=args.data_dir)
         result = extractor.run()
         
         # Create daily info regardless of result
