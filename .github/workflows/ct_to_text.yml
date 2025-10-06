@@ -170,12 +170,15 @@ jobs:
           steps.check_morpho.outputs.is_morphosource == 'true' &&
           steps.check_analysis.outputs.has_analysis != 'true'
         run: |
-          # Write release body to temp file
-          echo "${{ steps.fetch_release.outputs.release_body }}" > temp_release.txt
+          # Write release body to temp file using printf to avoid command injection
+          printf '%s\n' "${{ steps.fetch_release.outputs.release_body }}" > temp_release.txt
           
-          # Check if release body contains "New Record #" entries
+          # Check if release body contains "New Record #" entries OR JSON API data
           if grep -q "^New Record #[0-9]" temp_release.txt; then
             echo "Release contains detailed record data"
+            echo "has_records=true" >> "$GITHUB_OUTPUT"
+          elif grep -q "### Full API JSON for latest record" temp_release.txt; then
+            echo "Release contains API JSON record data"
             echo "has_records=true" >> "$GITHUB_OUTPUT"
           else
             echo "Release does not contain detailed record data (likely API count-only release)"
@@ -192,8 +195,8 @@ jobs:
           steps.check_analysis.outputs.has_analysis != 'true' &&
           steps.check_records.outputs.has_records == 'true'
         run: |
-          # Write release body to temp file
-          echo "${{ steps.fetch_release.outputs.release_body }}" > temp_release.txt
+          # Write release body to temp file using printf to avoid command injection
+          printf '%s\n' "${{ steps.fetch_release.outputs.release_body }}" > temp_release.txt
           
           # Debug: Show contents of blacklist file
           echo "=== Blacklist Contents ==="
@@ -267,8 +270,8 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          # Write the release body to a file
-          echo "${{ steps.fetch_release.outputs.release_body }}" > release_body.txt
+          # Write the release body to a file using printf to avoid command injection
+          printf '%s\n' "${{ steps.fetch_release.outputs.release_body }}" > release_body.txt
 
           # Run your custom Python script
           python .github/scripts/ct_to_text.py release_body.txt > ct_output.txt
