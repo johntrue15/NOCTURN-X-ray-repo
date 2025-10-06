@@ -1,7 +1,7 @@
 name: Parse MorphoSource Data
 
 on:
-  schedule:
+  #schedule:
     # Runs every 5 minutes (adjust as needed)
     #- cron: "*/5 * * * *"
   workflow_dispatch:
