@@ -20,6 +20,7 @@ A **hybrid compression strategy** that optimizes repository size while maintaini
    - Compresses older directories into `data_archive.tar.gz`
    - Automatically handles special directories (`parquet/`, `reactions/`)
    - Includes configurable compression level (1-9)
+   - Uses Git LFS to handle large archive files (>100 MB)
 
 2. **Documentation** 
    - `docs/data-compression-strategy.md` - Comprehensive technical documentation
@@ -45,9 +46,10 @@ A **hybrid compression strategy** that optimizes repository size while maintaini
 ### Expected Results
 
 The workflow will:
+- Set up Git LFS for large file handling
 - Keep the 3 most recent timestamped data directories uncompressed
 - Keep special directories (`parquet/`, `reactions/`) uncompressed
-- Compress ~250 older directories into `data_archive.tar.gz`
+- Compress ~250 older directories into `data_archive.tar.gz` (managed by Git LFS)
 - Remove compressed directories from git tracking
 - Create extraction script and documentation
 
@@ -99,12 +101,13 @@ The solution has been tested and verified:
 - `.github/workflows/compress-data.yml` - Main compression workflow
 - `docs/data-compression-strategy.md` - Technical documentation
 - `IMPLEMENTATION_SUMMARY.md` - This file
+- `.gitattributes` - Configures Git LFS for large files
 
 ### Modified Files
 - `README.md` - Added link to compression documentation
 
 ### Files Created When Workflow Runs
-- `data_archive.tar.gz` - Compressed archive of historical data
+- `data_archive.tar.gz` - Compressed archive of historical data (managed by Git LFS)
 - `extract-data-archive.sh` - Extraction script
 - `DATA_ARCHIVE_README.md` - Archive documentation
 
@@ -136,3 +139,4 @@ For questions or issues:
 - **Pattern matching**: `YYYY-MM-DD_HH-MM-SS` format
 - **Sorting**: Reverse chronological (newest first)
 - **Safety**: Non-destructive, can be reversed
+- **Large file handling**: Git LFS for archives >100 MB

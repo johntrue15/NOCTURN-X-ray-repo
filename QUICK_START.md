@@ -23,10 +23,11 @@ Merge this pull request to the main branch.
 
 ### Step 3: Wait for Completion
 The workflow will:
+- Set up Git LFS for large file handling
 - Identify ~250 old data directories to compress
-- Create `data_archive.tar.gz` (~1-2GB estimated)
+- Create `data_archive.tar.gz` (~1-2GB estimated, managed by Git LFS)
 - Keep 3 most recent directories + special directories uncompressed
-- Push changes to main branch
+- Push changes to main branch (Git LFS handles the large archive file)
 - Takes ~5-15 minutes depending on compression level
 
 ### Step 4: Verify Results
