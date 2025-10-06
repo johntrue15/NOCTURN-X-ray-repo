@@ -10,6 +10,7 @@ This repository automatically tracks and analyzes X-ray CT data from MorphoSourc
 
 - [Project Overview and Setup](docs/index.md) - Introduction, project structure, and getting started
 - [Workflow Dependencies](docs/dependencies.md) - Detailed mapping of workflows and their associated scripts
+- [Data Compression Strategy](docs/data-compression-strategy.md) - How historical data is compressed to optimize GitHub Actions performance
 - [MorphoSource API Migration](docs/morphosource_api_migration.md) - Technical details about the migration from web scraping to API
 - [Raspberry Pi Installation](docs/Raspi.md) - Guide for setting up NOCTURN on a Raspberry Pi
 
