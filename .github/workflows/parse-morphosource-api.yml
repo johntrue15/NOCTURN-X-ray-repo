@@ -1,0 +1,72 @@
+name: Parse MorphoSource API
+
+on:
+  schedule:
+    # Every 5 minutes (match your scraper cadence)
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+    inputs:
+      query:
+        description: 'Search term for /api/media (free text)'
+        required: false
+        default: 'X-ray'
+
+permissions:
+  contents: write
+
+jobs:
+  api_query_and_release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run API Query
+        id: api
+        env:
+          MORPHOSOURCE_API_KEY: ${{ secrets.MORPHOSOURCE_API_KEY }} # optional
+          QUERY: ${{ github.event.inputs.query || 'X-ray' }}
+          BASE_URL: https://www.morphosource.org/api/media
+          LAST_COUNT_FILE: .github/last_count.txt
+          COUNT_OUTFILE: morphosource_xray_count.txt
+        run: |
+          python .github/scripts/parse_morphosource_api.py
+
+      - name: Commit updated count files
+        if: steps.api.outputs.new_data == 'true'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .github/last_count.txt morphosource_xray_count.txt
+          git commit -m "Update MorphoSource API count to ${COUNT}"
+          git push
+        env:
+          COUNT: ${{ steps.api.outputs.count }}
+
+      - name: Generate Timestamp
+        id: gen_ts
+        if: steps.api.outputs.new_data == 'true'
+        run: echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> $GITHUB_OUTPUT
+
+      - name: Create or Update Release
+        if: steps.api.outputs.new_data == 'true'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        with:
+          tag_name: morphosource-api-${{ steps.gen_ts.outputs.timestamp }}
+          release_name: "MorphoSource API Update #${{ steps.gen_ts.outputs.timestamp }}"
+          body: ${{ steps.api.outputs.details }}
+          draft: false
+          prerelease: false
