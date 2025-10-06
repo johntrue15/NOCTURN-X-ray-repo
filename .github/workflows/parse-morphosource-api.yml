@@ -1,4 +1,4 @@
-name: Parse MorphoSource API (total_count)
+name: Parse MorphoSource API (total_count + latest record)
 
 on:
   schedule:
@@ -10,17 +10,23 @@ on:
         required: false
         default: 'X-ray'
 
+concurrency:
+  group: morphosource-api
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
 jobs:
   api_query_and_release:
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
           persist-credentials: true
+          fetch-depth: 0   # needed for pull/rebase
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -43,21 +49,45 @@ jobs:
           LAST_COUNT_FILE: .github/last_count.txt
           COUNT_OUTFILE: morphosource_xray_count.txt
 
-          # Optional auth if you have one (not required for public search)
+          # Optional auth (public search usually works without it)
           MORPHOSOURCE_API_KEY: ${{ secrets.MORPHOSOURCE_API_KEY }}
         run: |
           python .github/scripts/parse_morphosource_api.py
 
-      - name: Commit updated count files
+      - name: Commit updated count files (safe rebase)
         if: steps.api.outputs.new_data == 'true'
         env:
           COUNT: ${{ steps.api.outputs.count }}
+          LAST_COUNT_FILE: .github/last_count.txt
+          COUNT_OUTFILE: morphosource_xray_count.txt
         run: |
+          set -euo pipefail
+
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add .github/last_count.txt morphosource_xray_count.txt
-          git commit -m "MorphoSource API total_count -> ${COUNT}"
-          git push
+
+          # Ensure we’re on main and up-to-date metadata-wise
+          git checkout main
+          git fetch origin main
+
+          # Stage and commit our generated files (may noop if identical)
+          git add "$LAST_COUNT_FILE" "$COUNT_OUTFILE" || true
+          git commit -m "MorphoSource API total_count -> ${COUNT}" || echo "No local changes to commit."
+
+          # Rebase onto the latest remote; on conflict for our two files, prefer current run
+          set +e
+          git pull --rebase --autostash origin main
+          REBASE_STATUS=$?
+          if [ $REBASE_STATUS -ne 0 ]; then
+            echo "Rebase conflict detected. Preferring generated files from this run…"
+            git checkout --ours -- "$LAST_COUNT_FILE" "$COUNT_OUTFILE" 2>/dev/null || true
+            git add "$LAST_COUNT_FILE" "$COUNT_OUTFILE" 2>/dev/null || true
+            git rebase --continue || (git rebase --abort; echo "Rebase failed; aborting." && exit 1)
+          fi
+          set -e
+
+          # Push safely (only if remote unchanged since fetch)
+          git push --force-with-lease origin HEAD:main
 
       - name: Generate Timestamp
         id: gen_ts
@@ -70,8 +100,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          tag_name: morphosource-api-${{ steps.gen_ts.outputs.timestamp }}
-          release_name: "MorphoSource API Update • ${{ steps.gen_ts.outputs.timestamp }}"
+          tag_name: morphosource-api-${{ steps.api.outputs.latest_id }}-${{ steps.gen_ts.outputs.timestamp }}
+          release_name: "MorphoSource API • ${{
+            steps.api.outputs.latest_title || steps.api.outputs.latest_id
+          }} • ${{ steps.gen_ts.outputs.timestamp }}"
           body: ${{ steps.api.outputs.details }}
           draft: false
           prerelease: false
