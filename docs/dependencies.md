@@ -141,9 +141,13 @@ This document shows the relationships between GitHub Actions workflows and their
 - `.github/scripts/url_screenshot_check.py`
 
 ### CT to Text Analysis (`ct_to_text.yml`)
+**Triggered by:**
+- `Parse MorphoSource Data` (morphosource-updates-* releases)
+- `Parse MorphoSource API` (morphosource-api-* releases with detailed records)
 **Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/ct_to_text.py`
+**Note:** Skips API releases that only contain count information without detailed record data
 
 ### Deploy GitHub Pages (`deploy-pages.yml`)
 

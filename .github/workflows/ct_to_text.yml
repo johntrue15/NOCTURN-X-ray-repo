@@ -58,7 +58,8 @@ jobs:
         id: check_morpho
         run: |
           MS_TAG="${{ steps.fetch_release.outputs.release_tag }}"
-          if [[ "$MS_TAG" =~ ^morphosource-updates-[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}-[0-9]{2}-[0-9]{2}$ ]]; then
+          # Check for both morphosource-updates-* and morphosource-api-* releases
+          if [[ "$MS_TAG" =~ ^morphosource-(updates|api)-[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}-[0-9]{2}-[0-9]{2}$ ]]; then
             echo "Found MorphoSource release: $MS_TAG"
             echo "is_morphosource=true" >> "$GITHUB_OUTPUT"
             echo "ms_tag=$MS_TAG" >> "$GITHUB_OUTPUT"
@@ -75,7 +76,9 @@ jobs:
         if: steps.check_morpho.outputs.is_morphosource == 'true'
         run: |
           MS_TAG="${{ steps.check_morpho.outputs.ms_tag }}"
+          # Remove either morphosource-updates- or morphosource-api- prefix
           MS_TIME="${MS_TAG#morphosource-updates-}"
+          MS_TIME="${MS_TIME#morphosource-api-}"
           # Clean the timestamp to match CT analysis format
           MS_TIME_CLEAN=$(echo "$MS_TIME" | sed 's/[-_]//g')
           echo "MS_TIME=$MS_TIME" >> "$GITHUB_ENV"
@@ -152,13 +155,35 @@ jobs:
           fi
 
       # -------------------------------------------------------
-      # 8. Check Blacklist
+      # 8. Check if release has record data
+      # -------------------------------------------------------
+      - name: Check for record data
+        id: check_records
+        if: |
+          steps.check_morpho.outputs.is_morphosource == 'true' &&
+          steps.check_analysis.outputs.has_analysis != 'true'
+        run: |
+          # Write release body to temp file
+          echo "${{ steps.fetch_release.outputs.release_body }}" > temp_release.txt
+          
+          # Check if release body contains "New Record #" entries
+          if grep -q "^New Record #[0-9]" temp_release.txt; then
+            echo "Release contains detailed record data"
+            echo "has_records=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Release does not contain detailed record data (likely API count-only release)"
+            echo "has_records=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # -------------------------------------------------------
+      # 9. Check Blacklist
       # -------------------------------------------------------
       - name: Check Blacklist
         id: check_blacklist
         if: |
           steps.check_morpho.outputs.is_morphosource == 'true' &&
-          steps.check_analysis.outputs.has_analysis != 'true'
+          steps.check_analysis.outputs.has_analysis != 'true' &&
+          steps.check_records.outputs.has_records == 'true'
         run: |
           # Write release body to temp file
           echo "${{ steps.fetch_release.outputs.release_body }}" > temp_release.txt
@@ -208,13 +233,14 @@ jobs:
           echo "is_blacklisted=false" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 9. Generate Timestamp
+      # 10. Generate Timestamp
       # -------------------------------------------------------
       - name: Generate Timestamp
         id: gen_ts
         if: |
           steps.check_morpho.outputs.is_morphosource == 'true' &&
           steps.check_analysis.outputs.has_analysis != 'true' &&
+          steps.check_records.outputs.has_records == 'true' &&
           steps.check_blacklist.outputs.is_blacklisted != 'true'
         run: |
           # Example format: YYYY-MM-DD_HH-MM-SS
@@ -222,13 +248,14 @@ jobs:
           echo "timestamp=$TS" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 10. Run CT to Text
+      # 11. Run CT to Text
       # -------------------------------------------------------
       - name: Run CT to Text
         id: ct2text
         if: |
           steps.check_morpho.outputs.is_morphosource == 'true' &&
           steps.check_analysis.outputs.has_analysis != 'true' &&
+          steps.check_records.outputs.has_records == 'true' &&
           steps.check_blacklist.outputs.is_blacklisted != 'true'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -245,12 +272,13 @@ jobs:
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 11. Create or Update Release with AI Summary
+      # 12. Create or Update Release with AI Summary
       # -------------------------------------------------------
       - name: Create or Update Release with AI Summary
         if: |
           steps.check_morpho.outputs.is_morphosource == 'true' &&
           steps.check_analysis.outputs.has_analysis != 'true' &&
+          steps.check_records.outputs.has_records == 'true' &&
           steps.check_blacklist.outputs.is_blacklisted != 'true'
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -263,7 +291,19 @@ jobs:
           prerelease: false
 
       # -------------------------------------------------------
-      # 12. Log Blacklisted Release
+      # 13. Log Release Without Records
+      # -------------------------------------------------------
+      - name: Log Release Without Records
+        if: |
+          steps.check_morpho.outputs.is_morphosource == 'true' &&
+          steps.check_records.outputs.has_records == 'false'
+        run: |
+          echo "Release skipped - no detailed record data found"
+          echo "Release tag: ${{ steps.fetch_release.outputs.release_tag }}"
+          echo "This is likely a morphosource-api-* release that only tracks count changes"
+
+      # -------------------------------------------------------
+      # 14. Log Blacklisted Release
       # -------------------------------------------------------
       - name: Log Blacklisted Release
         if: steps.check_blacklist.outputs.is_blacklisted == 'true'
@@ -272,8 +312,8 @@ jobs:
           echo "Release tag: ${{ steps.fetch_release.outputs.release_tag }}"
 
       # -------------------------------------------------------
-      # 13. Fallback step if not morphosource-updates
+      # 15. Fallback step if not morphosource release
       # -------------------------------------------------------
       - name: No new morphosource release
         if: steps.check_morpho.outputs.is_morphosource == 'false'
-        run: echo "No 'morphosource-updates-*' release found. Skipping CT-to-text analysis."
+        run: echo "No 'morphosource-updates-*' or 'morphosource-api-*' release found. Skipping CT-to-text analysis."

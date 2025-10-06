@@ -78,12 +78,19 @@ This repository uses several automated workflows to analyze X-ray CT data. For a
    - Triggers subsequent analysis workflows
    - **Note:** Migrated from web scraping to API for improved reliability
 
-2. **CT to Text Analysis** (`ct_to_text.yml`)
-   - Triggered by MorphoSource updates
+2. **Parse MorphoSource API** (`parse-morphosource-api.yml`)
+   - Runs every 5 minutes
+   - Tracks total X-ray count via MorphoSource API
+   - Creates releases when count increases
+   - Updates `morphosource_xray_count.txt`
+
+3. **CT to Text Analysis** (`ct_to_text.yml`)
+   - Triggered by MorphoSource updates and API releases
    - Analyzes CT metadata using AI
    - Generates detailed descriptions of specimens
+   - Skips API releases without detailed record data
 
-3. **CT Slice Analysis** (`combined_ct_images_to_text.yml`)
+4. **CT Slice Analysis** (`combined_ct_images_to_text.yml`)
    - Analyzes 2D slices and 3D reconstructions
    - Checks image URLs and captures screenshots
    - Provides comprehensive visual analysis
