@@ -252,12 +252,12 @@ jobs:
           steps.check_morpho.outputs.is_morphosource == 'true' &&
           steps.check_analysis.outputs.has_analysis != 'true' &&
           steps.check_blacklist.outputs.is_blacklisted != 'true'
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        uses: actions/create-release@v1
         with:
           tag_name: "ct_to_text_analysis-${{ steps.gen_ts.outputs.timestamp }}"
-          release_name: "CT to Text Analysis #${{ steps.gen_ts.outputs.timestamp }}"
+          name: "CT to Text Analysis #${{ steps.gen_ts.outputs.timestamp }}"
           body: ${{ steps.ct2text.outputs.description }}
           draft: false
           prerelease: false
