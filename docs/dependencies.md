@@ -140,6 +140,9 @@ This document shows the relationships between GitHub Actions workflows and their
 - `.github/scripts/ct_slices_to_text.py`
 - `.github/scripts/url_screenshot_check.py`
 
+### Compress Data Directory (`compress-data.yml`)
+**Manual trigger available**
+
 ### CT to Text Analysis (`ct_to_text.yml`)
 **Manual trigger available**
 **Required Scripts:**
