@@ -153,9 +153,11 @@ Run the compression workflow when:
 - Level 6 (default) provides good balance of speed and size
 
 ### Directory Selection
-- Directories sorted by name (timestamp-based)
-- Most recent N directories kept uncompressed
-- Older directories moved to archive
+- Only timestamped directories (format: `YYYY-MM-DD_HH-MM-SS`) are considered for compression
+- Special directories (e.g., `parquet/`, `reactions/`) are always kept uncompressed
+- Timestamped directories sorted by name
+- Most recent N timestamped directories kept uncompressed
+- Older timestamped directories moved to archive
 
 ### Git Operations
 - Archived directories removed from git tracking

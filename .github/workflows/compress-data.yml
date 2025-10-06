@@ -57,8 +57,9 @@ jobs:
           KEEP_COUNT=${{ inputs.keep_recent || 3 }}
           echo "Keeping $KEEP_COUNT most recent directories uncompressed"
           
-          # Get all data directories sorted by name (which includes timestamp)
-          ALL_DIRS=$(find data -mindepth 1 -maxdepth 1 -type d | sort -r)
+          # Get all timestamped data directories (YYYY-MM-DD_HH-MM-SS format)
+          # Exclude special directories like 'parquet' and 'reactions'
+          ALL_DIRS=$(find data -mindepth 1 -maxdepth 1 -type d | grep -E "data/[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}-[0-9]{2}-[0-9]{2}" | sort -r)
           TOTAL_DIRS=$(echo "$ALL_DIRS" | wc -l)
           
           echo "Total directories: $TOTAL_DIRS"
