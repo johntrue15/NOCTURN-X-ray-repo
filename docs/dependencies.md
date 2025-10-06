@@ -28,7 +28,7 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ---
 
-### Parse MorphoSource API (total_count) (`parse-morphosource-api.yml`)
+### Parse MorphoSource API (total_count + latest record) (`parse-morphosource-api.yml`)
 
 **Schedule:** Every 5 minutes
 
