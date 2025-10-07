@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Queries:
-  https://www.morphosource.org/api/media?utf8=✓&search_field=all_fields&q=<QUERY>
+  https://www.morphosource.org/api/media?utf8=✓&search_field=all_fields&q=<QUERY>&sort=system_create_dtsi+desc
 
 Outputs:
   - count (current total_count)
@@ -133,7 +133,7 @@ def first_text(record: Dict[str, Any], *keys):
     return ""
 
 def main():
-    params = {"utf8": UTF8_CHK, "search_field": SEARCH_FIELD, "q": QUERY}
+    params = {"utf8": UTF8_CHK, "search_field": SEARCH_FIELD, "q": QUERY, "sort": "system_create_dtsi desc"}
     r = request_with_backoff(BASE_URL, params)
     if not r:
         msg = f"Failed to query MorphoSource API at {BASE_URL}"
@@ -195,7 +195,7 @@ def main():
     detail_url = f"https://www.morphosource.org/concern/media/{latest_id}" if latest_id else "(unknown)"
 
     body = "\n".join([
-        f"Queried **/api/media** with: `utf8=✓&search_field={SEARCH_FIELD}&q={QUERY}`",
+        f"Queried **/api/media** with: `utf8=✓&search_field={SEARCH_FIELD}&q={QUERY}&sort=system_create_dtsi desc`",
         f"**total_count**: **{total}**",
         "",
         f"Baseline source: _{baseline_source}_",
