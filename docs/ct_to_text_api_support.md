@@ -21,10 +21,15 @@ Previously, the workflow only processed releases with "New Record #" formatted e
 echo "${{ steps.fetch_release.outputs.release_body }}" > temp_release.txt
 
 # After (safe):
-printf '%s\n' "${{ steps.fetch_release.outputs.release_body }}" > temp_release.txt
+# In fetch_release step:
+echo "$release" | jq -r .body > release_body.txt
+
+# In subsequent steps, use the file instead of interpolating the variable:
+# OLD: printf '%s\n' "${{ steps.fetch_release.outputs.release_body }}" > temp_release.txt
+# NEW: (use release_body.txt directly - already created in fetch_release step)
 ```
 
-The `printf '%s\n'` command treats its arguments as literal strings, preventing command injection.
+The fix works by writing the release body to a file immediately after fetching it, before any GitHub Actions variable interpolation can cause issues. All subsequent steps read from this file instead of interpolating the release body variable, preventing bash from ever seeing JSON content as commands.
 
 **API Release Detection**:
 ```yaml
