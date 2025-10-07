@@ -288,9 +288,28 @@ def main():
 
     # Parse records
     records = parse_records_from_body(body)
+    
+    # Build output with record metadata
+    output_parts = []
+    
+    # Add metadata header for each record
+    for rec in records:
+        record_num = rec.get("record_number", "N/A")
+        title = rec.get("title", "N/A")
+        detail_url = rec.get("detail_url", "N/A")
+        
+        output_parts.append(f"## Record #{record_num}")
+        output_parts.append(f"**Title:** {title}")
+        if detail_url and detail_url != "N/A":
+            output_parts.append(f"**Detail Page:** {detail_url}")
+        output_parts.append("")
+    
     # Generate final text using the o1-mini model
     description = generate_text_for_records(records)
-    print(description)
+    output_parts.append("## Analysis")
+    output_parts.append(description)
+    
+    print("\n".join(output_parts))
 
 if __name__ == "__main__":
     main()
