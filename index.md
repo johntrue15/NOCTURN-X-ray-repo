@@ -2,14 +2,14 @@
 
 This page displays information about the latest data releases for the NOCTURN X-ray project.
 
-**Last Updated:** 2025-10-10 15:20:37 UTC
+**Last Updated:** 2025-10-10 16:25:58 UTC
 
 ## Summary Statistics
 
 <div class="stats-container">
     <div class="stat-card">
         <div>Total Releases</div>
-        <div class="stat-value">4884</div>
+        <div class="stat-value">4886</div>
     </div>
     <div class="stat-card">
         <div>MorphoSource Updates</div>
@@ -29,7 +29,7 @@ This page displays information about the latest data releases for the NOCTURN X-
     </div>
     <div class="stat-card">
         <div>CT to Text Analysis</div>
-        <div class="stat-value">1266</div>
+        <div class="stat-value">1268</div>
     </div>
     <div class="stat-card">
         <div>Daily</div>
@@ -71,6 +71,16 @@ This page displays information about the latest data releases for the NOCTURN X-
         <th>Type</th>
         <th>Date & Time</th>
         <th>Tag</th>
+    </tr>
+    <tr>
+        <td>CT to Text Analysis</td>
+        <td>2025/10/10 15:40:59 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-10_15-40-59">ct_to_text_analysis-2025-10-10_15-40-59</a></td>
+    </tr>
+    <tr>
+        <td>CT to Text Analysis</td>
+        <td>2025/10/10 15:29:41 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-10_15-29-41">ct_to_text_analysis-2025-10-10_15-29-41</a></td>
     </tr>
     <tr>
         <td>CT to Text Analysis</td>
@@ -312,16 +322,6 @@ This page displays information about the latest data releases for the NOCTURN X-
         <td>2025/09/21 01:42:11 UTC</td>
         <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/daily-2025-09-21_01-42-11">daily-2025-09-21_01-42-11</a></td>
     </tr>
-    <tr>
-        <td>Daily</td>
-        <td>2025/09/20 01:24:26 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/daily-2025-09-20_01-24-26">daily-2025-09-20_01-24-26</a></td>
-    </tr>
-    <tr>
-        <td>Daily</td>
-        <td>2025/09/19 01:28:19 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/daily-2025-09-19_01-28-19">daily-2025-09-19_01-28-19</a></td>
-    </tr>
 </table>
 
 ## Recent Releases by Type
@@ -329,6 +329,20 @@ This page displays information about the latest data releases for the NOCTURN X-
 ### CT to Text Analysis
 
 <div class="release-group">
+<div class="release-card">
+    <h4>2025/10/10 15:40:59 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-10_15-40-59">ct_to_text_analysis-2025-10-10_15-40-59</a></h4>
+    
+    ```
+    MorphoSource API total_count -> 116696
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/10/10 15:29:41 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-10_15-29-41">ct_to_text_analysis-2025-10-10_15-29-41</a></h4>
+    
+    ```
+    MorphoSource API total_count -> 116686
+    ```
+</div>
 <div class="release-card">
     <h4>2025/10/10 15:10:44 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-10_15-10-44">ct_to_text_analysis-2025-10-10_15-10-44</a></h4>
     
@@ -348,20 +362,6 @@ This page displays information about the latest data releases for the NOCTURN X-
     
     ```
     MorphoSource API total_count -> 116666
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/10/10 14:16:04 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-10_14-16-04">ct_to_text_analysis-2025-10-10_14-16-04</a></h4>
-    
-    ```
-    MorphoSource API total_count -> 116656
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/10/10 13:57:24 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-10_13-57-24">ct_to_text_analysis-2025-10-10_13-57-24</a></h4>
-    
-    ```
-    MorphoSource API total_count -> 116651
     ```
 </div>
 </div>
