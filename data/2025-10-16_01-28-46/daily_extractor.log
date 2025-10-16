@@ -1,0 +1,11 @@
+2025-10-16 01:28:51,022 - Data directory: data/2025-10-16_01-28-46
+2025-10-16 01:28:51,023 - Output directory: data/2025-10-16_01-28-46
+2025-10-16 01:28:51,023 - Using data directory: data/2025-10-16_01-28-46
+2025-10-16 01:28:51,023 - Looking for previous data in: data
+2025-10-16 01:28:51,023 - Loading previous data from: data/2025-10-06_01-28-33/morphosource_data_complete.json
+2025-10-16 01:28:51,415 - Loaded 108782 records from previous data file
+2025-10-16 01:28:51,415 - Latest stored record ID: 000781814
+2025-10-16 01:28:51,415 - Previous record count: 108782
+2025-10-16 01:28:51,416 - Fetching page 1 via API
+2025-10-16 01:28:52,616 - Completed fetch - Found 0 new records
+2025-10-16 01:28:52,616 - No records found on webpage
