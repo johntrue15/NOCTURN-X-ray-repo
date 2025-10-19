@@ -5,9 +5,18 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import time
-import os
+import argparse
 
-def test_fullscreen_screenshot():
+DEFAULT_URL = "https://www.morphosource.org/concern/media/000695203"
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="Run Selenium fullscreen test for 2D media")
+    parser.add_argument("--url", type=str, default=DEFAULT_URL, help="MorphoSource media URL")
+    return parser.parse_args()
+
+
+def test_fullscreen_screenshot(url: str = DEFAULT_URL):
     # 1. Configure ChromeOptions
     options = webdriver.ChromeOptions()
     # Comment out headless if you want to see the browser UI
@@ -26,7 +35,7 @@ def test_fullscreen_screenshot():
 
     try:
         # 2. Go to the MorphoSource page
-        driver.get("https://www.morphosource.org/concern/media/000695203")
+        driver.get(url)
         driver.maximize_window()
 
         # 3. Wait until the uv-iframe is available, then switch into it
@@ -67,4 +76,5 @@ def test_fullscreen_screenshot():
 # If you want to run this script directly (e.g., `python selenium_fullscreen_test2D.py`),
 # include this:
 if __name__ == "__main__":
-    test_fullscreen_screenshot()
+    args = parse_arguments()
+    test_fullscreen_screenshot(args.url)
