@@ -29,6 +29,7 @@ import argparse
 import json
 import os
 import pathlib
+import re
 import sys
 import textwrap
 import urllib.parse
@@ -148,6 +149,111 @@ def fetch_media_by_id(session: requests.Session, media_id: str) -> Dict[str, obj
     return payload
 
 
+PREFERRED_MEDIA_ID_KEYS = (
+    "id",
+    "media_id",
+    "media_id_ssi",
+    "media_id_ssim",
+    "media_id_tesim",
+    "record_id",
+    "system_identifier_ssi",
+    "system_identifier_ssim",
+    "system_identifier_tesim",
+)
+
+SECONDARY_MEDIA_ID_KEYS = (
+    "ark_ssi",
+    "ark_ssim",
+    "url",
+    "media_url",
+    "detail_url",
+)
+
+
+def _normalise_media_id(value: object) -> Optional[str]:
+    if value is None:
+        return None
+    candidate = str(value).strip().strip("\"'")
+    if not candidate:
+        return None
+    lower_candidate = candidate.lower()
+    if lower_candidate.startswith("ms-"):
+        return candidate
+    if candidate.isdigit():
+        return candidate
+
+    parsed = urllib.parse.urlparse(candidate)
+    if parsed.scheme and parsed.path:
+        path_parts = [part for part in parsed.path.split("/") if part]
+        for part in reversed(path_parts):
+            lowered = part.lower()
+            if lowered in {"media", "concern", "manifest", "file_sets", "files"}:
+                continue
+            if lowered == "iiif" and path_parts:
+                continue
+            normalised = part.strip()
+            if normalised:
+                return normalised
+    if "/" in candidate or "#" in candidate or ":" in candidate:
+        for token in re.split(r"[/:#]", candidate):
+            token = token.strip()
+            if token and token.lower() not in {"media", "concern", "manifest", "iiif"}:
+                return token
+    return candidate or None
+
+
+def _iter_candidate_values(record: Dict[str, object], keys: Iterable[str]):
+    for key in keys:
+        value = record.get(key)
+        if isinstance(value, list):
+            for item in value:
+                yield item
+        elif value is not None:
+            yield value
+
+
+def _search_nested_for_media_id(record: Dict[str, object]) -> Optional[str]:
+    stack: List[object] = [record]
+    visited: set[int] = set()
+    while stack:
+        current = stack.pop()
+        identifier = id(current)
+        if identifier in visited:
+            continue
+        visited.add(identifier)
+        if isinstance(current, dict):
+            for key in (*PREFERRED_MEDIA_ID_KEYS, *SECONDARY_MEDIA_ID_KEYS):
+                if key in current:
+                    for value in _iter_candidate_values(current, (key,)):
+                        normalised = _normalise_media_id(value)
+                        if normalised:
+                            return normalised
+            stack.extend(current.values())
+        elif isinstance(current, list):
+            stack.extend(current)
+    return None
+
+
+def extract_media_id(record: Dict[str, object]) -> str:
+    for value in _iter_candidate_values(record, PREFERRED_MEDIA_ID_KEYS):
+        normalised = _normalise_media_id(value)
+        if normalised:
+            return normalised
+
+    for value in _iter_candidate_values(record, SECONDARY_MEDIA_ID_KEYS):
+        normalised = _normalise_media_id(value)
+        if normalised:
+            return normalised
+
+    nested = _search_nested_for_media_id(record)
+    if nested:
+        return nested
+
+    snippet = json.dumps(record)[:500]
+    raise MediaLookupError(
+        "Unable to determine media identifier from record; keys present were: "
+        f"{', '.join(sorted(record.keys()))} | snippet={snippet}"
+    )
 def extract_media_id(record: Dict[str, object]) -> str:
     for key in ("id", "media_id", "record_id", "system_identifier_ssim"):
         value = record.get(key)
