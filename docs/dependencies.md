@@ -21,22 +21,22 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ---
 
-### Release Reactions Collector (`release-reactions.yml`)
-
-**Schedule:** Daily at midnight
-
-**Required Scripts:**
-- `.github/scripts/collect_reactions.py`
-
-
----
-
 ### Daily MorphoSource Check (`daily.yml`)
 
 **Schedule:** Daily at midnight
 
 **Required Scripts:**
 - `.github/scripts/daily.py`
+
+
+---
+
+### Release Reactions Collector (`release-reactions.yml`)
+
+**Schedule:** Daily at midnight
+
+**Required Scripts:**
+- `.github/scripts/collect_reactions.py`
 
 
 ---
@@ -106,15 +106,10 @@ This document shows the relationships between GitHub Actions workflows and their
 **Required Scripts:**
 - `.github/scripts/analyze_code.py`
 
-### MorphoSource Analysis Workflow (`combined_ct_images_to_text.yml`)
-**Triggered by:**
-- `Parse MorphoSource Data`
+### MorphoSource CT API Pipeline (`combined_ct_images_to_text.yml`)
 **Manual trigger available**
 **Required Scripts:**
-- `.github/scripts/2D3D_check.py`
-- `.github/scripts/ct_image_to_text.py`
-- `.github/scripts/ct_slices_to_text.py`
-- `.github/scripts/url_screenshot_check.py`
+- `.github/scripts/process_morphosource_records.py`
 
 ### Compress Data Directory (`compress-data.yml`)
 **Manual trigger available**
@@ -236,7 +231,6 @@ This section shows which workflows use each script:
 
 ### 2D3D_check.py
 **Used in Workflows:**
-- `combined_ct_images_to_text.yml`
 - `test-run-run.yml`
 
 ### OpenAI-release-analysis.py
@@ -265,13 +259,11 @@ This section shows which workflows use each script:
 
 ### ct_image_to_text.py
 **Used in Workflows:**
-- `combined_ct_images_to_text.yml`
 - `test-run-run.yml`
 - `test_3d_screenshots_prompt.yml`
 
 ### ct_slices_to_text.py
 **Used in Workflows:**
-- `combined_ct_images_to_text.yml`
 - `test-run-run.yml`
 
 ### ct_to_text.py
@@ -315,6 +307,10 @@ This section shows which workflows use each script:
 **Used in Workflows:**
 - `finetune-model.yml`
 
+### process_morphosource_records.py
+**Used in Workflows:**
+- `combined_ct_images_to_text.yml`
+
 ### release_analysis.py
 **Used in Workflows:**
 - `release_analysis.yml`
@@ -355,5 +351,4 @@ This section shows which workflows use each script:
 
 ### url_screenshot_check.py
 **Used in Workflows:**
-- `combined_ct_images_to_text.yml`
 - `test-run-run.yml`
