@@ -417,6 +417,7 @@ def write_outputs(
         "manifest_path": str(manifest_path) if manifest_path else "",
         "downloads": [d.to_dict() for d in downloads],
     }
+    summary_path.parent.mkdir(parents=True, exist_ok=True)
     summary_path.write_text(json.dumps(summary, indent=2))
 
     github_output = os.getenv("GITHUB_OUTPUT")
