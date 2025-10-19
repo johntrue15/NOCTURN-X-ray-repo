@@ -2,16 +2,12 @@ name: 2D or 3D Selenium Fullscreen Test
 on:
   workflow_dispatch:
     inputs:
-      test_type:
-        description: 'Select test type to run'
-        required: true
-        type: choice
-        options:
-          - '2D'
-          - '3D'
-        default: '2D'
-      custom_url:
-        description: 'Custom MorphoSource URL (optional)'
+      media_id:
+        description: 'MorphoSource media ID to analyse (optional)'
+        required: false
+        type: string
+      download_reason:
+        description: 'Reason to provide when downloading 3D media assets'
         required: false
         type: string
   push:
@@ -37,8 +33,25 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install selenium webdriver-manager
-      
+          pip install selenium webdriver-manager requests
+
+      - name: Select MorphoSource media record
+        id: select-media
+        env:
+          MEDIA_ID_INPUT: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.media_id || '' }}
+          DOWNLOAD_REASON_INPUT: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.download_reason || '' }}
+        run: |
+          set -eo pipefail
+          ARGS=()
+          if [ -n "$MEDIA_ID_INPUT" ]; then
+            ARGS+=(--media-id "$MEDIA_ID_INPUT")
+          fi
+          python .github/scripts/dimension_media_fetcher.py \
+            "${ARGS[@]}" \
+            --download-reason "${DOWNLOAD_REASON_INPUT:-Automated testing via GitHub Actions}" \
+            --artifact-dir artifacts \
+            --output-json artifacts/dimension_media_summary.json
+
       - name: Install and setup Chrome
         run: |
           sudo apt-get update
@@ -48,32 +61,38 @@ jobs:
           sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
       
       - name: Run Selenium test
+        env:
+          MEDIA_URL: ${{ steps.select-media.outputs.media_url }}
+          MEDIA_DIMENSION: ${{ steps.select-media.outputs.media_dimension }}
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            if [[ "${{ github.event.inputs.test_type }}" == "3D" ]]; then
-              if [[ -n "${{ github.event.inputs.custom_url }}" ]]; then
-                python .github/scripts/selenium_fullscreen_test3D.py --url "${{ github.event.inputs.custom_url }}"
-              else
-                python .github/scripts/selenium_fullscreen_test3D.py
-              fi
-            else
-              if [[ -n "${{ github.event.inputs.custom_url }}" ]]; then
-                python .github/scripts/selenium_fullscreen_test2D.py --url "${{ github.event.inputs.custom_url }}"
-              else
-                python .github/scripts/selenium_fullscreen_test2D.py
-              fi
-            fi
-          else
-            # For push/pull_request events, run both tests with default URLs
-            python .github/scripts/selenium_fullscreen_test2D.py
-            python .github/scripts/selenium_fullscreen_test3D.py
+          set -eo pipefail
+          if [ -z "$MEDIA_URL" ]; then
+            echo "::error::No media URL was produced by the selection step."
+            exit 1
           fi
-      
+          if [[ "$MEDIA_DIMENSION" == "3d" ]]; then
+            python .github/scripts/selenium_fullscreen_test3D.py --url "$MEDIA_URL"
+          else
+            python .github/scripts/selenium_fullscreen_test2D.py --url "$MEDIA_URL"
+          fi
+
+      - name: Upload media metadata artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: morphosource_media_assets
+          if-no-files-found: ignore
+          path: |
+            ${{ steps.select-media.outputs.summary_path }}
+            ${{ steps.select-media.outputs.manifest_path }}
+            ${{ steps.select-media.outputs.download_dir }}
+
       - name: Upload screenshot artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: fullscreen_screenshot
+          if-no-files-found: ignore
           path: |
             fullscreen_screenshot_2D.png
             fullscreen_screenshot_3D.png
