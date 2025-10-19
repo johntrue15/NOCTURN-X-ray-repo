@@ -1,0 +1,60 @@
+name: MorphoSource Blockchain Snapshot
+
+on:
+  schedule:
+    - cron: '30 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore blockchain cache
+        uses: actions/cache@v4
+        with:
+          path: data/morphosource_chain
+          key: morphosource-chain-${{ github.run_id }}
+          restore-keys: |
+            morphosource-chain-
+
+      - name: Ensure output directory exists
+        run: mkdir -p data/morphosource_chain
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Generate blockchain snapshot
+        run: |
+          python .github/scripts/morphosource_blockchain.py --output-dir data/morphosource_chain
+
+      - name: Display snapshot summary
+        run: |
+          cat data/morphosource_chain/summary.json
+
+      - name: Upload blockchain artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: morphosource-blockchain-${{ github.run_number }}
+          path: |
+            data/morphosource_chain/morphosource_blockchain.json
+            data/morphosource_chain/latest_snapshot.json
+            data/morphosource_chain/morphosource_records_*.json
+            data/morphosource_chain/summary.json
+          if-no-files-found: warn
