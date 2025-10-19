@@ -149,6 +149,10 @@ def fetch_media_by_id(session: requests.Session, media_id: str) -> Dict[str, obj
     return payload
 
 
+MEDIA_ID_PATTERN = re.compile(r"ms-\d+", re.IGNORECASE)
+MEDIA_URL_PATTERN = re.compile(r"/media/(ms-\d+|\d+)", re.IGNORECASE)
+
+
 PREFERRED_MEDIA_ID_KEYS = (
     "id",
     "media_id",
@@ -184,6 +188,10 @@ def _normalise_media_id(value: object) -> Optional[str]:
 
     parsed = urllib.parse.urlparse(candidate)
     if parsed.scheme and parsed.path:
+        # Try to recover the identifier from URLs that embed the media slug.
+        match = MEDIA_URL_PATTERN.search(parsed.path)
+        if match:
+            return match.group(1)
         path_parts = [part for part in parsed.path.split("/") if part]
         for part in reversed(path_parts):
             lowered = part.lower()
@@ -193,10 +201,21 @@ def _normalise_media_id(value: object) -> Optional[str]:
                 continue
             normalised = part.strip()
             if normalised:
+                token_match = MEDIA_ID_PATTERN.search(normalised)
+                if token_match:
+                    return token_match.group(0)
                 return normalised
     if "/" in candidate or "#" in candidate or ":" in candidate:
         for token in re.split(r"[/:#]", candidate):
             token = token.strip()
+            if not token:
+                continue
+            if token.lower() in {"media", "concern", "manifest", "iiif"}:
+                continue
+            token_match = MEDIA_ID_PATTERN.search(token)
+            if token_match:
+                return token_match.group(0)
+            return token
             if token and token.lower() not in {"media", "concern", "manifest", "iiif"}:
                 return token
     return candidate or None
@@ -231,6 +250,13 @@ def _search_nested_for_media_id(record: Dict[str, object]) -> Optional[str]:
             stack.extend(current.values())
         elif isinstance(current, list):
             stack.extend(current)
+        elif isinstance(current, str):
+            match = MEDIA_ID_PATTERN.search(current)
+            if match:
+                return match.group(0)
+            url_match = MEDIA_URL_PATTERN.search(current)
+            if url_match:
+                return url_match.group(1)
     return None
 
 
