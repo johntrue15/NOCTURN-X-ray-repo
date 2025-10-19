@@ -58,6 +58,16 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ---
 
+### MorphoSource Blockchain Snapshot (`morphosource_blockchain.yml`)
+
+**Schedule:** Cron: 30 2 * * *
+
+**Required Scripts:**
+- `.github/scripts/morphosource_blockchain.py`
+
+
+---
+
 ### Fine-tune Model from Reactions (`finetune-model.yml`)
 
 **Schedule:** Weekly on Sunday at midnight
@@ -290,6 +300,10 @@ This section shows which workflows use each script:
 ### monthly.py
 **Used in Workflows:**
 - `monthly.yml`
+
+### morphosource_blockchain.py
+**Used in Workflows:**
+- `morphosource_blockchain.yml`
 
 ### parquet_grapher.py
 **Used in Workflows:**
