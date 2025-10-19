@@ -254,6 +254,14 @@ def extract_media_id(record: Dict[str, object]) -> str:
         "Unable to determine media identifier from record; keys present were: "
         f"{', '.join(sorted(record.keys()))} | snippet={snippet}"
     )
+def extract_media_id(record: Dict[str, object]) -> str:
+    for key in ("id", "media_id", "record_id", "system_identifier_ssim"):
+        value = record.get(key)
+        if isinstance(value, list) and value:
+            return str(value[0])
+        if value:
+            return str(value)
+    raise MediaLookupError("Unable to determine media identifier from record")
 
 
 def flatten_values(record: Dict[str, object], keys: Iterable[str]) -> List[str]:
