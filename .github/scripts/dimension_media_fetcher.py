@@ -47,6 +47,25 @@ DEFAULT_DOWNLOAD_REASON = "Automated testing via GitHub Actions"
 USER_AGENT = "NOCTURN-Dimension-Test/1.0"
 
 
+THREE_D_KEYWORDS = (
+    "mesh",
+    "volumetric",
+    "3d",
+    "pointcloud",
+    "point cloud",
+    "model",
+)
+
+TWO_D_KEYWORDS = (
+    "image",
+    "2d",
+    "photograph",
+    "photo",
+    "radiograph",
+    "ctimageseries",
+)
+
+
 class MediaLookupError(RuntimeError):
     """Raised when a media record cannot be located."""
 
@@ -298,16 +317,21 @@ def determine_dimension(record: Dict[str, object]) -> str:
         record,
         (
             "media_type_ssim",
-            "human_readable_media_type_ssim",
             "media_type_ssi",
+            "media_type_tesim",
+            "human_readable_media_type_ssim",
             "modality_ssim",
             "human_readable_modality_tesim",
             "file_type_ssim",
         ),
     )
-    if any(token for token in tokens if "mesh" in token or "volumetric" in token or "3d" in token):
+
+    def _matches(keywords: Iterable[str]) -> bool:
+        return any(any(keyword in token for keyword in keywords) for token in tokens)
+
+    if _matches(THREE_D_KEYWORDS):
         return "3d"
-    if any(token for token in tokens if "image" in token or "2d" in token):
+    if _matches(TWO_D_KEYWORDS):
         return "2d"
     return "unknown"
 
@@ -452,6 +476,12 @@ def main() -> None:
         media_id = extract_media_id(record)
     except MediaLookupError as exc:
         print(f"::error::{exc}")
+        sys.exit(1)
+
+    try:
+        record = fetch_media_by_id(session, media_id)
+    except (requests.RequestException, MediaLookupError) as exc:
+        print(f"::error::Failed to retrieve detailed media metadata for {media_id}: {exc}")
         sys.exit(1)
 
     detail_url = MEDIA_DETAIL_URL.format(media_id=media_id)
