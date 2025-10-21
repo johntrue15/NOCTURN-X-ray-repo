@@ -131,12 +131,12 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ### Deploy GitHub Pages (`deploy-pages.yml`)
 
-### 2D or 3D Selenium Fullscreen Test (`dimension_test.yml`)
+### 2D or 3D Media Analysis (`dimension_test.yml`)
 **Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/dimension_media_fetcher.py`
-- `.github/scripts/selenium_fullscreen_test2D.py`
-- `.github/scripts/selenium_fullscreen_test3D.py`
+- `.github/scripts/iiif_manifest_viewer.py`
+- `.github/scripts/mesh_analysis.py`
 
 ### Issue Workflow Dependency Check (`issue-dependency-check.yml`)
 
