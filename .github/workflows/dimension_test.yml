@@ -1,4 +1,4 @@
-name: 2D or 3D Selenium Fullscreen Test
+name: 2D or 3D Media Analysis
 on:
   workflow_dispatch:
     inputs:
@@ -15,25 +15,36 @@ on:
     paths:
      - "src/**"
      - "tests/**"
+     - ".github/workflows/dimension_test.yml"
+     - ".github/scripts/dimension_media_fetcher.py"
+     - ".github/scripts/iiif_manifest_viewer.py"
+     - ".github/scripts/mesh_analysis.py"
   pull_request:
     branches: [ "main" ]
+    paths:
+     - "src/**"
+     - "tests/**"
+     - ".github/workflows/dimension_test.yml"
+     - ".github/scripts/dimension_media_fetcher.py"
+     - ".github/scripts/iiif_manifest_viewer.py"
+     - ".github/scripts/mesh_analysis.py"
 
 jobs:
-  run-selenium-test:
+  analyse-media:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
         uses: actions/checkout@v3
-      
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.x"
-      
+
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install selenium webdriver-manager requests
+          pip install requests pillow trimesh numpy
 
       - name: Select MorphoSource media record
         id: select-media
@@ -52,29 +63,41 @@ jobs:
             --artifact-dir artifacts \
             --output-json artifacts/dimension_media_summary.json
 
-      - name: Install and setup Chrome
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget gnupg2 unzip
-          # Install Chrome
-          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
-      
-      - name: Run Selenium test
-        env:
-          MEDIA_URL: ${{ steps.select-media.outputs.media_url }}
-          MEDIA_DIMENSION: ${{ steps.select-media.outputs.media_dimension }}
+      - name: Ensure media selection succeeded
         run: |
           set -eo pipefail
-          if [ -z "$MEDIA_URL" ]; then
-            echo "::error::No media URL was produced by the selection step."
+          if [ -z "${{ steps.select-media.outputs.media_dimension }}" ]; then
+            echo "::error::No media record was returned by the selection script."
             exit 1
           fi
-          if [[ "$MEDIA_DIMENSION" == "3d" ]]; then
-            python .github/scripts/selenium_fullscreen_test3D.py --url "$MEDIA_URL"
-          else
-            python .github/scripts/selenium_fullscreen_test2D.py --url "$MEDIA_URL"
+          if [ "${{ steps.select-media.outputs.media_dimension }}" == "unknown" ]; then
+            echo "::warning::Selected media has an unknown dimension; skipping viewer steps."
+            exit 0
           fi
+
+      - name: Render IIIF preview with Pillow
+        if: steps.select-media.outputs.media_dimension == '2d'
+        run: |
+          set -eo pipefail
+          if [ -z "${{ steps.select-media.outputs.manifest_path }}" ]; then
+            echo "::error::IIIF manifest path was not provided by the selection step."
+            exit 1
+          fi
+          python .github/scripts/iiif_manifest_viewer.py \
+            --manifest "${{ steps.select-media.outputs.manifest_path }}" \
+            --output-dir artifacts
+
+      - name: Analyse 3D mesh with trimesh
+        if: steps.select-media.outputs.media_dimension == '3d'
+        run: |
+          set -eo pipefail
+          if [ -z "${{ steps.select-media.outputs.download_dir }}" ]; then
+            echo "::error::No download directory was produced for the 3D media."
+            exit 1
+          fi
+          python .github/scripts/mesh_analysis.py \
+            --download-dir "${{ steps.select-media.outputs.download_dir }}" \
+            --output artifacts/mesh_analysis.json
 
       - name: Upload media metadata artifacts
         if: always()
@@ -82,17 +105,4 @@ jobs:
         with:
           name: morphosource_media_assets
           if-no-files-found: ignore
-          path: |
-            ${{ steps.select-media.outputs.summary_path }}
-            ${{ steps.select-media.outputs.manifest_path }}
-            ${{ steps.select-media.outputs.download_dir }}
-
-      - name: Upload screenshot artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: fullscreen_screenshot
-          if-no-files-found: ignore
-          path: |
-            fullscreen_screenshot_2D.png
-            fullscreen_screenshot_3D.png
+          path: artifacts/**
