@@ -1,151 +1,183 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
-from webdriver_manager.chrome import ChromeDriverManager
-import re
-import sys
-import os
 import json
 import logging
+import os
+import re
+import sys
 from datetime import datetime
+from typing import Iterable, List, Tuple
+
+import requests
+
+
+API_BASE_URL = "https://www.morphosource.org/api/media"
+USER_AGENT = "NOCTURN-2D3D-Check/1.0"
+
 
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(sys.stdout)
-    ]
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)],
 )
 
-def setup_driver():
-    chrome_options = Options()
-    chrome_options.add_argument('--headless=new')
-    chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--disable-dev-shm-usage')
-    chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument('--disable-software-rasterizer')
-    chrome_options.add_argument('--window-size=1920,1080')
-    
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=chrome_options)
-    driver.set_page_load_timeout(30)
-    driver.implicitly_wait(10)
-    return driver
 
-def extract_id_from_url(url):
-    match = re.search(r'(\d+)$', url)
-    return match.group(1) if match else 'unknown'
+def extract_id_from_url(url: str) -> str:
+    match = re.search(r"(\d+)$", url)
+    return match.group(1) if match else "unknown"
 
-def check_for_server_error(driver):
+
+def create_status_file(status_data: dict) -> None:
     try:
-        title = driver.title
-        if "MorphoSource temporarily unavailable (500)" in title:
-            logging.warning("Detected MorphoSource 500 error page")
-            return True
-        if "MorphoSource temporarily unavailable (500)" in driver.page_source:
-            logging.warning("Detected MorphoSource 500 error in page source")
-            return True
-        return False
-    except Exception as e:
-        if "MorphoSource temporarily unavailable (500)" in str(e):
-            logging.warning("Detected MorphoSource 500 error in exception")
-            return True
-        return False
-
-def create_status_file(status_data):
-    try:
-        with open('url_check_status.json', 'w') as f:
+        with open("url_check_status.json", "w", encoding="utf-8") as f:
             json.dump(status_data, f, indent=2)
         logging.info("Status file saved")
-    except Exception as e:
-        logging.error(f"Failed to save status file: {str(e)}")
+    except Exception as exc:  # pragma: no cover - best-effort logging
+        logging.error(f"Failed to save status file: {exc}")
 
-def check_media_types(url):
-    driver = None
-    try:
-        driver = setup_driver()
-        driver.get(url)
-        
-        if check_for_server_error(driver):
-            status_data = {
-                'status': 'server_error',
-                'url': url,
-                'file_id': extract_id_from_url(url),
-                'timestamp': datetime.now().isoformat(),
-                'has_mesh': False,
-                'has_volumetric_images': False
-            }
-            create_status_file(status_data)
-            return False
 
-        # Check for media error
-        try:
-            not_ready = driver.find_element(By.CSS_SELECTOR, 'div.not-ready')
-            if "Media preview currently unavailable" in not_ready.text:
-                status_data = {
-                    'status': 'media_error',
-                    'url': url,
-                    'file_id': extract_id_from_url(url),
-                    'timestamp': datetime.now().isoformat(),
-                    'has_mesh': False,
-                    'has_volumetric_images': False
-                }
-                create_status_file(status_data)
-                return False
-        except NoSuchElementException:
-            pass
-
-        # Look for type information
-        has_mesh = False
-        has_volumetric = False
-        
-        try:
-            type_elements = driver.find_elements(By.CLASS_NAME, 'text-muted-value')
-            for element in type_elements:
-                text = element.text.lower()
-                logging.info(f"Found media type: {text}")
-                if 'mesh' in text:
-                    has_mesh = True
-                if 'volumetric image series' in text.lower():
-                    has_volumetric = True
-        except Exception as e:
-            logging.error(f"Error checking types: {str(e)}")
-
-        # Create success status file with type information
-        status_data = {
-            'status': 'success',
-            'url': url,
-            'file_id': extract_id_from_url(url),
-            'timestamp': datetime.now().isoformat(),
-            'has_mesh': has_mesh,
-            'has_volumetric_images': has_volumetric
+def create_session() -> requests.Session:
+    session = requests.Session()
+    session.headers.update(
+        {
+            "Accept": "application/json",
+            "User-Agent": USER_AGENT,
         }
-        create_status_file(status_data)
-        
-        # Create GitHub Actions output file if environment variable is set
-        github_output = os.getenv('GITHUB_OUTPUT')
-        if github_output:
-            with open(github_output, 'a') as f:
-                f.write(f"has_mesh={str(has_mesh).lower()}\n")
-                f.write(f"has_volumetric_images={str(has_volumetric).lower()}\n")
-                f.write("has_media_error=false\n")
-                f.write("has_server_error=false\n")
-        
-        return True
+    )
+    return session
 
-    except Exception as e:
-        logging.error(f"Error processing URL: {str(e)}")
+
+def flatten_metadata_values(record: dict, keys: Iterable[str]) -> List[str]:
+    values: List[str] = []
+    for key in keys:
+        value = record.get(key)
+        if isinstance(value, list):
+            values.extend(str(item).lower() for item in value if item)
+        elif isinstance(value, str):
+            values.append(value.lower())
+    return values
+
+
+MEDIA_TYPE_KEYS: Tuple[str, ...] = (
+    "media_type_ssim",
+    "media_type_ssi",
+    "media_type_tesim",
+    "human_readable_media_type_ssim",
+    "modality_ssim",
+    "human_readable_modality_tesim",
+    "file_type_ssim",
+)
+
+
+def derive_media_flags(record: dict) -> Tuple[bool, bool]:
+    tokens = flatten_metadata_values(record, MEDIA_TYPE_KEYS)
+
+    has_mesh = any("mesh" in token for token in tokens)
+    volumetric_keywords = (
+        "volumetric",
+        "ct image series",
+        "ctimage series",
+        "ctimageseries",
+        "ct image",
+        "ct data",
+        "ct scan",
+        "computed tomography",
+    )
+    has_volumetric = any(
+        any(keyword in token for keyword in volumetric_keywords) for token in tokens
+    )
+
+    return has_mesh, has_volumetric
+
+
+def search_media_by_id(session: requests.Session, media_id: str) -> dict:
+    params = {
+        "utf8": "✓",
+        "search_field": "media_id_ssi",
+        "q": media_id,
+        "per_page": 1,
+        "page": 1,
+    }
+    response = session.get(API_BASE_URL, params=params, timeout=(10, 60))
+    response.raise_for_status()
+    payload = response.json()
+    media_items = payload.get("response", {}).get("media", [])
+    if not media_items:
+        raise LookupError(f"No media found for ID {media_id}")
+    return media_items[0]
+
+
+def record_status(
+    *,
+    status: str,
+    url: str,
+    media_id: str,
+    has_mesh: bool,
+    has_volumetric: bool,
+) -> None:
+    status_data = {
+        "status": status,
+        "url": url,
+        "file_id": media_id,
+        "timestamp": datetime.now().isoformat(),
+        "has_mesh": has_mesh,
+        "has_volumetric_images": has_volumetric,
+    }
+    create_status_file(status_data)
+
+    github_output = os.getenv("GITHUB_OUTPUT")
+    if github_output:
+        with open(github_output, "a", encoding="utf-8") as f:
+            f.write(f"has_mesh={str(has_mesh).lower()}\n")
+            f.write(f"has_volumetric_images={str(has_volumetric).lower()}\n")
+            f.write(f"has_media_error={str(status == 'media_error').lower()}\n")
+            f.write(f"has_server_error={str(status == 'server_error').lower()}\n")
+
+
+def check_media_types(url: str) -> bool:
+    media_id = extract_id_from_url(url)
+    if media_id == "unknown":
+        logging.error("Could not extract media ID from URL")
+        record_status(
+            status="media_error",
+            url=url,
+            media_id=media_id,
+            has_mesh=False,
+            has_volumetric=False,
+        )
         return False
-    finally:
-        if driver:
-            try:
-                driver.quit()
-            except Exception:
-                pass
+
+    session = create_session()
+    try:
+        record = search_media_by_id(session, media_id)
+        has_mesh, has_volumetric = derive_media_flags(record)
+        record_status(
+            status="success",
+            url=url,
+            media_id=media_id,
+            has_mesh=has_mesh,
+            has_volumetric=has_volumetric,
+        )
+        return True
+    except requests.HTTPError as exc:
+        status = "server_error" if exc.response is not None and exc.response.status_code >= 500 else "media_error"
+        logging.error(f"HTTP error retrieving media {media_id}: {exc}")
+        record_status(
+            status=status,
+            url=url,
+            media_id=media_id,
+            has_mesh=False,
+            has_volumetric=False,
+        )
+        return False
+    except (LookupError, requests.RequestException) as exc:
+        logging.error(f"Failed to retrieve media metadata for {media_id}: {exc}")
+        record_status(
+            status="media_error",
+            url=url,
+            media_id=media_id,
+            has_mesh=False,
+            has_volumetric=False,
+        )
+        return False
 
 def process_urls_from_file(input_file):
     try:
