@@ -12,10 +12,20 @@ jobs:
   process:
     runs-on: ubuntu-22.04
     steps:
-      - name: Check out repository
+      - name: Check out main branch (not the tag)
         uses: actions/checkout@v4
         with:
+          ref: main            # <-- Ensures we're on a real branch, not a tag
           fetch-depth: 0
+          persist-credentials: true
+
+      - name: Show git status (debug)
+        run: |
+          echo "GITHUB_REF=$GITHUB_REF"
+          echo "GITHUB_SHA=$GITHUB_SHA"
+          git branch -a
+          git status -sb
+          echo "Current branch: $(git rev-parse --abbrev-ref HEAD)"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -40,9 +50,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add morphosource_xray_count.txt .github/morphosource_state.json analysis_summary.md
+          # Add whatever changed without failing if a file is missing
+          git add -A
           git commit -m "Update MorphoSource API analysis" || echo "No changes to commit"
-          git push
+          # Push even if HEAD were detached for some event types
+          git push origin HEAD:main
 
       - name: Upload analysis artifacts
         if: always()
