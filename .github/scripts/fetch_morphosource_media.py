@@ -4,7 +4,7 @@ Fetch a single MorphoSource media by ID, decide Mesh vs CTImageSeries, then:
 - Mesh: POST /api/download/{id} to get a download_url, download it, and save as artifact
 - CTImageSeries: GET /api/media/{id}/iiif/manifest and save JSON as artifact
 
-Env (set in workflow):
+Env (set in workflow or locally):
   BASE_URL (default https://www.morphosource.org)
   MEDIA_ID (required)
   MORPHOSOURCE_API_KEY (required for protected endpoints)
@@ -97,49 +97,89 @@ def backoff_request(method: str, url: str, **kwargs) -> Optional[requests.Respon
     return None
 
 def unwrap_media(obj: Any) -> Optional[Dict[str, Any]]:
-    """Accepts either {response:{media:{...}}}, {response:{media:[...]}} or a media dict."""
-    if isinstance(obj, dict):
-        if "response" in obj and isinstance(obj["response"], dict) and "media" in obj["response"]:
-            m = obj["response"]["media"]
+    """
+    Accepts shapes like:
+      { "response": { "media": {...} } }
+      { "response": { "media": [...] } }
+      { "response": { "docs":  [...] } }   # some endpoints return 'docs'
+      { "id": "...", "has_model_ssim": [...] }  # direct media doc
+    """
+    if not isinstance(obj, dict):
+        return None
+    r = obj.get("response")
+    if isinstance(r, dict):
+        if "media" in r:
+            m = r["media"]
             if isinstance(m, dict):
                 return m
             if isinstance(m, list) and m:
                 return m[0]
-        # Some endpoints may return the media object directly
-        if obj.get("id") and obj.get("has_model_ssim"):
-            return obj
+        if "docs" in r and isinstance(r["docs"], list) and r["docs"]:
+            return r["docs"][0]
+    # Direct doc?
+    if obj.get("id") and (obj.get("has_model_ssim") or obj.get("human_readable_type_ssi") == "Media"):
+        return obj
     return None
+
+# --- classification helpers ---------------------------------------------------
+
+TYPE_FIELDS = [
+    # canonical + common variants
+    "media_type_ssim", "media_type_tesim", "media_type_ssi",
+    "human_readable_media_type_ssim", "human_readable_media_type_tesim", "human_readable_media_type_ssi",
+    # useful hints/fallbacks
+    "title_ssi", "title_tesim",
+    "modality_ssim", "human_readable_modality_tesim", "human_readable_modality_ssi",
+    "number_of_images_in_set_tesim", "slice_thickness_tesim", "x_spacing_tesim", "y_spacing_tesim", "z_spacing_tesim",
+]
+
+def listify(v: Any) -> List[str]:
+    if v is None:
+        return []
+    if isinstance(v, list):
+        return [str(x) for x in v]
+    return [str(v)]
 
 def collect_values(record: Dict[str, Any], keys: List[str]) -> List[str]:
     vals: List[str] = []
     for k in keys:
-        v = record.get(k)
-        if isinstance(v, list):
-            vals += [str(x).strip() for x in v if isinstance(x, (str, int, float))]
-        elif isinstance(v, (str, int, float)):
-            vals.append(str(v).strip())
+        if k in record:
+            vals += [s.strip() for s in listify(record[k]) if str(s).strip()]
     return vals
 
 def classify_media_type(record: Dict[str, Any]) -> Tuple[str, str]:
     """
     Returns (normalized, raw_hint)
     normalized in {"mesh", "ctimageseries", "other"}
+    Heuristics:
+      - explicit media_type/human_readable_media_type fields
+      - title tags like [Mesh], [CTImageSeries], [CT]
+      - CT-specific hints (IIIF + slice/spacing + modality)
     """
-    vals = [s.lower() for s in collect_values(
-        record,
-        ["media_type_ssim", "media_type_tesim", "human_readable_media_type_ssi", "human_readable_media_type_tesim"]
-    )]
-    raw_hint = ", ".join(vals) if vals else "unknown"
+    vals = [s.lower() for s in collect_values(record, TYPE_FIELDS)]
+    raw_hint = ", ".join(sorted(set(vals))) if vals else "unknown"
 
-    if any(v == "mesh" or "mesh" == v.strip() for v in vals):
+    # Explicit labels
+    if any(v == "mesh" for v in vals) or any("mesh" == v.strip() for v in vals) or any("[mesh]" in v for v in vals):
         return "mesh", raw_hint
-    if any(v == "ctimageseries" for v in vals) or any("volumetric image series" in v for v in vals):
+
+    if any(v == "ctimageseries" for v in vals) or \
+       any("volumetric image series" in v for v in vals) or \
+       any("[ctimageseries]" in v for v in vals) or \
+       any(re.search(r"\[ct\]", v) for v in vals):
         return "ctimageseries", raw_hint
+
+    # CT hints: modality mentions CT + has slice/spacing/num images
+    has_ct_modality = any("computed tomography" in v or v == "ct" for v in vals)
+    has_slice_or_spacing = any(k in record for k in ["slice_thickness_tesim", "x_spacing_tesim", "y_spacing_tesim", "z_spacing_tesim"])
+    has_count = bool(record.get("number_of_images_in_set_tesim"))
+    if has_ct_modality and (has_slice_or_spacing or has_count):
+        return "ctimageseries", raw_hint
+
     return "other", raw_hint
 
 def parse_filename_from_headers(resp: requests.Response, fallback: str) -> str:
     cd = resp.headers.get("Content-Disposition", "")
-    # RFC 5987 filename* or plain filename
     m = re.search(r"filename\*\s*=\s*UTF-8''([^;]+)", cd, flags=re.IGNORECASE)
     if m:
         return unquote(m.group(1))
@@ -149,8 +189,6 @@ def parse_filename_from_headers(resp: requests.Response, fallback: str) -> str:
     m = re.search(r'filename\s*=\s*([^;]+)', cd, flags=re.IGNORECASE)
     if m:
         return m.group(1).strip()
-
-    # Try URL path
     try:
         path = urlparse(resp.url).path
         base = os.path.basename(path)
@@ -160,20 +198,18 @@ def parse_filename_from_headers(resp: requests.Response, fallback: str) -> str:
         pass
     return fallback
 
+# --- main ---------------------------------------------------------------------
+
 def main():
     ensure_dir(ARTIFACT_DIR)
-    notes = []
-
     if not MEDIA_ID:
         msg = "MEDIA_ID is required."
         print("[error]", msg, file=sys.stderr)
         gh_set_outputs(media_type="unknown", action="none", result="failed", artifact_dir=ARTIFACT_DIR, notes=msg)
-        # Leave a note file so upload-artifact has something
         with open(os.path.join(ARTIFACT_DIR, "README.txt"), "w", encoding="utf-8") as fh:
             fh.write(msg + "\n")
         sys.exit(1)
 
-    # 1) Get media record
     media_url = f"{BASE_URL}/api/media/{MEDIA_ID}"
     print(f"[info] GET {media_url}", file=sys.stderr)
     r = backoff_request("GET", media_url, headers=bearer_headers())
@@ -190,13 +226,14 @@ def main():
         gh_set_outputs(media_type="unknown", action="lookup", result="failed", artifact_dir=ARTIFACT_DIR, notes=msg)
         return
 
+    # Save raw payload for inspection
     try:
         payload = r.json()
     except Exception as e:
         msg = f"Bad JSON from media record endpoint: {e}"
         print("[error]", msg, file=sys.stderr)
-        with open(os.path.join(ARTIFACT_DIR, "error.json"), "w", encoding="utf-8") as fh:
-            fh.write(r.text[:2000] if r and r.text else msg)
+        with open(os.path.join(ARTIFACT_DIR, "media_raw.txt"), "w", encoding="utf-8") as fh:
+            fh.write(r.text[:4000] if r and r.text else msg)
         gh_set_outputs(media_type="unknown", action="lookup", result="failed", artifact_dir=ARTIFACT_DIR, notes=msg)
         return
 
@@ -205,12 +242,17 @@ def main():
         json.dump(payload, fh, indent=2, ensure_ascii=False)
 
     mtype, raw_hint = classify_media_type(media)
-    gh_notes = f"raw_type_hint={raw_hint}"
     print(f"[info] Classified media_type={mtype} ({raw_hint})", file=sys.stderr)
 
-    # 2) Branch by type
+    # If still unknown, dump the exact type-related fields for debugging
+    if mtype == "other":
+        snap = {k: media.get(k) for k in TYPE_FIELDS if k in media}
+        snap["_keys_present"] = sorted(list(media.keys()))
+        with open(os.path.join(ARTIFACT_DIR, f"media_{MEDIA_ID}_type_snapshot.json"), "w", encoding="utf-8") as fh:
+            json.dump(snap, fh, indent=2, ensure_ascii=False)
+
+    # --- Branch by type -------------------------------------------------------
     if mtype == "mesh":
-        # Request download URL
         post_url = f"{BASE_URL}/api/download/{MEDIA_ID}"
         body = {
             "use_statement": USE_STATEMENT,
@@ -220,7 +262,6 @@ def main():
         }
         print(f"[info] POST {post_url} (requesting download_url)", file=sys.stderr)
 
-        # Try bearer then raw token
         pr = backoff_request("POST", post_url, headers=with_json(bearer_headers()), json=body)
         if pr is not None and pr.status_code in (401, 403):
             print("[warn] bearer auth rejected on download; retrying with raw token", file=sys.stderr)
@@ -231,8 +272,8 @@ def main():
             msg = f"Download request failed (status={status})."
             print("[error]", msg, file=sys.stderr)
             with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_error.txt"), "w", encoding="utf-8") as fh:
-                fh.write(msg + "\n" + (pr.text[:2000] if pr and pr.text else ""))
-            gh_set_outputs(media_type="mesh", action="download", result="failed", artifact_dir=ARTIFACT_DIR, notes=f"{gh_notes}; download request failed")
+                fh.write(msg + "\n" + (pr.text[:4000] if pr and pr.text else ""))
+            gh_set_outputs(media_type="mesh", action="download", result="failed", artifact_dir=ARTIFACT_DIR, notes="download request failed")
             return
 
         try:
@@ -242,7 +283,7 @@ def main():
             print("[error]", msg, file=sys.stderr)
             with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_response.txt"), "w", encoding="utf-8") as fh:
                 fh.write(pr.text[:4000] if pr and pr.text else "")
-            gh_set_outputs(media_type="mesh", action="download", result="failed", artifact_dir=ARTIFACT_DIR, notes=f"{gh_notes}; parse download response failed")
+            gh_set_outputs(media_type="mesh", action="download", result="failed", artifact_dir=ARTIFACT_DIR, notes="parse download response failed")
             return
 
         # Extract download_url
@@ -262,11 +303,10 @@ def main():
             msg = "No download_url returned (may require approval or restricted access)."
             print("[warn]", msg, file=sys.stderr)
             with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_no_download_url.json"), "w", encoding="utf-8") as fh:
-                json.dump(dl_payload, fh, indent=2)
-            gh_set_outputs(media_type="mesh", action="download", result="no-url", artifact_dir=ARTIFACT_DIR, notes=f"{gh_notes}; no download_url")
+                json.dump(dl_payload, fh, indent=2, ensure_ascii=False)
+            gh_set_outputs(media_type="mesh", action="download", result="no-url", artifact_dir=ARTIFACT_DIR, notes="no download_url")
             return
 
-        # Stream download
         print(f"[info] GET {download_url}", file=sys.stderr)
         dr = backoff_request("GET", download_url, stream=True)
         if not dr or dr.status_code >= 400:
@@ -275,7 +315,7 @@ def main():
             print("[error]", msg, file=sys.stderr)
             with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_url.txt"), "w", encoding="utf-8") as fh:
                 fh.write(download_url + "\n")
-            gh_set_outputs(media_type="mesh", action="download", result="failed", artifact_dir=ARTIFACT_DIR, notes=f"{gh_notes}; presigned download failed")
+            gh_set_outputs(media_type="mesh", action="download", result="failed", artifact_dir=ARTIFACT_DIR, notes="presigned download failed")
             return
 
         fname = parse_filename_from_headers(dr, f"media_{MEDIA_ID}.bin")
@@ -290,12 +330,11 @@ def main():
         with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_info.json"), "w", encoding="utf-8") as fh:
             json.dump({"media_id": MEDIA_ID, "download_url": download_url, "filename": fname, "size_bytes": size}, fh, indent=2)
 
-        gh_set_outputs(media_type="mesh", action="download", result="success", artifact_dir=ARTIFACT_DIR, notes=f"{gh_notes}; saved={fname}")
+        gh_set_outputs(media_type="mesh", action="download", result="success", artifact_dir=ARTIFACT_DIR, notes=f"saved={fname}")
         print(f"[info] Downloaded {size} bytes to {out_path}", file=sys.stderr)
         return
 
     elif mtype == "ctimageseries":
-        # Fetch IIIF manifest JSON
         iiif_url = f"{BASE_URL}/api/media/{MEDIA_ID}/iiif/manifest"
         print(f"[info] GET {iiif_url} (IIIF manifest)", file=sys.stderr)
         ir = backoff_request("GET", iiif_url, headers=bearer_headers())
@@ -308,8 +347,8 @@ def main():
             msg = f"Failed to fetch IIIF manifest (status={status})."
             print("[error]", msg, file=sys.stderr)
             with open(os.path.join(ARTIFACT_DIR, f"ct_{MEDIA_ID}_iiif_error.txt"), "w", encoding="utf-8") as fh:
-                fh.write(msg + "\n" + (ir.text[:2000] if ir and ir.text else ""))
-            gh_set_outputs(media_type="ctimageseries", action="iiif", result="failed", artifact_dir=ARTIFACT_DIR, notes=f"{gh_notes}; iiif fetch failed")
+                fh.write(msg + "\n" + (ir.text[:4000] if ir and ir.text else ""))
+            gh_set_outputs(media_type="ctimageseries", action="iiif", result="failed", artifact_dir=ARTIFACT_DIR, notes="iiif fetch failed")
             return
 
         try:
@@ -319,24 +358,23 @@ def main():
             print("[error]", msg, file=sys.stderr)
             with open(os.path.join(ARTIFACT_DIR, f"ct_{MEDIA_ID}_iiif_response.txt"), "w", encoding="utf-8") as fh:
                 fh.write(ir.text[:4000] if ir and ir.text else "")
-            gh_set_outputs(media_type="ctimageseries", action="iiif", result="failed", artifact_dir=ARTIFACT_DIR, notes=f"{gh_notes}; iiif parse failed")
+            gh_set_outputs(media_type="ctimageseries", action="iiif", result="failed", artifact_dir=ARTIFACT_DIR, notes="iiif parse failed")
             return
 
         out_path = os.path.join(ARTIFACT_DIR, f"iiif_manifest_{MEDIA_ID}.json")
         with open(out_path, "w", encoding="utf-8") as fh:
             json.dump(manifest, fh, indent=2, ensure_ascii=False)
 
-        gh_set_outputs(media_type="ctimageseries", action="iiif", result="success", artifact_dir=ARTIFACT_DIR, notes=f"{gh_notes}; saved=iiif_manifest_{MEDIA_ID}.json")
+        gh_set_outputs(media_type="ctimageseries", action="iiif", result="success", artifact_dir=ARTIFACT_DIR, notes=f"saved=iiif_manifest_{MEDIA_ID}.json")
         print(f"[info] Saved IIIF manifest to {out_path}", file=sys.stderr)
         return
 
-    else:
-        msg = f"Unhandled media type. ({raw_hint})"
-        print("[warn]", msg, file=sys.stderr)
-        with open(os.path.join(ARTIFACT_DIR, f"media_{MEDIA_ID}_unhandled.txt"), "w", encoding="utf-8") as fh:
-            fh.write(msg + "\n")
-        gh_set_outputs(media_type="other", action="none", result="skipped", artifact_dir=ARTIFACT_DIR, notes=msg)
-        return
+    # Unknown
+    msg = f"Unhandled media type. ({raw_hint})"
+    print("[warn]", msg, file=sys.stderr)
+    with open(os.path.join(ARTIFACT_DIR, f"media_{MEDIA_ID}_unhandled.txt"), "w", encoding="utf-8") as fh:
+        fh.write(msg + "\n")
+    gh_set_outputs(media_type="other", action="none", result="skipped", artifact_dir=ARTIFACT_DIR, notes=msg)
 
 if __name__ == "__main__":
     main()
