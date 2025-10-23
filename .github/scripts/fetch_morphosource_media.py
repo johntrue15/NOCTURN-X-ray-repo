@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
 """
-Fetch a single MorphoSource media by ID, decide Mesh vs CTImageSeries, then:
-- Mesh: POST /api/download/{id} to get a download_url, download it, and save as artifact
-- CTImageSeries: GET /api/media/{id}/iiif/manifest and save JSON as artifact
+Fetch a MorphoSource media by ID, decide Mesh vs CTImageSeries, then:
+- Mesh -> POST /api/download/{id} to obtain a presigned download_url; download & save.
+- CTImageSeries -> GET /api/media/{id}/iiif/manifest; save JSON.
 
-Improved classification:
-- Supports both Solr-style keys (*_ssim/_tesim/_ssi) and simplified keys
-  (media_type, human_readable_media_type, title, modality, x/y/z_pixel_spacing, slice_thickness, number_of_images_in_set).
-- Explicitly treats media_type 'Volumetric Image Series' as CT image series.
+Robust debugging:
+- Save sanitized request/response headers, status, elapsed, and raw body previews.
+- Dump full JSON payload for media and branch responses.
+- Emit a classification snapshot and confirm the ID match.
+- On 400 invalid use_categories, auto-fallback to use_category_other (configurable).
 
-Debug:
-- Always dumps HTTP meta + raw preview files for media and branch requests.
-- Saves classification detail including which fields were present.
-
-Env:
-  BASE_URL, MEDIA_ID, MORPHOSOURCE_API_KEY
+Env (set in workflow):
+  BASE_URL (default https://www.morphosource.org)
+  MEDIA_ID (required)
+  MORPHOSOURCE_API_KEY
   USE_STATEMENT, USE_CATEGORIES, USE_CATEGORY_OTHER, AGREEMENTS_ACCEPTED
-  ARTIFACT_DIR (default 'artifacts')
-  DEBUG (default '1'), RAW_MAX_BYTES (default '262144')
+  ARTIFACT_DIR (default artifacts)
+  DEBUG (default "1"), RAW_MAX_BYTES (default "262144")
+  FALLBACK_TO_OTHER (default "1") -> if 'use_categories' rejected, retry with 'use_category_other'
 """
 
 import os, sys, json, time, re
@@ -25,23 +25,26 @@ from typing import Any, Dict, Optional, Tuple, List
 import requests
 from urllib.parse import urlparse, unquote
 
+# -------------------- config --------------------
 BASE_URL = os.getenv("BASE_URL", "https://www.morphosource.org").rstrip("/")
 MEDIA_ID = os.getenv("MEDIA_ID", "").strip()
 API_KEY = os.getenv("MORPHOSOURCE_API_KEY", "").strip()
 
-USE_STATEMENT = os.getenv("USE_STATEMENT", "I will use this data for research and educational purposes.").strip()
-USE_CATEGORIES_RAW = os.getenv("USE_CATEGORIES", "Research").strip()
+USE_STATEMENT = os.getenv("USE_STATEMENT", "Downloading this data as part of a research project.").strip()
+USE_CATEGORIES_RAW = os.getenv("USE_CATEGORIES", "Research").strip()   # pipe or comma delimited
 USE_CATEGORY_OTHER = os.getenv("USE_CATEGORY_OTHER", "").strip()
 AGREEMENTS_ACCEPTED = os.getenv("AGREEMENTS_ACCEPTED", "true").lower() == "true"
 
 ARTIFACT_DIR = os.getenv("ARTIFACT_DIR", "artifacts").strip()
 DEBUG = os.getenv("DEBUG", "1").lower() in ("1", "true", "yes", "y", "on")
 RAW_MAX = int(os.getenv("RAW_MAX_BYTES", "262144"))
+FALLBACK_TO_OTHER = os.getenv("FALLBACK_TO_OTHER", "1").lower() in ("1", "true", "yes", "y", "on")
 
 TIMEOUT = (5, 60)
 MAX_TRIES = 4
 RETRY_STATUS = {429, 500, 502, 503, 504}
 
+# -------------------- utils --------------------
 def dbg(msg: str):
     if DEBUG:
         print(f"[debug] {msg}", file=sys.stderr)
@@ -73,6 +76,7 @@ def scrub_headers(h: Dict[str, str]) -> Dict[str, str]:
     return redacted
 
 def dump_http_debug(resp: Optional[requests.Response], base_name: str):
+    """Write request/response meta + a raw text preview to artifact dir."""
     try:
         info = {
             "request": {
@@ -147,7 +151,6 @@ def backoff_request(method: str, url: str, **kwargs) -> Optional[requests.Respon
     return None
 
 # ---------- classification helpers ----------
-# Support BOTH Solr-style and simplified keys.
 TYPE_FIELDS = [
     # Solr-style
     "media_type_ssim", "media_type_tesim", "media_type_ssi",
@@ -210,15 +213,12 @@ def classify_media_type(record: Dict[str, Any]) -> Tuple[str, str, Dict[str, Any
         "values_collected": vals,
     }
 
-    # Mesh signals
     if "mesh" in vals or any_contains(vals, ["[mesh]"]):
         return "mesh", raw_hint, detail
 
-    # CT signals (explicit)
     if "ctimageseries" in vals or "volumetric image series" in vals or any_contains(vals, ["[ctimageseries]", "[ct]"]):
         return "ctimageseries", raw_hint, detail
 
-    # CT hints: CT modality + slice/spacing/count present
     has_ct_modality = any_contains(vals, ["computed tomography"]) or "ct" in vals
     has_slice_or_spacing = any(k in record for k in [
         "slice_thickness_tesim", "x_spacing_tesim", "y_spacing_tesim", "z_spacing_tesim",
@@ -245,6 +245,34 @@ def parse_filename_from_headers(resp: requests.Response, fallback: str) -> str:
         pass
     return fallback
 
+# ---------------- download body helpers ----------------
+def split_categories(raw: str) -> List[str]:
+    # allow pipe or comma separation
+    parts = [p.strip() for p in re.split(r"[|,]", raw or "") if p.strip()]
+    # de-dup, preserve order
+    seen, out = set(), []
+    for p in parts:
+        if p not in seen:
+            seen.add(p)
+            out.append(p)
+    return out
+
+def build_body_use_categories(categories: List[str]) -> Dict[str, Any]:
+    # IMPORTANT: Only include one of use_categories OR use_category_other
+    return {
+        "use_statement": USE_STATEMENT,
+        "use_categories": categories,
+        "agreements_accepted": AGREEMENTS_ACCEPTED,
+    }
+
+def build_body_use_other(text: str) -> Dict[str, Any]:
+    return {
+        "use_statement": USE_STATEMENT,
+        "use_category_other": text,
+        "agreements_accepted": AGREEMENTS_ACCEPTED,
+    }
+
+# ---------------- main ----------------
 def main():
     ensure_dir(ARTIFACT_DIR)
 
@@ -307,30 +335,69 @@ def main():
 
     print(f"[info] Classified media_type={mtype} ({raw_hint})", file=sys.stderr)
 
+    # ---------- Mesh branch ----------
     if mtype == "mesh":
         post_url = f"{BASE_URL}/api/download/{MEDIA_ID}"
-        body = {
-            "use_statement": USE_STATEMENT,
-            "use_categories": [c.strip() for c in USE_CATEGORIES_RAW.split("|") if c.strip()],
-            "use_category_other": USE_CATEGORY_OTHER,
-            "agreements_accepted": AGREEMENTS_ACCEPTED,
-        }
-        print(f"[info] POST {post_url} (requesting download_url)", file=sys.stderr)
 
-        pr = backoff_request("POST", post_url, headers=with_json(bearer_headers()), json=body)
+        # Decide which body to send first:
+        cat_list = split_categories(USE_CATEGORIES_RAW)
+        initial_body: Dict[str, Any]
+        initial_label: str
+
+        if USE_CATEGORY_OTHER and not cat_list:
+            initial_body = build_body_use_other(USE_CATEGORY_OTHER)
+            initial_label = "use_other_initial"
+        else:
+            # if none provided, use safe default 'Research'
+            if not cat_list:
+                cat_list = ["Research"]
+            initial_body = build_body_use_categories(cat_list)
+            initial_label = "use_categories_initial"
+
+        # Save request body for reproducibility
+        with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_request_{initial_label}.json"), "w", encoding="utf-8") as fh:
+            json.dump(initial_body, fh, indent=2, ensure_ascii=False)
+
+        print(f"[info] POST {post_url} ({initial_label})", file=sys.stderr)
+        pr = backoff_request("POST", post_url, headers=with_json(bearer_headers()), json=initial_body)
         if pr is not None and pr.status_code in (401, 403):
             print("[warn] bearer auth rejected on download; retrying with raw token", file=sys.stderr)
-            pr = backoff_request("POST", post_url, headers=with_json(raw_headers()), json=body)
+            pr = backoff_request("POST", post_url, headers=with_json(raw_headers()), json=initial_body)
 
         dump_http_debug(pr, f"mesh_{MEDIA_ID}_download_resp")
+
+        # If invalid categories and fallback is allowed, retry with use_category_other only
+        fallback_tried = False
+        if pr and pr.status_code == 400 and FALLBACK_TO_OTHER:
+            try:
+                err = pr.json()
+            except Exception:
+                err = {}
+            msg_txt = json.dumps(err) if isinstance(err, dict) else (pr.text or "")
+            if "use_categories" in msg_txt and "not valid" in msg_txt.lower():
+                other_text = USE_CATEGORY_OTHER or ("Other: " + " | ".join(cat_list) if cat_list else "Other")
+                fallback_body = build_body_use_other(other_text)
+                with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_request_fallback_use_other.json"), "w", encoding="utf-8") as fh:
+                    json.dump(fallback_body, fh, indent=2, ensure_ascii=False)
+
+                print(f"[info] POST {post_url} (fallback use_category_other)", file=sys.stderr)
+                pr = backoff_request("POST", post_url, headers=with_json(bearer_headers()), json=fallback_body)
+                if pr is not None and pr.status_code in (401, 403):
+                    print("[warn] bearer auth rejected on fallback; retrying with raw token", file=sys.stderr)
+                    pr = backoff_request("POST", post_url, headers=with_json(raw_headers()), json=fallback_body)
+
+                dump_http_debug(pr, f"mesh_{MEDIA_ID}_download_resp_fallback")
+                fallback_tried = True
 
         if not pr or pr.status_code >= 400:
             status = pr.status_code if pr else "no-response"
             msg = f"Download request failed (status={status})."
             print("[error]", msg, file=sys.stderr)
-            gh_set_outputs(media_type="mesh", action="download", result="failed", artifact_dir=ARTIFACT_DIR, notes=f"id_match={id_match}; download request failed")
+            gh_set_outputs(media_type="mesh", action="download", result="failed", artifact_dir=ARTIFACT_DIR,
+                           notes=f"id_match={id_match}; {'fallback tried' if fallback_tried else 'no fallback'}")
             return
 
+        # Parse the response for download_url
         try:
             dl_payload = pr.json()
         except Exception as e:
@@ -338,7 +405,8 @@ def main():
             print("[error]", msg, file=sys.stderr)
             with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_response.txt"), "w", encoding="utf-8") as fh:
                 fh.write(pr.text[:RAW_MAX] if pr and pr.text else "")
-            gh_set_outputs(media_type="mesh", action="download", result="failed", artifact_dir=ARTIFACT_DIR, notes=f"id_match={id_match}; parse download response failed")
+            gh_set_outputs(media_type="mesh", action="download", result="failed", artifact_dir=ARTIFACT_DIR,
+                           notes=f"id_match={id_match}; parse download response failed")
             return
 
         with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_response.json"), "w", encoding="utf-8") as fh:
@@ -359,7 +427,8 @@ def main():
         if not download_url:
             msg = "No download_url returned (may require approval or restricted access)."
             print("[warn]", msg, file=sys.stderr)
-            gh_set_outputs(media_type="mesh", action="download", result="no-url", artifact_dir=ARTIFACT_DIR, notes=f"id_match={id_match}; no download_url")
+            gh_set_outputs(media_type="mesh", action="download", result="no-url", artifact_dir=ARTIFACT_DIR,
+                           notes=f"id_match={id_match}; request accepted but no presigned URL")
             return
 
         print(f"[info] GET presigned {download_url}", file=sys.stderr)
@@ -370,7 +439,8 @@ def main():
             status = dr.status_code if dr else "no-response"
             msg = f"Failed to download file from pre-signed URL (status={status})."
             print("[error]", msg, file=sys.stderr)
-            gh_set_outputs(media_type="mesh", action="download", result="failed", artifact_dir=ARTIFACT_DIR, notes=f"id_match={id_match}; presigned download failed")
+            gh_set_outputs(media_type="mesh", action="download", result="failed", artifact_dir=ARTIFACT_DIR,
+                           notes=f"id_match={id_match}; presigned download failed")
             return
 
         fname = parse_filename_from_headers(dr, f"media_{MEDIA_ID}.bin")
@@ -385,10 +455,12 @@ def main():
         with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_info.json"), "w", encoding="utf-8") as fh:
             json.dump({"media_id": MEDIA_ID, "download_url": download_url, "filename": fname, "size_bytes": size}, fh, indent=2)
 
-        gh_set_outputs(media_type="mesh", action="download", result="success", artifact_dir=ARTIFACT_DIR, notes=f"id_match={id_match}; saved={fname}")
+        gh_set_outputs(media_type="mesh", action="download", result="success", artifact_dir=ARTIFACT_DIR,
+                       notes=f"id_match={id_match}; saved={fname}")
         print(f"[info] Downloaded {size} bytes to {out_path}", file=sys.stderr)
         return
 
+    # ---------- CTImageSeries branch ----------
     if mtype == "ctimageseries":
         iiif_url = f"{BASE_URL}/api/media/{MEDIA_ID}/iiif/manifest"
         print(f"[info] GET {iiif_url} (IIIF manifest)", file=sys.stderr)
@@ -404,7 +476,8 @@ def main():
             status = ir.status_code if ir else "no-response"
             msg = f"Failed to fetch IIIF manifest (status={status})."
             print("[error]", msg, file=sys.stderr)
-            gh_set_outputs(media_type="ctimageseries", action="iiif", result="failed", artifact_dir=ARTIFACT_DIR, notes=f"id_match={id_match}; iiif fetch failed")
+            gh_set_outputs(media_type="ctimageseries", action="iiif", result="failed", artifact_dir=ARTIFACT_DIR,
+                           notes=f"id_match={id_match}; iiif fetch failed")
             return
 
         try:
@@ -412,22 +485,26 @@ def main():
         except Exception as e:
             msg = f"Bad JSON in IIIF manifest response: {e}"
             print("[error]", msg, file=sys.stderr)
-            gh_set_outputs(media_type="ctimageseries", action="iiif", result="failed", artifact_dir=ARTIFACT_DIR, notes=f"id_match={id_match}; iiif parse failed")
+            gh_set_outputs(media_type="ctimageseries", action="iiif", result="failed", artifact_dir=ARTIFACT_DIR,
+                           notes=f"id_match={id_match}; iiif parse failed")
             return
 
         out_path = os.path.join(ARTIFACT_DIR, f"iiif_manifest_{MEDIA_ID}.json")
         with open(out_path, "w", encoding="utf-8") as fh:
             json.dump(manifest, fh, indent=2, ensure_ascii=False)
 
-        gh_set_outputs(media_type="ctimageseries", action="iiif", result="success", artifact_dir=ARTIFACT_DIR, notes=f"id_match={id_match}; saved=iiif_manifest_{MEDIA_ID}.json")
+        gh_set_outputs(media_type="ctimageseries", action="iiif", result="success", artifact_dir=ARTIFACT_DIR,
+                       notes=f"id_match={id_match}; saved=iiif_manifest_{MEDIA_ID}.json")
         print(f"[info] Saved IIIF manifest to {out_path}", file=sys.stderr)
         return
 
+    # ---------- Unknown ----------
     msg = f"Unhandled media type. (hint: {raw_hint})"
     print("[warn]", msg, file=sys.stderr)
     with open(os.path.join(ARTIFACT_DIR, f"media_{MEDIA_ID}_unhandled.txt"), "w", encoding="utf-8") as fh:
         fh.write(msg + "\n")
-    gh_set_outputs(media_type="other", action="none", result="skipped", artifact_dir=ARTIFACT_DIR, notes=f"id_match={id_match}; {msg}")
+    gh_set_outputs(media_type="other", action="none", result="skipped", artifact_dir=ARTIFACT_DIR,
+                   notes=f"id_match={id_match}; {msg}")
 
 if __name__ == "__main__":
     main()
