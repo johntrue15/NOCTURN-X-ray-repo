@@ -1,0 +1,78 @@
+name: Fetch MorphoSource media (by ID)
+
+on:
+  workflow_dispatch:
+    inputs:
+      media_id:
+        description: 'MorphoSource media ID (e.g., 000787842)'
+        required: true
+      use_statement:
+        description: 'Use statement for download POST (Mesh only)'
+        required: false
+        default: 'I will use this data for research and educational purposes.'
+      use_categories:
+        description: 'Pipe-separated categories (Mesh only)'
+        required: false
+        default: 'Research|Teaching (Higher Ed)|Other'
+      use_category_other:
+        description: 'If category is Other, specify details'
+        required: false
+        default: ''
+  # You can add a schedule or keep this manual only.
+
+permissions:
+  contents: read
+
+jobs:
+  fetch-and-upload:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: morphosource-media-${{ github.ref }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install requests
+
+      - name: Fetch media and produce artifact
+        id: fetch
+        env:
+          BASE_URL: https://www.morphosource.org
+          MEDIA_ID: ${{ github.event.inputs.media_id }}
+          MORPHOSOURCE_API_KEY: ${{ secrets.MORPHOSOURCE_API_KEY }}
+          USE_STATEMENT: ${{ github.event.inputs.use_statement }}
+          USE_CATEGORIES: ${{ github.event.inputs.use_categories }}
+          USE_CATEGORY_OTHER: ${{ github.event.inputs.use_category_other }}
+          AGREEMENTS_ACCEPTED: "true"
+          ARTIFACT_DIR: morphosource_${{ github.event.inputs.media_id }}_artifact
+        run: |
+          python .github/scripts/fetch_morphosource_media.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: morphosource-${{ steps.fetch.outputs.media_type || 'unknown' }}-${{ github.event.inputs.media_id }}
+          path: ${{ steps.fetch.outputs.artifact_dir }}
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Job summary
+        run: |
+          {
+            echo "### MorphoSource fetch summary"
+            echo ""
+            echo "- Media ID: \`${{ github.event.inputs.media_id }}\`"
+            echo "- Media type: **${{ steps.fetch.outputs.media_type || 'unknown' }}**"
+            echo "- Action: **${{ steps.fetch.outputs.action || 'none' }}**"
+            echo "- Result: **${{ steps.fetch.outputs.result || 'n/a' }}**"
+            echo "- Artifact dir: \`${{ steps.fetch.outputs.artifact_dir }}\`"
+            echo "- Notes: ${{ steps.fetch.outputs.notes }}"
+          } >> "$GITHUB_STEP_SUMMARY"
