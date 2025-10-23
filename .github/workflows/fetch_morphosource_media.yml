@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       media_id:
-        description: 'MorphoSource media ID (e.g., 000788214)'
+        description: 'MorphoSource media ID (e.g., 000788351)'
         required: true
       use_statement:
         description: 'Use statement for download POST (Mesh only)'
@@ -48,11 +48,15 @@ jobs:
           BASE_URL: https://www.morphosource.org
           MEDIA_ID: ${{ github.event.inputs.media_id }}
 
-          # Auth and request tuning
+          # Auth (REQUIRED): your personal MorphoSource API key
           MORPHOSOURCE_API_KEY: ${{ secrets.MORPHOSOURCE_API_KEY }}
-          AUTH_ORDER: raw,bearer,token,token_noquotes   # try these in order
-          VERIFY_SSL: "true"                             # set "false" only to diagnose TLS issues
-          EXTRA_HEADERS_JSON: ""                         # optional, e.g. {"Accept-Language":"en-US"}
+
+          # Strictly follow the docs: send Authorization: <API_KEY> first.
+          AUTH_ORDER: raw               # doc-aligned default
+          EXTRA_KEY_HEADERS: x-api-key,api-key
+          APPEND_API_KEY_PARAM: "1"     # also try ...?api_key=<KEY> on the URL (defensive)
+          VERIFY_SSL: "true"
+          EXTRA_HEADERS_JSON: ""         # optional extras as JSON
 
           # Download intent inputs (mesh only)
           USE_STATEMENT: ${{ github.event.inputs.use_statement }}
@@ -63,8 +67,8 @@ jobs:
           # Behavior + debugging
           ARTIFACT_DIR: morphosource_${{ github.event.inputs.media_id }}_artifact
           DEBUG: "1"
-          RAW_MAX_BYTES: "524288"          # 512 KiB raw preview cap
-          FALLBACK_TO_OTHER: "1"           # auto-retry with use_category_other on 400 invalid categories
+          RAW_MAX_BYTES: "524288"       # 512 KiB raw preview cap
+          FALLBACK_TO_OTHER: "1"        # auto-retry with use_category_other on 400 invalid categories
 
         run: |
           python .github/scripts/fetch_morphosource_media.py
