@@ -4,23 +4,28 @@ Fetch a MorphoSource media by ID, decide Mesh vs CTImageSeries, then:
 - Mesh -> POST /api/download/{id} to obtain a presigned download_url; download & save.
 - CTImageSeries -> GET /api/media/{id}/iiif/manifest; save JSON.
 
-Robust debugging:
-- Save sanitized request/response headers, status, elapsed, and raw body previews.
-- Dump full JSON payload for media and branch responses.
-- Emit a classification snapshot and confirm the ID match.
-- On 400 invalid use_categories, auto-fallback to use_category_other (configurable).
+Hardened debug + retries:
+- Logs every request/response (sanitized headers), elapsed, and raw body previews.
+- Tries multiple auth variants in order (AUTH_ORDER env): raw,bearer,token,token_noquotes.
+- Optional SSL verification toggle (VERIFY_SSL) for diagnosing TLS issues.
+- If 400 due to invalid use_categories, auto-retry with use_category_other only.
+- Saves exceptions (trace/message) as files so "no-response" is explained.
 
-Env (set in workflow):
+Env:
   BASE_URL (default https://www.morphosource.org)
   MEDIA_ID (required)
-  MORPHOSOURCE_API_KEY
+  MORPHOSOURCE_API_KEY (recommended)
+  AUTH_ORDER (default "raw,bearer,token,token_noquotes")
+  VERIFY_SSL ("true" | "false", default "true")
+  EXTRA_HEADERS_JSON (optional JSON -> merged into request headers)
+
   USE_STATEMENT, USE_CATEGORIES, USE_CATEGORY_OTHER, AGREEMENTS_ACCEPTED
-  ARTIFACT_DIR (default artifacts)
+  ARTIFACT_DIR (default "artifacts")
   DEBUG (default "1"), RAW_MAX_BYTES (default "262144")
-  FALLBACK_TO_OTHER (default "1") -> if 'use_categories' rejected, retry with 'use_category_other'
+  FALLBACK_TO_OTHER (default "1")
 """
 
-import os, sys, json, time, re
+import os, sys, json, time, re, traceback
 from typing import Any, Dict, Optional, Tuple, List
 import requests
 from urllib.parse import urlparse, unquote
@@ -30,8 +35,12 @@ BASE_URL = os.getenv("BASE_URL", "https://www.morphosource.org").rstrip("/")
 MEDIA_ID = os.getenv("MEDIA_ID", "").strip()
 API_KEY = os.getenv("MORPHOSOURCE_API_KEY", "").strip()
 
+AUTH_ORDER = [s.strip().lower() for s in (os.getenv("AUTH_ORDER", "raw,bearer,token,token_noquotes")).split(",") if s.strip()]
+VERIFY_SSL = os.getenv("VERIFY_SSL", "true").lower() in ("1","true","yes","on")
+EXTRA_HEADERS_JSON = os.getenv("EXTRA_HEADERS_JSON", "").strip()
+
 USE_STATEMENT = os.getenv("USE_STATEMENT", "Downloading this data as part of a research project.").strip()
-USE_CATEGORIES_RAW = os.getenv("USE_CATEGORIES", "Research").strip()   # pipe or comma delimited
+USE_CATEGORIES_RAW = os.getenv("USE_CATEGORIES", "Research").strip()
 USE_CATEGORY_OTHER = os.getenv("USE_CATEGORY_OTHER", "").strip()
 AGREEMENTS_ACCEPTED = os.getenv("AGREEMENTS_ACCEPTED", "true").lower() == "true"
 
@@ -44,7 +53,6 @@ TIMEOUT = (5, 60)
 MAX_TRIES = 4
 RETRY_STATUS = {429, 500, 502, 503, 504}
 
-# -------------------- utils --------------------
 def dbg(msg: str):
     if DEBUG:
         print(f"[debug] {msg}", file=sys.stderr)
@@ -75,8 +83,17 @@ def scrub_headers(h: Dict[str, str]) -> Dict[str, str]:
             redacted[k] = v
     return redacted
 
+def write_exception(base_name: str, err: Exception):
+    info = {
+        "type": type(err).__name__,
+        "message": str(err),
+        "traceback": traceback.format_exc(),
+    }
+    with open(os.path.join(ARTIFACT_DIR, f"{base_name}_exception.json"), "w", encoding="utf-8") as fh:
+        json.dump(info, fh, indent=2, ensure_ascii=False)
+
 def dump_http_debug(resp: Optional[requests.Response], base_name: str):
-    """Write request/response meta + a raw text preview to artifact dir."""
+    """Write request/response meta + raw preview to artifact dir."""
     try:
         info = {
             "request": {
@@ -105,39 +122,60 @@ def dump_http_debug(resp: Optional[requests.Response], base_name: str):
     except Exception as e:
         dbg(f"dump_http_debug failed: {e}")
 
-def bearer_headers() -> Dict[str, str]:
-    h = {"Accept": "application/json"}
-    if API_KEY:
+def merge_extra_headers(h: Dict[str,str]) -> Dict[str,str]:
+    if not EXTRA_HEADERS_JSON:
+        return h
+    try:
+        extra = json.loads(EXTRA_HEADERS_JSON)
+        if isinstance(extra, dict):
+            merged = dict(h)
+            for k,v in extra.items():
+                if isinstance(v, str):
+                    merged[k] = v
+            return merged
+    except Exception as e:
+        dbg(f"EXTRA_HEADERS_JSON parse error: {e}")
+    return h
+
+def base_headers(accept_json=True) -> Dict[str,str]:
+    h = {"Accept": "application/json" if accept_json else "*/*"}
+    return merge_extra_headers(h)
+
+def headers_for_auth(mode: str, accept_json=True) -> Dict[str,str]:
+    h = base_headers(accept_json=accept_json)
+    if mode == "bearer" and API_KEY:
         h["Authorization"] = f"Bearer {API_KEY}"
-    return h
-
-def raw_headers() -> Dict[str, str]:
-    h = {"Accept": "application/json"}
-    if API_KEY:
+    elif mode == "raw" and API_KEY:
         h["Authorization"] = API_KEY
+    elif mode == "token" and API_KEY:
+        h["Authorization"] = f'Token token="{API_KEY}"'
+    elif mode == "token_noquotes" and API_KEY:
+        h["Authorization"] = f"Token token={API_KEY}"
     return h
 
-def with_json(h: Dict[str, str]) -> Dict[str, str]:
+def with_json(h: Dict[str,str]) -> Dict[str,str]:
     h = dict(h)
     h["Content-Type"] = "application/json"
     return h
 
-def backoff_request(method: str, url: str, **kwargs) -> Optional[requests.Response]:
+def backoff_request(method: str, url: str, **kwargs) -> Tuple[Optional[requests.Response], Optional[Exception]]:
     tries = 0
+    last_exc: Optional[Exception] = None
     while tries < MAX_TRIES:
         tries += 1
         try:
-            r = requests.request(method, url, timeout=TIMEOUT, **kwargs)
+            r = requests.request(method, url, timeout=TIMEOUT, verify=VERIFY_SSL, **kwargs)
         except requests.RequestException as e:
-            dbg(f"network error on {method} {url}: {e}")
+            last_exc = e
+            dbg(f"{method} {url} network error (try {tries}/{MAX_TRIES}): {e}")
             if tries >= MAX_TRIES:
-                return None
+                return None, e
             sleep = min(60, 2 ** tries)
             print(f"[warn] network error (try {tries}/{MAX_TRIES}); sleeping {sleep}s", file=sys.stderr)
             time.sleep(sleep)
             continue
         if r.status_code < 400:
-            return r
+            return r, None
         if r.status_code in RETRY_STATUS and tries < MAX_TRIES:
             ra = r.headers.get("Retry-After")
             try:
@@ -147,8 +185,8 @@ def backoff_request(method: str, url: str, **kwargs) -> Optional[requests.Respon
             print(f"[warn] HTTP {r.status_code} on {method} {url} (try {tries}/{MAX_TRIES}); sleeping {sleep}s", file=sys.stderr)
             time.sleep(sleep)
             continue
-        return r
-    return None
+        return r, None
+    return None, last_exc
 
 # ---------- classification helpers ----------
 TYPE_FIELDS = [
@@ -178,13 +216,6 @@ def collect_values(record: Dict[str, Any], keys: List[str]) -> List[str]:
     return vals
 
 def unwrap_media(obj: Any) -> Optional[Dict[str, Any]]:
-    """
-    Accepts:
-      { "response": { "media": {...} } }
-      { "response": { "media": [...] } }
-      { "response": { "docs":  [...] } }
-      or a direct media dict with "id" and Media-like markers.
-    """
     if not isinstance(obj, dict):
         return None
     r = obj.get("response")
@@ -205,17 +236,11 @@ def any_contains(values: List[str], needles: List[str]) -> bool:
 def classify_media_type(record: Dict[str, Any]) -> Tuple[str, str, Dict[str, Any]]:
     vals = [s.lower() for s in collect_values(record, TYPE_FIELDS)]
     raw_hint = ", ".join(sorted(set(vals))) if vals else "unknown"
-
     present = [k for k in TYPE_FIELDS if k in record]
-    detail = {
-        "fields_checked": TYPE_FIELDS,
-        "type_fields_present": present,
-        "values_collected": vals,
-    }
+    detail = {"fields_checked": TYPE_FIELDS, "type_fields_present": present, "values_collected": vals}
 
     if "mesh" in vals or any_contains(vals, ["[mesh]"]):
         return "mesh", raw_hint, detail
-
     if "ctimageseries" in vals or "volumetric image series" in vals or any_contains(vals, ["[ctimageseries]", "[ct]"]):
         return "ctimageseries", raw_hint, detail
 
@@ -247,9 +272,7 @@ def parse_filename_from_headers(resp: requests.Response, fallback: str) -> str:
 
 # ---------------- download body helpers ----------------
 def split_categories(raw: str) -> List[str]:
-    # allow pipe or comma separation
     parts = [p.strip() for p in re.split(r"[|,]", raw or "") if p.strip()]
-    # de-dup, preserve order
     seen, out = set(), []
     for p in parts:
         if p not in seen:
@@ -257,22 +280,13 @@ def split_categories(raw: str) -> List[str]:
             out.append(p)
     return out
 
-def build_body_use_categories(categories: List[str]) -> Dict[str, Any]:
-    # IMPORTANT: Only include one of use_categories OR use_category_other
-    return {
-        "use_statement": USE_STATEMENT,
-        "use_categories": categories,
-        "agreements_accepted": AGREEMENTS_ACCEPTED,
-    }
+def body_use_categories(categories: List[str]) -> Dict[str, Any]:
+    return {"use_statement": USE_STATEMENT, "use_categories": categories, "agreements_accepted": AGREEMENTS_ACCEPTED}
 
-def build_body_use_other(text: str) -> Dict[str, Any]:
-    return {
-        "use_statement": USE_STATEMENT,
-        "use_category_other": text,
-        "agreements_accepted": AGREEMENTS_ACCEPTED,
-    }
+def body_use_other(text: str) -> Dict[str, Any]:
+    return {"use_statement": USE_STATEMENT, "use_category_other": text, "agreements_accepted": AGREEMENTS_ACCEPTED}
 
-# ---------------- main ----------------
+# ---------------- main logic ----------------
 def main():
     ensure_dir(ARTIFACT_DIR)
 
@@ -287,12 +301,13 @@ def main():
     media_url = f"{BASE_URL}/api/media/{MEDIA_ID}"
     print(f"[info] GET {media_url}", file=sys.stderr)
 
-    r = backoff_request("GET", media_url, headers=bearer_headers())
+    r, err = backoff_request("GET", media_url, headers=headers_for_auth("bearer"))
     if r is not None and r.status_code in (401, 403):
-        print("[warn] bearer auth rejected; retrying with raw token", file=sys.stderr)
-        r = backoff_request("GET", media_url, headers=raw_headers())
-
+        print("[warn] bearer auth rejected; retrying with raw token for GET", file=sys.stderr)
+        r, err = backoff_request("GET", media_url, headers=headers_for_auth("raw"))
     dump_http_debug(r, f"media_{MEDIA_ID}")
+    if err:
+        write_exception(f"media_{MEDIA_ID}", err)
 
     if not r or r.status_code >= 400:
         status = r.status_code if r else "no-response"
@@ -313,10 +328,11 @@ def main():
         gh_set_outputs(media_type="unknown", action="lookup", result="failed", artifact_dir=ARTIFACT_DIR, notes=msg)
         return
 
-    media = unwrap_media(payload) or {}
+    # Save full payload
     with open(os.path.join(ARTIFACT_DIR, f"media_{MEDIA_ID}_raw.json"), "w", encoding="utf-8") as fh:
         json.dump(payload, fh, indent=2, ensure_ascii=False)
 
+    media = unwrap_media(payload) or {}
     found_id = media.get("id")
     if isinstance(found_id, list) and found_id:
         found_id = found_id[0]
@@ -324,12 +340,7 @@ def main():
     print(f"[info] Media ID in record: {found_id} | requested: {MEDIA_ID} | match={id_match}", file=sys.stderr)
 
     mtype, raw_hint, detail = classify_media_type(media)
-    detail.update({
-        "media_id_reported": found_id,
-        "media_id_requested": MEDIA_ID,
-        "id_match": id_match,
-        "raw_hint": raw_hint,
-    })
+    detail.update({"media_id_reported": found_id, "media_id_requested": MEDIA_ID, "id_match": id_match, "raw_hint": raw_hint})
     with open(os.path.join(ARTIFACT_DIR, f"classification_{MEDIA_ID}.json"), "w", encoding="utf-8") as fh:
         json.dump(detail, fh, indent=2, ensure_ascii=False)
 
@@ -339,65 +350,85 @@ def main():
     if mtype == "mesh":
         post_url = f"{BASE_URL}/api/download/{MEDIA_ID}"
 
-        # Decide which body to send first:
+        # Construct initial body
         cat_list = split_categories(USE_CATEGORIES_RAW)
-        initial_body: Dict[str, Any]
-        initial_label: str
-
         if USE_CATEGORY_OTHER and not cat_list:
-            initial_body = build_body_use_other(USE_CATEGORY_OTHER)
+            initial_body = body_use_other(USE_CATEGORY_OTHER)
             initial_label = "use_other_initial"
         else:
-            # if none provided, use safe default 'Research'
             if not cat_list:
                 cat_list = ["Research"]
-            initial_body = build_body_use_categories(cat_list)
+            initial_body = body_use_categories(cat_list)
             initial_label = "use_categories_initial"
 
         # Save request body for reproducibility
         with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_request_{initial_label}.json"), "w", encoding="utf-8") as fh:
             json.dump(initial_body, fh, indent=2, ensure_ascii=False)
 
-        print(f"[info] POST {post_url} ({initial_label})", file=sys.stderr)
-        pr = backoff_request("POST", post_url, headers=with_json(bearer_headers()), json=initial_body)
-        if pr is not None and pr.status_code in (401, 403):
-            print("[warn] bearer auth rejected on download; retrying with raw token", file=sys.stderr)
-            pr = backoff_request("POST", post_url, headers=with_json(raw_headers()), json=initial_body)
+        # Try multiple auth variants
+        pr, pr_err = None, None
+        auth_attempts = []
+        for idx, mode in enumerate(AUTH_ORDER, start=1):
+            label = f"{initial_label}_auth{idx}_{mode}"
+            print(f"[info] POST {post_url} ({label})", file=sys.stderr)
+            h = with_json(headers_for_auth(mode))
+            pr, pr_err = backoff_request("POST", post_url, headers=h, json=initial_body)
+            dump_http_debug(pr, f"mesh_{MEDIA_ID}_download_resp_{label}")
+            if pr_err:
+                write_exception(f"mesh_{MEDIA_ID}_download_resp_{label}", pr_err)
+            auth_attempts.append({"label": label, "mode": mode, "status": (None if pr is None else pr.status_code)})
 
-        dump_http_debug(pr, f"mesh_{MEDIA_ID}_download_resp")
+            # Stop when we have a non-retryable answer (any response, even 4xx), or success
+            if pr is not None:
+                break
 
-        # If invalid categories and fallback is allowed, retry with use_category_other only
+        # If we have a response and it's 400 for invalid categories, optionally fallback
         fallback_tried = False
-        if pr and pr.status_code == 400 and FALLBACK_TO_OTHER:
+        if pr is not None and pr.status_code == 400 and FALLBACK_TO_OTHER:
             try:
-                err = pr.json()
+                err_json = pr.json()
+                err_txt = json.dumps(err_json)
             except Exception:
-                err = {}
-            msg_txt = json.dumps(err) if isinstance(err, dict) else (pr.text or "")
-            if "use_categories" in msg_txt and "not valid" in msg_txt.lower():
-                other_text = USE_CATEGORY_OTHER or ("Other: " + " | ".join(cat_list) if cat_list else "Other")
-                fallback_body = build_body_use_other(other_text)
+                err_txt = pr.text or ""
+            if "use_categories" in (err_txt or "").lower() and "not valid" in (err_txt or "").lower():
+                fallback_body = body_use_other(USE_CATEGORY_OTHER or ("Other: " + " | ".join(cat_list) if cat_list else "Other"))
                 with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_request_fallback_use_other.json"), "w", encoding="utf-8") as fh:
                     json.dump(fallback_body, fh, indent=2, ensure_ascii=False)
 
-                print(f"[info] POST {post_url} (fallback use_category_other)", file=sys.stderr)
-                pr = backoff_request("POST", post_url, headers=with_json(bearer_headers()), json=fallback_body)
-                if pr is not None and pr.status_code in (401, 403):
-                    print("[warn] bearer auth rejected on fallback; retrying with raw token", file=sys.stderr)
-                    pr = backoff_request("POST", post_url, headers=with_json(raw_headers()), json=fallback_body)
-
-                dump_http_debug(pr, f"mesh_{MEDIA_ID}_download_resp_fallback")
+                pr, pr_err = None, None
+                for idx, mode in enumerate(AUTH_ORDER, start=1):
+                    label = f"fallback_use_other_auth{idx}_{mode}"
+                    print(f"[info] POST {post_url} ({label})", file=sys.stderr)
+                    h = with_json(headers_for_auth(mode))
+                    pr, pr_err = backoff_request("POST", post_url, headers=h, json=fallback_body)
+                    dump_http_debug(pr, f"mesh_{MEDIA_ID}_download_resp_{label}")
+                    if pr_err:
+                        write_exception(f"mesh_{MEDIA_ID}_download_resp_{label}", pr_err)
+                    if pr is not None:
+                        break
                 fallback_tried = True
 
-        if not pr or pr.status_code >= 400:
-            status = pr.status_code if pr else "no-response"
-            msg = f"Download request failed (status={status})."
+        # If still no response, fail and include attempt summary
+        if pr is None:
+            with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_attempts.json"), "w", encoding="utf-8") as fh:
+                json.dump({"attempts": auth_attempts}, fh, indent=2, ensure_ascii=False)
+            msg = "Download request failed (status=no-response)."
+            print("[error]", msg, file=sys.stderr)
+            gh_set_outputs(media_type="mesh", action="download", result="failed", artifact_dir=ARTIFACT_DIR,
+                           notes=f"id_match={id_match}; {'fallback tried' if fallback_tried else 'no fallback'}; see *_exception.json / *_http_debug.json")
+            return
+
+        # If response is error
+        if pr.status_code >= 400:
+            with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_attempts.json"), "w", encoding="utf-8") as fh:
+                json.dump({"status": pr.status_code}, fh, indent=2, ensure_ascii=False)
+            msg = f"Download request failed (status={pr.status_code})."
             print("[error]", msg, file=sys.stderr)
             gh_set_outputs(media_type="mesh", action="download", result="failed", artifact_dir=ARTIFACT_DIR,
                            notes=f"id_match={id_match}; {'fallback tried' if fallback_tried else 'no fallback'}")
             return
 
-        # Parse the response for download_url
+        # Parse for download_url
         try:
             dl_payload = pr.json()
         except Exception as e:
@@ -431,9 +462,12 @@ def main():
                            notes=f"id_match={id_match}; request accepted but no presigned URL")
             return
 
+        # Download the asset (headers accept */* to avoid content-type skirmishes)
         print(f"[info] GET presigned {download_url}", file=sys.stderr)
-        dr = backoff_request("GET", download_url, stream=True)
+        dr, dr_err = backoff_request("GET", download_url, headers=base_headers(accept_json=False), stream=True)
         dump_http_debug(dr, f"mesh_{MEDIA_ID}_download_file_headers")
+        if dr_err:
+            write_exception(f"mesh_{MEDIA_ID}_download_file_headers", dr_err)
 
         if not dr or dr.status_code >= 400:
             status = dr.status_code if dr else "no-response"
@@ -446,11 +480,11 @@ def main():
         fname = parse_filename_from_headers(dr, f"media_{MEDIA_ID}.bin")
         out_path = os.path.join(ARTIFACT_DIR, fname)
         size = 0
-        with open(out_path, "wb") as fh:
-            for chunk in dr.iter_content(chunk_size=1024 * 1024):
-                if chunk:
+        for chunk in dr.iter_content(chunk_size=1024 * 1024):
+            if chunk:
+                with open(out_path, "ab") as fh:
                     fh.write(chunk)
-                    size += len(chunk)
+                size += len(chunk)
 
         with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_info.json"), "w", encoding="utf-8") as fh:
             json.dump({"media_id": MEDIA_ID, "download_url": download_url, "filename": fname, "size_bytes": size}, fh, indent=2)
@@ -465,12 +499,13 @@ def main():
         iiif_url = f"{BASE_URL}/api/media/{MEDIA_ID}/iiif/manifest"
         print(f"[info] GET {iiif_url} (IIIF manifest)", file=sys.stderr)
 
-        ir = backoff_request("GET", iiif_url, headers=bearer_headers())
+        ir, ir_err = backoff_request("GET", iiif_url, headers=headers_for_auth("bearer"))
         if ir is not None and ir.status_code in (401, 403):
             print("[warn] bearer auth rejected on IIIF; retrying with raw token", file=sys.stderr)
-            ir = backoff_request("GET", iiif_url, headers=raw_headers())
-
+            ir, ir_err = backoff_request("GET", iiif_url, headers=headers_for_auth("raw"))
         dump_http_debug(ir, f"ct_{MEDIA_ID}_iiif")
+        if ir_err:
+            write_exception(f"ct_{MEDIA_ID}_iiif", ir_err)
 
         if not ir or ir.status_code >= 400:
             status = ir.status_code if ir else "no-response"
