@@ -159,12 +159,27 @@ def main():
         sys.exit(0)
 
     latest = get_first_media(data)
-    latest_id = latest.get("id") if isinstance(latest, dict) else ""
+    
+    # Ensure latest_id is always a string, never None or empty
+    if isinstance(latest, dict):
+        latest_id = str(latest.get("id", ""))
+    else:
+        latest_id = ""
+    
+    # If still empty, use a fallback
+    if not latest_id or latest_id == "None":
+        latest_id = f"unknown-{int(time.time())}"
+        print(f"[warn] No valid media ID found, using fallback: {latest_id}", file=sys.stderr)
+    
     latest_title = ""
     if latest:
         latest_title = (first_text(latest, "title_ssi", "title_tesim") or
                         first_text(latest, "short_title_tesim") or
                         f"Media {latest_id}").strip()
+
+    # Debug output
+    print(f"[debug] latest_id type: {type(latest_id)}, value: '{latest_id}'", file=sys.stderr)
+    print(f"[debug] latest_title: '{latest_title}'", file=sys.stderr)
 
     # Persist current count to file
     save_count_txt(total)
@@ -211,7 +226,7 @@ def main():
         latest_json_block,
     ])
 
-    # Emit outputs
+    # Emit outputs - ensure all values are strings
     gh_set_outputs(
         new_data="true" if new_data else "false",
         details=body,
@@ -219,7 +234,7 @@ def main():
         old_count=old_count_out,
         delta=str(delta),
         latest_id=str(latest_id),
-        latest_title=latest_title,
+        latest_title=str(latest_title),
         baseline_source=baseline_source,
         first_run="true" if old is None else "false",
     )
