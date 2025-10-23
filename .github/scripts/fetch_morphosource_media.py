@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Fetch a MorphoSource media by ID, decide Mesh vs CTImageSeries, then:
-- Mesh -> POST /api/download/{id} to obtain a presigned download_url; download & save.
+- Mesh -> POST /api/download/{id} OR /api/media/{id}/download to obtain a presigned download_url; download & save.
 - CTImageSeries -> GET /api/media/{id}/iiif/manifest; save JSON.
 
 Hardened debug + retries:
@@ -9,7 +9,7 @@ Hardened debug + retries:
 - Tries multiple auth variants in order (AUTH_ORDER env): raw,bearer,token,token_noquotes.
 - Optional SSL verification toggle (VERIFY_SSL) for diagnosing TLS issues.
 - If 400 due to invalid use_categories, auto-retry with use_category_other only.
-- Saves exceptions (trace/message) as files so "no-response" is explained.
+- Saves exceptions (trace/message) and an attempts summary so "no-response/404" is explained.
 
 Env:
   BASE_URL (default https://www.morphosource.org)
@@ -84,11 +84,7 @@ def scrub_headers(h: Dict[str, str]) -> Dict[str, str]:
     return redacted
 
 def write_exception(base_name: str, err: Exception):
-    info = {
-        "type": type(err).__name__,
-        "message": str(err),
-        "traceback": traceback.format_exc(),
-    }
+    info = {"type": type(err).__name__, "message": str(err), "traceback": traceback.format_exc()}
     with open(os.path.join(ARTIFACT_DIR, f"{base_name}_exception.json"), "w", encoding="utf-8") as fh:
         json.dump(info, fh, indent=2, ensure_ascii=False)
 
@@ -270,7 +266,7 @@ def parse_filename_from_headers(resp: requests.Response, fallback: str) -> str:
         pass
     return fallback
 
-# ---------------- download body helpers ----------------
+# ---------------- download helpers ----------------
 def split_categories(raw: str) -> List[str]:
     parts = [p.strip() for p in re.split(r"[|,]", raw or "") if p.strip()]
     seen, out = set(), []
@@ -286,6 +282,37 @@ def body_use_categories(categories: List[str]) -> Dict[str, Any]:
 def body_use_other(text: str) -> Dict[str, Any]:
     return {"use_statement": USE_STATEMENT, "use_category_other": text, "agreements_accepted": AGREEMENTS_ACCEPTED}
 
+def post_with_auth_modes(url: str, body: Dict[str, Any], label_root: str) -> Tuple[Optional[requests.Response], list]:
+    attempts = []
+    final_resp = None
+    for idx, mode in enumerate(AUTH_ORDER, start=1):
+        label = f"{label_root}_auth{idx}_{mode}"
+        print(f"[info] POST {url} ({label})", file=sys.stderr)
+        h = with_json(headers_for_auth(mode))
+        pr, pr_err = backoff_request("POST", url, headers=h, json=body)
+        dump_http_debug(pr, f"mesh_{MEDIA_ID}_download_resp_{label}")
+        if pr_err:
+            write_exception(f"mesh_{MEDIA_ID}_download_resp_{label}", pr_err)
+        attempts.append({"label": label, "mode": mode, "status": (None if pr is None else pr.status_code)})
+
+        if pr is None:
+            # network error; try next mode
+            continue
+
+        # success
+        if pr.status_code < 400:
+            return pr, attempts
+
+        # likely auth/route masking -> keep trying next mode
+        if pr.status_code in (401, 403, 404, 405):
+            final_resp = pr
+            continue
+
+        # other 4xx (e.g., 400 invalid categories), 5xx (non-retryable by auth mode switch)
+        return pr, attempts
+
+    return final_resp, attempts
+
 # ---------------- main logic ----------------
 def main():
     ensure_dir(ARTIFACT_DIR)
@@ -298,6 +325,7 @@ def main():
             fh.write(msg + "\n")
         sys.exit(1)
 
+    # --- fetch media record
     media_url = f"{BASE_URL}/api/media/{MEDIA_ID}"
     print(f"[info] GET {media_url}", file=sys.stderr)
 
@@ -328,7 +356,6 @@ def main():
         gh_set_outputs(media_type="unknown", action="lookup", result="failed", artifact_dir=ARTIFACT_DIR, notes=msg)
         return
 
-    # Save full payload
     with open(os.path.join(ARTIFACT_DIR, f"media_{MEDIA_ID}_raw.json"), "w", encoding="utf-8") as fh:
         json.dump(payload, fh, indent=2, ensure_ascii=False)
 
@@ -346,11 +373,8 @@ def main():
 
     print(f"[info] Classified media_type={mtype} ({raw_hint})", file=sys.stderr)
 
-    # ---------- Mesh branch ----------
+    # --- Mesh branch
     if mtype == "mesh":
-        post_url = f"{BASE_URL}/api/download/{MEDIA_ID}"
-
-        # Construct initial body
         cat_list = split_categories(USE_CATEGORIES_RAW)
         if USE_CATEGORY_OTHER and not cat_list:
             initial_body = body_use_other(USE_CATEGORY_OTHER)
@@ -361,28 +385,25 @@ def main():
             initial_body = body_use_categories(cat_list)
             initial_label = "use_categories_initial"
 
-        # Save request body for reproducibility
         with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_request_{initial_label}.json"), "w", encoding="utf-8") as fh:
             json.dump(initial_body, fh, indent=2, ensure_ascii=False)
 
-        # Try multiple auth variants
-        pr, pr_err = None, None
-        auth_attempts = []
-        for idx, mode in enumerate(AUTH_ORDER, start=1):
-            label = f"{initial_label}_auth{idx}_{mode}"
-            print(f"[info] POST {post_url} ({label})", file=sys.stderr)
-            h = with_json(headers_for_auth(mode))
-            pr, pr_err = backoff_request("POST", post_url, headers=h, json=initial_body)
-            dump_http_debug(pr, f"mesh_{MEDIA_ID}_download_resp_{label}")
-            if pr_err:
-                write_exception(f"mesh_{MEDIA_ID}_download_resp_{label}", pr_err)
-            auth_attempts.append({"label": label, "mode": mode, "status": (None if pr is None else pr.status_code)})
+        attempts_summary = []
 
-            # Stop when we have a non-retryable answer (any response, even 4xx), or success
-            if pr is not None:
-                break
+        # Try primary path
+        url1 = f"{BASE_URL}/api/download/{MEDIA_ID}"
+        pr, attempts = post_with_auth_modes(url1, initial_body, initial_label + "_p1")
+        attempts_summary += [{"path": url1, "attempts": attempts}]
 
-        # If we have a response and it's 400 for invalid categories, optionally fallback
+        # If not success and response suggests auth/route, try alt path
+        if not pr or pr.status_code >= 400:
+            url2 = f"{BASE_URL}/api/media/{MEDIA_ID}/download"
+            pr2, attempts2 = post_with_auth_modes(url2, initial_body, initial_label + "_p2")
+            attempts_summary += [{"path": url2, "attempts": attempts2}]
+            if pr is None or (pr2 is not None and pr2.status_code < 400):
+                pr = pr2  # prefer a success on alt path
+
+        # Fallback to use_category_other if 400 invalid categories
         fallback_tried = False
         if pr is not None and pr.status_code == 400 and FALLBACK_TO_OTHER:
             try:
@@ -391,41 +412,34 @@ def main():
             except Exception:
                 err_txt = pr.text or ""
             if "use_categories" in (err_txt or "").lower() and "not valid" in (err_txt or "").lower():
-                fallback_body = body_use_other(USE_CATEGORY_OTHER or ("Other: " + " | ".join(cat_list) if cat_list else "Other"))
+                fb_body = body_use_other(USE_CATEGORY_OTHER or ("Other: " + " | ".join(cat_list) if cat_list else "Other"))
                 with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_request_fallback_use_other.json"), "w", encoding="utf-8") as fh:
-                    json.dump(fallback_body, fh, indent=2, ensure_ascii=False)
-
-                pr, pr_err = None, None
-                for idx, mode in enumerate(AUTH_ORDER, start=1):
-                    label = f"fallback_use_other_auth{idx}_{mode}"
-                    print(f"[info] POST {post_url} ({label})", file=sys.stderr)
-                    h = with_json(headers_for_auth(mode))
-                    pr, pr_err = backoff_request("POST", post_url, headers=h, json=fallback_body)
-                    dump_http_debug(pr, f"mesh_{MEDIA_ID}_download_resp_{label}")
-                    if pr_err:
-                        write_exception(f"mesh_{MEDIA_ID}_download_resp_{label}", pr_err)
-                    if pr is not None:
-                        break
+                    json.dump(fb_body, fh, indent=2, ensure_ascii=False)
+                pr_fb, attempts_fb1 = post_with_auth_modes(url1, fb_body, "fallback_use_other_p1")
+                attempts_summary += [{"path": url1, "attempts": attempts_fb1}]
+                if not pr_fb or pr_fb.status_code >= 400:
+                    pr_fb2, attempts_fb2 = post_with_auth_modes(f"{BASE_URL}/api/media/{MEDIA_ID}/download", fb_body, "fallback_use_other_p2")
+                    attempts_summary += [{"path": f"{BASE_URL}/api/media/{MEDIA_ID}/download", "attempts": attempts_fb2}]
+                    pr_fb = pr_fb2 if (pr_fb is None or (pr_fb2 is not None and pr_fb2.status_code < 400)) else pr_fb
+                pr = pr_fb
                 fallback_tried = True
 
-        # If still no response, fail and include attempt summary
+        # Persist attempts summary
+        with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_attempts.json"), "w", encoding="utf-8") as fh:
+            json.dump(attempts_summary, fh, indent=2, ensure_ascii=False)
+
         if pr is None:
-            with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_attempts.json"), "w", encoding="utf-8") as fh:
-                json.dump({"attempts": auth_attempts}, fh, indent=2, ensure_ascii=False)
             msg = "Download request failed (status=no-response)."
             print("[error]", msg, file=sys.stderr)
             gh_set_outputs(media_type="mesh", action="download", result="failed", artifact_dir=ARTIFACT_DIR,
-                           notes=f"id_match={id_match}; {'fallback tried' if fallback_tried else 'no fallback'}; see *_exception.json / *_http_debug.json")
+                           notes=f"id_match={id_match}; {'fallback tried' if fallback_tried else 'no fallback'}; see *_attempts.json")
             return
 
-        # If response is error
         if pr.status_code >= 400:
-            with open(os.path.join(ARTIFACT_DIR, f"mesh_{MEDIA_ID}_download_attempts.json"), "w", encoding="utf-8") as fh:
-                json.dump({"status": pr.status_code}, fh, indent=2, ensure_ascii=False)
             msg = f"Download request failed (status={pr.status_code})."
             print("[error]", msg, file=sys.stderr)
             gh_set_outputs(media_type="mesh", action="download", result="failed", artifact_dir=ARTIFACT_DIR,
-                           notes=f"id_match={id_match}; {'fallback tried' if fallback_tried else 'no fallback'}")
+                           notes=f"id_match={id_match}; {'fallback tried' if fallback_tried else 'no fallback'}; see *_attempts.json")
             return
 
         # Parse for download_url
@@ -462,7 +476,7 @@ def main():
                            notes=f"id_match={id_match}; request accepted but no presigned URL")
             return
 
-        # Download the asset (headers accept */* to avoid content-type skirmishes)
+        # Download the asset
         print(f"[info] GET presigned {download_url}", file=sys.stderr)
         dr, dr_err = backoff_request("GET", download_url, headers=base_headers(accept_json=False), stream=True)
         dump_http_debug(dr, f"mesh_{MEDIA_ID}_download_file_headers")
@@ -494,7 +508,7 @@ def main():
         print(f"[info] Downloaded {size} bytes to {out_path}", file=sys.stderr)
         return
 
-    # ---------- CTImageSeries branch ----------
+    # --- CTImageSeries branch
     if mtype == "ctimageseries":
         iiif_url = f"{BASE_URL}/api/media/{MEDIA_ID}/iiif/manifest"
         print(f"[info] GET {iiif_url} (IIIF manifest)", file=sys.stderr)
@@ -533,7 +547,7 @@ def main():
         print(f"[info] Saved IIIF manifest to {out_path}", file=sys.stderr)
         return
 
-    # ---------- Unknown ----------
+    # --- Unknown
     msg = f"Unhandled media type. (hint: {raw_hint})"
     print("[warn]", msg, file=sys.stderr)
     with open(os.path.join(ARTIFACT_DIR, f"media_{MEDIA_ID}_unhandled.txt"), "w", encoding="utf-8") as fh:
