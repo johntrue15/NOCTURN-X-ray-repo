@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       media_id:
-        description: 'MorphoSource media ID (e.g., 000787842)'
+        description: 'MorphoSource media ID (e.g., 000788214)'
         required: true
       use_statement:
         description: 'Use statement for download POST (Mesh only)'
@@ -18,7 +18,6 @@ on:
         description: 'If category is Other, specify details'
         required: false
         default: ''
-  # You can add a schedule or keep this manual only.
 
 permissions:
   contents: read
@@ -53,13 +52,15 @@ jobs:
           USE_CATEGORY_OTHER: ${{ github.event.inputs.use_category_other }}
           AGREEMENTS_ACCEPTED: "true"
           ARTIFACT_DIR: morphosource_${{ github.event.inputs.media_id }}_artifact
+          DEBUG: "1"
+          RAW_MAX_BYTES: "524288"  # 512 KiB raw preview cap for *_raw.txt
         run: |
           python .github/scripts/fetch_morphosource_media.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: morphosource-${{ steps.fetch.outputs.media_type || 'unknown' }}-${{ github.event.inputs.media_id }}
+          name: morphosource-${{ github.event.inputs.media_id }}-${{ steps.fetch.outputs.media_type }}
           path: ${{ steps.fetch.outputs.artifact_dir }}
           if-no-files-found: warn
           retention-days: 7
@@ -70,9 +71,9 @@ jobs:
             echo "### MorphoSource fetch summary"
             echo ""
             echo "- Media ID: \`${{ github.event.inputs.media_id }}\`"
-            echo "- Media type: **${{ steps.fetch.outputs.media_type || 'unknown' }}**"
-            echo "- Action: **${{ steps.fetch.outputs.action || 'none' }}**"
-            echo "- Result: **${{ steps.fetch.outputs.result || 'n/a' }}**"
+            echo "- Media type: **${{ steps.fetch.outputs.media_type }}**"
+            echo "- Action: **${{ steps.fetch.outputs.action }}**"
+            echo "- Result: **${{ steps.fetch.outputs.result }}**"
             echo "- Artifact dir: \`${{ steps.fetch.outputs.artifact_dir }}\`"
             echo "- Notes: ${{ steps.fetch.outputs.notes }}"
           } >> "$GITHUB_STEP_SUMMARY"
