@@ -1,0 +1,61 @@
+name: MorphoSource Download
+
+on:
+  workflow_dispatch:
+    inputs:
+      media_id:
+        description: "MorphoSource media ID (e.g., 000788351)"
+        required: true
+        default: "000788351"
+      use_statement:
+        description: "Brief use statement"
+        required: true
+        default: "GitHub Actions test download"
+      use_category:
+        description: "Enumerated category (e.g., Research). Leave blank if using category_other."
+        required: false
+        default: "Research"
+      category_other:
+        description: "Free-text category if not using enumerated list"
+        required: false
+        default: ""
+      out_dir:
+        description: "Directory to save downloads"
+        required: false
+        default: "downloads"
+
+permissions:
+  contents: read
+
+jobs:
+  download:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install --upgrade pip requests
+
+      - name: Download from MorphoSource
+        env:
+          MORPHOSOURCE_API_KEY: ${{ secrets.MORPHOSOURCE_API_KEY }}
+        run: |
+          python scripts/morphosource_download.py \
+            --media-id "${{ inputs.media_id }}" \
+            --use-statement "${{ inputs.use_statement }}" \
+            --use-category "${{ inputs.use_category }}" \
+            --category-other "${{ inputs.category_other }}" \
+            --out-dir "${{ inputs.out_dir }}"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: morphosource-${{ inputs.media_id }}
+          path: ${{ inputs.out_dir }}/**
+          if-no-files-found: warn
