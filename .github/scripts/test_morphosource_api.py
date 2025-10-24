@@ -195,6 +195,25 @@ class TestMorphoSourceAPI(unittest.TestCase):
         self.assertIn('title', normalized)
         self.assertIn('metadata', normalized)
         self.assertIsInstance(normalized['metadata'], dict)
+    
+    def test_normalize_record_with_list_id(self):
+        """Test normalization handles ID as a list (API bug/format variation)"""
+        api_record = {
+            'id': ['000788438'],  # ID as a list instead of string
+            'title_sms': ['Test Record with List ID'],
+            'taxonomy_class_sms': ['Testidae']
+        }
+        
+        normalized = self.api.normalize_record(api_record)
+        
+        # Should extract the first element from the list
+        self.assertEqual(normalized['id'], '000788438')
+        self.assertNotIn('[', normalized['id'])  # Should not contain list brackets
+        self.assertNotIn(']', normalized['id'])
+        
+        # URL should be properly formatted
+        self.assertIn('/concern/media/000788438', normalized['url'])
+        self.assertNotIn("['", normalized['url'])  # Should not have list representation
 
 
 class TestBackwardCompatibility(unittest.TestCase):

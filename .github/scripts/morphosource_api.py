@@ -308,8 +308,13 @@ class MorphoSourceAPI:
             Normalized record dictionary
         """
         # Extract ID from various possible fields
+        # Handle case where id might be a list (e.g., ['000788438'])
+        id_value = record.get('id')
+        if isinstance(id_value, list):
+            id_value = id_value[0] if id_value else None
+        
         record_id = (
-            record.get('id') or
+            id_value or
             record.get('record_id') or
             record.get('ark_id', '').split('/')[-1] or
             'unknown'
