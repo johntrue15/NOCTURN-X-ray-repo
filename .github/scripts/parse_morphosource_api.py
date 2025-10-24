@@ -162,7 +162,12 @@ def main():
     
     # Ensure latest_id is always a string, never None or empty
     if isinstance(latest, dict):
-        latest_id = str(latest.get("id", ""))
+        id_value = latest.get("id", "")
+        # Handle case where id is a list (e.g., ['000788438'])
+        if isinstance(id_value, list):
+            latest_id = str(id_value[0]) if id_value else ""
+        else:
+            latest_id = str(id_value)
     else:
         latest_id = ""
     

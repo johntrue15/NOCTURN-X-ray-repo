@@ -66,6 +66,51 @@ class TestParseMorphoSourceAPI(unittest.TestCase):
             else:
                 self.fail("params not found in request call")
     
+    @patch('parse_morphosource_api.requests.get')
+    def test_list_id_handling(self, mock_get):
+        """Test that IDs returned as lists are properly extracted"""
+        # Create a mock response with ID as a list (common API format issue)
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.url = "https://www.morphosource.org/api/media?test=1"
+        mock_response.json.return_value = {
+            "response": {
+                "pages": {
+                    "total_count": 100
+                },
+                "media": [
+                    {
+                        "id": ["000788438"],  # ID as a list
+                        "title_ssi": "Test Record with List ID"
+                    }
+                ]
+            }
+        }
+        mock_get.return_value = mock_response
+        
+        # Temporarily redirect stdout to capture output
+        import io
+        captured_output = io.StringIO()
+        
+        # Call main (will use mocked requests.get)
+        try:
+            with patch('sys.stdout', captured_output):
+                parse_morphosource_api.main()
+        except SystemExit:
+            pass  # Expected when script completes normally
+        
+        # Read the GITHUB_OUTPUT file to check latest_id
+        output_file = os.environ.get('GITHUB_OUTPUT', '/tmp/test_github_output')
+        if os.path.exists(output_file):
+            with open(output_file, 'r') as f:
+                content = f.read()
+                # Verify that latest_id is just the ID string, not ['000788438']
+                self.assertIn('latest_id=000788438', content, 
+                             "latest_id should be '000788438' not ['000788438']")
+                self.assertNotIn("latest_id=['", content,
+                                "latest_id should not contain list brackets")
+                print("✓ List ID is properly extracted as a string")
+    
     def test_params_structure(self):
         """Test that the params dictionary includes all required fields"""
         # This is a simple structural test
