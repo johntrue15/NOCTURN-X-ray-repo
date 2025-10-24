@@ -275,6 +275,15 @@ def main():
 
     print(f"[info] Using API key: {mask_key(API_KEY)}", file=sys.stderr)
 
+    # Validate use_statement length (must be at least 50 characters)
+    if len(USE_STATEMENT) < 50:
+        msg = f"USE_STATEMENT must be at least 50 characters (current: {len(USE_STATEMENT)} characters)."
+        print(f"[error] {msg}", file=sys.stderr)
+        gh_set_outputs(media_type="unknown", action="none", result="failed", artifact_dir=ARTIFACT_DIR, notes=msg)
+        with open(os.path.join(ARTIFACT_DIR, "error.json"), "w", encoding="utf-8") as fh:
+            json.dump({"error": msg}, fh, indent=2)
+        sys.exit(1)
+
     if not MEDIA_ID:
         msg = "MEDIA_ID is required."
         print("[error]", msg, file=sys.stderr)
