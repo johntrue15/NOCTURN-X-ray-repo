@@ -79,8 +79,13 @@ def parse_api_record(body: str):
             detail_url = line.split("**detail page:**", 1)[1].strip()
     
     # Build a record dict similar to the old format
+    # Handle case where json_data["id"] might be a list
+    json_id = json_data.get("id", "N/A")
+    if isinstance(json_id, list):
+        json_id = json_id[0] if json_id else "N/A"
+    
     record = {
-        "record_number": record_id or json_data.get("id", "N/A"),
+        "record_number": record_id or json_id,
         "title": record_title or json_data.get("title_tesim", ["N/A"])[0] if isinstance(json_data.get("title_tesim"), list) else "N/A",
         "detail_url": detail_url,
         "api_data": json_data  # Include the full API JSON for analysis
