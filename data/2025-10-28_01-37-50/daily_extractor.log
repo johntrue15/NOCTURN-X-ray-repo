@@ -1,0 +1,15 @@
+2025-10-28 01:37:52,278 - Data directory: data/2025-10-28_01-37-50
+2025-10-28 01:37:52,278 - Output directory: data/2025-10-28_01-37-50
+2025-10-28 01:37:52,278 - Using data directory: data/2025-10-28_01-37-50
+2025-10-28 01:37:52,278 - Looking for previous data in: data
+2025-10-28 01:37:52,279 - Loading previous data from: data/2025-10-06_01-28-33/morphosource_data_complete.json
+2025-10-28 01:37:52,671 - Loaded 108782 records from previous data file
+2025-10-28 01:37:52,672 - Latest stored record ID: 000781814
+2025-10-28 01:37:52,672 - Previous record count: 108782
+2025-10-28 01:37:52,672 - Fetching page 1 via API
+2025-10-28 01:38:03,216 - Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7fb52eb1ea70>, 'Connection to www.morphosource.org timed out. (connect timeout=10)')': /catalog.json?q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc&page=1&per_page=100
+2025-10-28 01:38:23,567 - Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7fb52eb1ec80>, 'Connection to www.morphosource.org timed out. (connect timeout=10)')': /catalog.json?q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc&page=1&per_page=100
+2025-10-28 01:38:53,644 - Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7fb52eb1ee30>, 'Connection to www.morphosource.org timed out. (connect timeout=10)')': /catalog.json?q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc&page=1&per_page=100
+2025-10-28 01:39:03,658 - API error on page 1: Network error: HTTPSConnectionPool(host='www.morphosource.org', port=443): Max retries exceeded with url: /catalog.json?q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc&page=1&per_page=100 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7fb52eb1efe0>, 'Connection to www.morphosource.org timed out. (connect timeout=10)'))
+2025-10-28 01:39:03,658 - Error getting records: Network error: HTTPSConnectionPool(host='www.morphosource.org', port=443): Max retries exceeded with url: /catalog.json?q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc&page=1&per_page=100 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7fb52eb1efe0>, 'Connection to www.morphosource.org timed out. (connect timeout=10)'))
+2025-10-28 01:39:03,658 - Error in daily check: Network error: HTTPSConnectionPool(host='www.morphosource.org', port=443): Max retries exceeded with url: /catalog.json?q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc&page=1&per_page=100 (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7fb52eb1efe0>, 'Connection to www.morphosource.org timed out. (connect timeout=10)'))
