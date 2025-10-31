@@ -1,7 +1,7 @@
 # MorphoSource CT Analysis
 
 * Query: `X-ray`
-* New total count: **117358**
+* New total count: **117359**
 * Change since last run: **1**
 * Records analysed: **0**
 
