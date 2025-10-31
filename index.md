@@ -2,14 +2,14 @@
 
 This page displays information about the latest data releases for the NOCTURN X-ray project.
 
-**Last Updated:** 2025-10-31 06:32:37 UTC
+**Last Updated:** 2025-10-31 07:20:18 UTC
 
 ## Summary Statistics
 
 <div class="stats-container">
     <div class="stat-card">
         <div>Total Releases</div>
-        <div class="stat-value">5057</div>
+        <div class="stat-value">5060</div>
     </div>
     <div class="stat-card">
         <div>MorphoSource Updates</div>
@@ -29,7 +29,7 @@ This page displays information about the latest data releases for the NOCTURN X-
     </div>
     <div class="stat-card">
         <div>CT to Text Analysis</div>
-        <div class="stat-value">1439</div>
+        <div class="stat-value">1442</div>
     </div>
     <div class="stat-card">
         <div>Daily</div>
@@ -71,6 +71,21 @@ This page displays information about the latest data releases for the NOCTURN X-
         <th>Type</th>
         <th>Date & Time</th>
         <th>Tag</th>
+    </tr>
+    <tr>
+        <td>CT to Text Analysis</td>
+        <td>2025/10/31 07:17:06 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-31_07-17-06">ct_to_text_analysis-2025-10-31_07-17-06</a></td>
+    </tr>
+    <tr>
+        <td>CT to Text Analysis</td>
+        <td>2025/10/31 06:59:06 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-31_06-59-06">ct_to_text_analysis-2025-10-31_06-59-06</a></td>
+    </tr>
+    <tr>
+        <td>CT to Text Analysis</td>
+        <td>2025/10/31 06:49:30 UTC</td>
+        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-31_06-49-30">ct_to_text_analysis-2025-10-31_06-49-30</a></td>
     </tr>
     <tr>
         <td>CT to Text Analysis</td>
@@ -307,21 +322,6 @@ This page displays information about the latest data releases for the NOCTURN X-
         <td>2025/10/27 23:42:40 UTC</td>
         <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-27_23-42-40">ct_to_text_analysis-2025-10-27_23-42-40</a></td>
     </tr>
-    <tr>
-        <td>CT to Text Analysis</td>
-        <td>2025/10/27 23:34:40 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-27_23-34-40">ct_to_text_analysis-2025-10-27_23-34-40</a></td>
-    </tr>
-    <tr>
-        <td>CT to Text Analysis</td>
-        <td>2025/10/27 23:26:28 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-27_23-26-28">ct_to_text_analysis-2025-10-27_23-26-28</a></td>
-    </tr>
-    <tr>
-        <td>CT to Text Analysis</td>
-        <td>2025/10/27 23:10:14 UTC</td>
-        <td><a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-27_23-10-14">ct_to_text_analysis-2025-10-27_23-10-14</a></td>
-    </tr>
 </table>
 
 ## Recent Releases by Type
@@ -329,6 +329,27 @@ This page displays information about the latest data releases for the NOCTURN X-
 ### CT to Text Analysis
 
 <div class="release-group">
+<div class="release-card">
+    <h4>2025/10/31 07:17:06 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-31_07-17-06">ct_to_text_analysis-2025-10-31_07-17-06</a></h4>
+    
+    ```
+    Update MorphoSource API analysis
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/10/31 06:59:06 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-31_06-59-06">ct_to_text_analysis-2025-10-31_06-59-06</a></h4>
+    
+    ```
+    Update MorphoSource API analysis
+    ```
+</div>
+<div class="release-card">
+    <h4>2025/10/31 06:49:30 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-31_06-49-30">ct_to_text_analysis-2025-10-31_06-49-30</a></h4>
+    
+    ```
+    Update MorphoSource API analysis
+    ```
+</div>
 <div class="release-card">
     <h4>2025/10/31 03:30:33 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-31_03-30-33">ct_to_text_analysis-2025-10-31_03-30-33</a></h4>
     
@@ -338,27 +359,6 @@ This page displays information about the latest data releases for the NOCTURN X-
 </div>
 <div class="release-card">
     <h4>2025/10/31 00:49:50 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-31_00-49-50">ct_to_text_analysis-2025-10-31_00-49-50</a></h4>
-    
-    ```
-    Update MorphoSource API analysis
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/10/30 23:56:11 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-30_23-56-11">ct_to_text_analysis-2025-10-30_23-56-11</a></h4>
-    
-    ```
-    Update MorphoSource API analysis
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/10/30 23:42:57 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-30_23-42-57">ct_to_text_analysis-2025-10-30_23-42-57</a></h4>
-    
-    ```
-    Update MorphoSource API analysis
-    ```
-</div>
-<div class="release-card">
-    <h4>2025/10/30 23:35:41 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_to_text_analysis-2025-10-30_23-35-41">ct_to_text_analysis-2025-10-30_23-35-41</a></h4>
     
     ```
     Update MorphoSource API analysis
