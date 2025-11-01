@@ -1,0 +1,65 @@
+name: Delete All Issues
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "DELETE ALL ISSUES" to confirm'
+        required: true
+        type: string
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  delete-issues:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm == 'DELETE ALL ISSUES'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install PyGithub
+
+      - name: Delete all issues
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          python << 'EOF'
+          import os
+          from github import Github
+
+          # Initialize GitHub client
+          gh = Github(os.environ['GITHUB_TOKEN'])
+          repo = gh.get_repo(os.environ['GITHUB_REPOSITORY'])
+          
+          # Get all open issues
+          open_issues = repo.get_issues(state='open')
+          
+          issue_count = 0
+          for issue in open_issues:
+              # Skip pull requests (they are also returned by get_issues)
+              if issue.pull_request:
+                  continue
+              
+              print(f"Closing issue #{issue.number}: {issue.title}")
+              issue.edit(state='closed')
+              issue_count += 1
+          
+          print(f"\nTotal issues closed: {issue_count}")
+          EOF
+
+      - name: Summary
+        run: |
+          echo "✅ All issues have been closed successfully"
