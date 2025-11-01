@@ -109,7 +109,7 @@ class ReleaseAnalyzer:
         return "\n".join(user_content)
 
     def analyze_release(self, content: str) -> Optional[Tuple[str, dict]]:
-        """Analyze the release content using the o1-mini model."""
+        """Analyze the release content using the gpt-4o-mini model."""
         try:
             # Parse records from the content
             records = self.parse_release_data(content)
@@ -121,7 +121,7 @@ class ReleaseAnalyzer:
             prompt = self.generate_prompt(records)
             
             response = self.client.chat.completions.create(
-                model="o1-mini",
+                model="gpt-4o-mini",
                 messages=[
                     {
                         "role": "user",
@@ -152,9 +152,9 @@ class ReleaseAnalyzer:
         """Format the analysis as a wiki page."""
         current_time = datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC')
         
-        # Calculate approximate cost (based on current o1-mini pricing)
-        input_cost = (usage_stats['prompt_tokens'] / 1_000_000) * 3.00  # $3.00 per 1M input tokens
-        output_cost = (usage_stats['completion_tokens'] / 1_000_000) * 12.00  # $12.00 per 1M output tokens
+        # Calculate approximate cost (based on current gpt-4o-mini pricing)
+        input_cost = (usage_stats['prompt_tokens'] / 1_000_000) * 0.15  # $0.15 per 1M input tokens
+        output_cost = (usage_stats['completion_tokens'] / 1_000_000) * 0.60  # $0.60 per 1M output tokens
         total_cost = input_cost + output_cost
         
         wiki_content = f"""# OpenAI Weekly Analysis: {release_title}
@@ -166,7 +166,7 @@ Generated on: {current_time}
 {analysis}
 
 ---
-*This analysis was automatically generated using OpenAI's o1-mini model to support NSF's FAIROS initiatives.*
+*This analysis was automatically generated using OpenAI's gpt-4o-mini model to support NSF's FAIROS initiatives.*
 
 **Analysis Statistics:**
 - Prompt Tokens: {usage_stats['prompt_tokens']:,}
