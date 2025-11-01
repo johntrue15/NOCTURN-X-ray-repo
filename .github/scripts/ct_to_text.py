@@ -183,7 +183,7 @@ def parse_records_from_body(body: str):
 
 def generate_text_for_records(records):
     """
-    Calls the o1-mini model to generate descriptions for valid records.
+    Calls the gpt-4o-mini model to generate descriptions for valid records.
     Handles both traditional records and API records with JSON data.
     """
     if not OPENAI_API_KEY:
@@ -255,7 +255,7 @@ def generate_text_for_records(records):
 
     try:
         resp = client.chat.completions.create(
-            model="o1-mini",
+            model="gpt-4o-mini",
             messages=[
                 {
                     "role": "user",
@@ -270,7 +270,7 @@ def generate_text_for_records(records):
         )
         return resp.choices[0].message.content.strip()
     except Exception as e:
-        return f"Error calling o1-mini model: {e}"
+        return f"Error calling gpt-4o-mini model: {e}"
 
 def main():
     """
@@ -309,7 +309,7 @@ def main():
             output_parts.append(f"**Detail Page:** {detail_url}")
         output_parts.append("")
     
-    # Generate final text using the o1-mini model
+    # Generate final text using the gpt-4o-mini model
     description = generate_text_for_records(records)
     output_parts.append("## Analysis")
     output_parts.append(description)
