@@ -22,7 +22,7 @@ def get_image_paths(folder_path):
     ]
 
 def generate_text_with_images(image_paths):
-    """Pass image paths and super prompt to the o1-mini model."""
+    """Pass image paths and super prompt to the gpt-4o-mini model."""
     if not OPENAI_API_KEY:
         return "Error: OPENAI_API_KEY is missing."
 
@@ -67,7 +67,7 @@ def generate_text_with_images(image_paths):
 
     try:
         resp = client.chat.completions.create(
-            model="o1-mini",
+            model="gpt-4o-mini",
             messages=[
                 {
                     "role": "user",
@@ -77,7 +77,7 @@ def generate_text_with_images(image_paths):
         )
         return resp.choices[0].message.content.strip()
     except Exception as e:
-        return f"Error calling o1-mini model: {e}"
+        return f"Error calling gpt-4o-mini model: {e}"
 
 def main():
     """

@@ -4,12 +4,9 @@ import os
 import sys
 
 try:
-    # If you have a custom library named "o1-mini", you might do: 
-    # from o1_mini import OpenAI 
-    # Otherwise, if using standard openai:
     from openai import OpenAI
 except ImportError:
-    print("Error: The 'openai' (or your custom O1-mini) library is missing.")
+    print("Error: The 'openai' library is missing.")
     sys.exit(1)
 
 # We assume OPENAI_API_KEY is set in the GitHub Actions environment
@@ -61,7 +58,7 @@ def generate_text_for_screenshots(screenshot_files):
     try:
         # Example using a chat completion style call
         resp = client.chat.completions.create(
-            model="o1-mini",  # or "gpt-3.5-turbo" or whichever model you prefer
+            model="gpt-4o-mini",
             messages=[
                 {
                     "role": "user",
