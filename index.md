@@ -2,7 +2,7 @@
 
 This page displays information about the latest data releases for the NOCTURN X-ray project.
 
-**Last Updated:** 2025-11-01 03:13:03 UTC
+**Last Updated:** 2025-11-01 04:23:21 UTC
 
 ## Summary Statistics
 
@@ -533,59 +533,35 @@ This page displays information about the latest data releases for the NOCTURN X-
     <h4>2025/05/07 05:29:41 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-05-07_05-29-41">ct_image_analysis-2025-05-07_05-29-41</a></h4>
     
     ```
-    <p>Analysis for MorphoSource release: morphosource-updates-2025-05-07_05-26-16</p>
-<p>To conduct a detailed analysis of the 3D X-ray CT scan data of the specimen from Morphosource.org, we can break down the assessment into several aspects: structural characteristics, material composition, notable features, and any visible anomalies across different views.</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li>
-<p><strong>Overall Anatomy</strong>: The CT scans reveal a complex arrangement of various sk... (truncated)
+    Update last_count.txt for new records
     ```
 </div>
 <div class="release-card">
     <h4>2025/05/06 19:30:54 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-05-06_19-30-54">ct_image_analysis-2025-05-06_19-30-54</a></h4>
     
     ```
-    <p>Analysis for MorphoSource release: morphosource-updates-2025-05-06_19-27-27</p>
-<p>To analyze the 3D X-ray CT scan data of the specimen "Rasododon procurvidens," we can discuss structural characteristics, material composition, and notable features based on the various orientations depicted:</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li><strong>Mandibular Form</strong>:</li>
-<li>
-<p>The mandible appears robust with a pronounced curvature, indicative of adaptation for specific feeding strate... (truncated)
+    Update last_count.txt for new records
     ```
 </div>
 <div class="release-card">
     <h4>2025/05/06 14:45:28 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-05-06_14-45-28">ct_image_analysis-2025-05-06_14-45-28</a></h4>
     
     ```
-    <p>Analysis for MorphoSource release: morphosource-updates-2025-05-06_14-42-03</p>
-<p>Based on the 3D X-ray CT scan data provided, here’s a detailed analysis of the structural characteristics, material composition, and notable features across the different views:</p>
-<h3>Structural Characteristics</h3>
-<ol>
-<li>
-<p><strong>Overall Shape</strong>: The specimen appears to have a robust, rounded shape with a lumpy surface texture. The contours suggest that it may not have a uniform surface and show... (truncated)
+    Update last_count.txt for new records
     ```
 </div>
 <div class="release-card">
     <h4>2025/04/28 18:56:21 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-04-28_18-56-21">ct_image_analysis-2025-04-28_18-56-21</a></h4>
     
     ```
-    <p>Analysis for MorphoSource release: morphosource-updates-2025-04-28_18-52-52</p>
-<p>To provide a detailed analysis of the 3D X-ray CT scan data depicting a skull specimen, we can focus on various aspects such as structural characteristics, material composition, and notable features.</p>
-<h3>Structural Characteristics:</h3>
-<ol>
-<li>
-<p><strong>General Shape</strong>: The skull appears elongated and symmetrically structured, typical of many vertebrate skulls. The cranial and facial bones are di... (truncated)
+    Update last_count.txt for new records
     ```
 </div>
 <div class="release-card">
     <h4>2025/04/28 18:00:39 UTC - <a href="https://github.com/johntrue15/NOCTURN-X-ray-repo/releases/tag/ct_image_analysis-2025-04-28_18-00-39">ct_image_analysis-2025-04-28_18-00-39</a></h4>
     
     ```
-    <p>Analysis for MorphoSource release: morphosource-updates-2025-04-28_17-56-05</p>
-<p>It appears that the provided images are mostly blank and do not display any identifiable structural characteristics or features of the specimen. Because of this, I cannot analyze the structural characteristics, material composition, or any anomalies.</p>
-<p>If you have specific details or context about the specimen or can provide images with visible content, I'd be glad to help with your analysis!</p>
-<h3>Orien... (truncated)
+    Update last_count.txt for new records
     ```
 </div>
 </div>
