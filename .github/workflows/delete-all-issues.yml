@@ -1,10 +1,10 @@
-name: Delete All Issues
+name: Close All Issues
 
 on:
   workflow_dispatch:
     inputs:
       confirm:
-        description: 'Type "DELETE ALL ISSUES" to confirm'
+        description: 'Type "CLOSE ALL ISSUES" to confirm'
         required: true
         type: string
 
@@ -13,9 +13,9 @@ permissions:
   contents: read
 
 jobs:
-  delete-issues:
+  close-issues:
     runs-on: ubuntu-latest
-    if: github.event.inputs.confirm == 'DELETE ALL ISSUES'
+    if: github.event.inputs.confirm == 'CLOSE ALL ISSUES'
     
     steps:
       - name: Checkout repository
@@ -31,7 +31,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install PyGithub
 
-      - name: Delete all issues
+      - name: Close all issues
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -44,7 +44,7 @@ jobs:
           gh = Github(os.environ['GITHUB_TOKEN'])
           repo = gh.get_repo(os.environ['GITHUB_REPOSITORY'])
           
-          # Get all open issues
+          # Get all open issues (PyGithub handles pagination automatically)
           open_issues = repo.get_issues(state='open')
           
           issue_count = 0
