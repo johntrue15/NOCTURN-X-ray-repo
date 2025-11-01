@@ -33,8 +33,9 @@ jobs:
             
             # Check if response is valid JSON and is an array
             if ! echo "$response" | jq -e 'type == "array"' > /dev/null 2>&1; then
-              echo "Error: API response is not a valid array. Response:"
-              echo "$response"
+              echo "Error: API response is not a valid array."
+              error_msg=$(echo "$response" | jq -r '.message // "Unknown error"' 2>/dev/null || echo "Invalid JSON response")
+              echo "Error message: $error_msg"
               exit 1
             fi
             
