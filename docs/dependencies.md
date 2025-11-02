@@ -129,6 +129,9 @@ This document shows the relationships between GitHub Actions workflows and their
 **Required Scripts:**
 - `.github/scripts/ct_to_text.py`
 
+### Close All Issues (`delete-all-issues.yml`)
+**Manual trigger available**
+
 ### Deploy GitHub Pages (`deploy-pages.yml`)
 
 ### 2D or 3D Media Analysis (`dimension_test.yml`)
@@ -156,6 +159,9 @@ This document shows the relationships between GitHub Actions workflows and their
 **Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/check_modified_morphosource.py`
+
+### MorphoSource Download (`morphosource-download.yml`)
+**Manual trigger available**
 
 ### Parquet Data Grapher (`parquet_grapher.yml`)
 **Manual trigger available**
