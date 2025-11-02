@@ -82,6 +82,9 @@ class DailyMorphoSourceExtractor:
                         self.logger.info(f"No more records found on page {page}")
                         break
                     
+                    # Process records before incrementing page counter
+                    page_had_error = False
+                    
                     for api_record in api_records:
                         try:
                             # Normalize the record
@@ -103,14 +106,22 @@ class DailyMorphoSourceExtractor:
                                 self.logger.info(f"Found latest stored record {latest_stored_id} - stopping fetch")
                                 found_latest = True
                                 break
+                        except (KeyError, ValueError, TypeError) as e:
+                            # Catch specific exceptions from record normalization
+                            self.logger.error(f"Error normalizing record (KeyError/ValueError/TypeError): {e}")
+                            error_count += 1
+                            if error_count >= max_errors:
+                                raise
+                            continue
                         except Exception as e:
-                            self.logger.error(f"Error normalizing record: {e}")
+                            # Log unexpected exceptions with full details
+                            self.logger.error(f"Unexpected error normalizing record: {type(e).__name__}: {e}")
                             error_count += 1
                             if error_count >= max_errors:
                                 raise
                             continue
                     
-                    # Reset error count on successful page
+                    # Reset error count on successful page processing
                     error_count = 0
                     
                     # Log progress every 5 pages
@@ -125,6 +136,7 @@ class DailyMorphoSourceExtractor:
                         self.logger.info(f"Reached last page ({page} of {result['meta']['total_pages']})")
                         break
                     
+                    # Only increment page after successful processing
                     page += 1
                     time.sleep(2)  # Rate limiting
                     
@@ -134,6 +146,7 @@ class DailyMorphoSourceExtractor:
                     if error_count >= max_errors:
                         raise
                     time.sleep(5)  # Wait before retry
+                    # Don't increment page - will retry the same page
                     continue
                 
             self.logger.info(f"Completed fetch - Found {len(records)} records from {page} pages")
@@ -220,9 +233,19 @@ class DailyMorphoSourceExtractor:
                 
                 # Add metadata fields as separate columns
                 if 'metadata' in record and isinstance(record['metadata'], dict):
+                    seen_col_names = set()
                     for key, value in record['metadata'].items():
                         # Create valid column names (replace spaces with underscores)
-                        col_name = f"metadata_{key.replace(' ', '_').replace('/', '_')}"
+                        base_col_name = f"metadata_{key.replace(' ', '_').replace('/', '_')}"
+                        col_name = base_col_name
+                        
+                        # Ensure uniqueness by adding suffix if needed
+                        counter = 1
+                        while col_name in seen_col_names:
+                            col_name = f"{base_col_name}_{counter}"
+                            counter += 1
+                        
+                        seen_col_names.add(col_name)
                         flat_record[col_name] = str(value) if value is not None else ''
                 
                 flattened_records.append(flat_record)

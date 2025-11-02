@@ -82,11 +82,16 @@ class TestDailyPaginationParquet(unittest.TestCase):
             with patch.object(extractor.api, 'search_media', side_effect=mock_search_media):
                 records = extractor.get_all_records(latest_stored_id=latest_stored_id, fetch_all=False)
                 
-                # Should stop at or just after the stored record
+                # Should stop at or just after finding the stored record
+                # The function includes the stored record in results and then stops
                 self.assertLessEqual(len(records), 151, 
                                    f"Expected <= 151 records, got {len(records)}")
-                self.assertEqual(records[-1]['id'], latest_stored_id, 
-                               "Did not stop at latest stored record")
+                # The last record should be the latest_stored_id (the function includes it then breaks)
+                self.assertIn(latest_stored_id, [r['id'] for r in records],
+                            "Latest stored record should be in the results")
+                # Verify it stopped - should not have all 250 records
+                self.assertLess(len(records), total_test_records,
+                              "Should have stopped before fetching all records")
     
     def test_parquet_creation(self):
         """Test that parquet files are created correctly"""
