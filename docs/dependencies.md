@@ -184,6 +184,9 @@ This document shows the relationships between GitHub Actions workflows and their
 - `.github/scripts/release_analysis.py`
 - `.github/scripts/release_analyzer.py`
 
+### Retrigger CT to Text Analysis (`retrigger_ct_analysis.yml`)
+**Manual trigger available**
+
 ### Save User Ratings (`save-ratings.yml`)
 
 ### Test Attestation Generation (`test-attestation.yml`)
