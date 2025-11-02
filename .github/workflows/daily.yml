@@ -441,7 +441,7 @@ jobs:
           exit 1
 
       - name: Create Release
-        if: always()
+        if: steps.check-data.outputs.has_data == 'true'
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
