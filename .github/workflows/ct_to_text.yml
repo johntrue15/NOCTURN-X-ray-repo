@@ -4,6 +4,11 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag to analyze (e.g., "morphosource-api-000791519-2025-10-31_20-35-16")'
+        required: true
+        type: string
 
 jobs:
   analyze_ct:
@@ -35,15 +40,23 @@ jobs:
           pip install openai
 
       # -------------------------------------------------------
-      # 4. Get latest release
+      # 4. Get latest release or specified release
       # -------------------------------------------------------
-      - name: Fetch latest release
+      - name: Fetch release
         id: fetch_release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # Get the latest release
-          release=$(gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/releases/latest)
+          # Check if a release tag was provided via workflow_dispatch
+          if [ -n "${{ github.event.inputs.release_tag }}" ]; then
+            # Manual dispatch - fetch the specified release
+            echo "Fetching specified release: ${{ github.event.inputs.release_tag }}"
+            release=$(gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/releases/tags/${{ github.event.inputs.release_tag }})
+          else
+            # Automatic trigger - fetch the latest release
+            echo "Fetching latest release"
+            release=$(gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/releases/latest)
+          fi
           
           # Extract and store release info
           echo "release_tag=$(echo $release | jq -r .tag_name)" >> "$GITHUB_OUTPUT"
@@ -93,7 +106,7 @@ jobs:
           echo "timestamp=$MS_TIME" >> "$GITHUB_OUTPUT"
 
       # -------------------------------------------------------
-      # 7. Check for existing analysis
+      # 7. Check for existing analysis (skip if manually triggered)
       # -------------------------------------------------------
       - name: Check for existing analysis
         id: check_analysis
@@ -101,6 +114,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # Skip analysis check if manually triggered (force re-run)
+          if [ -n "${{ github.event.inputs.release_tag }}" ]; then
+            echo "Manual trigger detected - forcing re-analysis"
+            echo "has_analysis=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          
           # Log what we're checking for
           echo "Checking for analysis of MorphoSource release: ${{ steps.check_morpho.outputs.ms_tag }}"
           echo "Release timestamp: $MS_TIME"
