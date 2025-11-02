@@ -33,6 +33,35 @@ This folder (`.github/workflows`) contains the GitHub Actions workflows used by 
   - Update analysis with improved prompts or models
   - Generate new descriptions for existing releases
 
+### 3. `retrigger_ct_analysis.yml`
+- **Purpose**: Automatically finds CT to Text Analysis releases that failed with permission errors, retriggers the analysis for the corresponding MorphoSource releases, and cleans up the error releases.
+- **Triggers**:
+  - **Manual only**: Must be triggered via workflow_dispatch with configuration options.
+- **Manual Trigger Instructions**:
+  1. Go to the Actions tab in GitHub
+  2. Select "Retrigger CT to Text Analysis" workflow
+  3. Click "Run workflow"
+  4. Configure options:
+     - **test_mode**: Check this box to process only ONE release (recommended for first run)
+     - **specific_tag**: (Optional) Enter a specific error release tag to process (e.g., `ct_to_text_analysis-2025-10-31_14-35-14`)
+  5. Click "Run workflow"
+- **What it does**:
+  1. Searches for `ct_to_text_analysis-*` releases containing the error: "Error calling o1-mini model: Error code: 401 - {'error': {'message': 'You have insufficient permissions for this operation.'"
+  2. For each error release found:
+     - Identifies the corresponding `morphosource-api-*` release that triggered it
+     - Triggers the `ct_to_text.yml` workflow to re-run the analysis
+     - Deletes the error release to clean up
+  3. In test mode, processes only one release and exits
+  4. With test mode off, processes all matching error releases
+- **Use Cases**:
+  - Bulk fix multiple days of failed CT to Text Analysis runs
+  - Clean up error releases after fixing the underlying API permission issue
+  - Test the retrigger process on a single release before processing all errors
+- **Important Notes**:
+  - Always run in test mode first to verify behavior
+  - The workflow will wait briefly between triggering workflows to avoid rate limiting
+  - Deleted releases cannot be recovered, but they can be regenerated from the morphosource data
+
 ---
 
 ## Adding or Modifying Workflows
