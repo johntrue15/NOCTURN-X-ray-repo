@@ -17,6 +17,22 @@ This folder (`.github/workflows`) contains the GitHub Actions workflows used by 
   3. Runs the `scrape_morphosource.py` script.
   4. If new records exist, creates or updates a “MorphoSource Updates” release.
 
+### 2. `ct_to_text.yml`
+- **Purpose**: Analyzes MorphoSource releases using OpenAI's GPT-4o-mini to generate scientific descriptions of CT scan records.
+- **Triggers**:
+  - **Automatic**: Runs when a new release is published.
+  - **Manual**: Can be triggered on demand to re-analyze a specific morphosource release.
+- **Manual Trigger Instructions**:
+  1. Go to the Actions tab in GitHub
+  2. Select "CT to Text Analysis" workflow
+  3. Click "Run workflow"
+  4. Enter the release tag to analyze (e.g., `morphosource-api-000791519-2025-10-31_20-35-16`)
+  5. Click "Run workflow"
+- **Use Cases**:
+  - Re-run analysis for releases that failed due to API errors
+  - Update analysis with improved prompts or models
+  - Generate new descriptions for existing releases
+
 ---
 
 ## Adding or Modifying Workflows
