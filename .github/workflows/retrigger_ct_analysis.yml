@@ -1,0 +1,230 @@
+name: Retrigger CT to Text Analysis
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: 'Test mode - process only one release'
+        required: false
+        type: boolean
+        default: true
+      specific_tag:
+        description: 'Optional: Specific error release tag to process (e.g., "ct_to_text_analysis-2025-10-31_14-35-14")'
+        required: false
+        type: string
+
+jobs:
+  retrigger:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Find and Process Error Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TEST_MODE: ${{ github.event.inputs.test_mode }}
+          SPECIFIC_TAG: ${{ github.event.inputs.specific_tag }}
+        run: |
+          set -e
+          
+          echo "========================================="
+          echo "Retrigger CT to Text Analysis Workflow"
+          echo "========================================="
+          echo "Test Mode: ${TEST_MODE}"
+          echo "Specific Tag: ${SPECIFIC_TAG}"
+          echo ""
+          
+          # Function to extract morphosource tag from error release
+          extract_morphosource_tag() {
+            local error_tag="$1"
+            # Extract timestamp from ct_to_text_analysis-YYYY-MM-DD_HH-MM-SS
+            local timestamp=$(echo "$error_tag" | sed 's/ct_to_text_analysis-//')
+            echo "$timestamp"
+          }
+          
+          # Function to find morphosource release by timestamp
+          find_morphosource_release() {
+            local timestamp="$1"
+            local error_tag="$2"
+            # The ct_to_text workflow runs right after morphosource release is published
+            # So we look for morphosource-api releases with matching date/time (within same day/hour)
+            
+            # Extract date from timestamp: 2025-10-31_14-35-14 -> 2025-10-31
+            local date_part=$(echo "$timestamp" | cut -d'_' -f1)
+            
+            # Get error release to find its created_at time
+            local error_created=$(gh api -H "Accept: application/vnd.github+json" \
+              "/repos/$GITHUB_REPOSITORY/releases/tags/$error_tag" | jq -r '.created_at')
+            
+            echo "  Error release created at: $error_created"
+            
+            # Find morphosource-api releases from the same date that were created before this error
+            gh api -H "Accept: application/vnd.github+json" \
+              "/repos/$GITHUB_REPOSITORY/releases?per_page=100" | \
+              jq -r --arg date "$date_part" --arg error_time "$error_created" '
+                .[] | 
+                select(.tag_name | test("^morphosource-api-.*-" + $date)) |
+                select(.created_at < $error_time) |
+                .tag_name' | head -1
+          }
+          
+          # Function to trigger ct_to_text workflow
+          trigger_ct_workflow() {
+            local morpho_tag="$1"
+            echo "  → Triggering ct_to_text workflow for: $morpho_tag"
+            
+            gh workflow run ct_to_text.yml \
+              -f release_tag="$morpho_tag"
+            
+            echo "  → Workflow triggered successfully"
+            sleep 5  # Brief pause between triggers
+          }
+          
+          # Function to delete error release
+          delete_error_release() {
+            local tag_name="$1"
+            local release_id="$2"
+            
+            echo "  → Deleting error release: $tag_name (ID: $release_id)"
+            
+            curl -X DELETE \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/$release_id"
+            
+            echo "  → Release deleted successfully"
+          }
+          
+          # Main processing logic
+          processed_count=0
+          
+          if [ -n "$SPECIFIC_TAG" ]; then
+            echo "Processing specific release: $SPECIFIC_TAG"
+            
+            # Get the specific release
+            release=$(gh api -H "Accept: application/vnd.github+json" \
+              "/repos/$GITHUB_REPOSITORY/releases/tags/$SPECIFIC_TAG")
+            
+            # Check if it has the error
+            body=$(echo "$release" | jq -r '.body')
+            if echo "$body" | grep -q "Error calling o1-mini model.*insufficient permissions"; then
+              tag_name=$(echo "$release" | jq -r '.tag_name')
+              release_id=$(echo "$release" | jq -r '.id')
+              
+              echo ""
+              echo "Found error release: $tag_name"
+              
+              # Extract timestamp and find morphosource release
+              timestamp=$(extract_morphosource_tag "$tag_name")
+              echo "  Timestamp: $timestamp"
+              
+              morpho_tag=$(find_morphosource_release "$timestamp" "$tag_name")
+              
+              if [ -n "$morpho_tag" ]; then
+                echo "  Found morphosource release: $morpho_tag"
+                
+                # Trigger workflow
+                trigger_ct_workflow "$morpho_tag"
+                
+                # Delete error release
+                delete_error_release "$tag_name" "$release_id"
+                
+                processed_count=$((processed_count + 1))
+              else
+                echo "  ⚠ Could not find corresponding morphosource release"
+              fi
+            else
+              echo "  ⚠ Release does not contain the target error message"
+            fi
+          else
+            echo "Searching for error releases..."
+            echo ""
+            
+            # Get all releases and filter for errors
+            page=1
+            while true; do
+              releases=$(gh api -H "Accept: application/vnd.github+json" \
+                "/repos/$GITHUB_REPOSITORY/releases?per_page=100&page=$page")
+              
+              # Check if we got any releases
+              count=$(echo "$releases" | jq '. | length')
+              if [ "$count" -eq "0" ]; then
+                break
+              fi
+              
+              # Process each release
+              echo "$releases" | jq -c '.[]' | while read -r release; do
+                tag_name=$(echo "$release" | jq -r '.tag_name')
+                
+                # Only check ct_to_text_analysis releases
+                if [[ ! $tag_name =~ ^ct_to_text_analysis- ]]; then
+                  continue
+                fi
+                
+                body=$(echo "$release" | jq -r '.body')
+                release_id=$(echo "$release" | jq -r '.id')
+                
+                # Check for the specific error
+                if echo "$body" | grep -q "Error calling o1-mini model.*insufficient permissions"; then
+                  echo "Found error release: $tag_name"
+                  
+                  # Extract timestamp and find morphosource release
+                  timestamp=$(extract_morphosource_tag "$tag_name")
+                  echo "  Timestamp: $timestamp"
+                  
+                  morpho_tag=$(find_morphosource_release "$timestamp" "$tag_name")
+                  
+                  if [ -n "$morpho_tag" ]; then
+                    echo "  Found morphosource release: $morpho_tag"
+                    
+                    # Trigger workflow
+                    trigger_ct_workflow "$morpho_tag"
+                    
+                    # Delete error release
+                    delete_error_release "$tag_name" "$release_id"
+                    
+                    # Increment counter
+                    echo "$((processed_count + 1))" > /tmp/processed_count
+                    processed_count=$(cat /tmp/processed_count)
+                    
+                    # In test mode, stop after first one
+                    if [ "$TEST_MODE" = "true" ]; then
+                      echo ""
+                      echo "✓ Test mode: Processed 1 release. Exiting."
+                      exit 0
+                    fi
+                  else
+                    echo "  ⚠ Could not find corresponding morphosource release"
+                  fi
+                  
+                  echo ""
+                fi
+              done
+              
+              # Check if we processed anything in test mode
+              if [ "$TEST_MODE" = "true" ] && [ -f /tmp/processed_count ]; then
+                break
+              fi
+              
+              page=$((page + 1))
+            done
+            
+            # Get final count
+            if [ -f /tmp/processed_count ]; then
+              processed_count=$(cat /tmp/processed_count)
+            fi
+          fi
+          
+          echo "========================================="
+          echo "Summary:"
+          echo "  Processed: $processed_count release(s)"
+          echo "========================================="
+          
+          if [ "$processed_count" -eq "0" ]; then
+            echo "No error releases found to process."
+          fi
