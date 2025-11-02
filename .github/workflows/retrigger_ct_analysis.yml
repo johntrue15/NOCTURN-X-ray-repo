@@ -109,7 +109,7 @@ jobs:
             
             # Check if it has the error
             body=$(echo "$release" | jq -r '.body')
-            if echo "$body" | grep -q "Error calling o1-mini model.*insufficient permissions"; then
+            if echo "$body" | grep -q "Error calling o1-mini model.*Error code: 401.*insufficient permissions"; then
               tag_name=$(echo "$release" | jq -r '.tag_name')
               release_id=$(echo "$release" | jq -r '.id')
               
@@ -167,7 +167,7 @@ jobs:
                 release_id=$(echo "$release" | jq -r '.id')
                 
                 # Check for the specific error
-                if echo "$body" | grep -q "Error calling o1-mini model.*insufficient permissions"; then
+                if echo "$body" | grep -q "Error calling o1-mini model.*Error code: 401.*insufficient permissions"; then
                   echo "Found error release: $tag_name"
                   
                   # Extract timestamp and find morphosource release
