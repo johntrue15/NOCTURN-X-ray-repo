@@ -22,7 +22,7 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Find and Process Error Releases
         env:
@@ -92,10 +92,7 @@ jobs:
             
             echo "  → Deleting error release: $tag_name (ID: $release_id)"
             
-            curl -X DELETE \
-              -H "Authorization: Bearer $GH_TOKEN" \
-              -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/$release_id"
+            gh api -X DELETE "/repos/$GITHUB_REPOSITORY/releases/$release_id"
             
             echo "  → Release deleted successfully"
           }
@@ -157,8 +154,8 @@ jobs:
                 break
               fi
               
-              # Process each release
-              echo "$releases" | jq -c '.[]' | while read -r release; do
+              # Process each release - avoid subshell by using process substitution
+              while IFS= read -r release; do
                 tag_name=$(echo "$release" | jq -r '.tag_name')
                 
                 # Only check ct_to_text_analysis releases
@@ -189,14 +186,13 @@ jobs:
                     delete_error_release "$tag_name" "$release_id"
                     
                     # Increment counter
-                    echo "$((processed_count + 1))" > /tmp/processed_count
-                    processed_count=$(cat /tmp/processed_count)
+                    processed_count=$((processed_count + 1))
                     
                     # In test mode, stop after first one
                     if [ "$TEST_MODE" = "true" ]; then
                       echo ""
                       echo "✓ Test mode: Processed 1 release. Exiting."
-                      exit 0
+                      break 2  # Break out of both loops
                     fi
                   else
                     echo "  ⚠ Could not find corresponding morphosource release"
@@ -204,20 +200,15 @@ jobs:
                   
                   echo ""
                 fi
-              done
+              done < <(echo "$releases" | jq -c '.[]')
               
-              # Check if we processed anything in test mode
-              if [ "$TEST_MODE" = "true" ] && [ -f /tmp/processed_count ]; then
+              # In test mode, if we've processed something, exit
+              if [ "$TEST_MODE" = "true" ] && [ "$processed_count" -gt 0 ]; then
                 break
               fi
               
               page=$((page + 1))
             done
-            
-            # Get final count
-            if [ -f /tmp/processed_count ]; then
-              processed_count=$(cat /tmp/processed_count)
-            fi
           fi
           
           echo "========================================="
