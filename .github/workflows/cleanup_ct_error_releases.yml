@@ -8,13 +8,15 @@ on:
 jobs:
   cleanup:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Install jq
         run: sudo apt-get install jq
 
       - name: Delete Old Error Releases
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Fetching CT Analysis Error releases..."
           
