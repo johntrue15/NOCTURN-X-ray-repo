@@ -51,7 +51,7 @@ jobs:
           if [ -n "${{ github.event.inputs.release_tag }}" ]; then
             # Manual dispatch - fetch the specified release
             echo "Fetching specified release: ${{ github.event.inputs.release_tag }}"
-            release=$(gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/releases/tags/${{ github.event.inputs.release_tag }})
+            release=$(gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/releases/tags/"${{ github.event.inputs.release_tag }}")
           else
             # Automatic trigger - fetch the latest release
             echo "Fetching latest release"
