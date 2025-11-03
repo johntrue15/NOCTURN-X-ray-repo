@@ -15,6 +15,8 @@ permissions:
   contents: write
 jobs:
   api_query_and_release:
+    # Only run on the original repository, not on forks
+    if: github.repository == 'johntrue15/NOCTURN-X-ray-repo'
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
