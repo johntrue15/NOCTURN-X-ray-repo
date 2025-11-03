@@ -44,7 +44,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests beautifulsoup4
+          pip install requests beautifulsoup4 pandas pyarrow
           sudo apt-get update && sudo apt-get install -y jq
           
       - name: Generate Timestamp
@@ -185,7 +185,8 @@ jobs:
           mkdir -p data/${{ steps.timestamp.outputs.timestamp }}
           python .github/scripts/daily.py \
             --data-dir data/${{ steps.timestamp.outputs.timestamp }} \
-            --output-dir data/${{ steps.timestamp.outputs.timestamp }}
+            --output-dir data/${{ steps.timestamp.outputs.timestamp }} \
+            --fetch-all
 
       - name: Check Data File
         id: check-data
@@ -451,6 +452,7 @@ jobs:
           body_path: data/${{ steps.timestamp.outputs.timestamp }}/release_notes.txt
           files: |
             data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.json
+            data/${{ steps.timestamp.outputs.timestamp }}/morphosource_data_complete.parquet
             data/${{ steps.timestamp.outputs.timestamp }}/daily_info.json
 
       - name: Upload Artifacts
