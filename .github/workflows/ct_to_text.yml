@@ -59,7 +59,7 @@ jobs:
           fi
           
           # Extract and store release info
-          echo "release_tag=$(echo $release | jq -r .tag_name)" >> "$GITHUB_OUTPUT"
+          echo "release_tag=$(echo "$release" | jq -r .tag_name)" >> "$GITHUB_OUTPUT"
           
           # Write release body directly to file to avoid command injection
           echo "$release" | jq -r .body > release_body.txt
