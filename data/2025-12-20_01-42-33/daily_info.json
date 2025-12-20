@@ -1,0 +1,8 @@
+{
+  "check_date": "2025-12-20T01:42:38.543423",
+  "source_dir": "data/2025-12-20_01-42-33",
+  "has_new_records": false,
+  "latest_record_id": null,
+  "fetch_all_mode": true,
+  "parquet_support": true
+}
