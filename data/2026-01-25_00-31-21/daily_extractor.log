@@ -1,0 +1,14 @@
+2026-01-25 00:31:24,069 - Data directory: data/2026-01-25_00-31-21
+2026-01-25 00:31:24,069 - Output directory: data/2026-01-25_00-31-21
+2026-01-25 00:31:24,069 - Fetch all mode: True
+2026-01-25 00:31:24,069 - Using data directory: data/2026-01-25_00-31-21
+2026-01-25 00:31:24,069 - Looking for previous data in: data
+2026-01-25 00:31:24,073 - Loading previous data from: data/2025-10-06_01-28-33/morphosource_data_complete.json
+2026-01-25 00:31:24,478 - Loaded 108782 records from previous data file
+2026-01-25 00:31:24,478 - Latest stored record ID: 000781814
+2026-01-25 00:31:24,478 - Previous record count: 108782
+2026-01-25 00:31:24,478 - === FULL FETCH MODE: Collecting all records from all pages ===
+2026-01-25 00:31:24,478 - Fetching page 1 via API
+2026-01-25 00:31:29,000 - No more records found on page 1
+2026-01-25 00:31:29,000 - Completed fetch - Found 0 records from 1 pages
+2026-01-25 00:31:29,000 - No records found during full fetch
