@@ -1,0 +1,22 @@
+2026-03-05 00:33:37,505 - Data directory: data/2026-03-05_00-33-35
+2026-03-05 00:33:37,505 - Output directory: data/2026-03-05_00-33-35
+2026-03-05 00:33:37,505 - Fetch all mode: True
+2026-03-05 00:33:37,506 - Using data directory: data/2026-03-05_00-33-35
+2026-03-05 00:33:37,506 - Looking for previous data in: data
+2026-03-05 00:33:37,511 - Loading previous data from: data/2025-10-06_01-28-33/morphosource_data_complete.json
+2026-03-05 00:33:37,930 - Loaded 108782 records from previous data file
+2026-03-05 00:33:37,930 - Latest stored record ID: 000781814
+2026-03-05 00:33:37,930 - Previous record count: 108782
+2026-03-05 00:33:37,930 - === FULL FETCH MODE: Collecting all records from all pages ===
+2026-03-05 00:33:37,930 - Fetching page 1 via API
+2026-03-05 00:34:08,430 - API error on page 1: Network error: HTTPSConnectionPool(host='www.morphosource.org', port=443): Max retries exceeded with url: /catalog.json?q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc&page=1&per_page=100 (Caused by ResponseError('too many 500 error responses')) (error 1/5)
+2026-03-05 00:34:13,436 - Fetching page 1 via API
+2026-03-05 00:34:43,723 - API error on page 1: Network error: HTTPSConnectionPool(host='www.morphosource.org', port=443): Max retries exceeded with url: /catalog.json?q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc&page=1&per_page=100 (Caused by ResponseError('too many 500 error responses')) (error 2/5)
+2026-03-05 00:34:48,729 - Fetching page 1 via API
+2026-03-05 00:35:19,018 - API error on page 1: Network error: HTTPSConnectionPool(host='www.morphosource.org', port=443): Max retries exceeded with url: /catalog.json?q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc&page=1&per_page=100 (Caused by ResponseError('too many 500 error responses')) (error 3/5)
+2026-03-05 00:35:24,024 - Fetching page 1 via API
+2026-03-05 00:35:54,300 - API error on page 1: Network error: HTTPSConnectionPool(host='www.morphosource.org', port=443): Max retries exceeded with url: /catalog.json?q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc&page=1&per_page=100 (Caused by ResponseError('too many 500 error responses')) (error 4/5)
+2026-03-05 00:35:59,305 - Fetching page 1 via API
+2026-03-05 00:36:29,596 - API error on page 1: Network error: HTTPSConnectionPool(host='www.morphosource.org', port=443): Max retries exceeded with url: /catalog.json?q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc&page=1&per_page=100 (Caused by ResponseError('too many 500 error responses')) (error 5/5)
+2026-03-05 00:36:29,596 - Error getting records: Network error: HTTPSConnectionPool(host='www.morphosource.org', port=443): Max retries exceeded with url: /catalog.json?q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc&page=1&per_page=100 (Caused by ResponseError('too many 500 error responses'))
+2026-03-05 00:36:29,596 - Error in daily check: Network error: HTTPSConnectionPool(host='www.morphosource.org', port=443): Max retries exceeded with url: /catalog.json?q=X-Ray+Computed+Tomography&search_field=all_fields&sort=system_create_dtsi+desc&page=1&per_page=100 (Caused by ResponseError('too many 500 error responses'))
