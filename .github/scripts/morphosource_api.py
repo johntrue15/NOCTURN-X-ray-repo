@@ -154,13 +154,16 @@ class MorphoSourceAPI:
         if not isinstance(response_obj, dict):
             response_obj = {}
 
-        # Extract records from whichever key is present
-        records = (
-            data.get('data')
-            or response_obj.get('media')
-            or response_obj.get('docs')
-            or []
-        )
+        # Extract records from whichever key is present (use explicit None
+        # checks so that an empty list [] is not skipped in favour of a
+        # later key).
+        records = data.get('data')
+        if records is None:
+            records = response_obj.get('media')
+        if records is None:
+            records = response_obj.get('docs')
+        if records is None:
+            records = []
 
         # Extract pagination from whichever structure is present
         meta_pages = data.get('meta', {}).get('pages', {})
@@ -170,26 +173,33 @@ class MorphoSourceAPI:
         if not isinstance(resp_pages, dict):
             resp_pages = {}
 
-        total = (
-            meta_pages.get('total_count')
-            or resp_pages.get('total_count')
-            or response_obj.get('numFound')
-            or 0
+        def _first_not_none(*values, default):
+            """Return the first value that is not None, or *default*."""
+            for v in values:
+                if v is not None:
+                    return v
+            return default
+
+        total = _first_not_none(
+            meta_pages.get('total_count'),
+            resp_pages.get('total_count'),
+            response_obj.get('numFound'),
+            default=0,
         )
-        page = (
-            meta_pages.get('current_page')
-            or resp_pages.get('current_page')
-            or 1
+        page = _first_not_none(
+            meta_pages.get('current_page'),
+            resp_pages.get('current_page'),
+            default=1,
         )
-        per_page = (
-            meta_pages.get('limit_value')
-            or resp_pages.get('limit_value')
-            or 20
+        per_page = _first_not_none(
+            meta_pages.get('limit_value'),
+            resp_pages.get('limit_value'),
+            default=20,
         )
-        total_pages = (
-            meta_pages.get('total_pages')
-            or resp_pages.get('total_pages')
-            or 1
+        total_pages = _first_not_none(
+            meta_pages.get('total_pages'),
+            resp_pages.get('total_pages'),
+            default=1,
         )
 
         parsed = {
