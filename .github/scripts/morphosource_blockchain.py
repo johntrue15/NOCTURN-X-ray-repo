@@ -248,8 +248,21 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         records = fetch_all_records(api)
 
         if not records:
-            print("No records retrieved from MorphoSource API")
-            return 1
+            print("WARNING: No records retrieved from MorphoSource API — skipping snapshot")
+            output_dir.mkdir(parents=True, exist_ok=True)
+            summary_path = output_dir / "summary.json"
+            with summary_path.open("w", encoding="utf-8") as summary:
+                json.dump(
+                    {
+                        "status": "skipped",
+                        "reason": "No records retrieved from MorphoSource API",
+                        "timestamp": utc_now().isoformat(),
+                    },
+                    summary,
+                    indent=2,
+                    sort_keys=True,
+                )
+            return 0
 
         blockchain = BlockchainSnapshot(output_dir)
         block = blockchain.record_changes(records, utc_now())

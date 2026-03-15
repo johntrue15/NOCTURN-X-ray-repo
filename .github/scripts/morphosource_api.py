@@ -145,25 +145,63 @@ class MorphoSourceAPI:
         Returns:
             Parsed response with normalized structure
         """
-        # Blacklight JSON API typically returns:
-        # - response: Contains numFound, start, docs
-        # - facets: Facet information
-        # - meta: Pagination and other metadata
+        # MorphoSource API can return data in several formats:
+        # 1) /api/media: {"response": {"media": [...], "pages": {...}}}
+        # 2) /catalog.json: {"data": [...], "meta": {"pages": {...}}}
+        # 3) Solr/Blacklight: {"response": {"docs": [...], "numFound": N}}
         
+        response_obj = data.get('response', {})
+        if not isinstance(response_obj, dict):
+            response_obj = {}
+
+        # Extract records from whichever key is present
+        records = (
+            data.get('data')
+            or response_obj.get('media')
+            or response_obj.get('docs')
+            or []
+        )
+
+        # Extract pagination from whichever structure is present
+        meta_pages = data.get('meta', {}).get('pages', {})
+        resp_pages = response_obj.get('pages', {})
+        if not isinstance(meta_pages, dict):
+            meta_pages = {}
+        if not isinstance(resp_pages, dict):
+            resp_pages = {}
+
+        total = (
+            meta_pages.get('total_count')
+            or resp_pages.get('total_count')
+            or response_obj.get('numFound')
+            or 0
+        )
+        page = (
+            meta_pages.get('current_page')
+            or resp_pages.get('current_page')
+            or 1
+        )
+        per_page = (
+            meta_pages.get('limit_value')
+            or resp_pages.get('limit_value')
+            or 20
+        )
+        total_pages = (
+            meta_pages.get('total_pages')
+            or resp_pages.get('total_pages')
+            or 1
+        )
+
         parsed = {
-            'data': data.get('data', data.get('response', {}).get('docs', [])),
+            'data': records,
             'meta': {
-                'total': data.get('meta', {}).get('pages', {}).get('total_count', 0),
-                'page': data.get('meta', {}).get('pages', {}).get('current_page', 1),
-                'per_page': data.get('meta', {}).get('pages', {}).get('limit_value', 20),
-                'total_pages': data.get('meta', {}).get('pages', {}).get('total_pages', 1),
+                'total': total,
+                'page': page,
+                'per_page': per_page,
+                'total_pages': total_pages,
             },
-            'response': data.get('response', {})
+            'response': response_obj,
         }
-        
-        # Handle alternative response structures
-        if 'response' in data and 'numFound' in data['response']:
-            parsed['meta']['total'] = data['response']['numFound']
         
         return parsed
     
