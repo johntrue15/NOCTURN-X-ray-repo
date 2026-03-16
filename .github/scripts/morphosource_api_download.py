@@ -187,12 +187,17 @@ def request_download_url(
 
 
 def download_file(
-    session: requests.Session, signed_url: str, out_dir: Path, media_id: str
+    session: requests.Session, signed_url: str, out_dir: Path, media_id: str,
+    api_key: str = "",
 ) -> Path:
     """Stream the file from the signed URL to disk."""
     out_dir.mkdir(parents=True, exist_ok=True)
+    headers: Dict[str, str] = {}
+    if api_key:
+        headers["Authorization"] = api_key
     with session.get(
-        signed_url, stream=True, allow_redirects=True, timeout=(10, 300)
+        signed_url, headers=headers, stream=True, allow_redirects=True,
+        timeout=(10, 300),
     ) as r:
         if r.status_code < 200 or r.status_code >= 300:
             raise SystemExit(
@@ -297,7 +302,7 @@ def main() -> None:
 
         # --- download ---
         eprint("Downloading file …")
-        dest = download_file(session, signed_url, out_dir, media_id)
+        dest = download_file(session, signed_url, out_dir, media_id, api_key)
         file_size = dest.stat().st_size
 
         eprint(f"Saved: {dest} ({file_size:,} bytes)")

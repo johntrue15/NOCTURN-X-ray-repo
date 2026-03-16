@@ -107,9 +107,14 @@ def auth_check(session: requests.Session, api_key: str, media_id: str):
     ensure_ok(resp, "API key check (GET /media/{id})")
 
 
-def download_file(session: requests.Session, signed_url: str, out_dir: Path) -> Path:
+def download_file(session: requests.Session, signed_url: str, out_dir: Path,
+                  api_key: str = "") -> Path:
     out_dir.mkdir(parents=True, exist_ok=True)
-    with session.get(signed_url, stream=True, allow_redirects=True, timeout=300) as r:
+    headers = {}
+    if api_key:
+        headers["Authorization"] = api_key
+    with session.get(signed_url, headers=headers, stream=True,
+                     allow_redirects=True, timeout=300) as r:
         ensure_ok(r, "Downloading file")
         fname = header_filename(r.headers.get("Content-Disposition")) or derive_filename_from_url(signed_url)
         # Make sure we don't escape out_dir
@@ -159,7 +164,7 @@ def main():
 
         # 3) download
         eprint("Downloading file … (this may take a while)")
-        dest = download_file(s, signed_url, Path(args.out_dir))
+        dest = download_file(s, signed_url, Path(args.out_dir), api_key)
         print(f"Saved: {dest}")
 
         # 4) Make it available as a GitHub Actions output
