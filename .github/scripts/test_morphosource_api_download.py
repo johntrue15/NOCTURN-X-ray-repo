@@ -216,8 +216,8 @@ class TestMainOpenDownload(unittest.TestCase):
 
             # Verify the payload contains the correct keys
             call_args = mock_session.post.call_args
-            import json as _json
-            posted_payload = _json.loads(call_args[1]["data"] if "data" in call_args[1] else call_args[0][1])
+            posted_data = call_args[1].get("data") or call_args.kwargs.get("data", "")
+            posted_payload = json.loads(posted_data)
             self.assertIn("agreements_accepted", posted_payload, "Payload must use 'agreements_accepted'")
             self.assertTrue(posted_payload["agreements_accepted"], "agreements_accepted must be True")
             self.assertNotIn("agree_to_terms", posted_payload, "Should not use legacy 'agree_to_terms' key")
