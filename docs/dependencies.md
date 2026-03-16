@@ -170,6 +170,11 @@ This document shows the relationships between GitHub Actions workflows and their
 ### MorphoSource Download (`morphosource-download.yml`)
 **Manual trigger available**
 
+### MorphoSource API Download (`morphosource_api_download.yml`)
+**Manual trigger available**
+**Required Scripts:**
+- `.github/scripts/morphosource_api_download.py`
+
 ### Parquet Data Grapher (`parquet_grapher.yml`)
 **Manual trigger available**
 **Required Scripts:**
@@ -338,6 +343,10 @@ This section shows which workflows use each script:
 ### monthly.py
 **Used in Workflows:**
 - `monthly.yml`
+
+### morphosource_api_download.py
+**Used in Workflows:**
+- `morphosource_api_download.yml`
 
 ### morphosource_blockchain.py
 **Used in Workflows:**
