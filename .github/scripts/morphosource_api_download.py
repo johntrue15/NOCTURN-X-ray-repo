@@ -151,9 +151,9 @@ def request_download_url(
         headers["Authorization"] = api_key
 
     payload = {
-        "use_statement": "Automated download for CT image analysis research",
-        "agree_to_terms": True,
+        "use_statement": "Automated download for CT image analysis research workflow",
         "use_categories": ["Research"],
+        "agreements_accepted": True,
     }
     resp = session.post(
         url, headers=headers, data=json.dumps(payload), timeout=TIMEOUT
@@ -170,7 +170,15 @@ def request_download_url(
         )
 
     data = resp.json()
-    signed = (data.get("response") or {}).get("url") or data.get("url")
+    # Try response.media.download_url (official API format), then fallback
+    media_node = ((data.get("response") or {}).get("media") or {})
+    download_urls = media_node.get("download_url") if isinstance(media_node, dict) else None
+    if isinstance(download_urls, list) and download_urls:
+        signed = download_urls[0]
+    elif isinstance(download_urls, str):
+        signed = download_urls
+    else:
+        signed = (data.get("response") or {}).get("url") or data.get("url")
     if not signed:
         raise SystemExit(
             f"No download URL in response: {json.dumps(data)[:600]}"
