@@ -9,6 +9,7 @@ without making actual network requests.
 import unittest
 from unittest.mock import Mock, patch, MagicMock
 import json
+from pathlib import Path
 from morphosource_api import MorphoSourceAPI, MorphoSourceAPIError, MorphoSourceTemporarilyUnavailable
 
 
@@ -249,6 +250,85 @@ class TestBackwardCompatibility(unittest.TestCase):
         self.assertIn('Data Manager', metadata)
 
 
+class TestParseApiResponseFormats(unittest.TestCase):
+    """Test that _parse_api_response handles different MorphoSource response structures."""
+
+    def setUp(self):
+        self.api = MorphoSourceAPI()
+
+    def test_parse_response_media_format(self):
+        """Test parsing /api/media response with response.media and response.pages."""
+        raw = {
+            'response': {
+                'media': [
+                    {'id': '001', 'title_sms': ['Record A']},
+                    {'id': '002', 'title_sms': ['Record B']},
+                ],
+                'pages': {
+                    'total_count': 200,
+                    'current_page': 1,
+                    'limit_value': 20,
+                    'total_pages': 10,
+                },
+            }
+        }
+        parsed = self.api._parse_api_response(raw)
+        self.assertEqual(len(parsed['data']), 2)
+        self.assertEqual(parsed['data'][0]['id'], '001')
+        self.assertEqual(parsed['meta']['total'], 200)
+        self.assertEqual(parsed['meta']['page'], 1)
+        self.assertEqual(parsed['meta']['per_page'], 20)
+        self.assertEqual(parsed['meta']['total_pages'], 10)
+
+    def test_parse_solr_docs_format(self):
+        """Test parsing Solr/Blacklight response with response.docs and numFound."""
+        raw = {
+            'response': {
+                'docs': [
+                    {'id': '003', 'title_sms': ['Solr Record']},
+                ],
+                'numFound': 5000,
+            }
+        }
+        parsed = self.api._parse_api_response(raw)
+        self.assertEqual(len(parsed['data']), 1)
+        self.assertEqual(parsed['meta']['total'], 5000)
+
+    def test_parse_empty_response(self):
+        """Test parsing a response with no records."""
+        raw = {'response': {'media': [], 'pages': {'total_count': 0, 'total_pages': 0}}}
+        parsed = self.api._parse_api_response(raw)
+        self.assertEqual(parsed['data'], [])
+        self.assertEqual(parsed['meta']['total'], 0)
+
+    def test_parse_missing_keys(self):
+        """Test parsing a response with missing top-level keys."""
+        raw = {}
+        parsed = self.api._parse_api_response(raw)
+        self.assertEqual(parsed['data'], [])
+        self.assertEqual(parsed['meta']['total'], 0)
+
+
+class TestBlockchainSnapshotGraceful(unittest.TestCase):
+    """Test morphosource_blockchain.py graceful degradation."""
+
+    def test_main_returns_zero_on_empty_records(self):
+        """main() should return 0 and write a summary when no records are retrieved."""
+        import tempfile
+        from morphosource_blockchain import main
+
+        with tempfile.TemporaryDirectory() as tmpdir, \
+             patch('morphosource_blockchain.MorphoSourceAPI'), \
+             patch('morphosource_blockchain.fetch_all_records', return_value=[]):
+            rc = main(['--output-dir', tmpdir])
+            self.assertEqual(rc, 0)
+            summary_path = Path(tmpdir) / 'summary.json'
+            self.assertTrue(summary_path.exists())
+            with summary_path.open() as f:
+                summary = json.load(f)
+            self.assertEqual(summary['status'], 'skipped')
+
+
 def run_tests():
     """Run all tests"""
     loader = unittest.TestLoader()
@@ -257,6 +337,8 @@ def run_tests():
     # Add all test classes
     suite.addTests(loader.loadTestsFromTestCase(TestMorphoSourceAPI))
     suite.addTests(loader.loadTestsFromTestCase(TestBackwardCompatibility))
+    suite.addTests(loader.loadTestsFromTestCase(TestParseApiResponseFormats))
+    suite.addTests(loader.loadTestsFromTestCase(TestBlockchainSnapshotGraceful))
     
     # Run tests
     runner = unittest.TextTestRunner(verbosity=2)
