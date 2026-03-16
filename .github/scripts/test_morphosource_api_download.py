@@ -229,6 +229,54 @@ class TestMainOpenDownload(unittest.TestCase):
             self.assertTrue(downloaded.exists(), f"Expected {downloaded} to exist")
 
 
+class TestDownloadFileAuth(unittest.TestCase):
+    """Test that download_file sends the Authorization header."""
+
+    def test_auth_header_passed_to_download(self):
+        """download_file must include Authorization header when api_key is set."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            mock_session = MagicMock()
+            file_resp = Mock()
+            file_resp.status_code = 200
+            file_resp.headers = {"Content-Disposition": 'attachment; filename="test.zip"'}
+            file_resp.iter_content = Mock(return_value=[b"data"])
+            file_resp.__enter__ = Mock(return_value=file_resp)
+            file_resp.__exit__ = Mock(return_value=False)
+            mock_session.get.return_value = file_resp
+
+            mod.download_file(
+                mock_session, "https://example.com/signed", Path(tmpdir),
+                "000840215", api_key="test-key-123",
+            )
+
+            call_args = mock_session.get.call_args
+            headers = call_args[1].get("headers") or call_args.kwargs.get("headers", {})
+            self.assertEqual(headers.get("Authorization"), "test-key-123",
+                             "Authorization header must be set to the API key")
+
+    def test_no_auth_header_when_key_empty(self):
+        """download_file must not include Authorization header when api_key is empty."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            mock_session = MagicMock()
+            file_resp = Mock()
+            file_resp.status_code = 200
+            file_resp.headers = {"Content-Disposition": 'attachment; filename="test.zip"'}
+            file_resp.iter_content = Mock(return_value=[b"data"])
+            file_resp.__enter__ = Mock(return_value=file_resp)
+            file_resp.__exit__ = Mock(return_value=False)
+            mock_session.get.return_value = file_resp
+
+            mod.download_file(
+                mock_session, "https://example.com/signed", Path(tmpdir),
+                "000840215", api_key="",
+            )
+
+            call_args = mock_session.get.call_args
+            headers = call_args[1].get("headers") or call_args.kwargs.get("headers", {})
+            self.assertNotIn("Authorization", headers,
+                             "Authorization header must not be set when api_key is empty")
+
+
 class TestRequestDownloadUrlResponseParsing(unittest.TestCase):
     """Test that request_download_url correctly parses the API response format."""
 
