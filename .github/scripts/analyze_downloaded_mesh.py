@@ -103,7 +103,10 @@ def find_mesh_files(
 # ─── Mesh rendering ──────────────────────────────────────────────────────
 
 def _load_mesh(path: pathlib.Path) -> trimesh.Trimesh:
-    mesh = trimesh.load(path, force="mesh")
+    try:
+        mesh = trimesh.load(path, force="mesh")
+    except Exception as exc:
+        raise RuntimeError(f"Failed to load mesh {path}: {exc}") from exc
     if mesh.is_empty:
         raise RuntimeError(f"Mesh {path} contained no geometry")
     return mesh
