@@ -1,8 +1,12 @@
 name: CT to Text Analysis
 
 on:
-  release:
-    types: [published]
+  # Trigger when the MorphoSource API workflow completes successfully.
+  # Releases created by GITHUB_TOKEN do not fire 'release' events for other
+  # workflows, so we use workflow_run instead.
+  workflow_run:
+    workflows: ["Parse MorphoSource API (total_count + latest record)"]
+    types: [completed]
   workflow_dispatch:
     inputs:
       release_tag:
@@ -13,6 +17,10 @@ on:
 jobs:
   analyze_ct:
     runs-on: ubuntu-latest
+    # Only run when the upstream workflow succeeded or on manual dispatch
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     permissions:
       contents: write
     
@@ -21,15 +29,15 @@ jobs:
       # 1. Checkout repository
       # -------------------------------------------------------
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # -------------------------------------------------------
       # 2. Setup Python
       # -------------------------------------------------------
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
           
       # -------------------------------------------------------
       # 3. Install Dependencies
@@ -53,11 +61,20 @@ jobs:
             echo "Fetching specified release: ${{ github.event.inputs.release_tag }}"
             release=$(gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/releases/tags/"${{ github.event.inputs.release_tag }}")
           else
-            # Automatic trigger - fetch the latest release
-            echo "Fetching latest release"
-            release=$(gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/releases/latest)
+            # Automatic trigger (workflow_run) - fetch the latest morphosource-api release
+            echo "Fetching latest morphosource-api release"
+            release=$(gh api -H "Accept: application/vnd.github+json" \
+              /repos/$GITHUB_REPOSITORY/releases \
+              --jq '[.[] | select(.tag_name | startswith("morphosource-api-"))][0]')
           fi
-          
+
+          if [ -z "$release" ] || [ "$release" = "null" ]; then
+            echo "No matching release found"
+            echo "release_tag=" >> "$GITHUB_OUTPUT"
+            echo "" > release_body.txt
+            exit 0
+          fi
+
           # Extract and store release info
           echo "release_tag=$(echo "$release" | jq -r .tag_name)" >> "$GITHUB_OUTPUT"
           
@@ -306,14 +323,12 @@ jobs:
           steps.check_records.outputs.has_records == 'true' &&
           steps.check_blacklist.outputs.is_blacklisted != 'true'
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-        uses: actions/create-release@v1
-        with:
-          tag_name: "ct_to_text_analysis-${{ steps.gen_ts.outputs.timestamp }}"
-          release_name: "CT to Text Analysis #${{ steps.gen_ts.outputs.timestamp }}"
-          body: ${{ steps.ct2text.outputs.description }}
-          draft: false
-          prerelease: false
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create \
+            "ct_to_text_analysis-${{ steps.gen_ts.outputs.timestamp }}" \
+            --title "CT to Text Analysis #${{ steps.gen_ts.outputs.timestamp }}" \
+            --notes-file ct_output.txt
 
       # -------------------------------------------------------
       # 13. Log Release Without Records

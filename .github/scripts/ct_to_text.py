@@ -84,9 +84,23 @@ def parse_api_record(body: str):
     if isinstance(json_id, list):
         json_id = json_id[0] if json_id else "N/A"
     
+    # Resolve title: prefer the JSON title (more descriptive), then fall back
+    # to the markdown-extracted title. The markdown title from the API workflow
+    # is often a generic "Media XXXXXX" placeholder, while the JSON contains
+    # the actual specimen title.
+    json_title = None
+    for key in ("title", "title_tesim"):
+        val = json_data.get(key)
+        if isinstance(val, list) and val:
+            json_title = val[0]
+            break
+        elif isinstance(val, str) and val:
+            json_title = val
+            break
+
     record = {
         "record_number": record_id or json_id,
-        "title": record_title or json_data.get("title_tesim", ["N/A"])[0] if isinstance(json_data.get("title_tesim"), list) else "N/A",
+        "title": json_title or record_title or "N/A",
         "detail_url": detail_url,
         "api_data": json_data  # Include the full API JSON for analysis
     }
