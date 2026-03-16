@@ -11,6 +11,11 @@ This document shows the relationships between GitHub Actions workflows and their
 **Required Scripts:**
 - `.github/scripts/parse_morphosource_api.py`
 
+**Triggers Workflows:**
+
+- `ct_to_text.yml`
+  Scripts:
+  - `.github/scripts/ct_to_text.py`
 
 ---
 
@@ -21,22 +26,22 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ---
 
-### Release Reactions Collector (`release-reactions.yml`)
-
-**Schedule:** Daily at midnight
-
-**Required Scripts:**
-- `.github/scripts/collect_reactions.py`
-
-
----
-
 ### Daily MorphoSource Check (`daily.yml`)
 
 **Schedule:** Daily at midnight
 
 **Required Scripts:**
 - `.github/scripts/daily.py`
+
+
+---
+
+### Release Reactions Collector (`release-reactions.yml`)
+
+**Schedule:** Daily at midnight
+
+**Required Scripts:**
+- `.github/scripts/collect_reactions.py`
 
 
 ---
@@ -125,6 +130,8 @@ This document shows the relationships between GitHub Actions workflows and their
 **Manual trigger available**
 
 ### CT to Text Analysis (`ct_to_text.yml`)
+**Triggered by:**
+- `Parse MorphoSource API (total_count + latest record)`
 **Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/ct_to_text.py`
