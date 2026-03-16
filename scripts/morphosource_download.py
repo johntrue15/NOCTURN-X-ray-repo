@@ -74,7 +74,7 @@ def request_signed_url(session: requests.Session, api_key: str, media_id: str,
         # MorphoSource expects the raw key (no Bearer)
         "Authorization": api_key,
     }
-    payload: dict = {"use_statement": use_statement, "agree_to_terms": True}
+    payload: dict = {"use_statement": use_statement, "agreements_accepted": True}
     if use_categories:
         payload["use_categories"] = use_categories
     elif use_category_other:
@@ -84,8 +84,15 @@ def request_signed_url(session: requests.Session, api_key: str, media_id: str,
     ensure_ok(resp, "Requesting signed download URL")
 
     data = resp.json()
-    # The URL may be at response.url or url
-    signed = (data.get("response") or {}).get("url") or data.get("url")
+    # Try response.media.download_url (official API format), then fallback
+    media_node = ((data.get("response") or {}).get("media") or {})
+    download_urls = media_node.get("download_url") if isinstance(media_node, dict) else None
+    if isinstance(download_urls, list) and download_urls:
+        signed = download_urls[0]
+    elif isinstance(download_urls, str):
+        signed = download_urls
+    else:
+        signed = (data.get("response") or {}).get("url") or data.get("url")
     if not signed:
         raise SystemExit(f"Download URL not found in response: {json.dumps(data)[:600]}")
     return signed

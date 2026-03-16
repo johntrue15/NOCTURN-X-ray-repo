@@ -213,8 +213,80 @@ class TestMainOpenDownload(unittest.TestCase):
 
             # Verify the download was attempted
             self.assertTrue(mock_session.post.called, "Should have POSTed for download URL")
+
+            # Verify the payload contains the correct keys
+            call_args = mock_session.post.call_args
+            import json as _json
+            posted_payload = _json.loads(call_args[1]["data"] if "data" in call_args[1] else call_args[0][1])
+            self.assertIn("agreements_accepted", posted_payload, "Payload must use 'agreements_accepted'")
+            self.assertTrue(posted_payload["agreements_accepted"], "agreements_accepted must be True")
+            self.assertNotIn("agree_to_terms", posted_payload, "Should not use legacy 'agree_to_terms' key")
+            self.assertGreaterEqual(len(posted_payload["use_statement"]), 50,
+                                    "use_statement must be >= 50 characters")
+            self.assertIn("use_categories", posted_payload, "Payload must include use_categories")
+
             downloaded = Path(tmpdir) / "media_000840215.zip"
             self.assertTrue(downloaded.exists(), f"Expected {downloaded} to exist")
+
+
+class TestRequestDownloadUrlResponseParsing(unittest.TestCase):
+    """Test that request_download_url correctly parses the API response format."""
+
+    def _make_session(self, json_response):
+        session = MagicMock()
+        resp = Mock()
+        resp.status_code = 200
+        resp.json.return_value = json_response
+        session.post.return_value = resp
+        return session
+
+    def test_official_api_format(self):
+        """Parse response.media.download_url list (official API format)."""
+        session = self._make_session({
+            "response": {
+                "media": {
+                    "id": ["000840215"],
+                    "download_url": ["https://example.com/signed/file.zip"],
+                }
+            }
+        })
+        url = mod.request_download_url(session, "key", "000840215")
+        self.assertEqual(url, "https://example.com/signed/file.zip")
+
+    def test_official_api_format_scalar(self):
+        """Parse response.media.download_url as scalar string."""
+        session = self._make_session({
+            "response": {
+                "media": {
+                    "id": "000840215",
+                    "download_url": "https://example.com/signed/file.zip",
+                }
+            }
+        })
+        url = mod.request_download_url(session, "key", "000840215")
+        self.assertEqual(url, "https://example.com/signed/file.zip")
+
+    def test_fallback_response_url(self):
+        """Fallback: parse response.url."""
+        session = self._make_session({
+            "response": {"url": "https://example.com/fallback.zip"}
+        })
+        url = mod.request_download_url(session, "key", "000840215")
+        self.assertEqual(url, "https://example.com/fallback.zip")
+
+    def test_fallback_top_level_url(self):
+        """Fallback: parse top-level url."""
+        session = self._make_session({
+            "url": "https://example.com/top-level.zip"
+        })
+        url = mod.request_download_url(session, "key", "000840215")
+        self.assertEqual(url, "https://example.com/top-level.zip")
+
+    def test_no_url_raises(self):
+        """Raise SystemExit when no download URL is found."""
+        session = self._make_session({"response": {"media": {}}})
+        with self.assertRaises(SystemExit):
+            mod.request_download_url(session, "key", "000840215")
 
 
 if __name__ == "__main__":
