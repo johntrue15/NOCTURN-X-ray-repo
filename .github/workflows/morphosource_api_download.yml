@@ -1,0 +1,84 @@
+name: MorphoSource API Download
+
+on:
+  workflow_dispatch:
+    inputs:
+      api_record_json:
+        description: >
+          Full JSON record from parse_morphosource API output.
+          The script extracts media ID, visibility, and metadata from this JSON.
+        required: false
+        default: ""
+      media_id:
+        description: "MorphoSource media ID (e.g., 000840215). Used as fallback when api_record_json is empty."
+        required: false
+        default: ""
+      out_dir:
+        description: "Directory to save downloads"
+        required: false
+        default: "downloads"
+
+permissions:
+  contents: read
+
+jobs:
+  download:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Validate inputs
+        run: |
+          if [ -z "${{ inputs.api_record_json }}" ] && [ -z "${{ inputs.media_id }}" ]; then
+            echo "::error::Either 'api_record_json' or 'media_id' must be provided."
+            exit 1
+          fi
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install --upgrade pip requests
+
+      - name: Download from MorphoSource API
+        id: download
+        env:
+          RECORD_JSON: ${{ inputs.api_record_json }}
+          MEDIA_ID: ${{ inputs.media_id }}
+          OUT_DIR: ${{ inputs.out_dir }}
+          MORPHOSOURCE_API_KEY: ${{ secrets.MORPHOSOURCE_API_KEY }}
+        run: |
+          python .github/scripts/morphosource_api_download.py
+
+      - name: Upload downloaded files
+        if: steps.download.outputs.download_skipped != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: morphosource-download-${{ steps.download.outputs.media_id || 'unknown' }}
+          path: ${{ inputs.out_dir }}/**
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "### MorphoSource API Download Summary"
+            echo ""
+            echo "- **Media ID**: \`${{ steps.download.outputs.media_id || 'N/A' }}\`"
+            echo "- **Title**: ${{ steps.download.outputs.title || 'N/A' }}"
+            echo "- **Visibility**: \`${{ steps.download.outputs.visibility || 'N/A' }}\`"
+            echo "- **Media type**: ${{ steps.download.outputs.media_type || 'N/A' }}"
+            echo "- **Modality**: ${{ steps.download.outputs.modality || 'N/A' }}"
+            echo "- **Taxonomy**: ${{ steps.download.outputs.physical_object_taxonomy_name || 'N/A' }}"
+            echo ""
+            if [ "${{ steps.download.outputs.download_skipped }}" = "true" ]; then
+              echo "⚠️ **Download skipped**: ${{ steps.download.outputs.skip_reason }}"
+            else
+              echo "✅ **Downloaded file**: \`${{ steps.download.outputs.downloaded_file || 'N/A' }}\`"
+              echo "- **File size**: ${{ steps.download.outputs.downloaded_file_size || '0' }} bytes"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
