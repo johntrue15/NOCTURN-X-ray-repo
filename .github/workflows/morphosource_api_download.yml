@@ -17,9 +17,17 @@ on:
         description: "Directory to save downloads"
         required: false
         default: "downloads"
+      previous_run_id:
+        description: >
+          Run ID of a previous workflow run whose download artifact will be
+          re-used instead of querying the MorphoSource API.  Requires media_id
+          to be set so the correct artifact can be located.
+        required: false
+        default: ""
 
 permissions:
   contents: write
+  actions: read          # needed to download artifacts from other runs
 
 jobs:
   download:
@@ -27,8 +35,12 @@ jobs:
     steps:
       - name: Validate inputs
         run: |
-          if [ -z "${{ inputs.api_record_json }}" ] && [ -z "${{ inputs.media_id }}" ]; then
-            echo "::error::Either 'api_record_json' or 'media_id' must be provided."
+          if [ -z "${{ inputs.api_record_json }}" ] && [ -z "${{ inputs.media_id }}" ] && [ -z "${{ inputs.previous_run_id }}" ]; then
+            echo "::error::Either 'api_record_json', 'media_id', or 'previous_run_id' must be provided."
+            exit 1
+          fi
+          if [ -n "${{ inputs.previous_run_id }}" ] && [ -z "${{ inputs.media_id }}" ]; then
+            echo "::error::When 'previous_run_id' is provided, 'media_id' must also be set."
             exit 1
           fi
 
@@ -49,8 +61,20 @@ jobs:
           pip install --upgrade pip
           pip install requests trimesh numpy matplotlib openai
 
+      # ── Fetch from a previous run's artifact ──────────────────────────
+      - name: Download artifact from previous run
+        if: inputs.previous_run_id != ''
+        uses: actions/download-artifact@v4
+        with:
+          name: morphosource-download-${{ inputs.media_id }}
+          path: ${{ inputs.out_dir }}
+          run-id: ${{ inputs.previous_run_id }}
+          github-token: ${{ github.token }}
+
+      # ── Normal MorphoSource API download ──────────────────────────────
       - name: Download from MorphoSource API
         id: download
+        if: inputs.previous_run_id == ''
         env:
           RECORD_JSON: ${{ inputs.api_record_json }}
           MEDIA_ID: ${{ inputs.media_id }}
@@ -59,42 +83,79 @@ jobs:
         run: |
           python .github/scripts/morphosource_api_download.py
 
+      # ── Unify outputs from both download paths ────────────────────────
+      - name: Resolve download metadata
+        id: resolve
+        run: |
+          if [ -n "${{ inputs.previous_run_id }}" ]; then
+            echo "media_id=${{ inputs.media_id }}" >> "$GITHUB_OUTPUT"
+            echo "download_skipped=false" >> "$GITHUB_OUTPUT"
+            echo "source=previous_run" >> "$GITHUB_OUTPUT"
+          else
+            MID="${{ steps.download.outputs.media_id }}"
+            MID="${MID:-${{ inputs.media_id }}}"
+            MID="${MID:-unknown}"
+            echo "media_id=${MID}" >> "$GITHUB_OUTPUT"
+            echo "download_skipped=${{ steps.download.outputs.download_skipped }}" >> "$GITHUB_OUTPUT"
+            echo "source=morphosource_api" >> "$GITHUB_OUTPUT"
+          fi
+
+      # ── Extract any .zip archives in the download directory ───────────
+      - name: Unzip downloaded archives
+        if: steps.resolve.outputs.download_skipped != 'true'
+        run: |
+          echo "── Contents of ${{ inputs.out_dir }} BEFORE extraction ──"
+          find "${{ inputs.out_dir }}" -type f 2>/dev/null || echo "(empty)"
+          echo ""
+          cd "${{ inputs.out_dir }}"
+          for f in *.zip; do
+            if [ -f "$f" ]; then
+              echo "Extracting: $f"
+              unzip -o "$f" -d "${f%.zip}" \
+                && echo "  ✅ Extracted successfully" \
+                || echo "::warning::Failed to extract $f"
+            fi
+          done
+          echo ""
+          echo "── Contents of ${{ inputs.out_dir }} AFTER extraction ──"
+          find "." -type f | head -100
+
       - name: Analyze downloaded mesh files
         id: analyze
-        if: steps.download.outputs.download_skipped != 'true'
+        if: steps.resolve.outputs.download_skipped != 'true'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           python .github/scripts/analyze_downloaded_mesh.py \
             --download-dir "${{ inputs.out_dir }}" \
             --output-dir "artifacts" \
-            --media-id "${{ steps.download.outputs.media_id || 'unknown' }}"
+            --media-id "${{ steps.resolve.outputs.media_id || 'unknown' }}"
 
       - name: Upload downloaded files
-        if: steps.download.outputs.download_skipped != 'true'
+        if: steps.resolve.outputs.download_skipped != 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: morphosource-download-${{ steps.download.outputs.media_id || 'unknown' }}
+          name: morphosource-download-${{ steps.resolve.outputs.media_id || 'unknown' }}
           path: ${{ inputs.out_dir }}/**
           if-no-files-found: warn
           retention-days: 30
 
       - name: Upload analysis artifacts
-        if: steps.analyze.outputs.analysis_skipped != 'true' && steps.download.outputs.download_skipped != 'true'
+        if: steps.analyze.outputs.analysis_skipped != 'true' && steps.resolve.outputs.download_skipped != 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: morphosource-analysis-${{ steps.download.outputs.media_id || 'unknown' }}
+          name: morphosource-analysis-${{ steps.resolve.outputs.media_id || 'unknown' }}
           path: artifacts/**
           if-no-files-found: warn
           retention-days: 30
 
       - name: Commit analysis results
-        if: steps.analyze.outputs.analysis_skipped != 'true' && steps.download.outputs.download_skipped != 'true'
+        if: steps.analyze.outputs.analysis_skipped != 'true' && steps.resolve.outputs.download_skipped != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "Add mesh analysis for media ${{ steps.download.outputs.media_id || 'unknown' }}" || echo "No changes to commit"
+          git commit -m "Add mesh analysis for media ${{ steps.resolve.outputs.media_id || 'unknown' }}" || echo "No changes to commit"
           git push origin HEAD:main
 
       - name: Job summary
@@ -103,14 +164,15 @@ jobs:
           {
             echo "### MorphoSource API Download Summary"
             echo ""
-            echo "- **Media ID**: \`${{ steps.download.outputs.media_id || 'N/A' }}\`"
+            echo "- **Media ID**: \`${{ steps.resolve.outputs.media_id || 'N/A' }}\`"
+            echo "- **Source**: ${{ steps.resolve.outputs.source || 'N/A' }}"
             echo "- **Title**: ${{ steps.download.outputs.title || 'N/A' }}"
             echo "- **Visibility**: \`${{ steps.download.outputs.visibility || 'N/A' }}\`"
             echo "- **Media type**: ${{ steps.download.outputs.media_type || 'N/A' }}"
             echo "- **Modality**: ${{ steps.download.outputs.modality || 'N/A' }}"
             echo "- **Taxonomy**: ${{ steps.download.outputs.physical_object_taxonomy_name || 'N/A' }}"
             echo ""
-            if [ "${{ steps.download.outputs.download_skipped }}" = "true" ]; then
+            if [ "${{ steps.resolve.outputs.download_skipped }}" = "true" ]; then
               echo "⚠️ **Download skipped**: ${{ steps.download.outputs.skip_reason }}"
             else
               echo "✅ **Downloaded file**: \`${{ steps.download.outputs.downloaded_file || 'N/A' }}\`"
@@ -122,8 +184,8 @@ jobs:
                 echo "- **Screenshots captured**: ${{ steps.analyze.outputs.screenshots_count || '0' }}"
                 echo "- **Analysis report**: \`${{ steps.analyze.outputs.analysis_report || 'N/A' }}\`"
                 echo ""
-                if [ -f "artifacts/mesh_analysis_${{ steps.download.outputs.media_id || 'unknown' }}.md" ]; then
-                  cat "artifacts/mesh_analysis_${{ steps.download.outputs.media_id || 'unknown' }}.md"
+                if [ -f "artifacts/mesh_analysis_${{ steps.resolve.outputs.media_id || 'unknown' }}.md" ]; then
+                  cat "artifacts/mesh_analysis_${{ steps.resolve.outputs.media_id || 'unknown' }}.md"
                 fi
               else
                 echo "ℹ️ **Analysis skipped**: ${{ steps.analyze.outputs.skip_reason || 'No mesh files found' }}"
