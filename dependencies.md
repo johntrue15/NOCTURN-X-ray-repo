@@ -202,6 +202,11 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ### Save User Ratings (`save-ratings.yml`)
 
+### SlicerMorph Analysis (`slicer_morph_analysis.yml`)
+**Manual trigger available**
+**Required Scripts:**
+- `.github/scripts/slicer_morph_analysis.py`
+
 ### Test Attestation Generation (`test-attestation.yml`)
 **Manual trigger available**
 
@@ -389,6 +394,10 @@ This section shows which workflows use each script:
 ### scrape_morphosource.py
 **Used in Workflows:**
 - `parse_morphosource.yml`
+
+### slicer_morph_analysis.py
+**Used in Workflows:**
+- `slicer_morph_analysis.yml`
 
 ### test_3D_screenshot.py
 **Used in Workflows:**
