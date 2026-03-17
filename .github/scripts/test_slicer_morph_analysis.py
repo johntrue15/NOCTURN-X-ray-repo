@@ -149,12 +149,11 @@ class TestGenerateSlicerScript(unittest.TestCase):
         )
         self.assertIn("M999", script)
 
-    def test_script_contains_slicermorph_install(self):
+    def test_script_does_not_install_slicermorph(self):
         script = mod.generate_slicer_script(
             [Path("/tmp/test.ply")], Path("/tmp/out"), "test"
         )
-        self.assertIn("SlicerMorph", script)
-        self.assertIn("downloadAndInstallExtensionByName", script)
+        self.assertNotIn("downloadAndInstallExtensionByName", script)
 
     def test_script_contains_screenshot_capture(self):
         script = mod.generate_slicer_script(
@@ -238,7 +237,7 @@ class TestParseArgs(unittest.TestCase):
         self.assertEqual(args.output_dir, Path("artifacts"))
         self.assertEqual(args.media_id, "unknown")
         self.assertEqual(args.timeout, 300)
-        self.assertEqual(args.max_meshes, 3)
+        self.assertEqual(args.max_meshes, 1)
 
     def test_all_args(self):
         args = mod.parse_args([
