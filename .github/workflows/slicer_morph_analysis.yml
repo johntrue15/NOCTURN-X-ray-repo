@@ -1,0 +1,223 @@
+name: SlicerMorph Analysis
+
+on:
+  workflow_dispatch:
+    inputs:
+      previous_run_id:
+        description: >
+          Run ID of a previous MorphoSource API Download workflow run whose
+          download artifact will be re-used (avoids querying the MorphoSource
+          API again).
+        required: true
+      media_id:
+        description: "MorphoSource media ID (e.g., 000840215). Identifies the artifact from the previous run."
+        required: true
+      out_dir:
+        description: "Directory to place downloaded mesh files"
+        required: false
+        default: "downloads"
+
+permissions:
+  contents: write
+  actions: read          # needed to download artifacts from other runs
+
+jobs:
+  slicer-analysis:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Validate inputs
+        run: |
+          if [ -z "${{ inputs.previous_run_id }}" ]; then
+            echo "::error::'previous_run_id' is required."
+            exit 1
+          fi
+          if [ -z "${{ inputs.media_id }}" ]; then
+            echo "::error::'media_id' is required."
+            exit 1
+          fi
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install requests
+
+      # ── Fetch mesh files from a previous run's artifact ─────────────────
+      - name: Download artifact from previous run
+        uses: actions/download-artifact@v4
+        with:
+          name: morphosource-download-${{ inputs.media_id }}
+          path: ${{ inputs.out_dir }}
+          run-id: ${{ inputs.previous_run_id }}
+          github-token: ${{ github.token }}
+
+      # ── Extract any .zip archives in the download directory ─────────────
+      - name: Unzip downloaded archives
+        run: |
+          echo "── Contents of ${{ inputs.out_dir }} BEFORE extraction ──"
+          find "${{ inputs.out_dir }}" -type f 2>/dev/null || echo "(empty)"
+          echo ""
+          cd "${{ inputs.out_dir }}"
+          shopt -s nullglob
+          for f in *.zip; do
+            echo "Extracting: $f"
+            unzip -o "$f" -d "${f%.zip}" \
+              && echo "  ✅ Extracted successfully" \
+              || echo "::warning::Failed to extract $f"
+          done
+          shopt -u nullglob
+          echo ""
+          echo "── Contents of ${{ inputs.out_dir }} AFTER extraction ──"
+          find "." -type f | head -100
+
+      # ── Download and install 3D Slicer ──────────────────────────────────
+      - name: Install system dependencies for Slicer
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libglu1-mesa \
+            libxi6 \
+            libxrender1 \
+            libxtst6 \
+            libxrandr2 \
+            libxcursor1 \
+            libxcomposite1 \
+            libxdamage1 \
+            libxfixes3 \
+            libxss1 \
+            libnss3 \
+            libasound2 \
+            libpulse0 \
+            xvfb \
+            x11-utils \
+            libgl1-mesa-dri \
+            libglx-mesa0 \
+            libegl1-mesa \
+            mesa-utils \
+            libdbus-1-3 \
+            libsm6 \
+            libice6 \
+            libfontconfig1 \
+            libxkbcommon0
+
+      - name: Download 3D Slicer for Linux
+        run: |
+          echo "Downloading 3D Slicer …"
+          mkdir -p /tmp/slicer-download
+          curl -L -o /tmp/slicer-download/Slicer.tar.gz \
+            "https://download.slicer.org/bitstream/6911b598ac7b1c95e7934427"
+          echo "Download complete. File size:"
+          ls -lh /tmp/slicer-download/Slicer.tar.gz
+
+      - name: Extract 3D Slicer
+        id: install_slicer
+        run: |
+          echo "Extracting 3D Slicer …"
+          mkdir -p /opt/slicer
+          tar -xzf /tmp/slicer-download/Slicer.tar.gz -C /opt/slicer --strip-components=1 \
+            || tar -xf /tmp/slicer-download/Slicer.tar.gz -C /opt/slicer --strip-components=1
+          echo "Slicer directory contents:"
+          ls -la /opt/slicer/ | head -20
+
+          # Locate the Slicer executable
+          SLICER_BIN=$(find /opt/slicer -maxdepth 1 -name "Slicer" -type f 2>/dev/null | head -1)
+          if [ -z "$SLICER_BIN" ]; then
+            SLICER_BIN=$(find /opt/slicer -name "Slicer" -type f 2>/dev/null | head -1)
+          fi
+          if [ -z "$SLICER_BIN" ]; then
+            echo "::error::Could not find Slicer executable"
+            find /opt/slicer -type f -name "Slicer*" | head -10
+            exit 1
+          fi
+          chmod +x "$SLICER_BIN"
+          echo "slicer_bin=${SLICER_BIN}" >> "$GITHUB_OUTPUT"
+          echo "Found Slicer at: ${SLICER_BIN}"
+
+      - name: Verify Slicer installation
+        run: |
+          echo "Verifying Slicer …"
+          export DISPLAY=:99
+          Xvfb :99 -screen 0 1024x768x24 &
+          sleep 2
+          "${{ steps.install_slicer.outputs.slicer_bin }}" --version 2>&1 || true
+          echo "Slicer verification done."
+
+      # ── Run SlicerMorph analysis ────────────────────────────────────────
+      - name: Run SlicerMorph analysis
+        id: analyze
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          DISPLAY: ":99"
+        run: |
+          # Ensure Xvfb is running
+          if ! pgrep -x Xvfb > /dev/null; then
+            Xvfb :99 -screen 0 1024x768x24 &
+            sleep 2
+          fi
+
+          python .github/scripts/slicer_morph_analysis.py \
+            --download-dir "${{ inputs.out_dir }}" \
+            --output-dir "artifacts" \
+            --slicer-executable "${{ steps.install_slicer.outputs.slicer_bin }}" \
+            --media-id "${{ inputs.media_id }}"
+
+      - name: Upload downloaded files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: slicermorph-download-${{ inputs.media_id }}
+          path: ${{ inputs.out_dir }}/**
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Upload analysis artifacts
+        if: steps.analyze.outputs.analysis_skipped != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: slicermorph-analysis-${{ inputs.media_id }}
+          path: artifacts/**
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Commit analysis results
+        if: steps.analyze.outputs.analysis_skipped != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Add SlicerMorph analysis for media ${{ inputs.media_id }}" || echo "No changes to commit"
+          git push origin HEAD:main
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "### SlicerMorph Analysis Summary"
+            echo ""
+            echo "- **Media ID**: \`${{ inputs.media_id }}\`"
+            echo "- **Source run**: [${{ inputs.previous_run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ inputs.previous_run_id }})"
+            echo ""
+            if [ "${{ steps.analyze.outputs.analysis_skipped }}" = "true" ]; then
+              echo "⚠️ **Analysis skipped**: ${{ steps.analyze.outputs.skip_reason }}"
+            else
+              echo "✅ **Analysis complete**"
+              echo ""
+              echo "- **Screenshots captured**: ${{ steps.analyze.outputs.screenshots_count || '0' }}"
+              echo "- **Analysis report**: \`${{ steps.analyze.outputs.analysis_report || 'N/A' }}\`"
+              echo ""
+              if [ -f "artifacts/slicermorph_analysis_${{ inputs.media_id }}.md" ]; then
+                cat "artifacts/slicermorph_analysis_${{ inputs.media_id }}.md"
+              fi
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
