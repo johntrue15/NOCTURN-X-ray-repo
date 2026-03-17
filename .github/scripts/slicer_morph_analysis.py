@@ -342,7 +342,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         mesh_files = find_mesh_files(download_dir, temp_root)
 
         if not mesh_files:
-            logger.warning("No supported mesh files found in %s — nothing to analyse.", download_dir)
+            logger.warning("No supported mesh files found in %s — nothing to analyze.", download_dir)
             _gh_output("analysis_skipped", "true")
             _gh_output("skip_reason", "No supported mesh files found in download directory")
             return
@@ -376,7 +376,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         if metrics_path.exists():
             metrics = json.loads(metrics_path.read_text(encoding="utf-8"))
             screenshot_paths = metrics.get("screenshots", [])
-            logger.info("Loaded metrics: %d mesh(es) analysed", metrics.get("loaded_count", 0))
+            logger.info("Loaded metrics: %d mesh(es) analyzed", metrics.get("loaded_count", 0))
 
         # Write report
         report_path = write_analysis_report(
