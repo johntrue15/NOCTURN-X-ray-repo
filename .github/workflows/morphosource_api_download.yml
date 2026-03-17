@@ -108,14 +108,14 @@ jobs:
           find "${{ inputs.out_dir }}" -type f 2>/dev/null || echo "(empty)"
           echo ""
           cd "${{ inputs.out_dir }}"
+          shopt -s nullglob
           for f in *.zip; do
-            if [ -f "$f" ]; then
-              echo "Extracting: $f"
-              unzip -o "$f" -d "${f%.zip}" \
-                && echo "  ✅ Extracted successfully" \
-                || echo "::warning::Failed to extract $f"
-            fi
+            echo "Extracting: $f"
+            unzip -o "$f" -d "${f%.zip}" \
+              && echo "  ✅ Extracted successfully" \
+              || echo "::warning::Failed to extract $f"
           done
+          shopt -u nullglob
           echo ""
           echo "── Contents of ${{ inputs.out_dir }} AFTER extraction ──"
           find "." -type f | head -100
