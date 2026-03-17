@@ -53,6 +53,8 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
                    help="Path to the 3D Slicer executable")
     p.add_argument("--media-id", default="unknown",
                    help="MorphoSource media ID (used in filenames)")
+    p.add_argument("--timeout", type=int, default=1800,
+                   help="Timeout in seconds for the Slicer subprocess (default: 1800)")
     return p.parse_args(argv)
 
 
@@ -326,6 +328,7 @@ def main(argv: Optional[List[str]] = None) -> None:
     output_dir: pathlib.Path = args.output_dir
     slicer_executable: pathlib.Path = args.slicer_executable
     media_id: str = args.media_id
+    timeout: int = args.timeout
 
     if not download_dir.exists():
         logger.error("Download directory %s does not exist", download_dir)
@@ -357,7 +360,7 @@ def main(argv: Optional[List[str]] = None) -> None:
 
         # Run Slicer
         try:
-            result = run_slicer_analysis(slicer_executable, slicer_script_path)
+            result = run_slicer_analysis(slicer_executable, slicer_script_path, timeout=timeout)
         except subprocess.TimeoutExpired:
             logger.error("Slicer analysis timed out")
             _gh_output("analysis_skipped", "true")

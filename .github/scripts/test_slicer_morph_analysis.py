@@ -237,6 +237,7 @@ class TestParseArgs(unittest.TestCase):
         self.assertEqual(args.slicer_executable, Path("/opt/slicer/Slicer"))
         self.assertEqual(args.output_dir, Path("artifacts"))
         self.assertEqual(args.media_id, "unknown")
+        self.assertEqual(args.timeout, 1800)
 
     def test_all_args(self):
         args = mod.parse_args([
@@ -244,11 +245,13 @@ class TestParseArgs(unittest.TestCase):
             "--output-dir", "/tmp/out",
             "--slicer-executable", "/opt/slicer/Slicer",
             "--media-id", "M123",
+            "--timeout", "3600",
         ])
         self.assertEqual(args.download_dir, Path("/tmp/dl"))
         self.assertEqual(args.output_dir, Path("/tmp/out"))
         self.assertEqual(args.slicer_executable, Path("/opt/slicer/Slicer"))
         self.assertEqual(args.media_id, "M123")
+        self.assertEqual(args.timeout, 3600)
 
     def test_missing_required_fails(self):
         with self.assertRaises(SystemExit):
