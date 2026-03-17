@@ -19,7 +19,7 @@ on:
         default: "downloads"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   download:
@@ -34,6 +34,10 @@ jobs:
 
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -41,7 +45,9 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install --upgrade pip requests
+        run: |
+          pip install --upgrade pip
+          pip install requests trimesh numpy matplotlib openai
 
       - name: Download from MorphoSource API
         id: download
@@ -53,6 +59,17 @@ jobs:
         run: |
           python .github/scripts/morphosource_api_download.py
 
+      - name: Analyze downloaded mesh files
+        id: analyze
+        if: steps.download.outputs.download_skipped != 'true'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python .github/scripts/analyze_downloaded_mesh.py \
+            --download-dir "${{ inputs.out_dir }}" \
+            --output-dir "artifacts" \
+            --media-id "${{ steps.download.outputs.media_id || 'unknown' }}"
+
       - name: Upload downloaded files
         if: steps.download.outputs.download_skipped != 'true'
         uses: actions/upload-artifact@v4
@@ -61,6 +78,24 @@ jobs:
           path: ${{ inputs.out_dir }}/**
           if-no-files-found: warn
           retention-days: 30
+
+      - name: Upload analysis artifacts
+        if: steps.analyze.outputs.analysis_skipped != 'true' && steps.download.outputs.download_skipped != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: morphosource-analysis-${{ steps.download.outputs.media_id || 'unknown' }}
+          path: artifacts/**
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Commit analysis results
+        if: steps.analyze.outputs.analysis_skipped != 'true' && steps.download.outputs.download_skipped != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Add mesh analysis for media ${{ steps.download.outputs.media_id || 'unknown' }}" || echo "No changes to commit"
+          git push origin HEAD:main
 
       - name: Job summary
         if: always()
@@ -80,5 +115,18 @@ jobs:
             else
               echo "✅ **Downloaded file**: \`${{ steps.download.outputs.downloaded_file || 'N/A' }}\`"
               echo "- **File size**: ${{ steps.download.outputs.downloaded_file_size || '0' }} bytes"
+              echo ""
+              if [ "${{ steps.analyze.outputs.analysis_skipped }}" != "true" ]; then
+                echo "### Mesh Analysis"
+                echo ""
+                echo "- **Screenshots captured**: ${{ steps.analyze.outputs.screenshots_count || '0' }}"
+                echo "- **Analysis report**: \`${{ steps.analyze.outputs.analysis_report || 'N/A' }}\`"
+                echo ""
+                if [ -f "artifacts/mesh_analysis_${{ steps.download.outputs.media_id || 'unknown' }}.md" ]; then
+                  cat "artifacts/mesh_analysis_${{ steps.download.outputs.media_id || 'unknown' }}.md"
+                fi
+              else
+                echo "ℹ️ **Analysis skipped**: ${{ steps.analyze.outputs.skip_reason || 'No mesh files found' }}"
+              fi
             fi
           } >> "$GITHUB_STEP_SUMMARY"
