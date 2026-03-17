@@ -178,7 +178,9 @@ jobs:
             --download-dir "${{ inputs.out_dir }}" \
             --output-dir "artifacts" \
             --slicer-executable "${{ steps.install_slicer.outputs.slicer_bin }}" \
-            --media-id "${{ inputs.media_id }}"
+            --media-id "${{ inputs.media_id }}" \
+            --timeout 300 \
+            --max-meshes 3
 
       - name: Upload downloaded files
         if: always()
