@@ -173,6 +173,7 @@ This document shows the relationships between GitHub Actions workflows and their
 ### MorphoSource API Download (`morphosource_api_download.yml`)
 **Manual trigger available**
 **Required Scripts:**
+- `.github/scripts/analyze_downloaded_mesh.py`
 - `.github/scripts/morphosource_api_download.py`
 
 ### Parquet Data Grapher (`parquet_grapher.yml`)
@@ -285,6 +286,10 @@ This section shows which workflows use each script:
 ### analyze_dependencies.py
 **Used in Workflows:**
 - `analyze_dependencies.yml`
+
+### analyze_downloaded_mesh.py
+**Used in Workflows:**
+- `morphosource_api_download.yml`
 
 ### check_modified_morphosource.py
 **Used in Workflows:**
