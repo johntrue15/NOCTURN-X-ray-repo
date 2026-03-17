@@ -109,7 +109,14 @@ jobs:
             libsm6 \
             libice6 \
             libfontconfig1 \
-            libxkbcommon0
+            libxkbcommon0 \
+            libxcb-icccm4 \
+            libxcb-image0 \
+            libxcb-keysyms1 \
+            libxcb-render-util0 \
+            libxcb-xinerama0 \
+            libxcb-xkb1 \
+            libxkbcommon-x11-0
 
       - name: Download 3D Slicer for Linux
         run: |
