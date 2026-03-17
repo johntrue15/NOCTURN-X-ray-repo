@@ -99,6 +99,7 @@ jobs:
             libnss3 \
             libasound2 \
             libpulse0 \
+            libpulse-mainloop-glib0 \
             xvfb \
             x11-utils \
             libgl1-mesa-dri \
