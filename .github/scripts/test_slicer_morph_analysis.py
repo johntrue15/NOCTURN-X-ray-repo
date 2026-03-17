@@ -237,7 +237,8 @@ class TestParseArgs(unittest.TestCase):
         self.assertEqual(args.slicer_executable, Path("/opt/slicer/Slicer"))
         self.assertEqual(args.output_dir, Path("artifacts"))
         self.assertEqual(args.media_id, "unknown")
-        self.assertEqual(args.timeout, 1800)
+        self.assertEqual(args.timeout, 300)
+        self.assertEqual(args.max_meshes, 3)
 
     def test_all_args(self):
         args = mod.parse_args([
@@ -252,6 +253,22 @@ class TestParseArgs(unittest.TestCase):
         self.assertEqual(args.slicer_executable, Path("/opt/slicer/Slicer"))
         self.assertEqual(args.media_id, "M123")
         self.assertEqual(args.timeout, 3600)
+
+    def test_max_meshes_arg(self):
+        args = mod.parse_args([
+            "--download-dir", "/tmp/dl",
+            "--slicer-executable", "/opt/slicer/Slicer",
+            "--max-meshes", "5",
+        ])
+        self.assertEqual(args.max_meshes, 5)
+
+    def test_max_meshes_zero_unlimited(self):
+        args = mod.parse_args([
+            "--download-dir", "/tmp/dl",
+            "--slicer-executable", "/opt/slicer/Slicer",
+            "--max-meshes", "0",
+        ])
+        self.assertEqual(args.max_meshes, 0)
 
     def test_missing_required_fails(self):
         with self.assertRaises(SystemExit):

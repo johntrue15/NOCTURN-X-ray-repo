@@ -53,8 +53,11 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
                    help="Path to the 3D Slicer executable")
     p.add_argument("--media-id", default="unknown",
                    help="MorphoSource media ID (used in filenames)")
-    p.add_argument("--timeout", type=int, default=1800,
-                   help="Timeout in seconds for the Slicer subprocess (default: 1800)")
+    p.add_argument("--timeout", type=int, default=300,
+                   help="Timeout in seconds for the Slicer subprocess (default: 300)")
+    p.add_argument("--max-meshes", type=int, default=3,
+                   help="Maximum number of mesh files to process (default: 3). "
+                        "Keeps CI fast; set to 0 for unlimited.")
     return p.parse_args(argv)
 
 
@@ -329,6 +332,7 @@ def main(argv: Optional[List[str]] = None) -> None:
     slicer_executable: pathlib.Path = args.slicer_executable
     media_id: str = args.media_id
     timeout: int = args.timeout
+    max_meshes: int = args.max_meshes
 
     if not download_dir.exists():
         logger.error("Download directory %s does not exist", download_dir)
@@ -351,6 +355,13 @@ def main(argv: Optional[List[str]] = None) -> None:
             return
 
         logger.info("Found %d mesh file(s): %s", len(mesh_files), mesh_files)
+
+        if max_meshes > 0 and len(mesh_files) > max_meshes:
+            logger.info(
+                "Capping mesh list from %d to %d (--max-meshes %d)",
+                len(mesh_files), max_meshes, max_meshes,
+            )
+            mesh_files = mesh_files[:max_meshes]
 
         # Generate the Slicer Python script
         slicer_script_content = generate_slicer_script(mesh_files, output_dir, media_id)
