@@ -180,7 +180,7 @@ jobs:
             --slicer-executable "${{ steps.install_slicer.outputs.slicer_bin }}" \
             --media-id "${{ inputs.media_id }}" \
             --timeout 300 \
-            --max-meshes 3
+            --max-meshes 1
 
       - name: Upload downloaded files
         if: always()

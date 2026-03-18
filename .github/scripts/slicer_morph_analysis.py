@@ -55,8 +55,8 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
                    help="MorphoSource media ID (used in filenames)")
     p.add_argument("--timeout", type=int, default=300,
                    help="Timeout in seconds for the Slicer subprocess (default: 300)")
-    p.add_argument("--max-meshes", type=int, default=3,
-                   help="Maximum number of mesh files to process (default: 3). "
+    p.add_argument("--max-meshes", type=int, default=1,
+                   help="Maximum number of mesh files to process (default: 1). "
                         "Keeps CI fast; set to 0 for unlimited.")
     return p.parse_args(argv)
 
@@ -117,35 +117,13 @@ def generate_slicer_script(
         #
         # SlicerMorph analysis script — executed inside headless 3D Slicer
         #
-        import json, os, sys, time
+        import json, os, sys
 
         output_dir = {output_dir_str!r}
         media_id = {media_id!r}
         mesh_paths = {mesh_paths_json}
 
         os.makedirs(output_dir, exist_ok=True)
-
-        # ── Install SlicerMorph extension ──────────────────────────────────
-        em = slicer.app.extensionsManagerModel()
-        if em is not None:
-            slicer.app.processEvents()
-            installed = [em.extensionMetadataByName(em.installedExtensions[i]).get("extensionName", "")
-                         for i in range(em.installedExtensionsCount)]
-            if "SlicerMorph" not in installed:
-                print("Installing SlicerMorph extension...")
-                md = em.retrieveExtensionMetadataByName("SlicerMorph")
-                if md and md.get("extension_id"):
-                    em.downloadAndInstallExtensionByName("SlicerMorph")
-                    slicer.app.processEvents()
-                    time.sleep(5)
-                    slicer.app.processEvents()
-                    print("SlicerMorph installation requested.")
-                else:
-                    print("WARNING: SlicerMorph metadata not found in extension index.")
-            else:
-                print("SlicerMorph is already installed.")
-        else:
-            print("WARNING: Extension manager not available.")
 
         # ── Load mesh files ────────────────────────────────────────────────
         all_metrics = []
