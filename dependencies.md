@@ -17,12 +17,11 @@ This document shows the relationships between GitHub Actions workflows and their
   Scripts:
   - `.github/scripts/ct_to_text.py`
 
----
+- `modified_morphosource.yml`
+  Scripts:
+  - `.github/scripts/check_modified_morphosource.py`
 
-### GitHub Pages Content Generation (`github-pages.yml`)
-
-**Schedule:** Cron: 0 * * * *
-
+- `update_readme.yml`
 
 ---
 
@@ -56,9 +55,64 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ---
 
+### Wiki Generation (`wiki-generation.yml`)
+
+**Schedule:** Monthly on day 1 at 0:0
+
+**Required Scripts:**
+- `.github/scripts/release_analysis.py`
+
+
+---
+
 ### Cleanup CT Error Releases (`cleanup_ct_error_releases.yml`)
 
 **Schedule:** Cron: 0 */6 * * *
+
+
+---
+
+### GitHub Pages Content Generation (`github-pages.yml`)
+
+**Schedule:** Cron: 0 */6 * * *
+
+**Required Scripts:**
+- `.github/scripts/generate_taxonomy_explorer.py`
+
+
+---
+
+### Dataset Quality Metrics (`quality-metrics.yml`)
+
+**Schedule:** Cron: 0 10 * * 0
+
+**Required Scripts:**
+- `.github/scripts/quality_metrics.py`
+
+
+---
+
+### Daily Deep Analysis Orchestrator (`daily-analysis-orchestrator.yml`)
+
+**Schedule:** Cron: 0 6 * * *
+
+**Required Scripts:**
+- `.github/scripts/score_records.py`
+
+**Triggers Workflows:**
+
+- `cross-specimen-analysis.yml`
+  Scripts:
+  - `.github/scripts/cross_specimen_compare.py`
+
+---
+
+### Weekly Trend Report (`weekly-trend-report.yml`)
+
+**Schedule:** Cron: 0 8 * * 0
+
+**Required Scripts:**
+- `.github/scripts/weekly_trends.py`
 
 
 ---
@@ -84,27 +138,7 @@ This document shows the relationships between GitHub Actions workflows and their
 
 ---
 
-### Wiki Generation (`wiki-generation.yml`)
-
-**Schedule:** Weekly on Sunday at midnight
-
-**Required Scripts:**
-- `.github/scripts/release_analysis.py`
-
-
----
-
 ## Other Workflows
-
-### Auto Code Generation with Claude on Issue (`Claude_issue_automation.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/generate_code.py`
-
-### OpenAI Release Analysis (`OpenAI-release-analysis.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/OpenAI-release-analysis.py`
 
 ### Analyze Workflow Dependencies (`analyze_dependencies.yml`)
 **Manual trigger available**
@@ -114,13 +148,6 @@ This document shows the relationships between GitHub Actions workflows and their
 ### Audit CT Text Releases (`audit_ct_releases.yml`)
 **Manual trigger available**
 
-### Code Review and Analysis (`code_review_workflow.yml`)
-**Triggered by:**
-- `Auto Code Generation with Claude on Issue`
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/analyze_code.py`
-
 ### MorphoSource CT API Pipeline (`combined_ct_images_to_text.yml`)
 **Manual trigger available**
 **Required Scripts:**
@@ -129,6 +156,13 @@ This document shows the relationships between GitHub Actions workflows and their
 ### Compress Data Directory (`compress-data.yml`)
 **Manual trigger available**
 
+### Cross-Specimen Comparison (`cross-specimen-analysis.yml`)
+**Triggered by:**
+- `Daily Deep Analysis Orchestrator`
+**Manual trigger available**
+**Required Scripts:**
+- `.github/scripts/cross_specimen_compare.py`
+
 ### CT to Text Analysis (`ct_to_text.yml`)
 **Triggered by:**
 - `Parse MorphoSource API (total_count + latest record)`
@@ -136,39 +170,19 @@ This document shows the relationships between GitHub Actions workflows and their
 **Required Scripts:**
 - `.github/scripts/ct_to_text.py`
 
-### Close All Issues (`delete-all-issues.yml`)
-**Manual trigger available**
-
 ### Deploy GitHub Pages (`deploy-pages.yml`)
-
-### 2D or 3D Media Analysis (`dimension_test.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/dimension_media_fetcher.py`
-- `.github/scripts/iiif_manifest_viewer.py`
-- `.github/scripts/mesh_analysis.py`
 
 ### Fetch MorphoSource media (by ID) (`fetch_morphosource_media.yml`)
 **Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/fetch_morphosource_media.py`
 
-### Issue Workflow Dependency Check (`issue-dependency-check.yml`)
-
-### Metadata Record Extractor (`metadata_record_extract.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/metadata_record_extract.py`
-
 ### Check Modified MorphoSource Records (`modified_morphosource.yml`)
 **Triggered by:**
-- `Parse MorphoSource Data`
+- `Parse MorphoSource API (total_count + latest record)`
 **Manual trigger available**
 **Required Scripts:**
 - `.github/scripts/check_modified_morphosource.py`
-
-### MorphoSource Download (`morphosource-download.yml`)
-**Manual trigger available**
 
 ### MorphoSource API Download (`morphosource_api_download.yml`)
 **Manual trigger available**
@@ -186,17 +200,6 @@ This document shows the relationships between GitHub Actions workflows and their
 **Required Scripts:**
 - `.github/scripts/parquet_processor.py`
 
-### Parse MorphoSource Data (`parse_morphosource.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/scrape_morphosource.py`
-
-### Release Analysis and Wiki Generation (`release_analysis.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/release_analysis.py`
-- `.github/scripts/release_analyzer.py`
-
 ### Retrigger CT to Text Analysis (`retrigger_ct_analysis.yml`)
 **Manual trigger available**
 
@@ -207,61 +210,9 @@ This document shows the relationships between GitHub Actions workflows and their
 **Required Scripts:**
 - `.github/scripts/slicer_morph_analysis.py`
 
-### Test Attestation Generation (`test-attestation.yml`)
-**Manual trigger available**
-
-### Test URL Processing Workflow (`test-run-run.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/2D3D_check.py`
-- `.github/scripts/ct_image_to_text.py`
-- `.github/scripts/ct_slices_to_text.py`
-- `.github/scripts/url_screenshot_check.py`
-
-### 3D Screenshot Tests (`test_3d_screenshot.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/test_3D_screenshot.py`
-
-### Test 3D Screenshot with Prompt (`test_3d_screenshot_prompt.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/analyze_ct_images.py`
-- `.github/scripts/test_3D_screenshot.py`
-
-### Test MorphoSource Screenshots Analysis (`test_3d_screenshots_prompt.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/ct_image_to_text.py`
-
-### Test Workflow (`test_commit_workflow.yml`)
-**Manual trigger available**
-
-### Test Daily Check (`test_daily.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/daily.py`
-- `.github/scripts/test_daily.py`
-
-### Test Monthly Collection (`test_monthly.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/test_monthly.py`
-
-### Test Parquet Results Aggregator (`test_parquet_aggregator.yml`)
-**Manual trigger available**
-
-### Test Parquet Processing Coordinator (`test_parquet_coordinator.yml`)
-**Manual trigger available**
-
-### Test Parquet Data Processor (`test_parquet_processor.yml`)
-**Manual trigger available**
-**Required Scripts:**
-- `.github/scripts/test_parquet_processor.py`
-
 ### Update README (`update_readme.yml`)
 **Triggered by:**
-- `Parse MorphoSource Data`
+- `Parse MorphoSource API (total_count + latest record)`
 **Manual trigger available**
 
 ### Workflow Monitor (`workflow-monitor.yml`)
@@ -271,22 +222,6 @@ This document shows the relationships between GitHub Actions workflows and their
 ## Scripts and Their Workflows
 
 This section shows which workflows use each script:
-
-### 2D3D_check.py
-**Used in Workflows:**
-- `test-run-run.yml`
-
-### OpenAI-release-analysis.py
-**Used in Workflows:**
-- `OpenAI-release-analysis.yml`
-
-### analyze_code.py
-**Used in Workflows:**
-- `code_review_workflow.yml`
-
-### analyze_ct_images.py
-**Used in Workflows:**
-- `test_3d_screenshot_prompt.yml`
 
 ### analyze_dependencies.py
 **Used in Workflows:**
@@ -304,14 +239,9 @@ This section shows which workflows use each script:
 **Used in Workflows:**
 - `release-reactions.yml`
 
-### ct_image_to_text.py
+### cross_specimen_compare.py
 **Used in Workflows:**
-- `test-run-run.yml`
-- `test_3d_screenshots_prompt.yml`
-
-### ct_slices_to_text.py
-**Used in Workflows:**
-- `test-run-run.yml`
+- `cross-specimen-analysis.yml`
 
 ### ct_to_text.py
 **Used in Workflows:**
@@ -320,11 +250,6 @@ This section shows which workflows use each script:
 ### daily.py
 **Used in Workflows:**
 - `daily.yml`
-- `test_daily.yml`
-
-### dimension_media_fetcher.py
-**Used in Workflows:**
-- `dimension_test.yml`
 
 ### fetch_morphosource_media.py
 **Used in Workflows:**
@@ -334,21 +259,9 @@ This section shows which workflows use each script:
 **Used in Workflows:**
 - `finetune-model.yml`
 
-### generate_code.py
+### generate_taxonomy_explorer.py
 **Used in Workflows:**
-- `Claude_issue_automation.yml`
-
-### iiif_manifest_viewer.py
-**Used in Workflows:**
-- `dimension_test.yml`
-
-### mesh_analysis.py
-**Used in Workflows:**
-- `dimension_test.yml`
-
-### metadata_record_extract.py
-**Used in Workflows:**
-- `metadata_record_extract.yml`
+- `github-pages.yml`
 
 ### monthly.py
 **Used in Workflows:**
@@ -382,40 +295,22 @@ This section shows which workflows use each script:
 **Used in Workflows:**
 - `combined_ct_images_to_text.yml`
 
+### quality_metrics.py
+**Used in Workflows:**
+- `quality-metrics.yml`
+
 ### release_analysis.py
 **Used in Workflows:**
-- `release_analysis.yml`
 - `wiki-generation.yml`
 
-### release_analyzer.py
+### score_records.py
 **Used in Workflows:**
-- `release_analysis.yml`
-
-### scrape_morphosource.py
-**Used in Workflows:**
-- `parse_morphosource.yml`
+- `daily-analysis-orchestrator.yml`
 
 ### slicer_morph_analysis.py
 **Used in Workflows:**
 - `slicer_morph_analysis.yml`
 
-### test_3D_screenshot.py
+### weekly_trends.py
 **Used in Workflows:**
-- `test_3d_screenshot.yml`
-- `test_3d_screenshot_prompt.yml`
-
-### test_daily.py
-**Used in Workflows:**
-- `test_daily.yml`
-
-### test_monthly.py
-**Used in Workflows:**
-- `test_monthly.yml`
-
-### test_parquet_processor.py
-**Used in Workflows:**
-- `test_parquet_processor.yml`
-
-### url_screenshot_check.py
-**Used in Workflows:**
-- `test-run-run.yml`
+- `weekly-trend-report.yml`
