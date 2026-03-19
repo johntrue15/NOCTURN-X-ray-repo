@@ -3,7 +3,7 @@ name: Update README
 on:
   workflow_run:
     workflows: 
-      - "Parse MorphoSource Data"  # Trigger on MorphoSource updates
+      - "Parse MorphoSource API (total_count + latest record)"
     types: [completed]
   workflow_dispatch:  # Keep manual trigger for testing
 

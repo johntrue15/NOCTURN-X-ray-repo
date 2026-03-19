@@ -1,0 +1,102 @@
+name: Cross-Specimen Comparison
+
+on:
+  workflow_run:
+    workflows: ["Daily Deep Analysis Orchestrator"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      media_id:
+        description: "MorphoSource media ID to compare"
+        required: true
+        type: string
+      source_tag:
+        description: "CT-to-Text release tag"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install openai
+
+      - name: Resolve inputs
+        id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -n "${{ inputs.media_id }}" ]; then
+            echo "media_id=${{ inputs.media_id }}" >> "$GITHUB_OUTPUT"
+            echo "source_tag=${{ inputs.source_tag }}" >> "$GITHUB_OUTPUT"
+          else
+            # Find the latest daily-deep-analysis release to get media_id
+            latest=$(gh api -H "Accept: application/vnd.github+json" \
+              /repos/$GITHUB_REPOSITORY/releases \
+              --jq '[.[] | select(.tag_name | startswith("daily-deep-analysis-"))][0]')
+
+            media_id=$(echo "$latest" | jq -r '.body' | grep -oP 'Media ID.*?`\K[0-9]+' || echo "")
+            source_tag=$(echo "$latest" | jq -r '.body' | grep -oP 'Source CT-to-Text release:\s*\K\S+' || echo "")
+
+            echo "media_id=${media_id}" >> "$GITHUB_OUTPUT"
+            echo "source_tag=${source_tag}" >> "$GITHUB_OUTPUT"
+
+            if [ -z "$media_id" ]; then
+              echo "::warning::Could not resolve media ID from latest deep analysis"
+            fi
+          fi
+
+      - name: Run comparison
+        if: steps.resolve.outputs.media_id != ''
+        id: compare
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MEDIA_ID: ${{ steps.resolve.outputs.media_id }}
+          SOURCE_TAG: ${{ steps.resolve.outputs.source_tag }}
+        run: python .github/scripts/cross_specimen_compare.py
+
+      - name: Generate timestamp
+        id: ts
+        run: echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> "$GITHUB_OUTPUT"
+
+      - name: Create release
+        if: steps.resolve.outputs.media_id != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create \
+            "cross-specimen-${{ steps.ts.outputs.timestamp }}" \
+            --title "Cross-Specimen Comparison #${{ steps.ts.outputs.timestamp }}" \
+            --notes-file comparison_report.md
+
+      - name: Summary
+        if: steps.resolve.outputs.media_id != ''
+        run: |
+          {
+            echo "### Cross-Specimen Comparison"
+            echo ""
+            echo "- **Media ID**: \`${{ steps.resolve.outputs.media_id }}\`"
+            echo "- **Similar records found**: ${{ steps.compare.outputs.similar_count }}"
+            echo ""
+            cat comparison_report.md
+          } >> "$GITHUB_STEP_SUMMARY"

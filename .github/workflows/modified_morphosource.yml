@@ -3,7 +3,7 @@ name: Check Modified MorphoSource Records
 on:
   workflow_run:
     workflows: 
-      - "Parse MorphoSource Data"  # Trigger after Parse MorphoSource completes
+      - "Parse MorphoSource API (total_count + latest record)"
     types: [completed]
   workflow_dispatch:  # Allow manual triggering for testing
 

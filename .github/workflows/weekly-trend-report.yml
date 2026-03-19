@@ -1,0 +1,67 @@
+name: Weekly Trend Report
+
+on:
+  schedule:
+    - cron: '0 8 * * 0'  # Sundays at 8 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  trends:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate trend report
+        id: trends
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python .github/scripts/weekly_trends.py
+
+      - name: Generate timestamp
+        id: ts
+        run: echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> "$GITHUB_OUTPUT"
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create \
+            "weekly-trend-${{ steps.ts.outputs.timestamp }}" \
+            --title "Weekly Trend Report #${{ steps.ts.outputs.timestamp }}" \
+            --notes-file weekly_trends.md
+
+      - name: Commit trend data
+        run: |
+          mkdir -p data/trends
+          cp weekly_trends.md "data/trends/weekly_trends_$(date +'%Y-%m-%d').md"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/trends/
+          git commit -m "Add weekly trend report $(date +'%Y-%m-%d')" || echo "No changes"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Summary
+        run: |
+          {
+            echo "### Weekly Trend Report"
+            echo ""
+            echo "- **New records this week**: ${{ steps.trends.outputs.total_new }}"
+            echo "- **Top taxonomy**: ${{ steps.trends.outputs.top_taxonomy }}"
+            echo ""
+            cat weekly_trends.md
+          } >> "$GITHUB_STEP_SUMMARY"

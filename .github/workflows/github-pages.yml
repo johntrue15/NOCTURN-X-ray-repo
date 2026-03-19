@@ -2,7 +2,7 @@ name: GitHub Pages Content Generation
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Runs every hour
+    - cron: '0 */6 * * *'  # Runs every 6 hours
   workflow_dispatch:  # Allows manual trigger
 
 permissions:
@@ -1793,6 +1793,13 @@ jobs:
           
           echo "::notice title=Content Generation::GitHub Pages content generated successfully"
       
+      - name: Generate Taxonomy Explorer
+        env:
+          GH_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        run: |
+          python .github/scripts/generate_taxonomy_explorer.py || echo "::warning::Taxonomy explorer generation failed (non-fatal)"
+          echo "::notice title=Taxonomy Explorer::Generation complete"
+
       - name: Post-Generation Debug Report
         run: |
           echo "::group::Post-Generation Debug Info"

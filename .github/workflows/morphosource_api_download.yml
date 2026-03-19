@@ -1,6 +1,33 @@
 name: MorphoSource API Download
 
 on:
+  workflow_call:
+    inputs:
+      api_record_json:
+        description: "Full JSON record from parse_morphosource API output."
+        required: false
+        type: string
+        default: ""
+      media_id:
+        description: "MorphoSource media ID (e.g., 000840215)."
+        required: false
+        type: string
+        default: ""
+      out_dir:
+        description: "Directory to save downloads"
+        required: false
+        type: string
+        default: "downloads"
+      previous_run_id:
+        description: "Run ID of a previous workflow run whose download artifact will be re-used."
+        required: false
+        type: string
+        default: ""
+    secrets:
+      MORPHOSOURCE_API_KEY:
+        required: false
+      OPENAI_API_KEY:
+        required: false
   workflow_dispatch:
     inputs:
       api_record_json:

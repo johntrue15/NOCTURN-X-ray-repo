@@ -1,0 +1,168 @@
+name: Daily Deep Analysis Orchestrator
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # 6 AM UTC, after overnight CT-to-Text processing
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: daily-deep-analysis
+  cancel-in-progress: false
+
+jobs:
+  # ── Step 1: Score records, verify open download, pick the best ────
+  select-record:
+    runs-on: ubuntu-latest
+    outputs:
+      has_candidate: ${{ steps.score.outputs.has_candidate }}
+      best_media_id: ${{ steps.score.outputs.best_media_id }}
+      best_tag: ${{ steps.score.outputs.best_tag }}
+      best_score: ${{ steps.score.outputs.best_score }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Score records and select candidate
+        id: score
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MORPHOSOURCE_API_KEY: ${{ secrets.MORPHOSOURCE_API_KEY }}
+          ANALYZED_FILE: .github/analyzed_records.txt
+          BLACKLIST_FILE: .github/blacklist.txt
+          LOOKBACK_HOURS: "48"
+          MAX_API_CHECKS: "10"
+        run: python .github/scripts/score_records.py
+
+      - name: Summary
+        run: |
+          {
+            echo "### Record Selection"
+            echo ""
+            if [ "${{ steps.score.outputs.has_candidate }}" = "true" ]; then
+              echo "- **Selected media ID**: \`${{ steps.score.outputs.best_media_id }}\`"
+              echo "- **Source release**: ${{ steps.score.outputs.best_tag }}"
+              echo "- **Score**: ${{ steps.score.outputs.best_score }}"
+              echo "- **Verified**: open download on MorphoSource"
+            else
+              echo "No open-download candidate found for deep analysis today."
+              echo ""
+              echo "Candidates checked (may all be restricted or already analyzed):"
+              echo '```json'
+              echo '${{ steps.score.outputs.candidates_json }}'
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ── Step 2: Download the verified-open record from MorphoSource ───
+  download:
+    needs: select-record
+    if: needs.select-record.outputs.has_candidate == 'true'
+    uses: ./.github/workflows/morphosource_api_download.yml
+    with:
+      media_id: ${{ needs.select-record.outputs.best_media_id }}
+      out_dir: "downloads"
+    secrets:
+      MORPHOSOURCE_API_KEY: ${{ secrets.MORPHOSOURCE_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+  # ── Step 3: Run SlicerMorph analysis on the downloaded mesh ───────
+  slicer-analysis:
+    needs: [select-record, download]
+    if: needs.select-record.outputs.has_candidate == 'true' && needs.download.result == 'success'
+    uses: ./.github/workflows/slicer_morph_analysis.yml
+    with:
+      previous_run_id: ${{ github.run_id }}
+      media_id: ${{ needs.select-record.outputs.best_media_id }}
+      out_dir: "downloads"
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+  # ── Step 4: Create summary release and update tracking ────────────
+  finalize:
+    needs: [select-record, download, slicer-analysis]
+    if: always() && needs.select-record.outputs.has_candidate == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Generate timestamp
+        id: ts
+        run: echo "timestamp=$(date +'%Y-%m-%d_%H-%M-%S')" >> "$GITHUB_OUTPUT"
+
+      - name: Build release notes
+        id: notes
+        env:
+          MEDIA_ID: ${{ needs.select-record.outputs.best_media_id }}
+          SOURCE_TAG: ${{ needs.select-record.outputs.best_tag }}
+          SCORE: ${{ needs.select-record.outputs.best_score }}
+          DOWNLOAD_RESULT: ${{ needs.download.result }}
+          SLICER_RESULT: ${{ needs.slicer-analysis.result }}
+        run: |
+          cat > release_notes.md << EOF
+          ## Daily Deep Analysis
+
+          **Media ID**: \`${MEDIA_ID}\`
+          **Source CT-to-Text release**: ${SOURCE_TAG}
+          **Interestingness score**: ${SCORE}
+
+          ### Pipeline Results
+
+          | Stage | Result |
+          |-------|--------|
+          | Record selection (open-download verified) | success |
+          | MorphoSource download | ${DOWNLOAD_RESULT} |
+          | SlicerMorph analysis | ${SLICER_RESULT} |
+
+          ---
+          *Automatically selected and analyzed by the Daily Deep Analysis Orchestrator.*
+          EOF
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create \
+            "daily-deep-analysis-${{ steps.ts.outputs.timestamp }}" \
+            --title "Daily Deep Analysis #${{ steps.ts.outputs.timestamp }}" \
+            --notes-file release_notes.md
+
+      - name: Update analyzed records tracking
+        if: needs.download.result == 'success'
+        env:
+          MEDIA_ID: ${{ needs.select-record.outputs.best_media_id }}
+        run: |
+          echo "$MEDIA_ID" >> .github/analyzed_records.txt
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/analyzed_records.txt
+          git commit -m "Track analyzed record ${MEDIA_ID}" || echo "No changes to commit"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Warn on download failure
+        if: needs.download.result != 'success'
+        run: |
+          echo "::warning::Download failed for media ${{ needs.select-record.outputs.best_media_id }}."
+          echo "The record was NOT added to analyzed_records.txt so it can be retried."
+          echo "Download result: ${{ needs.download.result }}"

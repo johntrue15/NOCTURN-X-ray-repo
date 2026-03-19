@@ -1,6 +1,24 @@
 name: SlicerMorph Analysis
 
 on:
+  workflow_call:
+    inputs:
+      previous_run_id:
+        description: "Run ID of a previous MorphoSource API Download workflow run."
+        required: true
+        type: string
+      media_id:
+        description: "MorphoSource media ID (e.g., 000840215)."
+        required: true
+        type: string
+      out_dir:
+        description: "Directory to place downloaded mesh files"
+        required: false
+        type: string
+        default: "downloads"
+    secrets:
+      OPENAI_API_KEY:
+        required: false
   workflow_dispatch:
     inputs:
       previous_run_id:

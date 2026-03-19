@@ -2,7 +2,7 @@ name: Wiki Generation
 
 on:
   schedule:
-    - cron: '0 0 * * 0'  # Runs weekly on Sunday at midnight
+    - cron: '0 0 1 * *'  # Runs monthly on the 1st at midnight
   workflow_dispatch:      # Allows manual trigger
 
 env:
