@@ -1,9 +1,12 @@
 name: CT to Text Analysis
 
 on:
-  # Trigger when the MorphoSource API workflow completes successfully.
-  # Releases created by GITHUB_TOKEN do not fire 'release' events for other
-  # workflows, so we use workflow_run instead.
+  # Trigger when a new MorphoSource API release is published.
+  # GITHUB_TOKEN-created releases DO fire 'release' events in other workflows
+  # (only same-workflow recursion is blocked), so this is the primary trigger.
+  release:
+    types: [published]
+  # Also trigger on workflow_run as a fallback in case the release event is missed.
   workflow_run:
     workflows: ["Parse MorphoSource API (total_count + latest record)"]
     types: [completed]
@@ -17,9 +20,10 @@ on:
 jobs:
   analyze_ct:
     runs-on: ubuntu-latest
-    # Only run when the upstream workflow succeeded or on manual dispatch
+    # Run on release publish, manual dispatch, or successful upstream workflow_run
     if: >-
       github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'release' ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     permissions:
       contents: write
@@ -60,6 +64,10 @@ jobs:
             # Manual dispatch - fetch the specified release
             echo "Fetching specified release: ${{ github.event.inputs.release_tag }}"
             release=$(gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/releases/tags/"${{ github.event.inputs.release_tag }}")
+          elif [ "${{ github.event_name }}" = "release" ]; then
+            # Release event - use the published release directly
+            echo "Fetching release from publish event: ${{ github.event.release.tag_name }}"
+            release=$(gh api -H "Accept: application/vnd.github+json" /repos/$GITHUB_REPOSITORY/releases/tags/"${{ github.event.release.tag_name }}")
           else
             # Automatic trigger (workflow_run) - fetch the latest morphosource-api release
             echo "Fetching latest morphosource-api release"
@@ -208,11 +216,18 @@ jobs:
           steps.check_analysis.outputs.has_analysis != 'true'
         run: |
           # Use the release_body.txt file created in step 4
-          # Check if release body contains "New Record #" entries OR JSON API data
+          # Check if release body contains record data in any known format:
+          #   1. Legacy format: "New Record #NNN"
+          #   2. New API multi-record format: "## Record N: `ID`"
+          #   3. New API single-record format (no new delta): "### Full API JSON for latest record"
+          #   4. New API per-record format: "### Full API JSON for record NNN"
           if grep -q "^New Record #[0-9]" release_body.txt; then
-            echo "Release contains detailed record data"
+            echo "Release contains legacy detailed record data"
             echo "has_records=true" >> "$GITHUB_OUTPUT"
-          elif grep -q "### Full API JSON for latest record" release_body.txt; then
+          elif grep -E "^## Record [0-9]+" release_body.txt > /dev/null 2>&1; then
+            echo "Release contains new API multi-record data"
+            echo "has_records=true" >> "$GITHUB_OUTPUT"
+          elif grep -q "### Full API JSON for" release_body.txt; then
             echo "Release contains API JSON record data"
             echo "has_records=true" >> "$GITHUB_OUTPUT"
           else
