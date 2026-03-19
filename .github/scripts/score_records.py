@@ -114,19 +114,33 @@ def extract_media_id_from_tag(tag: str) -> str | None:
 
 
 def extract_media_id_from_body(body: str) -> str | None:
+    """Extract the first media ID found in a release body."""
+    ids = extract_all_media_ids_from_body(body)
+    return ids[0] if ids else None
+
+
+def extract_all_media_ids_from_body(body: str) -> list[str]:
+    """
+    Extract ALL distinct media IDs from a release body.
+    A multi-record release may contain several records, each with its own ID.
+    """
     patterns = [
-        r'"id"\s*:\s*\[\s*"(\d{6,12})"\s*\]',       # "id": ["000791519"]
-        r'"id"\s*:\s*"(\d{6,12})"',                   # "id": "000791519"
+        r'"id"\s*:\s*\[\s*"(\d{6,12})"\s*\]',
+        r'"id"\s*:\s*"(\d{6,12})"',
         r'"media_id"\s*:\s*"?(\d{6,12})"?',
+        r"\*\*Media ID:\*\*\s*(\d{6,12})",
         r"Media ID:\s*(\d{6,12})",
         r"Record #(\d{4,12})",
-        r"media/(\d{6,12})",
     ]
+    seen: set[str] = set()
+    ordered: list[str] = []
     for pat in patterns:
-        m = re.search(pat, body)
-        if m:
-            return m.group(1)
-    return None
+        for m in re.finditer(pat, body):
+            mid = m.group(1)
+            if mid not in seen:
+                seen.add(mid)
+                ordered.append(mid)
+    return ordered
 
 
 # ──────────────────── MorphoSource API verification ─────────────────
@@ -299,56 +313,59 @@ def main():
     ]
 
     # ── score and filter candidates ─────────────────────────────────
+    # A single CT-to-Text release may now cover multiple records; create
+    # one candidate per media ID found in the release body.
     candidates = []
     for r in ct_releases:
         body = r.get("body", "") or ""
-        media_id = extract_media_id_from_body(body)
+        media_ids = extract_all_media_ids_from_body(body)
 
-        # try to resolve media_id from the source morphosource-api release
+        # try to resolve from the source morphosource-api release
         source_ms_body = ""
-        if not media_id:
+        if not media_ids:
             ts = find_source_morphosource_tag(r)
             if ts:
                 for ms in ms_releases:
                     if ts in ms.get("tag_name", ""):
                         source_ms_body = ms.get("body", "") or ""
-                        media_id = extract_media_id_from_body(source_ms_body)
-                        if media_id:
+                        media_ids = extract_all_media_ids_from_body(source_ms_body)
+                        if media_ids:
                             break
 
-        if not media_id:
+        if not media_ids:
             print(f"  Skip {r['tag_name']}: no media ID found")
             continue
 
-        if media_id in analyzed_ids:
-            print(f"  Skip {r['tag_name']}: media {media_id} already analyzed")
-            continue
+        base_score = score_record(r, blacklist)
 
-        # ── fast visibility check from release body text ────────────
-        vis = extract_visibility_from_body(body)
-        if vis is None and source_ms_body:
-            vis = extract_visibility_from_body(source_ms_body)
-        if vis is None:
-            # look in the matching morphosource-api release if we haven't yet
-            for ms in ms_releases:
-                if media_id in ms.get("tag_name", ""):
-                    vis = extract_visibility_from_body(ms.get("body", "") or "")
-                    if vis:
-                        break
+        for media_id in media_ids:
+            if media_id in analyzed_ids:
+                print(f"  Skip {r['tag_name']}: media {media_id} already analyzed")
+                continue
 
-        if vis and vis != "open":
-            print(f"  Skip {r['tag_name']}: media {media_id} visibility='{vis}' (not open)")
-            continue
+            # ── fast visibility check from release body text ────────
+            vis = extract_visibility_from_body(body)
+            if vis is None and source_ms_body:
+                vis = extract_visibility_from_body(source_ms_body)
+            if vis is None:
+                for ms in ms_releases:
+                    if media_id in ms.get("tag_name", ""):
+                        vis = extract_visibility_from_body(ms.get("body", "") or "")
+                        if vis:
+                            break
 
-        s = score_record(r, blacklist)
-        candidates.append({
-            "tag": r["tag_name"],
-            "media_id": media_id,
-            "score": s,
-            "created_at": r.get("created_at", ""),
-            "body_visibility": vis or "unknown",
-        })
-        print(f"  Candidate: {r['tag_name']} media={media_id} vis={vis or '?'} score={s:.1f}")
+            if vis and vis != "open":
+                print(f"  Skip {r['tag_name']}: media {media_id} visibility='{vis}' (not open)")
+                continue
+
+            candidates.append({
+                "tag": r["tag_name"],
+                "media_id": media_id,
+                "score": base_score,
+                "created_at": r.get("created_at", ""),
+                "body_visibility": vis or "unknown",
+            })
+            print(f"  Candidate: {r['tag_name']} media={media_id} vis={vis or '?'} score={base_score:.1f}")
 
     if not candidates:
         print("No viable candidates found")
