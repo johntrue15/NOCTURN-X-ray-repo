@@ -1,0 +1,326 @@
+name: Error Check Release
+
+# Detects ct_analysis_error-* releases that have been missed and determines
+# whether a matching Process 2D / Process 3D release already exists.
+#
+# Behaviour (dry_run = true, the safe default):
+#   - Lists all ct_analysis_error-* releases and whether each has a matching
+#     ct_to_text_analysis-* release that references the same MorphoSource tag.
+#   - Uploads a Markdown report as a workflow artifact.
+#   - Creates a summary GitHub Release when missed records are found.
+#
+# Behaviour (dry_run = false):
+#   - In addition to the above, re-triggers ct_to_text.yml for every missed
+#     MorphoSource record so that the analysis can be completed.
+
+on:
+  # Run automatically after every successful Parse MorphoSource API run so
+  # that newly created error releases are caught as quickly as possible.
+  workflow_run:
+    workflows: ["Parse MorphoSource API (total_count + latest record)"]
+    types: [completed]
+
+  # Allow manual runs (e.g., for testing or one-off recovery).
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: >
+          Dry run: generate an output list of missed process2D/process3D
+          releases only – do NOT re-trigger MAW for missed records.
+        required: false
+        type: boolean
+        default: true
+      max_pages:
+        description: >
+          Maximum number of API pages to scan (100 releases/page).
+          0 means scan all pages.
+        required: false
+        type: string
+        default: '10'
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  check_and_recover:
+    runs-on: ubuntu-latest
+
+    # Only run when manually triggered OR when the upstream parse workflow
+    # completed successfully (avoid spurious runs on failures/cancellations).
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' &&
+       github.event.workflow_run.conclusion == 'success')
+
+    steps:
+      # ─────────────────────────────────────────────────────────────────────
+      # 1. Checkout
+      # ─────────────────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ─────────────────────────────────────────────────────────────────────
+      # 2. Collect error releases and check for matching analyses
+      # ─────────────────────────────────────────────────────────────────────
+      - name: Find error releases and check for matching Process 2D/3D
+        id: check_errors
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'true' }}
+          MAX_PAGES: ${{ github.event.inputs.max_pages || '10' }}
+        run: |
+          set -euo pipefail
+
+          echo "========================================="
+          echo "Error Check Release Workflow"
+          echo "========================================="
+          echo "Dry Run  : ${DRY_RUN}"
+          echo "Max Pages: ${MAX_PAGES}"
+          echo ""
+
+          # ── Helper: fetch up to MAX_PAGES pages of releases ──────────────
+          fetch_releases() {
+            local prefix="$1"
+            local page=1
+            local result="[]"
+            local limit="${MAX_PAGES:-10}"
+
+            while true; do
+              # Stop if we have reached the page limit (0 = unlimited)
+              if [ "${limit}" -ne 0 ] && [ "$page" -gt "${limit}" ]; then
+                break
+              fi
+
+              local batch
+              batch=$(gh api -H "Accept: application/vnd.github+json" \
+                "/repos/${GITHUB_REPOSITORY}/releases?per_page=100&page=${page}")
+
+              local count
+              count=$(echo "$batch" | jq '. | length')
+              if [ "${count}" -eq 0 ]; then
+                break
+              fi
+
+              # Keep only releases matching the requested prefix
+              local filtered
+              filtered=$(echo "$batch" | \
+                jq --arg p "$prefix" '[.[] | select(.tag_name | startswith($p))]')
+
+              result=$(printf '%s\n%s' "$result" "$filtered" | jq -s '.[0] + .[1]')
+              page=$((page + 1))
+
+              # If the batch was smaller than a full page we are on the last page
+              if [ "${count}" -lt 100 ]; then
+                break
+              fi
+            done
+
+            echo "$result"
+          }
+
+          # ── Gather releases ───────────────────────────────────────────────
+          echo "Fetching ct_analysis_error-* releases …"
+          ERROR_RELEASES=$(fetch_releases "ct_analysis_error-")
+          ERROR_COUNT=$(echo "$ERROR_RELEASES" | jq '. | length')
+          echo "Found ${ERROR_COUNT} ct_analysis_error-* release(s)."
+
+          echo "Fetching ct_to_text_analysis-* releases …"
+          SUCCESS_RELEASES=$(fetch_releases "ct_to_text_analysis-")
+          SUCCESS_COUNT=$(echo "$SUCCESS_RELEASES" | jq '. | length')
+          echo "Found ${SUCCESS_COUNT} ct_to_text_analysis-* release(s)."
+          echo ""
+
+          # ── Initialise report ─────────────────────────────────────────────
+          REPORT="error_check_report.md"
+          {
+            echo "# Error Check Report"
+            echo ""
+            echo "**Generated**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+            echo ""
+            echo "**Mode**: \`dry_run=${DRY_RUN}\`"
+            echo "  - \`true\` = list-only (no MAW re-runs)"
+            echo "  - \`false\` = also re-trigger \`ct_to_text.yml\` for missed records"
+            echo ""
+            echo "---"
+            echo ""
+            echo "## Error Releases Scanned"
+            echo ""
+            echo "| Error Release Tag | MorphoSource Ref | Media Err | 3D | 2D | Match? | Notes |"
+            echo "|-------------------|-----------------|:---------:|:--:|:--:|:------:|-------|"
+          } > "${REPORT}"
+
+          # ── Per-release logic ─────────────────────────────────────────────
+          MISSED=0
+          MATCHED=0
+          SKIPPED=0
+
+          while IFS= read -r rel; do
+            TAG=$(echo "$rel"    | jq -r '.tag_name')
+            BODY=$(echo "$rel"   | jq -r '.body // ""')
+            CREATED=$(echo "$rel"| jq -r '.created_at')
+            REL_ID=$(echo "$rel" | jq -r '.id')
+
+            # Extract the referenced MorphoSource tag from the error body.
+            # Supports both morphosource-updates-* and morphosource-api-* formats.
+            MS_TAG=$(echo "$BODY" | \
+              grep -oE 'morphosource-(updates|api)-[A-Za-z0-9_-]+' | \
+              head -1 || true)
+
+            # Extract status flags (case-insensitive)
+            MEDIA_ERR=$(echo "$BODY" | grep -ioP 'Media Error:\s*\K\S+'  | head -1 || echo "unknown")
+            SERVER_ERR=$(echo "$BODY"| grep -ioP 'Server Error:\s*\K\S+' | head -1 || echo "unknown")
+            PROC_3D=$(echo "$BODY"   | grep -ioP '3D Process:\s*\K\S+'   | head -1 || echo "unknown")
+            PROC_2D=$(echo "$BODY"   | grep -ioP '2D Process:\s*\K\S+'   | head -1 || echo "unknown")
+
+            if [ -z "${MS_TAG}" ]; then
+              echo "  ⚠  ${TAG}: could not extract MorphoSource tag – skipping"
+              SKIPPED=$((SKIPPED + 1))
+              echo "| \`${TAG}\` | _(unresolved)_ | ${MEDIA_ERR} | ${PROC_3D} | ${PROC_2D} | ⚠ skipped | Could not extract MorphoSource tag |" >> "${REPORT}"
+              continue
+            fi
+
+            echo "Checking: ${TAG}  →  ${MS_TAG}"
+
+            # Check whether any successful ct_to_text_analysis-* release
+            # references this MorphoSource tag in its body.
+            # Use (.body // "") to safely handle null bodies.
+            MATCH_COUNT=$(echo "$SUCCESS_RELEASES" | \
+              jq -r --arg t "${MS_TAG}" \
+              '[.[] | select((.body // "") | contains($t))] | length')
+
+            if [ "${MATCH_COUNT}" -gt 0 ]; then
+              MATCHED=$((MATCHED + 1))
+
+              # Find the earliest matching success release for the time diff.
+              MATCH_REL=$(echo "$SUCCESS_RELEASES" | \
+                jq -r --arg t "${MS_TAG}" \
+                '[.[] | select((.body // "") | contains($t))] | sort_by(.created_at) | .[0]')
+              MATCH_TAG=$(echo "$MATCH_REL" | jq -r '.tag_name')
+              MATCH_CREATED=$(echo "$MATCH_REL" | jq -r '.created_at')
+
+              # Calculate time gap between error and successful analysis.
+              ERROR_TS=$(date -d "${CREATED}"       +%s 2>/dev/null || echo "0")
+              MATCH_TS=$(date -d "${MATCH_CREATED}" +%s 2>/dev/null || echo "0")
+              if [ "${ERROR_TS}" -gt 0 ] && [ "${MATCH_TS}" -gt 0 ]; then
+                DIFF_S=$(( MATCH_TS - ERROR_TS ))
+                # Use absolute value in case timestamps are out of expected order
+                DIFF_ABS=$(( DIFF_S < 0 ? -DIFF_S : DIFF_S ))
+                DIFF_H=$(( DIFF_ABS / 3600 ))
+                DIFF_M=$(( (DIFF_ABS % 3600) / 60 ))
+                TIME_NOTE="${DIFF_H}h ${DIFF_M}m between error and success"
+              else
+                TIME_NOTE="(time diff unavailable)"
+              fi
+
+              echo "  ✅  Matched → ${MATCH_TAG}  (${TIME_NOTE})"
+              echo "| \`${TAG}\` | \`${MS_TAG}\` | ${MEDIA_ERR} | ${PROC_3D} | ${PROC_2D} | ✅ matched | \`${MATCH_TAG}\`; ${TIME_NOTE} |" >> "${REPORT}"
+            else
+              MISSED=$((MISSED + 1))
+              echo "  ❌  No match – MISSED (Media Error: ${MEDIA_ERR}, 3D: ${PROC_3D}, 2D: ${PROC_2D})"
+              echo "| \`${TAG}\` | \`${MS_TAG}\` | ${MEDIA_ERR} | ${PROC_3D} | ${PROC_2D} | ❌ missed | No matching ct_to_text_analysis found |" >> "${REPORT}"
+
+              # In full (non-dry-run) mode, re-trigger MAW for the missed tag.
+              if [ "${DRY_RUN}" = "false" ]; then
+                echo "  → Re-triggering ct_to_text.yml for: ${MS_TAG}"
+                if gh workflow run ct_to_text.yml \
+                    --ref main \
+                    -f release_tag="${MS_TAG}" 2>&1; then
+                  echo "  ✓ Workflow triggered successfully"
+                else
+                  echo "  ⚠ Failed to trigger workflow for ${MS_TAG}"
+                fi
+              fi
+            fi
+          done < <(echo "$ERROR_RELEASES" | jq -c '.[]')
+
+          # ── Summary section ───────────────────────────────────────────────
+          {
+            echo ""
+            echo "---"
+            echo ""
+            echo "## Statistics"
+            echo ""
+            echo "| Metric | Count |"
+            echo "|--------|------:|"
+            echo "| Total \`ct_analysis_error-*\` releases scanned | ${ERROR_COUNT} |"
+            echo "| ✅ Matched (already processed) | ${MATCHED} |"
+            echo "| ❌ Missed (no matching analysis found) | ${MISSED} |"
+            echo "| ⚠ Skipped (unresolved MorphoSource tag) | ${SKIPPED} |"
+            echo "| Total \`ct_to_text_analysis-*\` releases available | ${SUCCESS_COUNT} |"
+            echo ""
+            if [ "${MISSED}" -gt 0 ] && [ "${DRY_RUN}" = "false" ]; then
+              echo "> **Action taken**: \`ct_to_text.yml\` was re-triggered for each missed record."
+            elif [ "${MISSED}" -gt 0 ]; then
+              echo "> **Dry-run mode**: no workflows were re-triggered."
+              echo "> Re-run this workflow with \`dry_run=false\` to process missed records."
+            else
+              echo "> No missed records – all error releases have been resolved."
+            fi
+          } >> "${REPORT}"
+
+          echo ""
+          echo "========================================="
+          echo "Summary:"
+          echo "  Error releases scanned : ${ERROR_COUNT}"
+          echo "  Matched                : ${MATCHED}"
+          echo "  Missed                 : ${MISSED}"
+          echo "  Skipped                : ${SKIPPED}"
+          echo "========================================="
+
+          # Expose outputs for downstream steps
+          echo "error_count=${ERROR_COUNT}"   >> "$GITHUB_OUTPUT"
+          echo "matched_count=${MATCHED}"     >> "$GITHUB_OUTPUT"
+          echo "missed_count=${MISSED}"       >> "$GITHUB_OUTPUT"
+          if [ "${MISSED}" -gt 0 ]; then
+            echo "has_errors=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_errors=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # ─────────────────────────────────────────────────────────────────────
+      # 3. Upload report as workflow artifact
+      # ─────────────────────────────────────────────────────────────────────
+      - name: Upload error check report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: error-check-report-${{ github.run_id }}
+          path: error_check_report.md
+          if-no-files-found: warn
+          retention-days: 30
+
+      # ─────────────────────────────────────────────────────────────────────
+      # 4. Append report to the GitHub Actions job summary
+      # ─────────────────────────────────────────────────────────────────────
+      - name: Write job summary
+        if: always()
+        run: |
+          if [ -f "error_check_report.md" ]; then
+            cat error_check_report.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # ─────────────────────────────────────────────────────────────────────
+      # 5. Create a summary release when missed records are found
+      #    (makes the finding discoverable in the Releases page)
+      # ─────────────────────────────────────────────────────────────────────
+      - name: Create summary release for missed records
+        if: steps.check_errors.outputs.has_errors == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TIMESTAMP=$(date +'%Y-%m-%d_%H-%M-%S')
+          MISSED="${{ steps.check_errors.outputs.missed_count }}"
+          DRY="${{ github.event.inputs.dry_run || 'true' }}"
+
+          if [ "${DRY}" = "false" ]; then
+            TITLE_SUFFIX="(MAW re-triggered)"
+          else
+            TITLE_SUFFIX="(dry-run, list only)"
+          fi
+
+          gh release create \
+            "error-check-${TIMESTAMP}" \
+            --title "Error Check: ${MISSED} missed record(s) found • ${TIMESTAMP} ${TITLE_SUFFIX}" \
+            --notes-file error_check_report.md \
+            --prerelease
