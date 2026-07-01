@@ -1,0 +1,22 @@
+2026-07-01 01:00:28,574 - Data directory: data/2026-07-01_01-00-25
+2026-07-01 01:00:28,575 - Output directory: data/2026-07-01_01-00-25
+2026-07-01 01:00:28,575 - Fetch all mode: True
+2026-07-01 01:00:28,575 - Using data directory: data/2026-07-01_01-00-25
+2026-07-01 01:00:28,575 - Looking for previous data in: data
+2026-07-01 01:00:28,583 - Loading previous data from: data/2025-10-06_01-28-33/morphosource_data_complete.json
+2026-07-01 01:00:29,003 - Loaded 108782 records from previous data file
+2026-07-01 01:00:29,003 - Latest stored record ID: 000781814
+2026-07-01 01:00:29,003 - Previous record count: 108782
+2026-07-01 01:00:29,003 - === FULL FETCH MODE: Collecting all records from all pages ===
+2026-07-01 01:00:29,003 - Fetching page 1 via API
+2026-07-01 01:00:29,373 - API error on page 1: Network error: Expecting value: line 1 column 1 (char 0) (error 1/5)
+2026-07-01 01:00:34,378 - Fetching page 1 via API
+2026-07-01 01:00:34,403 - API error on page 1: Network error: Expecting value: line 1 column 1 (char 0) (error 2/5)
+2026-07-01 01:00:39,408 - Fetching page 1 via API
+2026-07-01 01:00:39,437 - API error on page 1: Network error: Expecting value: line 1 column 1 (char 0) (error 3/5)
+2026-07-01 01:00:44,442 - Fetching page 1 via API
+2026-07-01 01:00:44,467 - API error on page 1: Network error: Expecting value: line 1 column 1 (char 0) (error 4/5)
+2026-07-01 01:00:49,472 - Fetching page 1 via API
+2026-07-01 01:00:49,496 - API error on page 1: Network error: Expecting value: line 1 column 1 (char 0) (error 5/5)
+2026-07-01 01:00:49,496 - Error getting records: Network error: Expecting value: line 1 column 1 (char 0)
+2026-07-01 01:00:49,496 - Error in daily check: Network error: Expecting value: line 1 column 1 (char 0)
