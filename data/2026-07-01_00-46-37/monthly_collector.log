@@ -1,0 +1,18 @@
+2026-07-01 00:46:38,517 - INFO - Initialized collector with output directory: data/2026-07-01_00-46-37
+2026-07-01 00:46:38,517 - INFO - Processing page 1 via API
+2026-07-01 00:46:39,164 - ERROR - API error on page 1: Network error: Expecting value: line 1 column 1 (char 0)
+2026-07-01 00:46:39,164 - INFO - Processing page 1 via API
+2026-07-01 00:46:39,248 - ERROR - API error on page 1: Network error: Expecting value: line 1 column 1 (char 0)
+2026-07-01 00:46:39,248 - INFO - Processing page 1 via API
+2026-07-01 00:46:39,334 - ERROR - API error on page 1: Network error: Expecting value: line 1 column 1 (char 0)
+2026-07-01 00:46:39,334 - INFO - Processing page 1 via API
+2026-07-01 00:46:39,418 - ERROR - API error on page 1: Network error: Expecting value: line 1 column 1 (char 0)
+2026-07-01 00:46:39,418 - INFO - Processing page 1 via API
+2026-07-01 00:46:39,501 - ERROR - API error on page 1: Network error: Expecting value: line 1 column 1 (char 0)
+2026-07-01 00:46:39,501 - INFO - Analysis complete:
+2026-07-01 00:46:39,502 - INFO - - Existing records: 0
+2026-07-01 00:46:39,502 - INFO - - New records: 0
+2026-07-01 00:46:39,502 - INFO - - Modified records: 0
+2026-07-01 00:46:39,502 - INFO - - Removed records: 0
+2026-07-01 00:46:39,502 - ERROR - Error saving data: No records to save - aborting to prevent data loss
+2026-07-01 00:46:39,502 - ERROR - Error in monthly collection: No records to save - aborting to prevent data loss
