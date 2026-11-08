@@ -1,14 +1,14 @@
 {
   "current": {
-    "date": "2026-11-01",
-    "timestamp": "2026-11-01T10:07:34.420781+00:00",
-    "total_morphosource_records": 2959,
+    "date": "2026-11-08",
+    "timestamp": "2026-11-08T10:07:02.160207+00:00",
+    "total_morphosource_records": 3104,
     "ct_to_text_analyses": 1114,
     "deep_analyses": 0,
     "ct_errors": 0,
     "daily_runs": 252,
     "monthly_runs": 3,
-    "ct_coverage_pct": 37.6,
+    "ct_coverage_pct": 35.9,
     "deep_coverage_pct": 0.0,
     "error_rate_pct": 0.0,
     "avg_metadata_fields": 3.7
@@ -458,6 +458,20 @@
       "daily_runs": 252,
       "monthly_runs": 3,
       "ct_coverage_pct": 37.6,
+      "deep_coverage_pct": 0.0,
+      "error_rate_pct": 0.0,
+      "avg_metadata_fields": 3.7
+    },
+    {
+      "date": "2026-11-08",
+      "timestamp": "2026-11-08T10:07:02.160207+00:00",
+      "total_morphosource_records": 3104,
+      "ct_to_text_analyses": 1114,
+      "deep_analyses": 0,
+      "ct_errors": 0,
+      "daily_runs": 252,
+      "monthly_runs": 3,
+      "ct_coverage_pct": 35.9,
       "deep_coverage_pct": 0.0,
       "error_rate_pct": 0.0,
       "avg_metadata_fields": 3.7
